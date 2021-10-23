@@ -1,0 +1,27 @@
+#pragma once
+
+#include <QCoreApplication>
+#include <QCborParserError>
+#include <QCborArray>
+#include <QCborMap>
+#include <QObject>
+#include <QVariant>
+#include <QVector>
+#include <QList>
+#include <QVariantHash>
+#include <QVariantList>
+#include <QDateTime>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlField>
+#include <QUuid>
+#include <QUrl>
+#include <QMap>
+#include "./qstm_svm.h"
+#include "./qstm_currency.h"
+#include "./qstm_util_variant.h"
+#include "./qstm_util_formatting.h"
+#include "../qorm_macro.h"
+#include "../qorm_global.h"
