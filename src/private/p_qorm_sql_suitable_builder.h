@@ -3,6 +3,7 @@
 #include "../qorm_query.h"
 #include "../qorm_sql_suitable_builder.h"
 #include "../qorm_object_db.h"
+#include "./p_qorm_query.h"
 #include "./p_qorm_sql_suitable_parser_keywork.h"
 
 namespace QOrm{
@@ -118,8 +119,11 @@ namespace QOrm{
                     continue;
 
                 auto command=lst.join(' ') + qsl(";");
-                if(!this->query->sqlQuery().prepare(command))
-                    return false;
+                {
+                    auto&p=*static_cast<QueryPvt*>(query->p);
+                    if(!p.sqlQuery.prepare(command))
+                        return false;
+                }
             }
             return !this->_build.isEmpty();
         }

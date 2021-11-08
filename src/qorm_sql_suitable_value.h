@@ -41,7 +41,7 @@ public:
     QString toTim(const QDateTime&v);
     QString toBoo(const bool&v);
     QString toVar(const QVariant&v);
-    QString toVar(const QVariant &v, const QVariant::Type&vType);
+    QString toVar(const QVariant &v, const int &vType);
 
     static QString toLikeLR(const QVariant &v);
     static QString toLikeL(const QVariant &v);

@@ -142,7 +142,7 @@ QVariant &ModelDtoLinkItem::parameters() const
 ModelDtoLinkItem &ModelDtoLinkItem::setParameters(const QVariant &value)
 {
     dPvtI();
-    if(value.type()==value.String || value.type()==value.ByteArray || value.type()==value.BitArray || value.type()==value.Char){
+    if(value.typeId()==value.String || value.typeId()==value.ByteArray || value.typeId()==value.BitArray || value.typeId()==value.Char){
         auto name=value.toString().trimmed();
         if(name.isEmpty())
             p.parameters=QVariantHash({{name, qsl("${%1}").arg(name)}});

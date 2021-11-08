@@ -104,7 +104,7 @@ void ConnectionManager::setParamaters(const QVariantHash &value)
     qDeleteAll(lst);
     p.settings.clear();
     for(auto&v:value){
-        if(v.canConvert(v.Map))
+        if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
             this->insert(v.toHash());
     }
 }
@@ -170,7 +170,7 @@ QVariantMap ConnectionManager::toMap() const
 QVariantHash ConnectionManager::toHash() const
 {
     if(this->isEmpty() || !this->isLoaded())
-        return QVariantHash();
+        return {};
     else{
         QVariantHash RETURN;
         for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {

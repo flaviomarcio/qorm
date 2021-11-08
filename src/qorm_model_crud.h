@@ -55,25 +55,25 @@ namespace QOrm{
             VariantUtil util;
             if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
                 return this->lr();
-            else if(!this->p_dao.recordList(value))
+
+            if(!this->p_dao.recordList(value))
                 return this->lr(this->p_dao.lr());
-            else{
-                auto vList=this->p_dao.lr().resultList();
-                vList=this->p_model.toList(vList);
-                return this->lr(vList);
-            }
+
+            auto vList=this->p_dao.lr().resultList();
+            vList=this->p_model.toList(vList);
+            return this->lr(vList);
         }
         virtual ResultValue &search(const QVariant&value){
             VariantUtil util;
             if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
                 return this->lr();
-            else if(!this->p_dao.recordList(value))
+
+            if(!this->p_dao.recordList(value))
                 return this->lr(this->p_dao.lr());
-            else{
-                auto vList=this->p_dao.lr().resultList();
-                vList=this->p_model.toList(vList);
-                return this->lr(vList);
-            }
+
+            auto vList=this->p_dao.lr().resultList();
+            vList=this->p_model.toList(vList);
+            return this->lr(vList);
         }
         virtual ResultValue &search(){
             T model(this->source());
@@ -117,10 +117,11 @@ namespace QOrm{
         virtual ResultValue &insert(T&model){
             if(!model.isValid())
                 return this->lr(model.lr());
-            else if(!this->p_dao.insert(model))
+
+            if(!this->p_dao.insert(model))
                 return this->lr(this->p_dao.lr());
-            else
-                return this->lr(model.toHash());
+
+            return this->lr(model.toHash());
         }
         virtual ResultValue &insert(const QVariant&value){
             T model(this, value);
@@ -139,10 +140,11 @@ namespace QOrm{
         virtual ResultValue &update(T&model){
             if(!model.isValid())
                 return this->lr(model.lr());
-            else if(!this->p_dao.update(model))
+
+            if(!this->p_dao.update(model))
                 return this->lr(this->p_dao.lr());
-            else
-                return this->lr(model.toHash());
+
+            return this->lr(model.toHash());
         }
         virtual ResultValue &update(const QVariant&value){
             T model(this, value);
@@ -160,12 +162,14 @@ namespace QOrm{
         virtual ResultValue &upsert(T&model){
             if(!model.uuidSet())
                 return this->lr(model.lr());
-            else if(!model.isValid())
+
+            if(!model.isValid())
                 return this->lr(model.lr());
-            else if(!this->p_dao.upsert(model))
+
+            if(!this->p_dao.upsert(model))
                 return this->lr(this->p_dao.lr());
-            else
-                return this->lr(model.toHash());
+
+            return this->lr(model.toHash());
         }
         virtual ResultValue &upsert(const QVariant&value){
             T model(this, value);
@@ -202,14 +206,17 @@ namespace QOrm{
         virtual ResultValue &deactivate(T&model){
             if(model.isEmptyPK())
                 return this->lr();
-            else if(!this->p_dao.lock(model))
+
+            if(!this->p_dao.lock(model))
                 return this->lr(this->p_dao.lr(model.toHash()));
-            else if(!model.isValid())
+
+            if(!model.isValid())
                 return this->lr(this->p_dao.lr(model.toHash()));
-            else if(!this->p_dao.deactivate(model))
+
+            if(!this->p_dao.deactivate(model))
                 return this->lr(this->p_dao.lr(model.toHash()));
-            else
-                return this->lr(model.toHash());
+
+            return this->lr(model.toHash());
         }
         virtual ResultValue &deactivate(const QVariant&value){
             T model(this, value);

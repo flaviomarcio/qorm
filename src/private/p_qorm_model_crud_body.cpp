@@ -21,7 +21,7 @@ CRUDBody::~CRUDBody()
 
 QOrm::CRUDStrategy CRUDBody::strategy()const
 {
-    static auto varName=QStringList()<<__func__<<qsl("method");
+    static auto varName=QStringList{__func__,qsl("method")};
     auto&vHash=*this;
     for(auto&vName:varName){
         const QVariant&v=vHash[vName];

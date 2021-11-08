@@ -134,64 +134,64 @@ public:
 
         if(!payload.isValid())
             return false;
-        else if(this->connectedDriver==nullptr)
+
+        if(this->connectedDriver==nullptr)
             return false;
+
+        bool __return=false;
+        QString payloadBytes;
+
+        auto channelList=channel.trimmed().isEmpty()?this->subscribeToNotification:QStringList{channel.trimmed()};
+
+        auto&v=payload;
+        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList)
+            payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
+        else if(v.typeId()==QMetaType::QUuid)
+            payloadBytes=v.toUuid().toString();
+        else if(v.typeId()==QMetaType::QUrl)
+            payloadBytes=v.toUrl().toString();
+        else
+            payloadBytes=payload.toByteArray().trimmed().toHex();
+
+        QSqlDatabase localConnection;
+
+        if(payloadBytes.isEmpty()){
+            sWarning()<<tr("payload is empty");
+            __return=false;
+        }
+        else if(!this->pool.get(localConnection)){
+            sWarning()<<tr("invalid connection on subscriber");
+            return false;
+        }
         else{
-            bool __return=false;
-            QString payloadBytes;
-
-            auto channelList=channel.trimmed().isEmpty()?this->subscribeToNotification:QStringList()<<channel.trimmed();
-
-            auto&v=payload;
-            if(v.canConvert(QVariant::Map) || v.canConvert(QVariant::Hash) || v.canConvert(QVariant::List) || v.canConvert(QVariant::StringList))
-                payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
-            else if(v.type()==QVariant::Uuid)
-                payloadBytes=v.toUuid().toString();
-            else if(v.type()==QVariant::Url)
-                payloadBytes=v.toUrl().toString();
-            else
-                payloadBytes=payload.toByteArray().trimmed().toHex();
-
-            QSqlDatabase localConnection;
-
-            if(payloadBytes.isEmpty()){
-                sWarning()<<tr("payload is empty");
-                __return=false;
-            }
-            else if(!this->pool.get(localConnection)){
-                sWarning()<<tr("invalid connection on subscriber");
-                return false;
+            QStringList commandList;
+            const auto dbmsType = this->dbmsType();
+            if(dbmsType==QSqlDriver::PostgreSQL){
+                for(auto&channel:channelList){
+                    commandList<<qsl("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
+                }
             }
             else{
-                QStringList commandList;
-                const auto dbmsType = this->dbmsType();
-                if(dbmsType==QSqlDriver::PostgreSQL){
-                    for(auto&channel:channelList){
-                        commandList<<qsl("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
-                    }
+                sWarning()<<tr("Invalid database to notification");
+            }
+
+            __return=channelList.isEmpty();
+            for(auto&command:commandList){
+                auto q=localConnection.exec(command);
+                if(q.lastError().type()!=QSqlError::NoError){
+                    sWarning()<<tr("invalid execute %1").arg(q.lastError().text());
+                    break;
                 }
                 else{
-                    sWarning()<<tr("Invalid database to notification");
+                    q.finish();
+                    q.clear();
+                    __return=true;
                 }
-
-                __return=channelList.isEmpty();
-                for(auto&command:commandList){
-                    auto q=localConnection.exec(command);
-                    if(q.lastError().type()!=QSqlError::NoError){
-                        sWarning()<<tr("invalid execute %1").arg(q.lastError().text());
-                        break;
-                    }
-                    else{
-                        q.finish();
-                        q.clear();
-                        __return=true;
-                    }
-                }
-
-                this->pool.finish(localConnection);
             }
-            return __return;
+
+            this->pool.finish(localConnection);
         }
+        return __return;
     }
 
 public slots:

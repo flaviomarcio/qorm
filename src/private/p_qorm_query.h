@@ -43,7 +43,7 @@ namespace QOrm{
             }
         }
 
-        auto ext=QStringList()<<qbl("*.*");
+        auto ext=QStringList{qbl("*.*")};
         for(auto&sdir:dir_rm_file){
             QDir scanDir(sdir);
             if(scanDir.exists()){

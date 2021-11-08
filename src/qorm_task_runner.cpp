@@ -59,9 +59,9 @@ TaskRunner &TaskRunner::vs(const QVariant &values)
 {
     dPvt();
     QVariantList vList;
-    if(values.canConvert(values.Map))
+    if(values.typeId()==QMetaType::QVariantMap || values.typeId()==QMetaType::QVariantHash)
         vList=values.toHash().values();
-    else if(values.canConvert(values.List))
+    else if(values.typeId()==QMetaType::QVariantList || values.typeId()==QMetaType::QStringList)
         vList=values.toList();
     else
         vList<<values;

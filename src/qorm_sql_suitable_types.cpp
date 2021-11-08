@@ -11,19 +11,22 @@ TypeUtil::~TypeUtil(){
 }
 
 QSqlDriver::DbmsType TypeUtil::strToDataType(const QString&driverName)
-    {
+{
         if(driverName == driver_QODBC)
             return QSqlDriver::MSSqlServer;
-        else if(driverName == driver_QSQLITE)
+
+        if(driverName == driver_QSQLITE)
             return QSqlDriver::SQLite;
-        else if(driverName == driver_QPSQL)
+
+        if(driverName == driver_QPSQL)
             return QSqlDriver::PostgreSQL;
-        else if(driverName == driver_QOIC)
+
+        if(driverName == driver_QOIC)
             return QSqlDriver::Oracle;
-        else if(driverName == driver_QMYSQL)
+
+        if(driverName == driver_QMYSQL)
             return QSqlDriver::MySqlServer;
-        else
-            return QSqlDriver::UnknownDbms;
+        return QSqlDriver::UnknownDbms;
 }
 
 const QList<int> TypeUtil::keywordGroupingTypes()

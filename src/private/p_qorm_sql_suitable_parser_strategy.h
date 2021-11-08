@@ -175,7 +175,7 @@ namespace QOrm {
 
             QStringList parser_groupby;
 
-            static auto local_list=QStringList()<<qsl("from")<<qsl("join")<<qsl("where");
+            static auto local_list=qvsl{qsl("from"), qsl("join"), qsl("where")};
             auto parser_combination=appendMapStartsWith(local_list , mapObject);
 
 
@@ -207,7 +207,7 @@ namespace QOrm {
                             group<<i.key();
                         }
                     }
-                    else if(parser_fields.type()==QVariant::Map || parser_fields.type()==QVariant::Hash || parser_fields.type()==QVariant::List || parser_fields.type()==QVariant::StringList){
+                    else if(parser_fields.typeId()==QMetaType::QVariantMap || parser_fields.typeId()==QMetaType::QVariantHash || parser_fields.typeId()==QMetaType::QVariantList || parser_fields.typeId()==QMetaType::QStringList){
                         auto map=parser_fields.toMap();
                         auto grouping=map.value(qsl("grouping")).toInt();
                         auto value=map.value(qsl("value")).toString().trimmed();
@@ -257,7 +257,7 @@ namespace QOrm {
                             }
                         }
                         else{
-                            if(parser_order.canConvert(QVariant::Map) || parser_order.canConvert(QVariant::Hash)){
+                            if(parser_order.typeId()==QMetaType::QVariantMap || parser_order.typeId()==QMetaType::QVariantHash){
                                 auto item = SqlParserItem::from(parser_order);
                                 QString name;
                                 if(item.info()==koiObject)
@@ -267,7 +267,7 @@ namespace QOrm {
                                 if(!fields.contains(name))
                                     fields<<name;
                             }
-                            else if(parser_order.canConvert(QVariant::List) || parser_order.canConvert(QVariant::StringList)){
+                            else if(parser_order.typeId()==QMetaType::QVariantList || parser_order.typeId()==QMetaType::QVariantList){
                                 for(auto&v:parser_order.toList()){
                                     auto name=v.toByteArray().trimmed();
                                     if(!fields.contains(name))
@@ -337,8 +337,8 @@ namespace QOrm {
 
         virtual QStringList toScript(SqlSuitableKeyWord&parser){
             auto map=this->toMap();
-            auto destine=getVariantStartsWith("destine",map);
-            auto values=getVariantStartsWith("values",map);
+            auto destine=getVariantStartsWith(qsl("destine"),map);
+            auto values=getVariantStartsWith(qsl("values"),map);
             const auto&modelInfo=QOrm::ModelInfo::modelInfo(destine);
             auto command=parser.parserCommand(kgcInsertInto, &modelInfo, values);
             return command;
@@ -373,8 +373,8 @@ namespace QOrm {
 
         virtual QStringList toScript(SqlSuitableKeyWord&parser){
             auto map=this->toMap();
-            auto destine=getVariantStartsWith("destine",map);
-            auto values=getVariantStartsWith("values", map);
+            auto destine=getVariantStartsWith(qsl("destine"),map);
+            auto values=getVariantStartsWith(qsl("values"), map);
             const auto&modelInfo=QOrm::ModelInfo::modelInfo(destine);
             auto command=parser.parserCommand(kgcUpdateSet, &modelInfo, values);
             return command;
@@ -409,8 +409,8 @@ namespace QOrm {
 
         virtual QStringList toScript(SqlSuitableKeyWord&parser){
             auto map=this->toMap();
-            auto destine=getVariantStartsWith("destine",map);
-            auto values=getVariantStartsWith("values",map);
+            auto destine=getVariantStartsWith(qsl("destine"),map);
+            auto values=getVariantStartsWith(qsl("values"),map);
             const auto&modelInfo=QOrm::ModelInfo::modelInfo(destine);
             auto command=parser.parserCommand(kgcUpsertSet, &modelInfo, values);
             return command;
@@ -451,7 +451,7 @@ namespace QOrm {
             //    if(key.startsWith("from") || key.startsWith("join") || key.startsWith("where"))
             //        parser_combination.insert(key, value);
             //}
-            auto parser_combination=appendMapStartsWith(QStringList()<<"from"<<"join"<<"where"<<"using", mapObject);
+            static auto parser_combination=appendMapStartsWith(qvsl{qsl("from"), qsl("join"), qsl("where"), qsl("using")}, mapObject);
             QStringList output;
             if(!parser_combination.isEmpty()){
                 output<<parser.parserCommand(kgcDelete);
@@ -486,8 +486,8 @@ namespace QOrm {
             auto object=new SqlParserCommand();
             object->makeUuid();
             QVariantMap map;
-            map.insert("type",kgcNextValSelect);
-            map.insert("object",v);
+            map.insert(qsl("type"),kgcNextValSelect);
+            map.insert(qsl("object"),v);
             object->setValue(map);
             this->setPointer(this->suuid(), object);
             return*this;
@@ -501,8 +501,8 @@ namespace QOrm {
                 i.next();
                 auto vValue=i.value().toMap();
                 auto type=vValue.value(qsl("type")).toInt();
-                auto object=vValue.value("object");
-                auto value=vValue.value("value");
+                auto object=vValue.value(qsl("object"));
+                auto value=vValue.value(qsl("value"));
                 QStringList command;
                 const auto&modelInfo=QOrm::ModelInfo::modelInfo(object);
                 if(modelInfo.isValid())
@@ -530,8 +530,8 @@ namespace QOrm {
             auto object=new SqlParserCommand();
             object->makeUuid();
             QVariantMap map;
-            map.insert("type",kgcTruncateTable);
-            map.insert("object",v);
+            map.insert(qsl("type"),kgcTruncateTable);
+            map.insert(qsl("object"),v);
             object->setValue(map);
             this->setPointer(this->suuid(), object);
             return*this;
@@ -541,8 +541,8 @@ namespace QOrm {
             auto object=new SqlParserCommand();
             object->makeUuid();
             QVariantMap map;
-            map.insert("type",kgcTruncateTableCacade);
-            map.insert("object",v);
+            map.insert(qsl("type"),kgcTruncateTableCacade);
+            map.insert(qsl("object"),v);
             object->setValue(map);
             this->setPointer(this->suuid(), object);
             return*this;
@@ -556,8 +556,8 @@ namespace QOrm {
                 i.next();
                 auto vValue=i.value().toMap();
                 auto type=vValue.value(qsl("type")).toInt();
-                auto object=vValue.value("object");
-                auto value=vValue.value("value");
+                auto object=vValue.value(qsl("object"));
+                auto value=vValue.value(qsl("value"));
                 QStringList command;
                 const auto&modelInfo=QOrm::ModelInfo::modelInfo(object);
                 if(modelInfo.isValid())

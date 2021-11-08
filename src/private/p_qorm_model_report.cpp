@@ -64,7 +64,7 @@ public:
     }
 
     void source_set(const QVariant&source){
-        if(source.type()==source.String || source.type()==source.ByteArray || source.type()==source.Char || source.type()==source.BitArray){
+        if(source.typeId()==source.String || source.typeId()==source.ByteArray || source.typeId()==source.Char || source.typeId()==source.BitArray){
             auto vSource=QJsonDocument::fromJson(source.toByteArray()).toVariant();
             this->source=vSource;
         }

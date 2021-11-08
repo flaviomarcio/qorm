@@ -44,11 +44,11 @@ public:
         QStringList RETURN;
         if(command==kgcUpdate || command==kgcUpdateSet || command==kgcUpdateSetValues){
             auto listRecords=value;
-            if(listRecords.type()==QVariant::List){
+            if(listRecords.typeId()==QMetaType::QVariantList){
                 auto l=listRecords.toList();
                 listRecords=l.size()==1?l.first():l;
             }
-            else if(listRecords.type()==QVariant::StringList){
+            else if(listRecords.typeId()==QMetaType::QStringList){
                 auto l=listRecords.toStringList();
                 listRecords=l.size()==1?QVariant(l.first()):l;
             }
@@ -67,13 +67,13 @@ public:
                     QStringList fields;
                     for(auto&v1:propertyTableList){
                         auto property=modelInfo->propertyByFieldName().value(v1);
-                        auto vType=property.type();
+                        auto vType=property.typeId();
                         auto v2=v1;
-                        if(vType==QVariant::Uuid)
+                        if(vType==QMetaType::QUuid)
                             v2+=qsl("::uuid");
-                        else if(vType==QVariant::DateTime)
+                        else if(vType==QMetaType::QDateTime)
                             v2+=qsl("::timestamp");
-                        else if(vType==QVariant::Date)
+                        else if(vType==QMetaType::QDate)
                             v2+=qsl("::date");
                         fields << qsl("%1=s.%2").arg(v1, v2);
                     }
@@ -93,14 +93,14 @@ public:
                     for(auto&v1:modelInfo->tablePk()){
 
                         auto property=modelInfo->propertyByFieldName().value(v1);
-                        auto vType=property.type();
+                        auto vType=property.typeId();
 
                         auto v2=v1;
-                        if(vType==QVariant::Uuid)
+                        if(vType==QMetaType::QUuid)
                             v2+=qsl("::uuid");
-                        else if(vType==QVariant::DateTime)
+                        else if(vType==QMetaType::QDateTime)
                             v2+=qsl("::timestamp");
-                        else if(vType==QVariant::Date)
+                        else if(vType==QMetaType::QDate)
                             v2+=qsl("::date");
 
                         fieldsWhere<<qsl("u.%1 = s.%2").arg(v1,v2);
@@ -118,14 +118,14 @@ public:
 
             auto propertyTableList=modelInfo->propertyTableList();
             QVariantList list;
-            if(value.type()==QVariant::List)
+            if(value.typeId()==QMetaType::QVariantList)
                 list=value.toList();
             else
                 list<<value;
 
             QVariantList listRecords;
             for(auto&v:list){
-                if(v.type()==QVariant::Map || v.type()==QVariant::Hash)
+                if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
                     listRecords<<v;
                 else
                     listRecords<<QVariantMap();//deve gerar erro
@@ -153,13 +153,13 @@ public:
                         QStringList fields;
                         for(auto&v1:propertyTableList){
                             auto property=modelInfo->propertyByFieldName().value(v1);
-                            auto vType=property.type();
+                            auto vType=property.typeId();
                             auto v2=v1;
-                            if(vType==QVariant::Uuid)
+                            if(vType==QMetaType::QUuid)
                                 v2+=qsl("::uuid");
-                            else if(vType==QVariant::DateTime)
+                            else if(vType==QMetaType::QDateTime)
                                 v2+=qsl("::timestamp");
-                            else if(vType==QVariant::Date)
+                            else if(vType==QMetaType::QDate)
                                 v2+=qsl("::date");
                             fields << qsl("%1=excluded.%2").arg(v1, v2);
                         }

@@ -7,15 +7,16 @@
 
 namespace QOrm {
 
-class Q_ORM_EXPORT Object: public QStm::Object
-{
-    Q_OBJECT
-public:
-    Q_INVOKABLE explicit Object(QObject*parent=nullptr):QStm::Object(parent){
-    }
-    Q_INVOKABLE ~Object(){
-    }
-};
+typedef QStm::Object Object;
+//class Q_ORM_EXPORT Object: public QStm::Object
+//{
+//    Q_OBJECT
+//public:
+//    Q_INVOKABLE explicit Object(QObject*parent=nullptr):QStm::Object(parent){
+//    }
+//    Q_INVOKABLE ~Object(){
+//    }
+//};
 
 }
 

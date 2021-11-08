@@ -1,7 +1,7 @@
 #pragma once
 
 #include "./qorm_sql_suitable_builder.h"
-#include <QSqlQuery>
+#include <QSqlRecord>
 
 namespace QOrm {
 class Model;
@@ -52,12 +52,6 @@ public:
      * @return
      */
     virtual SqlSuitableBuilder&b();
-
-    /**
-     * @brief sqlQuery
-     * @return
-     */
-    virtual QSqlQuery &sqlQuery();
 
     /**
      * @brief sqlRecord
@@ -129,7 +123,8 @@ public:
      * @param mode
      * @return
      */
-    virtual bool execBatch(QSqlQuery::BatchExecutionMode mode = QSqlQuery::ValuesAsRows);
+    virtual bool execBatch();
+    virtual bool execBatch(int mode);
 
     /**
      * @brief bindValue
@@ -158,7 +153,7 @@ public:
      * @brief boundValues
      * @return
      */
-    virtual QVariantMap boundValues() const;
+    virtual QVariantList boundValues() const;
 
     /**
      * @brief executedQuery
@@ -192,7 +187,7 @@ public:
      */
     virtual QOrm::SqlSuitableKeyWord&parser();
 
-private:
+public:
     void*p=nullptr;
 };
 

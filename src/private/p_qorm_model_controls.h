@@ -6,6 +6,7 @@
 #include "./private/p_qorm_model_dto_filter.h"
 #include "./private/p_qorm_model_dto_link.h"
 #include "./private/p_qorm_model_dto_crud.h"
+#include "../qorm_model_dto_resullt_info.h"
 
 namespace QOrm {
 
@@ -24,6 +25,13 @@ public:
      * @brief ~ModelRESTControl
      */
     Q_INVOKABLE ~ModelDtoControls();
+
+    //!
+    //! \brief resultInfo
+    //! \return
+    //!
+    virtual ModelDtoResultInfo&resultInfo();
+    virtual ModelDtoControls&setResultInfo(const ModelDtoResultInfo&resultInfo);
 
     /**
      * @brief name

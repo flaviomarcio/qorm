@@ -42,7 +42,7 @@ public:
 
     QVariantMap appendMapStartsWith(const QVariant&vKey, const QVariantMap&mapSrc){
         QVariantMap mapDst;
-        QStringList lKey=vKey.type()==QVariant::StringList?vKey.toStringList():QStringList()<<vKey.toString();
+        QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
         QMapIterator<QString, QVariant> i(mapSrc);
         while (i.hasNext()) {
             i.next();
@@ -59,7 +59,7 @@ public:
 
     QVariantMap unionMapStartsWith(const QVariant&vKey, const QVariantMap&mapSrc){
 
-        QStringList lKey=vKey.type()==QVariant::StringList?vKey.toStringList():QStringList()<<vKey.toString();
+        QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
         QVariantMap mapDst;
         QVariantMap mapUni;
         {
@@ -93,7 +93,7 @@ public:
     }
 
     QVariant getVariantStartsWith(const QVariant&vKey, const QVariantMap&mapSrc){
-        QStringList lKey=vKey.type()==QVariant::StringList?vKey.toStringList():QStringList()<<vKey.toString();
+        QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
         QMapIterator<QString, QVariant> i(mapSrc);
         while (i.hasNext()) {
             i.next();
@@ -105,7 +105,7 @@ public:
             }
 
         }
-        return QVariant();
+        return {};
     }
 
 
@@ -199,11 +199,11 @@ public:
                     auto v=i.value();
                     if(v!=nullptr){
                         if(v!=this)v->makeObject();
-                        if(v->type()==QVariant::Map || v->type()==QVariant::Hash){
+                        if(v->typeId()==QMetaType::QVariantMap || v->typeId()==QMetaType::QVariantHash){
                             auto map=v->toMap();
                             vThis.insert(key, map);
                         }
-                        else if(v->type()==QVariant::UserType){
+                        else if(v->typeId()==QMetaType::User){
                             vThis.insert(key, QVariant(*v));
                         }
                         r=true;
@@ -322,7 +322,7 @@ public:
         VariantUtil vu;
         auto vValue=vu.toVariant(v);
         auto rMap=r.toMap();
-        if(vValue.type()==QVariant::Map || vValue.type()==QVariant::Hash){
+        if(vValue.typeId()==QMetaType::QVariantMap || vValue.typeId()==QMetaType::QVariantHash){
             auto map=vValue.toMap();
             map.insert(qsl("uuid"), rMap.value(qsl("uuid")));
             r.setValue(map);
@@ -345,7 +345,7 @@ public:
         auto rMap=r.toHash();
         QVariantHash map;
 
-        if(vValue.type()==QVariant::Map || vValue.type()==QVariant::Hash){
+        if(vValue.typeId()==QMetaType::QVariantMap || vValue.typeId()==QMetaType::QVariantHash){
             auto map=vValue.toMap();
             if(!map.contains(qsl("uuid"))){
                 map.insert(qsl("uuid"),rMap.value(qsl("uuid")));
@@ -394,12 +394,12 @@ public:
 
     bool isList()const{
         const auto&v=this->value();
-        return v.type()==v.List || v.type()==v.StringList;
+        return v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList;
     }
 
     bool isMap()const{
         const auto&v=this->value();
-        return v.type()==v.Map || v.type()==v.Hash;
+        return v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash;
     }
 
     QVariant name()const{
@@ -408,7 +408,7 @@ public:
             return v;
         }
         else{
-            return QVariant();
+            return {};
         }
     }
 
@@ -426,7 +426,7 @@ public:
             return v;
         }
         else{
-            return QVariant();
+            return {};
         }
     }
 
@@ -471,7 +471,7 @@ public:
     }
 
     virtual QString toFormat(SqlSuitableKeyWord &parser)const{
-        if(this->type()==QVariant::Map || this->type()==QVariant::Hash){
+        if(this->typeId()==QMetaType::QVariantMap || this->typeId()==QMetaType::QVariantHash){
             return qsl_null;
         }
         else{
@@ -546,12 +546,12 @@ public:
             this->setPointer(c->makeUuid().toString(), c);
         }
 
-        if(v.type()==QVariant::List || v.type()==QVariant::StringList){
+        if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList){
             for(auto&i:v.toList()){
                 this->value(i);
             }
         }
-        else if(v.type()==QVariant::Map || v.type()==QVariant::Hash){
+        else if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash){
             QMapIterator<QString, QVariant> i(v.toMap());
             while (i.hasNext()) {
                 i.next();
@@ -632,7 +632,7 @@ public:
             auto valueB = map.value(qsl("valueB"));
 
             auto valueBval      = valueB.toMap().value(qsl("value"));
-            if(valueBval.type()==valueBval.Map || valueBval.type()==valueBval.Hash )//if Map, import values
+            if(valueBval.typeId()==QMetaType::QVariantMap || valueBval.typeId()==QMetaType::QVariantHash )//if Map, import values
                 valueBval=valueBval.toMap().values();
 
             if((!valueA.isValid()) || (!valueB.isValid()) || valueA.isNull() || valueB.isNull()){
@@ -640,10 +640,10 @@ public:
                     keywordOperator=KeywordOperator::koIsNull;
                 }
             }
-            else if((keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut) && (valueB.type()==valueB.List || valueB.type()==valueB.StringList || valueBval.type()==valueBval.List)){
+            else if((keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut) && (valueB.typeId()==QMetaType::QVariantList || valueB.typeId()==QMetaType::QStringList || valueBval.typeId()==QMetaType::QVariantList)){
                 keywordOperator=KeywordOperator::koIn;
             }
-            else if((keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut) && (valueBval.type()==valueBval.List || valueBval.type()==valueBval.StringList)){
+            else if((keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut) && (valueBval.typeId()==QMetaType::QVariantList || valueBval.typeId()==QMetaType::QStringList)){
                 keywordOperator=KeywordOperator::koIn;
             }
 
@@ -788,7 +788,7 @@ public:
         return this->addCondition(new SqlParserCondition(__func__, valueA, valueB, KeywordOperator::koIsNotNull, keywordLogical));
     }
     auto&between(const QVariant&field, const QVariant&valueA, const KeywordLogical&keywordLogical=KeywordLogical::klAnd){
-        if(valueA.type()==QVariant::DateTime || valueA.type()==QVariant::Date || valueA.type()==QVariant::Time){
+        if(valueA.typeId()==QMetaType::QDateTime || valueA.typeId()==QMetaType::QDate || valueA.typeId()==QMetaType::QTime){
             auto valueB=QDateTime(valueA.toDateTime().date(), QTime(23,59,59,998));
             return this->addCondition(new SqlParserCondition(__func__, field, valueA, valueB, KeywordOperator::koBetween, keywordLogical));
         }
@@ -958,10 +958,10 @@ public:
             QStringList output;
 
             QVariantMap map;
-            if(this->type()==QVariant::Map || this->type()==QVariant::Hash){
+            if(this->typeId()==QMetaType::QVariantMap || this->typeId()==QMetaType::QVariantHash){
                 map=this->toMap();
             }
-            else if(this->type()==QVariant::List){
+            else if(this->typeId()==QMetaType::QVariantList){
                 auto l=this->toList();
                 map=l.isEmpty()?map:l.first().toMap();
             }

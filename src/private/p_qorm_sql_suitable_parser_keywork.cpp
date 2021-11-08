@@ -282,14 +282,14 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
     QStringList RETURN;
     if(command==kgcInsertInto){
         QVariantList list;
-        if(value.type()==QVariant::List)
+        if(value.typeId()==QMetaType::QVariantList)
             list=value.toList();
         else
             list<<value;
 
         QVariantList listRecords;
         for(auto&v:list){
-            if(v.type()==QVariant::Map || v.type()==QVariant::Hash)
+            if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
                 listRecords<<v;
             else
                 listRecords<<QVariantHash();//deve gerar erro
@@ -308,11 +308,11 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
     else if(command==kgcUpdate || command==kgcUpdateSet || command==kgcUpdateSetValues){
         auto listRecords=value;
-        if(listRecords.type()==QVariant::List){
+        if(listRecords.typeId()==QMetaType::QVariantList){
             auto l=listRecords.toList();
             listRecords=l.size()==1?l.first():l;
         }
-        else if(listRecords.type()==QVariant::StringList){
+        else if(listRecords.typeId()==QMetaType::QStringList){
             auto l=listRecords.toStringList();
             listRecords=l.size()==1?QVariant(l.first()):l;
         }
@@ -350,11 +350,11 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
     }
     else if(command==kgcDelete || command==kgcDeleteFrom || command==kgcDeleteFromUsing){
         auto listRecords=value;
-        if(listRecords.type()==QVariant::List){
+        if(listRecords.typeId()==QMetaType::QVariantList){
             auto l=listRecords.toList();
             listRecords=l.size()==1?l.first():l;
         }
-        else if(listRecords.type()==QVariant::StringList){
+        else if(listRecords.typeId()==QMetaType::QStringList){
             auto l=listRecords.toStringList();
             listRecords=l.size()==1?QVariant(l.first()):l;
         }
@@ -478,117 +478,133 @@ void SqlSuitableKeyWord::setDrivers(QList<QSqlDriver::DbmsType> value)
 
 QString SqlSuitableKeyWord::formatValue(const QVariant &v)
 {
-    QString __return=qsl("null");
-    if(v.isValid()){
-        auto __type=v.type();
-        if(__type==QVariant::Int || __type==QVariant::UInt)
-            __return=QString::number(v.toInt());
-        else if(__type==QVariant::LongLong || __type==QVariant::ULongLong)
-            __return=QString::number(v.toLongLong());
-        else if(__type==QVariant::Double)
-            __return=QString::number(v.toDouble(),'f',6);
-        else if(__type==QVariant::Bool)
-            __return=v.toString();
-        else if(__type==QVariant::String || __type==QVariant::ByteArray){
-            auto s=v.toString().trimmed();
-            __return=qsl("'")+s.replace(qsl("'"),qsl("''"))+qsl("'");
-        }
-        else if(__type==QVariant::BitArray || __type==QVariant::Char)
-            __return=v.toString();
-        else if(__type==QVariant::DateTime){
-            auto d=v.toDateTime();
-            d = (d.date()>=__d1900)?d:__dt1900;
-            __return=qsl("'")+d.toString(format_date_time)+qsl("'");
-        }
-        else if(__type==QVariant::Date){
-            auto d=v.toDate();
-            d = (d>=__d1900)?d:__d1900;
-            __return=qsl("'")+d.toString(format_date)+qsl("'");
-        }
-        else if(__type==QVariant::Time)
-            return qsl("'")+v.toTime().toString(format_date)+qsl("'");
-        else if(__type==QVariant::Uuid){
-            auto u = v.toUuid();
-            __return=u.isNull()?qsl("null"):(qsl("'")+u.toByteArray()+qsl("'"));
-        }
-        else if(__type==QVariant::Url){
-            auto u = v.toUrl();
-            __return=u.isEmpty()?qsl("null"):(qsl("'")+u.toString()+qsl("'"));
-        }
-        else if(__type==QVariant::List || __type==QVariant::StringList){
-            QStringList ls;
-            for(auto&vv : v.toList()){
-                if(vv.isNull() || !vv.isValid()){
-                    continue;
-                }
-                else if(vv.type()==vv.String || vv.type()==v.ByteArray || vv.type()==v.Char || vv.type()==v.BitArray){
-                    const auto ss=vv.toString().trimmed();
-                    ls.append(qsl("'") + ss + qsl("'"));
-                }
-                else if(vv.type()==vv.Uuid){
-                    const auto ss=vv.toUuid().toString();
-                    ls.append(qsl("'") + ss + qsl("'"));
-                }
-                else if(vv.type()==vv.Url){
-                    const auto ss=vv.toUrl().toString();
-                    ls.append(qsl("'") + ss + qsl("'"));
-                    continue;
-                }
-                else{
-                    ls.append(vv.toString().trimmed());
-                }
-            }
-            __return=ls.isEmpty()?qsl("null"):ls.join(qsl(","));
-        }
+    if(!v.isValid())
+        return qsl("null");
+
+    QMetaType::Type __type=QMetaType::Type(v.typeId());
+    if(__type==QMetaType::Int || __type==QMetaType::UInt)
+        return QString::number(v.toInt());
+
+    if(__type==QMetaType::LongLong || __type==QMetaType::ULongLong)
+        return QString::number(v.toLongLong());
+
+    if(__type>=QMetaType::User)
+        return QString::number(v.toLongLong());
+
+    if(__type==QMetaType::Double)
+        return QString::number(v.toDouble(),'f',6);
+
+    if(__type==QMetaType::Bool)
+        return v.toString();
+
+    if(__type==QMetaType::QString || __type==QMetaType::QByteArray){
+        auto s=v.toString().trimmed();
+        return qsl("'")+s.replace(qsl("'"),qsl("''"))+qsl("'");
     }
 
-    return __return;
+    if(__type==QMetaType::QBitArray || __type==QMetaType::QChar)
+        return v.toString();
+
+    if(__type==QMetaType::QDateTime){
+        auto d=v.toDateTime();
+        d = (d.date()>=__d1900)?d:__dt1900;
+        return qsl("'")+d.toString(format_date_time)+qsl("'");
+    }
+
+    if(__type==QMetaType::QDate){
+        auto d=v.toDate();
+        d = (d>=__d1900)?d:__d1900;
+        return qsl("'")+d.toString(format_date)+qsl("'");
+    }
+
+    if(__type==QMetaType::QTime)
+        return qsl("'")+v.toTime().toString(format_date)+qsl("'");
+
+    if(__type==QMetaType::QUuid){
+        auto u = v.toUuid();
+        return u.isNull()?qsl("null"):(qsl("'")+u.toByteArray()+qsl("'"));
+    }
+
+    if(__type==QMetaType::QUrl){
+        auto u = v.toUrl();
+        return u.isEmpty()?qsl("null"):(qsl("'")+u.toString()+qsl("'"));
+    }
+
+    if(__type==QMetaType::QVariantList || __type==QMetaType::QStringList){
+        QVector<QString> ls;
+        for(auto&vv : v.toList()){
+            if(vv.isNull() || !vv.isValid()){
+                continue;
+            }
+            else if(vv.typeId()==QMetaType::QString || vv.typeId()==QMetaType::QByteArray || vv.typeId()==QMetaType::QChar || vv.typeId()==QMetaType::QBitArray){
+                const auto ss=vv.toString().trimmed();
+                ls.append(qsl("'") + ss + qsl("'"));
+            }
+            else if(vv.typeId()==QMetaType::QUuid){
+                const auto ss=vv.toUuid().toString();
+                ls.append(qsl("'") + ss + qsl("'"));
+            }
+            else if(vv.typeId()==QMetaType::QUrl){
+                const auto ss=vv.toUrl().toString();
+                ls.append(qsl("'") + ss + qsl("'"));
+                continue;
+            }
+            else{
+                ls.append(vv.toString().trimmed());
+            }
+        }
+        if(!ls.isEmpty())
+            return ls.join(qsl(","));
+        return qsl("null");
+    }
+
+    return qsl("undefined_sql_type");
 }
 
 QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
 {
     QString __return=qsl("null");
     if(v.isValid()){
-        auto __type=v.type();
-        if(__type==QVariant::Int || __type==QVariant::UInt)
+        auto __type=v.typeId();
+        if(__type==QMetaType::Int || __type==QMetaType::UInt)
             __return=QString::number(v.toInt());
-        else if(__type==QVariant::LongLong || __type==QVariant::ULongLong)
+        else if(__type==QMetaType::LongLong || __type==QMetaType::ULongLong)
             __return=QString::number(v.toLongLong());
-        else if(__type==QVariant::Double)
+        else if(__type==QMetaType::Double)
             __return=QString::number(v.toDouble(),'f',6);
-        else if(__type==QVariant::Bool)
+        else if(__type==QMetaType::Bool)
             __return=v.toString();
-        else if(__type==QVariant::String || __type==QVariant::ByteArray){
+        else if(__type==QMetaType::QString || __type==QMetaType::QByteArray){
             auto s=v.toString().trimmed();
-            __return=qsl("'")+s.replace(qsl("'"),"\'")+qsl("'");
+            __return=qsl("'")+s.replace(qsl("'"),qsl("\'"))+qsl("'");
         }
-        else if(__type==QVariant::BitArray || __type==QVariant::Char){
+        else if(__type==QMetaType::QBitArray || __type==QMetaType::QChar){
             auto s=v.toString().trimmed();
-            __return=qsl("'")+s.replace(qsl("'"),"\'")+qsl("'");
+            __return=qsl("'")+s.replace(qsl("'"),qsl("\'"))+qsl("'");
         }
-        else if(__type==QVariant::DateTime){
+        else if(__type==QMetaType::QDateTime){
             auto d=v.toDateTime();
             d = (d.date()>=__d1900)?d:__dt1900;
             __return=qsl("'")+d.toString(format_date_time)+qsl("'");
         }
-        else if(__type==QVariant::Date){
+        else if(__type==QMetaType::QDate){
             auto d=v.toDate();
             d = (d>=__d1900)?d:__d1900;
             __return=qsl("'")+d.toString(format_date)+qsl("'");
         }
-        else if(__type==QVariant::Time)
+        else if(__type==QMetaType::QTime)
             return qsl("'")+v.toTime().toString(format_date)+qsl("'");
-        else if(__type==QVariant::Uuid){
+        else if(__type==QMetaType::QUuid){
             auto u = v.toUuid();
             __return=u.isNull()?qsl("null"):(qsl("'")+u.toByteArray()+qsl("'"));
         }
-        else if(__type==QVariant::Url){
+        else if(__type==QMetaType::QUrl){
             auto u = v.toUrl();
             __return=u.isEmpty()?qsl("null"):(qsl("'")+u.toString()+qsl("'"));
         }
-        else if(__type==QVariant::List || __type==QVariant::StringList){
+        else if(__type==QMetaType::QVariantList || __type==QMetaType::QStringList){
             QStringList ls;
-            if(__type==QVariant::StringList){
+            if(__type==QMetaType::QStringList){
                 for(auto&v:v.toStringList()){
                     ls<<this->formatParameter(v);
                 }
@@ -611,7 +627,7 @@ QStringList SqlSuitableKeyWord::formatValues(const QStringList &field, const QVa
     auto fieldFormat=field;
 
     QVariantList vList;
-    if(values.type()==QVariant::List)
+    if(values.typeId()==QMetaType::QVariantList)
         vList=values.toList();
     else
         vList<<values;
@@ -649,9 +665,9 @@ QStringList SqlSuitableKeyWord::formatValues(const QVariant &value)
 {
     QVariantList values;
 
-    if(value.type()==QVariant::List || value.type()==QVariant::StringList)
+    if(value.typeId()==QMetaType::QVariantList || value.typeId()==QMetaType::QStringList)
         values=value.toList();
-    else if(value.type()==QVariant::Map || value.type()==QVariant::Hash)
+    else if(value.typeId()==QMetaType::QVariantMap || value.typeId()==QMetaType::QVariantHash)
         values<<value.toHash().values();
     else
         values<<value;
@@ -670,9 +686,9 @@ QStringList SqlSuitableKeyWord::formatValuesSet(const QStringList &field, const 
     QStringList RETURN;
     QVariantList values;
 
-    if(value.type()==QVariant::List)
+    if(value.typeId()==QMetaType::QVariantList)
         values=value.toList();
-    else if(value.type()==QVariant::Map || value.type()==QVariant::Hash)
+    else if(value.typeId()==QMetaType::QVariantMap || value.typeId()==QMetaType::QVariantHash)
         values<<value;
 
     for(auto&v:values){
@@ -705,13 +721,13 @@ QStringList SqlSuitableKeyWord::parserCallProcedure(const QVariant &value)
         s_object+=database.isEmpty()?qsl_null:(s_object+qsl("."));
         s_object+=schema.isEmpty()?qsl_null:(schema+qsl("."));
         s_object+=s_object.isEmpty()?qsl_null:s_object;
-        return QStringList()<<qsl("%1; { call %2(%3) }").arg(s_database,s_object, s_values);
+        return QStringList{qsl("%1; { call %2(%3) }").arg(s_database,s_object, s_values)};
     }
     else if(this->drivers().contains(QSqlDriver::PostgreSQL)){
         QString s_object=object.toString();
         s_object+=schema.isEmpty()?qsl_null:(schema+qsl("."));
         s_object+=s_object.isEmpty()?qsl_null:s_object;
-        return QStringList()<<qsl("select %1(%2)").arg(s_object, s_values);
+        return QStringList{qsl("select %1(%2)").arg(s_object, s_values)};
     }
 
     return QStringList();
@@ -733,7 +749,7 @@ QStringList SqlSuitableKeyWord::parserCallFunction(const QVariant &value)
         QString s_object=object.toString();
         s_object+=schema.isEmpty()?qsl_null:(schema+qsl("."));
         s_object+=s_object.isEmpty()?qsl_null:s_object;
-        return QStringList()<<qsl("select %1(%2)").arg(s_object, s_values);
+        return QStringList{qsl("select %1(%2)").arg(s_object, s_values)};
     }
 
     return QStringList();
@@ -754,7 +770,7 @@ QStringList SqlSuitableKeyWord::parserCallFunctionTable(const QVariant &value)
         QString s_object=object.toString();
         s_object+=schema.isEmpty()?qsl_null:(schema+qsl("."));
         s_object+=s_object.isEmpty()?qsl_null:s_object;
-        return QStringList()<<qsl("select * from %1(%2)").arg(s_object, s_values);
+        return QStringList{qsl("select * from %1(%2)").arg(s_object, s_values)};
     }
 
     return QStringList();

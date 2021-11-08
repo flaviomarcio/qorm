@@ -28,11 +28,11 @@ public:
 
 //    const static QString toBytes(const QVariant &v)
 //    {
-//        if(v.type()==QVariant::List || v.type()==QVariant::StringList || v.type()==QVariant::Map || v.type()==QVariant::Hash)
+//        if(v.type()==QMetaType::QVariantList || v.type()==QMetaType::QStringList || v.type()==QMetaType::QVariantMap || v.type()==QMetaType::QVariantHash)
 //            return QJsonDocument::fromVariant(v).toJson(QJsonDocument::Compact);
-//        else if(v.type()==QVariant::Uuid)
+//        else if(v.type()==QMetaType::QUuid)
 //            return v.toUuid().toString();
-//        else if(v.type()==QVariant::Url)
+//        else if(v.type()==QMetaType::QUrl)
 //            return v.toUrl().toString();
 //        else
 //            return v.toByteArray();
@@ -70,19 +70,19 @@ SearchParam::~SearchParam()
 bool SearchParam::isValid()
 {
     auto va=this->valueA();
-    if((va.type()==va.Map || va.type()==va.Hash) && (!va.toHash().isEmpty()))
+    if((va.typeId()==QMetaType::QVariantHash || va.typeId()==QMetaType::QVariantMap) && (!va.toHash().isEmpty()))
         return true;
-    else if((va.type()==va.List || va.type()==va.StringList) && (!va.toList().isEmpty()))
+    if((va.typeId()==QMetaType::QVariantList || va.typeId()==QMetaType::QStringList) && (!va.toList().isEmpty()))
         return true;
-    else{
-        auto vb=this->valueB();
-        if((vb.type()==vb.Map || vb.type()==vb.Hash) && (!vb.toHash().isEmpty()))
-            return true;
-        else if((vb.type()==vb.List || vb.type()==vb.StringList) && (!vb.toList().isEmpty()))
-            return true;
-        else
-            return false;
-    }
+
+    auto vb=this->valueB();
+    if((vb.typeId()==QMetaType::QVariantHash || vb.typeId()==QMetaType::QVariantMap) && (!vb.toHash().isEmpty()))
+        return true;
+
+    if((vb.typeId()==QMetaType::QVariantList || vb.typeId()==QMetaType::QStringList) && (!vb.toList().isEmpty()))
+        return true;
+
+    return false;
 }
 
 QString SearchParam::key() const
@@ -91,10 +91,11 @@ QString SearchParam::key() const
     auto vb=this->valueB().toString().trimmed();
     if(!va.isEmpty())
         return va;
-    else if(!vb.isEmpty())
+
+    if(!vb.isEmpty())
         return vb;
-    else
-        return qsl_null;
+
+    return qsl_null;
 }
 
 QVariant SearchParam::valueA() const
@@ -118,8 +119,8 @@ QOrm::KeywordOperator SearchParam::keywordOperator() const
     auto i = v.toInt();//QOrm::KeywordOperator();
     if(QOrm::KeywordOperators.contains(i))
         return QOrm::KeywordOperator(i);
-    else
-        return QOrm::koEqual;
+
+    return QOrm::koEqual;
 }
 
 QOrm::KeywordLogical SearchParam::keywordLogical() const
@@ -128,15 +129,16 @@ QOrm::KeywordLogical SearchParam::keywordLogical() const
     auto i = QOrm::KeywordLogical(v.toInt());
     if(i==QOrm::klAnd)
         return i;
-    else if(i==QOrm::klOr)
+
+    if(i==QOrm::klOr)
         return i;
-    else
-        return QOrm::klAnd;
+
+    return QOrm::klAnd;
 }
 
 SearchParam SearchParam::from(const QVariant &value)
 {
-    if(value.type()==value.Hash || value.type()==value.Map){
+    if(value.typeId()==QMetaType::QVariantHash || value.typeId()==QMetaType::QVariantMap){
         auto vHash=value.toHash();
         if(vHash.contains(qsl("valueA")) || vHash.contains(qsl("valueB"))){
             SearchParam __return(vHash);
@@ -158,14 +160,14 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant()
 {
     this->p = new SearchParametersPvt();
     dPvt();
-    if(other.type()==other.List){
+    if(other.typeId()==QMetaType::QVariantList){
         for(auto&v:other.toList()){
             auto s=SearchParam::from(v);
             if(v.isValid())
                 p.insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
         }
     }
-    else if(other.type()==other.Map || other.type()==other.Hash){
+    else if(other.typeId()==QMetaType::QVariantMap || other.typeId()==QMetaType::QVariantHash){
         QHashIterator<QString, QVariant> i(other.toHash());
         while (i.hasNext()) {
             i.next();
@@ -194,14 +196,14 @@ SearchParameters::~SearchParameters()
 bool SearchParameters::canRead(const QVariant &v)
 {
     this->p = new SearchParametersPvt();
-    if(v.type()==v.List){
+    if(v.typeId()==QMetaType::QVariantList){
         for(auto&v:v.toList()){
             auto s=SearchParam::from(v);
             if(v.isValid())
                 return true;
         }
     }
-    else if(v.type()==v.Map || v.type()==v.Hash){
+    else if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash){
         QHashIterator<QString, QVariant> i(v.toHash());
         while (i.hasNext()) {
             i.next();
@@ -209,14 +211,12 @@ bool SearchParameters::canRead(const QVariant &v)
             auto s=SearchParam::from(v);
             if(s.isValid())
                 return true;
-            else{
-                auto va=QOrm::SqlParserItem::from(s.valueA());
-                auto vb=QOrm::SqlParserItem::from(s.valueB());
-                auto vc=QOrm::SqlParserItem::from(s.valueC());
-                if(va.isValid() || vb.isValid() || vc.isValid()){
-                    return true;
-                }
-            }
+
+            auto va=QOrm::SqlParserItem::from(s.valueA());
+            auto vb=QOrm::SqlParserItem::from(s.valueB());
+            auto vc=QOrm::SqlParserItem::from(s.valueC());
+            if(va.isValid() || vb.isValid() || vc.isValid())
+                return true;
         }
     }
     return false;
@@ -234,7 +234,7 @@ SearchParameters &SearchParameters::operator=(const QVariant &v)
     VariantUtil vu;
     QVariant::clear();
     p.values.clear();
-    if(v.type()==v.List || v.type()==v.StringList){
+    if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList){
         auto vList=vu.toList(v);
         for(auto&v:vList) {
             SearchParam param(v.toHash());
@@ -242,7 +242,7 @@ SearchParameters &SearchParameters::operator=(const QVariant &v)
                 p.values<<v;
         }
     }
-    else if(v.type()==v.Hash || v.type()==v.Map){
+    else if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap){
         auto vMap=vu.toHash(v);
         QHashIterator<QString, QVariant> i(vMap);
         while (i.hasNext()) {
@@ -261,7 +261,7 @@ SearchParameters &SearchParameters::operator+=(const QVariant &v)
 {
     dPvt();
     VariantUtil vu;
-    if(v.type()==v.List || v.type()==v.StringList){
+    if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList){
         auto vList=vu.toList(v);
         for(auto&v:vList) {
             SearchParam param(v.toHash());
@@ -269,7 +269,7 @@ SearchParameters &SearchParameters::operator+=(const QVariant &v)
                 p.values<<v;
         }
     }
-    else if(v.type()==v.Hash || v.type()==v.Map){
+    else if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap){
         auto vMap=vu.toHash(v);
         QHashIterator<QString, QVariant> i(vMap);
         while (i.hasNext()) {

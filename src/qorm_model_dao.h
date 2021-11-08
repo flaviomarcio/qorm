@@ -44,10 +44,11 @@ namespace QOrm{
                 strategy.where().condition(value);
             if(!query.exec())
                 return this->lr(query.lastError());
-            else if(!query.next())
+
+            if(!query.next())
                 return this->lr()=false;
-            else
-                return this->lr(query.makeRecord(this->modelRef));
+
+            return this->lr(query.makeRecord(this->modelRef));
         }
 
 
@@ -82,8 +83,8 @@ namespace QOrm{
 
             if(!query.exec())
                 return this->lr(query.lastError());
-            else
-                return this->lr(query.makeRecordList());
+
+            return this->lr(query.makeRecordList());
         }
 
         auto&recordMap(){
@@ -94,49 +95,46 @@ namespace QOrm{
             auto tablePk=this->modelRef.tablePk();
             if(tablePk.isEmpty())
                 return this->lr(QVariant())=true;
-            else{
-                Query query(this);
-                auto&strategy=query.builder().select();
-                strategy.fieldsFrom(modelRef);
-                QVariant value(this->variantToParameters(v));
-                if(value.isValid()){
-                    strategy
-                        .where()
-                        .condition(value);
-                }
-                QHashIterator<QString, QVariant> i(this->modelRef.tableDeactivateField());
-                while (i.hasNext()) {
-                    i.next();
-                    strategy.where().notEqual(i.key(), i.value());
-                }
 
-                if(!query.exec())
-                    return this->lr(query.lastError());
-                else{
-                    QVariantHash map;
-                    for(auto&v:query.makeRecordList()){
-                        QVariantHash vMap(v.toHash());
-                        QStringList key;
-                        QObject model;
-                        for(auto&pkField:tablePk){
-                            const auto property = modelRef.propertyByFieldName(pkField);
-                            const auto vMapValue=vMap.value(pkField);
-                            const auto vType=property.type();
-
-                            if(vType==vMapValue.Invalid || !vMapValue.isValid() || vMapValue.isNull())
-                                key<<qsl_null;
-                            else if(vType==vMapValue.Uuid)
-                                key<<vMapValue.toUuid().toString();
-                            else if(vType==vMapValue.Url)
-                                key<<vMapValue.toUrl().toString();
-                            else
-                                key<<vMapValue.toString();
-                        }
-                        map.insert(key.join('.'),v);
-                    }
-                    return this->lr(QVariant(map));
-                }
+            Query query(this);
+            auto&strategy=query.builder().select();
+            strategy.fieldsFrom(modelRef);
+            QVariant value(this->variantToParameters(v));
+            if(value.isValid()){
+                strategy
+                    .where()
+                    .condition(value);
             }
+            QHashIterator<QString, QVariant> i(this->modelRef.tableDeactivateField());
+            while (i.hasNext()) {
+                i.next();
+                strategy.where().notEqual(i.key(), i.value());
+            }
+
+            if(!query.exec())
+                return this->lr(query.lastError());
+
+            QVariantHash map;
+            for(auto&v:query.makeRecordList()){
+                QVariantHash vMap(v.toHash());
+                QStringList key;
+                QObject model;
+                for(auto&pkField:tablePk){
+                    const auto property = modelRef.propertyByFieldName(pkField);
+                    const auto vMapValue=vMap.value(pkField);
+                    const auto vType=property.typeId();
+                    if(vType==vMapValue.Invalid || !vMapValue.isValid() || vMapValue.isNull())
+                        key<<qsl_null;
+                    else if(vType==vMapValue.Uuid)
+                        key<<vMapValue.toUuid().toString();
+                    else if(vType==vMapValue.Url)
+                        key<<vMapValue.toUrl().toString();
+                    else
+                        key<<vMapValue.toString();
+                }
+                map.insert(key.join('.'),v);
+            }
+            return this->lr(QVariant(map));
         }
 
         /**
@@ -185,10 +183,11 @@ namespace QOrm{
 
             if(!query.exec())
                 return this->lr(query.lastError());
-            else if (!query.next())
+
+            if (!query.next())
                 return this->lr()=false;
-            else
-                return this->lr()=true;
+
+            return this->lr()=true;
         }
 
         /**
@@ -199,29 +198,29 @@ namespace QOrm{
         auto&insert(T&value){
             return this->insert(value.toHashModel());
         }
+
         auto&insert(const QVariant&value){
             if(value.isNull() || !value.isValid())
                 return this->lr()=false;
+
+            QVariantList list;
+            if(value.typeId()==QMetaType::QVariantList){
+                for(auto&v:value.toList()){
+                    T model(v);
+                    list<<model.toHashModel();
+                }
+            }
             else{
-                QVariantList list;
-                if(value.type()==QVariant::List){
-                    for(auto&v:value.toList()){
-                        T model(v);
-                        list<<model.toHashModel();
-                    }
-                }
-                else{
-                    list<<value;
-                }
-                for(auto&v:list){
-                    QOrm::Query query(this);
-                    query.builder()
-                            .insert()
-                            .destine(modelRef)
-                            .values(v);
-                    if(!query.exec())
-                        return this->lr(query.lastError());
-                }
+                list<<value;
+            }
+            for(auto&v:list){
+                QOrm::Query query(this);
+                query.builder()
+                    .insert()
+                    .destine(modelRef)
+                    .values(v);
+                if(!query.exec())
+                    return this->lr(query.lastError());
             }
             return this->lr()=true;
         }
@@ -244,26 +243,24 @@ namespace QOrm{
         auto&update(const QVariant&value){
             if(value.isNull() || !value.isValid())
                 return this->lr()=false;
+            QVariantList list;
+            if(value.typeId()==QMetaType::QVariantList){
+                for(auto&v:value.toList()){
+                    T model(v);
+                    list<<model.toHashModel();
+                }
+            }
             else{
-                QVariantList list;
-                if(value.type()==QVariant::List){
-                    for(auto&v:value.toList()){
-                        T model(v);
-                        list<<model.toHashModel();
-                    }
-                }
-                else{
-                    list<<value;
-                }
-                for(auto&v:list){
-                    QOrm::Query query(this);
-                    query.builder()
-                            .update()
-                            .destine(modelRef)
-                            .values(v);
-                    if(!query.exec())
-                        return this->lr(query.lastError());
-                }
+                list<<value;
+            }
+            for(auto&v:list){
+                QOrm::Query query(this);
+                query.builder()
+                    .update()
+                    .destine(modelRef)
+                    .values(v);
+                if(!query.exec())
+                    return this->lr(query.lastError());
             }
             return this->lr()=true;
         }
@@ -279,9 +276,7 @@ namespace QOrm{
                 value.readFrom(map);
                 return this->lr()=true;
             }
-            else{
-                return this->lr()=false;
-            }
+            return this->lr()=false;
         }
 
         /**
@@ -292,26 +287,25 @@ namespace QOrm{
         auto&upsert(const QVariant&value){
             if(value.isNull() || !value.isValid())
                 return this->lr()=false;
+
+            QVariantList list;
+            if(value.typeId()==QMetaType::QVariantList){
+                for(auto&v:value.toList()){
+                    T model(v);
+                    list<<model.toHashModel();
+                }
+            }
             else{
-                QVariantList list;
-                if(value.type()==QVariant::List){
-                    for(auto&v:value.toList()){
-                        T model(v);
-                        list<<model.toHashModel();
-                    }
-                }
-                else{
-                    list<<value;
-                }
-                for(auto&v:list){
-                    QOrm::Query query(this);
-                    query.builder()
-                            .upsert()
-                            .destine(modelRef)
-                            .values(v);
-                    if(!query.exec())
-                        return this->lr(query.lastError());
-                }
+                list<<value;
+            }
+            for(auto&v:list){
+                QOrm::Query query(this);
+                query.builder()
+                    .upsert()
+                    .destine(modelRef)
+                    .values(v);
+                if(!query.exec())
+                    return this->lr(query.lastError());
             }
             return this->lr()=true;
         }
@@ -326,13 +320,13 @@ namespace QOrm{
             if(!value.deactivateSetValues()){
                 return this->lr(value.lr())=false;
             }
-            else if(this->upsert(map)){
+
+            if(this->upsert(map)){
                 value.readFrom(map);
                 return this->lr()=true;
             }
-            else{
-                return this->lr()=false;
-            }
+
+            return this->lr()=false;
         }
 
         /**
@@ -342,7 +336,7 @@ namespace QOrm{
         */
         auto&deactivate(const QVariant&value){
             QVariantList list;
-            if(value.type()==QVariant::List){
+            if(value.typeId()==QMetaType::QVariantList){
                 for(auto&v:value.toList()){
                     T model(v);
                     list<<model.toHashModel();
@@ -389,22 +383,21 @@ namespace QOrm{
             }
             if(!query.exec())
                 return this->lr(query.lastError());
-            else
-                return this->lr()=true;
+
+            return this->lr()=true;
         }
 
         auto&remove(){
             auto list=this->lr().resultList();
             if(list.isEmpty())
                 return this->lr()=true;
-            else {
-                for(auto&v:list){
-                    T model(this, v);
-                    if(!this->remove(model))
-                        return this->lr()=false;
-                }
-                return this->lr()=true;
+
+            for(auto&v:list){
+                T model(this, v);
+                if(!this->remove(model))
+                    return this->lr()=false;
             }
+            return this->lr()=true;
         }
 
         /**
@@ -425,10 +418,11 @@ namespace QOrm{
                 model.clear();
                 return this->lr()=false;
             }
-            else if(!model.readFrom(record))
+
+            if(!model.readFrom(record))
                 return this->lr()=false;
-            else
-                return this->lr(record)=true;
+
+            return this->lr(record)=true;
         }
 
         auto&lock(T&model){
@@ -437,24 +431,28 @@ namespace QOrm{
                 map=model.toMapFKValues();
             if(!this->lock(map))
                 return this->lr()=false;
-            else if(!model.readFrom(this->lr()))
+
+            if(!model.readFrom(this->lr()))
                 return this->lr()=false;
-            else if(!model.storedProperty())
+
+            if(!model.storedProperty())
                 return this->lr()=false;
-            else
-                return this->lr()=true;
+
+            return this->lr()=true;
 
         }
 
         auto&lock(T&model, const QVariant&value){
             if(!this->lock(value))
                 return this->lr()=false;
-            else if(!model.readFrom(this->lr()))
+
+            if(!model.readFrom(this->lr()))
                 return this->lr()=false;
-            else if(!model.storedProperty())
+
+            if(!model.storedProperty())
                 return this->lr()=false;
-            else
-                return this->lr()=true;
+
+            return this->lr()=true;
         }
 
         auto&lock(const QVariant&v){
@@ -469,13 +467,11 @@ namespace QOrm{
             }
             if(!query.exec())
                 return this->lr(query.lastError());
-            else{
-                auto vList=query.makeRecordList(this->modelRef);
-                if(vList.isEmpty())
-                    return this->lr()=false;
-                else
-                    return this->lr((vList.size()==1)?vList.first():vList);
-            }
+            auto vList=query.makeRecordList(this->modelRef);
+            if(vList.isEmpty())
+                return this->lr()=false;
+
+            return this->lr((vList.size()==1)?vList.first():vList);
         }
 
         /**
@@ -490,10 +486,11 @@ namespace QOrm{
                     .truncateTable(this->modelRef);
             if(!query.exec())
                 return this->lr(query.lastError());
-            else if(!query.next())
+
+            if(!query.next())
                 return this->lr()=false;
-            else
-                return this->lr()=true;
+
+            return this->lr()=true;
         }
 
         auto&truncateTableCascade(){
@@ -504,10 +501,11 @@ namespace QOrm{
                     .truncateTableCascade(this->modelRef);
             if(!query.exec())
                 return this->lr(query.lastError());
-            else if(!query.next())
+
+            if(!query.next())
                 return this->lr()=false;
-            else
-                return this->lr()=true;
+
+            return this->lr()=true;
         }
 
         auto&nextVal(){
@@ -522,11 +520,9 @@ namespace QOrm{
                     .nextVal(v);
             if(!query.exec())
                 return this->lr().clear()=query.lastError();
-            else if(!query.next())
+            if(!query.next())
                 return this->lr().clear()=false;
-            else{
-                return this->lr(query.value(0));
-            }
+            return this->lr(query.value(0));
         }
 
         auto values(){
@@ -536,19 +532,18 @@ namespace QOrm{
                 auto tablePk=this->modelRef.tablePkField();
                 if(tablePk.size()==1)
                     return this->values(tablePk.first());
-                else{
-                    for(auto&v:vListRecord){
-                        auto map=v.toHash();
-                        QVariantHash record;
-                        for(auto&v:tablePk){
-                            auto vField=SqlParserItem::from(v);
-                            auto f_name=vField.name().toString();
-                            auto f_value=map.value(f_name);
-                            if(!record.contains(f_name))
-                                record.insert(f_name, f_value);
-                        }
-                        __return.append(record);
+
+                for(auto&v:vListRecord){
+                    auto map=v.toHash();
+                    QVariantHash record;
+                    for(auto&v:tablePk){
+                        auto vField=SqlParserItem::from(v);
+                        auto f_name=vField.name().toString();
+                        auto f_value=map.value(f_name);
+                        if(!record.contains(f_name))
+                            record.insert(f_name, f_value);
                     }
+                    __return.append(record);
                 }
             }
             return __return;

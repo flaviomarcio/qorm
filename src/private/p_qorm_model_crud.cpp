@@ -9,10 +9,10 @@ namespace PrivateQOrm {
 #define dPvt()\
     auto&p = *reinterpret_cast<CRUDBasePvt*>(this->p)
 
-
 class CRUDBasePvt{
 public:
     QOrm::ModelDtoOptions options;
+    QOrm::ModelDtoResultInfo resultInfo;
     QByteArray crudName;
     QByteArray crudDescription;
     QOrm::ModelDto dto;
@@ -22,7 +22,7 @@ public:
     QVariant source;
     CRUDBase*parent=nullptr;
 
-    explicit CRUDBasePvt(CRUDBase*parent):options(parent),dto(parent){
+    explicit CRUDBasePvt(CRUDBase*parent):options(parent),resultInfo(parent),dto(parent){
         this->parent=parent;
         dto.setType(dftNormalForm);
     }
@@ -61,10 +61,11 @@ public:
         };
         this->strategy_set(vStrategy());
         this->source_set(vSource());
+        this->resultInfo.fromVar(vCrud.value(qsl("resultInfo")));
     }
 
     void source_set(const QVariant&source){
-        if(source.type()==source.String || source.type()==source.ByteArray || source.type()==source.Char || source.type()==source.BitArray){
+        if(source.typeId()==source.String || source.typeId()==source.ByteArray || source.typeId()==source.Char || source.typeId()==source.BitArray){
             auto vSource=QJsonDocument::fromJson(source.toByteArray()).toVariant();
             this->source=vSource;
         }
@@ -79,7 +80,7 @@ public:
         }
         else{
             QVariant vFy=strategy;
-            if(vFy.type()==vFy.String || vFy.type()==vFy.ByteArray || vFy.type()==vFy.Char || vFy.type()==vFy.BitArray){
+            if(vFy.typeId()==vFy.String || vFy.typeId()==vFy.ByteArray || vFy.typeId()==vFy.Char || vFy.typeId()==vFy.BitArray){
                 vFy=vFy.toString().toLower();
                 vFy=QOrm::__stringToStrategy.value(vFy.toString());
             }
@@ -122,6 +123,19 @@ CRUDBase &CRUDBase::setOptions(const QOrm::ModelDtoOptions &options)
     return*this;
 }
 
+QOrm::ModelDtoResultInfo &CRUDBase::resultInfo()
+{
+    dPvt();
+    return p.resultInfo;
+}
+
+CRUDBase &CRUDBase::setResultInfo(const QOrm::ModelDtoResultInfo &resultInfo)
+{
+    dPvt();
+    p.resultInfo.fromHash(resultInfo.toHash());
+    return*this;
+}
+
 CRUDBase &CRUDBase::makeDefault()
 {
     this->dto().headers().makeDefault();
@@ -138,9 +152,8 @@ QVariant CRUDBase::type() const
 {
     dPvt();
     QVariant type=p.dto.type();
-    if(type.isNull() && !type.isValid()){
+    if(type.isNull() && !type.isValid())
         type=this->defaultType();
-    }
     return type;
 }
 
@@ -155,9 +168,8 @@ QVariant CRUDBase::layout() const
 {
     dPvt();
     QVariant type=p.dto.layout();
-    if(type.isNull() && !type.isValid()){
+    if(type.isNull() && !type.isValid())
         type=this->defaultLayout();
-    }
     return type;
 }
 
@@ -173,8 +185,8 @@ QByteArray CRUDBase::crudName() const
     dPvt();
     if(p.crudName.trimmed().isEmpty())
         return this->metaObject()->className();
-    else
-        return p.crudName;
+
+    return p.crudName;
 }
 
 CRUDBase &CRUDBase::crudName(const QVariant &value)
@@ -189,8 +201,8 @@ QByteArray CRUDBase::crudDescription() const
     dPvt();
     if(p.crudDescription.trimmed().isEmpty())
         return this->metaObject()->className();
-    else
-        return p.crudDescription;
+
+    return p.crudDescription;
 }
 
 CRUDBase &CRUDBase::crudDescription(const QVariant &value)
@@ -246,22 +258,29 @@ CRUDBase &CRUDBase::source(const QVariant &value)
 
 ResultValue &CRUDBase::crudify()
 {
+    dPvt();
+    p.dto.setResultInfo(this->resultInfo());
     //QOrm::TransactionScope transaction(this);
     auto strategy=this->strategy();
     if(strategy==QOrm::Search)
         return this->canActionSearch();
-    else if(strategy==QOrm::Insert)
+
+    if(strategy==QOrm::Insert)
         return this->canActionInsert();
-    else if(strategy==QOrm::Update)
+
+    if(strategy==QOrm::Update)
         return this->canActionUpdate();
-    else if(strategy==QOrm::Upsert)
+
+    if(strategy==QOrm::Upsert)
         return this->canActionUpsert();
-    else if(strategy==QOrm::Remove)
+
+    if(strategy==QOrm::Remove)
         return this->canActionRemove();
-    else if(strategy==QOrm::Deactivate)
+
+    if(strategy==QOrm::Deactivate)
         return this->canActionDeactivate();
-    else
-        return this->lr().setValidation(tr("Invalid strategy"));
+
+    return this->lr().setValidation(tr("Invalid strategy"));
 }
 
 CRUDBase &CRUDBase::actionSearch(QOrm::ModelAction &action)

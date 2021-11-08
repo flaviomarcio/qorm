@@ -148,12 +148,13 @@ public:
     }
 
     bool v_load(const QVariant &v){
-        if(v.type()==v.List || v.type()==v.StringList)
+        if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList)
             return this->load(v.toStringList());
-        else if(v.type()==v.Map || v.type()==v.Hash)
+
+        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap)
             return this->load(v.toHash());
-        else
-            return this->load(v.toString());
+
+        return this->load(v.toString());
     }
 
     bool load(const QVariantHash &vSettings)
@@ -323,7 +324,7 @@ public:
                 auto metaMethod = metaObject->method(methodIndex);
                 if(metaMethod.parameterCount()==0){
                     auto methodName=QString(metaMethod.name()).toLower().trimmed();
-                    auto staticNames=QStringList()<<"settingsfilename"<<"settings_server"<<"settingsserver";
+                    auto staticNames=QStringList{qsl("settingsfilename"),qsl("settings_server"),qsl("settingsserver")};
                     if(staticNames.contains(methodName)){
                         QVariant invokeReturn;
                         auto argReturn=Q_RETURN_ARG(QVariant, invokeReturn);

@@ -17,6 +17,7 @@ namespace QOrm {
         Q_INVOKABLE virtual ~CRUDBlock();
 
         Q_INVOKABLE virtual QOrm::ModelDtoOptions&options();
+        Q_INVOKABLE virtual QOrm::ModelDtoResultInfo&resultInfo();
 
          /**
          * @brief operator +=

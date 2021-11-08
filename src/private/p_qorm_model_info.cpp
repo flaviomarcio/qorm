@@ -73,14 +73,17 @@ public:
             auto method = metaObject->method(methodIndex);
             if(method.returnType()!=QMetaType::Void)
                 continue;
-            else if(method.parameterCount()>0)
+
+            if(method.parameterCount()>0)
                 continue;
-            else if(method.name().toLower() != __methodName)
+
+            if(method.name().toLower() != __methodName)
                 continue;
-            else if(!method.invoke(objectCheck, Qt::DirectConnection))
+
+            if(!method.invoke(objectCheck, Qt::DirectConnection))
                 return false;
-            else
-                return true;
+
+            return true;
         }
         return false;
     };
@@ -93,33 +96,33 @@ public:
         auto metaObject=objectCheck->metaObject();
         for(int methodIndex = 0; methodIndex < metaObject->methodCount(); ++methodIndex) {
             auto method = metaObject->method(methodIndex);
-            if(!(method.returnType()==QVariant::Map || method.returnType()==QVariant::Hash))
+            if(!(method.returnType()==QMetaType::QVariantMap || method.returnType()==QMetaType::QVariantHash))
                 continue;
-            else if(method.parameterCount()>0)
+            if(method.parameterCount()>0)
                 continue;
-            else if(method.name().toLower() != __methodName)
-                continue;
-            else{
-                QVariantMap _vMap;
-                QVariantHash _vHash;
-                QGenericReturnArgument invokeReturn;
 
-                if(method.returnType()==QVariant::Map)
-                    invokeReturn=Q_RETURN_ARG(QVariantMap, _vMap);
-                else if(method.returnType()==QVariant::Hash)
-                    invokeReturn=Q_RETURN_ARG(QVariantHash, _vHash);
+            if(method.name().toLower() != __methodName)
+                continue;
 
-                if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
-                    break;
-                else if(method.returnType()==QVariant::Map && !_vMap.isEmpty())
-                    return _vMap;
-                else if(method.returnType()==QVariant::Hash && !_vHash.isEmpty())
-                    return _vHash;
-                else
-                    return QVariantHash();
-            }
+            QVariantMap _vMap;
+            QVariantHash _vHash;
+            QGenericReturnArgument invokeReturn;
+
+            if(method.returnType()==QMetaType::QVariantMap)
+                invokeReturn=Q_RETURN_ARG(QVariantMap, _vMap);
+            else if(method.returnType()==QMetaType::QVariantHash)
+                invokeReturn=Q_RETURN_ARG(QVariantHash, _vHash);
+
+            if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
+                break;
+
+            if(method.returnType()==QMetaType::QVariantMap && !_vMap.isEmpty())
+                return _vMap;
+
+            if(method.returnType()==QMetaType::QVariantHash && !_vHash.isEmpty())
+                return _vHash;
         }
-        return QVariantHash();
+        return {};
     };
 
     static QString invokeText(QObject*objectCheck, const QString&methodName){
@@ -131,23 +134,23 @@ public:
             auto method = metaObject->method(methodIndex);
             if(method.parameterCount()>0)
                 continue;
-            else if(method.name().toLower() != __methodName)
+
+            if(method.name().toLower() != __methodName)
                 continue;
-            else{
-                QByteArray _textBytes;
-                QString _textStr;
-                QGenericReturnArgument invokeReturn;
 
-                if(method.returnType()==QVariant::ByteArray)
-                    invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
-                else
-                    invokeReturn=Q_RETURN_ARG(QString, _textStr);
+            QByteArray _textBytes;
+            QString _textStr;
+            QGenericReturnArgument invokeReturn;
 
-                if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
-                    continue;
-                else
-                    return (method.returnType()==QVariant::String)?_textStr.toUtf8():_textBytes;
-            }
+            if(method.returnType()==QMetaType::QByteArray)
+                invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
+            else
+                invokeReturn=Q_RETURN_ARG(QString, _textStr);
+
+            if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
+                continue;
+
+            return (method.returnType()==QMetaType::QString)?_textStr.toUtf8():_textBytes;
         }
         return qsl_null;
     };
@@ -161,21 +164,22 @@ public:
             auto method = metaObject->method(methodIndex);
             if(method.parameterCount()>0)
                 continue;
-            else if(method.name().toLower() != __methodName)
-                continue;
-            else if(method.returnType()==QVariant::Bool)
-                continue;
-            else{
-                bool __return=false;
-                QGenericReturnArgument invokeReturn;
 
-                invokeReturn=Q_RETURN_ARG(bool, __return);
+            if(method.name().toLower() != __methodName)
+                continue;
 
-                if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
-                    continue;
-                else
-                    return __return;
-            }
+            if(method.returnType()==QMetaType::Bool)
+                continue;
+
+            bool __return=false;
+            QGenericReturnArgument invokeReturn;
+
+            invokeReturn=Q_RETURN_ARG(bool, __return);
+
+            if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
+                continue;
+
+            return __return;
         }
         return false;
     };
@@ -281,23 +285,22 @@ public:
                 for(int i = 0; i < staticMetaObject.propertyCount(); ++i) {
                     auto property=staticMetaObject.property(i);
                     const QByteArray propertyName(property.name());
+
                     if(!property.isValid())
                         continue;
-                    else if(__propertyIgnoredList.contains(propertyName.toLower()))
+
+                    if(__propertyIgnoredList.contains(propertyName.toLower()))
                         continue;
-                    else{
-                        pvt.propertyHash[property.name()]=property;
-                        pvt.property.append(property);
-                    }
+                    pvt.propertyHash[property.name()]=property;
+                    pvt.property.append(property);
                 }
 
                 for(int i = 0; i < staticMetaObject.methodCount(); ++i) {
                     auto method=staticMetaObject.method(i);
                     if(!method.isValid())
                         continue;
-                    else{
-                        pvt.methods[method.name()]=method;
-                    }
+
+                    pvt.methods[method.name()]=method;
                 }
 
                 auto tablePkAutoGenerate = pvt.invokeBool(object, qbl("tablePkAutoGenerate"));
@@ -365,13 +368,10 @@ public:
                         auto property=pvt.propertyHash.value(propertyName);
                         if(!property.isValid())
                             continue;
-                            //sWarning()<<qsl("foreign key field(%1) not exists in model(%2) properties").arg(propertyName, staticMetaObject.className());
-                        else{
-                            auto field=tablePrefix+tablePrefixSeparator+propertyName;
-                            pvt.tableForeignPk<<field;
-                            pvt.tableForeignPkField<<SqlParserItem::createObject(field);
-                            pvt.propertyFK.insert(property.name(), property);
-                        }
+                        auto field=tablePrefix+tablePrefixSeparator+propertyName;
+                        pvt.tableForeignPk<<field;
+                        pvt.tableForeignPkField<<SqlParserItem::createObject(field);
+                        pvt.propertyFK.insert(property.name(), property);
                     }
                 }
 
@@ -389,7 +389,7 @@ public:
                         pvt.propertyByPropertyName[propertyA]=property;
                         pvt.propertyByFieldName[propertyB]=property;
 
-                        if(property.type()==QVariant::Map || property.type()==QVariant::Hash){//property info
+                        if(property.typeId()==QMetaType::QVariantMap || property.typeId()==QMetaType::QVariantHash){//property info
                             auto split=propertyName.split(qsl("qorm__info__"));
                             if(split.size()==2){
                                 auto name=split.last().trimmed();
@@ -435,31 +435,30 @@ public:
                 for(auto&row:tableDeactivateField.split(qbl_space)){
                     if(row.isEmpty())
                         continue;
-                    else{
-                        auto rowSplited=row.split(qsl("="));
-                        if(rowSplited.size()<=1)
-                            sWarning()<<qsl("invalid deactivate fields on ")+pvt.tableNameFull;
-                        else{
-                            auto propertyName=rowSplited.first();
-                            auto property=pvt.propertyHash.value(propertyName);
-                            if(!property.isValid())
-                                continue;
-                                //sWarning()<<qsl("deactivate field(%1) not exists in model(%2) properties").arg(propertyName, staticMetaObject.className());
-                            else if(pvt.propertyByPropertyName.contains(propertyName)){
-                                auto property=pvt.propertyByPropertyName.value(propertyName);
-                                auto value=QVariant(rowSplited.last());
-                                if(!value.isValid() || value.isNull())
-                                    value=QVariant();
-                                else
-                                   value=VariantUtil(value).toType(property.type());
+                    auto rowSplited=row.split(qsl("="));
+                    if(rowSplited.size()<=1){
+                        sWarning()<<qsl("invalid deactivate fields on ")+pvt.tableNameFull;
+                        continue;
+                    }
 
-                                auto field=tablePrefix+tablePrefixSeparator+propertyName;
-                                auto vField=SqlParserItem::createObject(field);
-                                auto vValue=SqlParserItem::createValue(value);
-                                pvt.propertyDeactivateField.insert(propertyName,vValue);
-                                pvt.tableDeactivateField.insert(vField, vValue);
-                            }
-                        }
+                    auto propertyName=rowSplited.first();
+                    auto property=pvt.propertyHash.value(propertyName);
+                    if(!property.isValid())
+                        continue;
+                    //sWarning()<<qsl("deactivate field(%1) not exists in model(%2) properties").arg(propertyName, staticMetaObject.className());
+                    else if(pvt.propertyByPropertyName.contains(propertyName)){
+                        auto property=pvt.propertyByPropertyName.value(propertyName);
+                        auto value=QVariant(rowSplited.last());
+                        if(!value.isValid() || value.isNull())
+                            value=QVariant();
+                        else
+                            value=VariantUtil(value).toType(property.typeId());
+
+                        auto field=tablePrefix+tablePrefixSeparator+propertyName;
+                        auto vField=SqlParserItem::createObject(field);
+                        auto vValue=SqlParserItem::createValue(value);
+                        pvt.propertyDeactivateField.insert(propertyName,vValue);
+                        pvt.tableDeactivateField.insert(vField, vValue);
                     }
                 }
 
@@ -528,9 +527,9 @@ void ModelInfo::setModelDescription(const QString &value)
 const ModelInfo&ModelInfo::modelInfo(const QVariant &v)
 {
     QByteArray className;
-    if(v.type()==v.String || v.type()==v.ByteArray)
+    if(v.typeId()==QMetaType::QString || v.typeId()==QMetaType::QByteArray)
         className=v.toByteArray();
-    else if(v.type()==v.Map || v.type()==v.Hash)
+    else if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
         className=v.toHash().value(qsl("classname")).toByteArray();
     else
         className=v.toByteArray();
@@ -691,7 +690,7 @@ QVariantHash ModelInfo::propertyParserToTable(const QVariant&v) const
         else
             ik=SqlParserItem::createValue(k);
 
-        if(i.value().type()==QVariant::Hash || i.value().type()==QVariant::Map)
+        if(i.value().typeId()==QMetaType::QVariantHash || i.value().typeId()==QMetaType::QVariantMap)
             iv=i.value();
         else if(propertyList.contains(v.toString()))
             iv=SqlParserItem::createObject(i.value());
@@ -719,7 +718,7 @@ QVariantHash ModelInfo::propertyParserToProperty(const QVariant&v) const
         else
             ik=SqlParserItem::createValue(k);
 
-        if(i.value().type()==QVariant::Hash || i.value().type()==QVariant::Map)
+        if(i.value().typeId()==QMetaType::QVariantHash || i.value().typeId()==QMetaType::QVariantMap)
             iv=i.value();
         else if(propertyList.contains(v.toString()))
             iv=SqlParserItem::createObject(i.value());
@@ -743,10 +742,9 @@ bool ModelInfo::propertyNameConvertMap(QVariantHash &propertyMap)
             propertyMap.clear();
             return false;
         }
-        else{
-            auto value=vHash.value(i.key());
-            propertyMap.insert(key, value);
-        }
+
+        auto value=vHash.value(i.key());
+        propertyMap.insert(key, value);
     }
     return !propertyMap.isEmpty();
 }
@@ -843,8 +841,20 @@ QString ModelInfo::tablePkSingle()const
 
 QVariantMap ModelInfo::toMap(const QObject *object)const
 {
-    auto v=QVariant(this->toHash(object)).toMap();
-    return v;
+    dPvt();
+    QVariantMap __return;
+    for(auto&property:p.property){
+        if(property.isValid()){
+            auto propertyName = QString(property.name()).toLower();
+            QVariant value;
+            if(property.typeId()>=QMetaType::User)
+                value=property.read(object).toInt();
+            else
+                value=property.read(object);
+            __return.insert(propertyName, value);
+        }
+    }
+    return __return;
 }
 
 QVariantHash ModelInfo::toHash(const QObject *object) const
@@ -854,7 +864,11 @@ QVariantHash ModelInfo::toHash(const QObject *object) const
     for(auto&property:p.property){
         if(property.isValid()){
             auto propertyName = QString(property.name()).toLower();
-            auto value=property.read(object);
+            QVariant value;
+            if(property.typeId()>=QMetaType::User)
+                value=property.read(object).toInt();
+            else
+                value=property.read(object);
             __return.insert(propertyName, value);
         }
     }
@@ -875,10 +889,10 @@ QVariantHash ModelInfo::toHashModel(const QObject *object)const
         if(property.isValid()){
             auto propertyName = QString(property.name()).toLower();
             propertyName=p.propertyShortVsTable.value(propertyName);
-            auto type=property.type();
-            auto value=property.read(object);
-            value.convert(type);
-            __return.insert(propertyName, value);
+            //auto value=property.read(object);
+            //auto type=property.typeId();
+            //value.convert(type);
+            __return.insert(propertyName, property.read(object));
         }
     }
     return __return;
@@ -889,12 +903,12 @@ QVariantHash ModelInfo::toForeign(const QVariant &vModel,const QVariant &v) cons
     dPvt();
     QVariantHash __return=vModel.toHash();
     auto vRecord=v;
-    if(vRecord.type()==QVariant::List || vRecord.type()==QVariant::StringList){
+    if(vRecord.typeId()==QMetaType::QVariantList || vRecord.typeId()==QMetaType::QStringList){
         auto vList=vRecord.toList();
         vRecord = vList.isEmpty()?v:vList;
     }
 
-    if(vRecord.type()==QVariant::Map || vRecord.type()==QVariant::Hash){
+    if(vRecord.typeId()==QMetaType::QVariantMap || vRecord.typeId()==QMetaType::QVariantHash){
         auto vRecordHash=vRecord.toHash();
         Q_V_HASH_ITERATOR(p.tableForeignKey){
             i.next();

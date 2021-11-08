@@ -69,12 +69,6 @@ SqlSuitableBuilder &Query::b()
     return p.sqlBuilder;
 }
 
-QSqlQuery &Query::sqlQuery()
-{
-    dPvt();
-    return p.sqlQuery;
-}
-
 QSqlRecord &Query::sqlRecord()
 {
     dPvt();
@@ -168,7 +162,7 @@ QVariantHash Query::makeRecord()const
         }
         return record;
     }
-    return QVariantHash();
+    return {};
 }
 
 QVariantHash Query::makeRecord(const QMetaObject &metaObject) const
@@ -209,7 +203,7 @@ QVariantHash Query::makeRecord(const ModelInfo &modelInfo)const
             return record;
         }
     }
-    return QVariantHash();
+    return {};
 }
 
 bool Query::modelRead(QOrm::Model *model) const
@@ -279,11 +273,18 @@ bool Query::exec(const QVariant &command)
     return p.exec(command);
 }
 
-bool Query::execBatch(QSqlQuery::BatchExecutionMode mode)
+bool Query::execBatch()
 {
     dPvt();
     this->prepare();
-    return p.sqlQuery.execBatch(mode);
+    return p.sqlQuery.execBatch(QSqlQuery::ValuesAsRows);
+}
+
+bool Query::execBatch(int mode)
+{
+    dPvt();
+    this->prepare();
+    return p.sqlQuery.execBatch(QSqlQuery::BatchExecutionMode(mode));
 }
 
 void Query::bindValue(const QString &placeholder, const QVariant &val, QSql::ParamType type)
@@ -307,7 +308,7 @@ void Query::addBindValue(const QVariant &val, QSql::ParamType type)
     p.sqlQuery.addBindValue(val, type);
 }
 
-QVariantMap Query::boundValues() const
+QVariantList Query::boundValues() const
 {
     dPvt();
     return p.sqlQuery.boundValues();

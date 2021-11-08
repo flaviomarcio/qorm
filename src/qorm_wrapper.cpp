@@ -14,14 +14,14 @@ public:
     }
     QVariant&wrapper(){
         QVariantList list;
-        if(v.type()==QVariant::Hash || v.type()==QVariant::Map)
+        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap)
             list<<this->v;
-        else if(v.type()==QVariant::List)
+        else if(v.typeId()==QMetaType::QVariantList)
             list=v.toList();
 
         for (int var = 0; var < list.count(); ++var) {
             auto&v=list[var];
-            if(v.type()==QVariant::Hash || v.type()==QVariant::Map){
+            if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap){
                 auto map=v.toHash();
                 if(!map.isEmpty()){
                     QVariantHash wrapperMap;
@@ -41,9 +41,9 @@ public:
             }
         }
 
-        if(v.type()==QVariant::Hash || v.type()==QVariant::Map)
+        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap)
             this->v=list.first();
-        else if(v.type()==QVariant::List)
+        else if(v.typeId()==QMetaType::QVariantList)
             this->v=list;
 
         return this->v;

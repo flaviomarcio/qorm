@@ -74,10 +74,11 @@ bool SqlSuitableBuilder::build()
     dPvt();
     if(!p.canBuild())
         return true;
-    else if(!p.build())
+
+    if(!p.build())
         return false;
-    else
-        return true;
+
+    return true;
 }
 
 QStringList &SqlSuitableBuilder::preparedQuery() const

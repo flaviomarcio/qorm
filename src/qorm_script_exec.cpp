@@ -35,8 +35,8 @@ public:
 
     QStringList scriptParser(const QVariant&v){
         QStringList __return;
-        if(v.type()==v.String || v.type()==v.ByteArray || v.type()==v.Url){
-            auto url=v.type()==v.Url?v.toUrl():QUrl::fromLocalFile(v.toString());
+        if(v.typeId()==QMetaType::QString || v.typeId()==QMetaType::QByteArray || v.typeId()==QMetaType::QUrl){
+            auto url=v.typeId()==QMetaType::QUrl?v.toUrl():QUrl::fromLocalFile(v.toString());
             if(url.isLocalFile()){
                 QFile file(url.toLocalFile());
                 if(file.exists() && file.open(file.ReadOnly)){
@@ -57,7 +57,7 @@ public:
                     }
                 }
             }
-            else if(v.type()==v.StringList){
+            else if(v.typeId()==QMetaType::QStringList){
                 __return=v.toStringList();
             }
             else{

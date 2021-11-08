@@ -55,25 +55,25 @@ namespace QOrm{
             VariantUtil util;
             if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
                 return this->lr();
-            else if(!this->p_dao.recordList(value))
+
+            if(!this->p_dao.recordList(value))
                 return this->lr(this->p_dao.lr());
-            else{
-                auto vList=this->p_dao.lr().resultList();
-                vList=this->p_model.toList(vList);
-                return this->lr(vList);
-            }
+
+            auto vList=this->p_dao.lr().resultList();
+            vList=this->p_model.toList(vList);
+            return this->lr(vList);
         }
         virtual ResultValue &search(const QVariant&value){
             VariantUtil util;
             if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
                 return this->lr();
-            else if(!this->p_dao.recordList(value))
+
+            if(!this->p_dao.recordList(value))
                 return this->lr(this->p_dao.lr());
-            else{
-                auto vList=this->p_dao.lr().resultList();
-                vList=this->p_model.toList(vList);
-                return this->lr(vList);
-            }
+
+            auto vList=this->p_dao.lr().resultList();
+            vList=this->p_model.toList(vList);
+            return this->lr(vList);
         }
         virtual ResultValue &search(){
             T model(this->source());

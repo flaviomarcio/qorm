@@ -93,13 +93,17 @@ bool TaskSlot::connectionCheck()
     if(this->connection.isValid()){
         if(!this->connection.isOpen())
             this->connection.open();
+        return this->connection.isOpen();
     }
-    else if(!cnnPool.isValid())
+
+    if(!cnnPool.isValid())
         return this->cnnPool.finish(this->connection);
-    else if(!cnnPool.get(connection))
+
+    if(!cnnPool.get(connection))
         return !this->cnnPool.finish(this->connection);
 
     return this->connection.isOpen();
+
 }
 
 }

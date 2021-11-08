@@ -12,21 +12,29 @@ namespace PrivateQOrm{
     {
         Q_OBJECT
     public:
+        //!
+        //! \brief ModelDao
+        //! \param parent
+        //!
         Q_INVOKABLE explicit ModelDao(QObject *parent = nullptr);
+
+        //!
+        //! \brief ~ModelDao
+        //!
         Q_INVOKABLE ~ModelDao();
 
-        /**
-         * @brief variantToParameters
-         * @param modelRef
-         * @param value
-         * @return
-         */
+        //!
+        //! \brief variantToParameters
+        //! \param modelRef
+        //! \param value
+        //! \return
+        //!
         QVariant variantToParameters(const QOrm::ModelInfo&modelRef, const QVariant&value)const;
 
-        /**
-         * @brief suitableValue
-         * @return
-         */
+        //!
+        //! \brief suitableValue
+        //! \return
+        //!
         QOrm::SqlSuitableValue&suitableValue();
     private:
         void*p=nullptr;

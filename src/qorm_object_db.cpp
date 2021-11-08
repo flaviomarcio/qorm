@@ -40,7 +40,7 @@ public:
             QString _textStr;
             QGenericReturnArgument invokeReturn;
 
-            if(method.returnType()==QVariant::String)
+            if(method.returnType()==QMetaType::QString)
                 invokeReturn=Q_RETURN_ARG(QString, _textStr);
             else
                 invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
@@ -52,7 +52,7 @@ public:
                 return QSqlDatabase();
             }
             else{
-                auto connectionId = ((method.returnType()==QVariant::String)?_textStr.toUtf8():_textBytes).trimmed();
+                auto connectionId = ((method.returnType()==QMetaType::QString)?_textStr.toUtf8():_textBytes).trimmed();
                 auto connection=connectionId.isEmpty()?QSqlDatabase():QSqlDatabase::database(connectionId);
                 if(!connection.isValid() || !connection.isOpen())
                     return QSqlDatabase();

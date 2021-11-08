@@ -20,22 +20,22 @@ static auto&dtoSettings=*PrivateOrm::dtoSettings;
 static void initDtoSettingsCache(){
     QVariantHash __dtoSettings;
     QDir dir(qsl(":"));
-    dir.setNameFilters(QStringList()<<"settings.qorm.dto.json");
+    dir.setNameFilters(QStringList{qsl("settings.qorm.dto.json")});
     for(auto&info:dir.entryInfoList()){
         QFile fileSrc(info.filePath());
         if(!fileSrc.open(fileSrc.ReadOnly))
 #if Q_ORM_LOG
-            sWarning()<<"No open file:"<<fileSrc.fileName()<<", error: "<<fileSrc.errorString();
+            sWarning()<<qsl("No open file:")<<fileSrc.fileName()<<qsl(", error: ")<<fileSrc.errorString();
 #endif
         else{
             auto bytes=fileSrc.readAll();
             fileSrc.close();
             QVariantList vList;
             auto vDoc=QJsonDocument::fromJson(bytes).toVariant();
-            if(vDoc.type()==vDoc.Map || vDoc.type()==vDoc.Hash){
+            if(vDoc.typeId()==QMetaType::QVariantHash || vDoc.typeId()==QMetaType::QVariantMap){
                 vList<<vDoc;
             }
-            else if(vDoc.type()==vDoc.List || vDoc.type()==vDoc.StringList){
+            else if(vDoc.typeId()==QMetaType::QVariantList || vDoc.typeId()==QMetaType::QStringList){
                 vList=vDoc.toList();
             }
             for(auto&v:vList){
@@ -227,6 +227,26 @@ ModelDtoControls &ModelDto::items(const ResultValue &lr)
 {
     dPvt();
     return p.dtoControls.items(lr.resultVariant());
+}
+
+ModelDtoResultInfo &ModelDto::resultInfo()
+{
+    dPvt();
+    return p.dtoControls.resultInfo();
+}
+
+ModelDtoControls &ModelDto::resultInfo(const QVariant &v)
+{
+    dPvt();
+    p.dtoControls.resultInfo().fromVar(v);
+    return p.dtoControls;
+}
+
+ModelDtoControls &ModelDto::setResultInfo(const ModelDtoResultInfo &resultInfo)
+{
+    dPvt();
+    p.dtoControls.resultInfo().fromHash(resultInfo.toHash());
+    return p.dtoControls;
 }
 
 ModelDto &ModelDto::setValue(const QVariant &v)

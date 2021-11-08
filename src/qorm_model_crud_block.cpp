@@ -9,6 +9,7 @@ namespace QOrm {
     class CRUDBlockPvt{
     public:
         ModelDtoOptions options;
+        QOrm::ModelDtoResultInfo resultInfo;
         CRUDBlock*parent=nullptr;
         QVariant crudBody;
         QMap<QByteArray, PrivateQOrm::CRUDBase*> crudMap;
@@ -44,6 +45,12 @@ namespace QOrm {
     {
         dPvt();
         return p.options;
+    }
+
+    ModelDtoResultInfo &CRUDBlock::resultInfo()
+    {
+        dPvt();
+        return p.resultInfo;
     }
 
     CRUDBlock &CRUDBlock::operator+=(PrivateQOrm::CRUDBase *crud)
@@ -147,6 +154,7 @@ namespace QOrm {
             for(auto&crud:p.crudList){
                 const auto crudName=crud->crudName().toLower();
                 crud->setOptions(p.options);
+                crud->setResultInfo(p.resultInfo);
                 crud->unMakeDefault();
                 QVariantList crudList;
                 QVariant crudSource;

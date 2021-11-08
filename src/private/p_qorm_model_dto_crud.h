@@ -28,51 +28,6 @@ public:
         auto object=&PrivateQOrm::ModelDtoLinkCollection::d();
         return*dynamic_cast<T*>(object);
     }
-//    virtual ModelDtoCrudItem<T>&search(){
-//        auto func=__func__;
-//        auto object=PrivateQOrm::ModelDtoLinkCollection::find(func);
-//        if(object==nullptr){
-//            object=new ModelDtoCrudItem<T>(&this->d(), this);
-//            PrivateQOrm::ModelDtoLinkCollection::ref(object);
-//        }
-//        return*object;
-//    }
-//    virtual ModelDtoCrudItem<T>&searchObject(){
-//        auto func=__func__;
-//        auto object=PrivateQOrm::ModelDtoLinkCollection::find(func);
-//        if(object==nullptr){
-//            object=new ModelDtoCrudItem<T>(&this->d(), this);
-//            PrivateQOrm::ModelDtoLinkCollection::ref(object);
-//        }
-//        return*object;
-//    }
-//    virtual ModelDtoCrudItem<T>&upsert(){
-//        auto func=__func__;
-//        auto object=PrivateQOrm::ModelDtoLinkCollection::find(func);
-//        if(object==nullptr){
-//            object=new ModelDtoCrudItem<T>(&this->d(), this);
-//            PrivateQOrm::ModelDtoLinkCollection::ref(object);
-//        }
-//        return*object;
-//    }
-//    virtual ModelDtoCrudItem<T>&remove(){
-//        auto func=__func__;
-//        auto object=PrivateQOrm::ModelDtoLinkCollection::find(func);
-//        if(object==nullptr){
-//            object=new ModelDtoCrudItem<T>(&this->d(), this);
-//            PrivateQOrm::ModelDtoLinkCollection::ref(object);
-//        }
-//        return*object;
-//    }
-//    virtual ModelDtoCrudItem<T>&disabled(){
-//        auto func=__func__;
-//        ModelDtoCrudItem<T>*object=PrivateQOrm::ModelDtoLinkCollection::find(func);
-//        if(object==nullptr){
-//            object=new ModelDtoCrudItem<T>(&this->d(), this);
-//            PrivateQOrm::ModelDtoLinkCollection::ref(object);
-//        }
-//        return*object;
-//    }
 };
 
 

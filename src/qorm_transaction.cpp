@@ -159,12 +159,14 @@ ResultValue &Transaction::inTransaction()
     auto db = this->connection();
     if(!this->lr())
         return this->lr();
-    else if(!db.isValid())
+
+    if(!db.isValid())
         return this->lr().setCritical(tr("Invalid connection on inTransaction"));
-    else if(!db.isOpen())
+
+    if(!db.isOpen())
         return this->lr().setCritical(tr("Connection is not opened"));
-    else
-        return this->lr().clear()=p.inTransaction();
+
+    return this->lr().clear()=p.inTransaction();
 }
 
 ResultValue &Transaction::isValid()
@@ -172,10 +174,11 @@ ResultValue &Transaction::isValid()
     auto db = this->connection();
     if(!db.isValid())
         return this->lr().setCritical(tr("Invalid connection on isValid"));
-    else if(!db.isOpen())
+
+    if(!db.isOpen())
         return this->lr().setCritical(tr("Connection is not opened"));
-    else
-        return this->lr();
+
+    return this->lr();
 }
 
 ResultValue &Transaction::canTransaction()
@@ -183,8 +186,8 @@ ResultValue &Transaction::canTransaction()
     dPvt();
     if(!this->isValid())
         return this->lr();
-    else
-        return this->lr()=!p.inTransaction();
+
+    return this->lr()=!p.inTransaction();
 }
 
 bool Transaction::rollbackOnError() const

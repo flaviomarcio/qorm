@@ -122,6 +122,14 @@ public:
     virtual ModelDtoControls &items(const QVariant&v);
     virtual ModelDtoControls &items(const ResultValue&lr);
 
+    //!
+    //! \brief resultInfo
+    //! \return
+    //!
+    virtual ModelDtoResultInfo &resultInfo();
+    virtual ModelDtoControls &resultInfo(const QVariant&v);
+    virtual ModelDtoControls &setResultInfo(const ModelDtoResultInfo&resultInfo);
+
 
 
     /**
