@@ -215,13 +215,12 @@ QString SqlSuitableValue::toBoo(const bool &v)
     auto db=this->connection();
     if(db.driver()->dbmsType()==QSqlDriver::MSSqlServer || db.driver()->dbmsType()==QSqlDriver::SQLite)
         return this->toInt(v?1:0);
-    else
-        return v?qsl("true"):qsl("false");
+    return v?qsl("true"):qsl("false");
 }
 
 QString SqlSuitableValue::toVar(const QVariant &v)
 {
-    return this->toVar(v, v.typeId());
+    return this->toVar(v, qTypeId(v));
 }
 
 QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
@@ -236,17 +235,17 @@ QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
 
     {//primitive type area area
         switch (vType) {
-        case QMetaType::Int:
+        case QMetaType_Int:
             return SqlSuitableValue::toInt(v.toInt());
-        case QMetaType::UInt:
+        case QMetaType_UInt:
             return SqlSuitableValue::toInt(v.toInt());
-        case QMetaType::LongLong:
+        case QMetaType_LongLong:
             return SqlSuitableValue::toLng(v.toLongLong());
-        case QMetaType::ULongLong:
+        case QMetaType_ULongLong:
             return SqlSuitableValue::toLng(v.toLongLong());
-        case QMetaType::Double:
+        case QMetaType_Double:
             return SqlSuitableValue::toDbl(v.toDouble());
-        case QMetaType::Bool:
+        case QMetaType_Bool:
             return SqlSuitableValue::toBoo(v.toBool());
         default:
             break;
@@ -256,13 +255,13 @@ QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
 
     {//string area
         switch (vType) {
-        case QMetaType::QString:
+        case QMetaType_QString:
             return toStr(v.toString());
-        case QMetaType::QByteArray:
+        case QMetaType_QByteArray:
             return toStr(v.toString());
-        case QMetaType::QBitArray:
+        case QMetaType_QBitArray:
             return toStr(v.toString());
-        case QMetaType::QChar:
+        case QMetaType_QChar:
             return toStr(v.toString());
         default:
             break;
@@ -271,11 +270,11 @@ QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
 
     {//date time area
         switch (vType) {
-        case QMetaType::QDate:
+        case QMetaType_QDate:
             return v.toDate().isValid()?this->toDat(v.toDate()):__static_null;
-        case QMetaType::QTime:
+        case QMetaType_QTime:
             return v.toTime().isValid()?this->toTim(v.toTime()):__static_null;
-        case QMetaType::QDateTime:
+        case QMetaType_QDateTime:
             return v.toDateTime().isValid()?this->toDat(v.toDateTime()):__static_null;
         default:
             break;
@@ -284,9 +283,9 @@ QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
 
     {//class type area
         switch (vType) {
-        case QMetaType::QUrl:
+        case QMetaType_QUrl:
             return toStr(v.toUrl().toString());
-        case QMetaType::QUuid:
+        case QMetaType_QUuid:
             return v.toUuid().isNull()?__static_null:toStr(v.toUuid().toByteArray());
         default:
             break;

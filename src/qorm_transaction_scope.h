@@ -4,18 +4,27 @@
 
 namespace QOrm {
 
+//!
+//! \brief The TransactionScope class
+//!
 class Q_ORM_EXPORT TransactionScope : public ObjectDb{
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit TransactionScope(QObject *parent);
-    Q_INVOKABLE ~TransactionScope();
+    //!
+    //! \brief TransactionScope
+    //! \param parent
+    //!
+    explicit TransactionScope(QObject *parent);
 
-    /**
-     * @brief rollback
-     * @return
-     *
-     * execute rollback transaction
-     */
+    //!
+    //! \brief ~TransactionScope
+    //!
+    ~TransactionScope();
+
+    //!
+    //! \brief rollback
+    //! \return
+    //!execute rollback transaction
     Q_INVOKABLE virtual bool rollback();
 private:
     void*p=nullptr;

@@ -5,186 +5,247 @@
 
 namespace QOrm {
 class Model;
+
+//!
+//! \brief The Query class
+//!
 class Q_ORM_EXPORT Query : public ObjectDb
 {
 public:
-    Q_INVOKABLE explicit Query(QObject *parent = nullptr);
-    Q_INVOKABLE explicit Query(const QSqlDatabase &db, QObject *parent=nullptr);
-    Q_INVOKABLE ~Query();
 
-    /**
-     * @brief lastError
-     * @return
-     */
+    //!
+    //! \brief Query
+    //! \param parent
+    //!
+    Q_INVOKABLE explicit Query(QObject *parent = nullptr);
+
+    //!
+    //! \brief Query
+    //! \param db
+    //! \param parent
+    //!
+    explicit Query(const QSqlDatabase &db, QObject *parent=nullptr);
+    ~Query();
+
+    //!
+    //! \brief lastError
+    //! \return
+    //!
     virtual QSqlError &lastError() const;
 
-    /**
-     * @brief lr
-     * @return
-     */
+    //!
+    //! \brief lr
+    //! \return
+    //!
     ResultValue &lr();
 
-    /**
-     * @brief clear
-     */
+    //!
+    //! \brief clear
+    //!
     virtual void clear() const;
 
-    /**
-     * @brief close
-     */
+    //!
+    //! \brief close
+    //!
     virtual void close() const;
 
-    /**
-     * @brief setModel
-     * @param metaObject
-     * @return
-     */
+    //!
+    //! \brief setModel
+    //! \param metaObject
+    //! \return
+    //!
     virtual bool setModel(QMetaObject&metaObject);
 
-    /**
-     * @brief builder
-     * @return
-     */
+    //!
+    //! \brief builder
+    //! \return
+    //!
     virtual SqlSuitableBuilder&builder();
 
-    /**
-     * @brief builder
-     * @return
-     */
+    //!
+    //! \brief b
+    //! \return
+    //!
     virtual SqlSuitableBuilder&b();
 
-    /**
-     * @brief sqlRecord
-     * @return
-     */
+    //!
+    //! \brief sqlRecord
+    //! \return
+    //!
     virtual QSqlRecord &sqlRecord();
 
-    /**
-     * @brief makeRecordList
-     * @return
-     */
+    //!
+    //! \brief makeRecordList
+    //! \return
+    //!
     virtual QVariantList makeRecordList();
+
+    //!
+    //! \brief makeRecordList
+    //! \param metaObject
+    //! \return
+    //!
     virtual QVariantList makeRecordList(const QMetaObject&metaObject);
+
+    //!
+    //! \brief makeRecordList
+    //! \param modelInfo
+    //! \return
+    //!
     virtual QVariantList makeRecordList(const QOrm::ModelInfo&modelInfo);
+
+    //!
+    //! \brief makeRecord
+    //! \return
+    //!
     virtual QVariantHash makeRecord() const;
+
+    //!
+    //! \brief makeRecord
+    //! \param metaObject
+    //! \return
+    //!
     virtual QVariantHash makeRecord(const QMetaObject&metaObject) const;
+
+    //!
+    //! \brief makeRecord
+    //! \param modelInfo
+    //! \return
+    //!
     virtual QVariantHash makeRecord(const QOrm::ModelInfo&modelInfo) const;
 
-    /**
-     * @brief modelSet
-     * @param model
-     * @return
-     */
+    //!
+    //! \brief modelRead
+    //! \param model
+    //! \return
+    //!
     virtual bool modelRead(QOrm::Model *model) const;
 
+    //!
+    //! \brief modelRead
+    //! \param model
+    //! \return
+    //!
     template<class T>
     bool modelRead(T&model){
         return this->modelRead(&model);
     }
 
-    /**
-     * @brief close
-     */
-    virtual void close();
+    //!
+    //! \brief close
+    //!
+    virtual Query&close();
 
-    /**
-     * @brief next
-     * @return
-     */
+    //!
+    //! \brief next
+    //! \return
+    //!
     virtual bool next() const;
 
-    /**
-     * @brief prepare
-     * @return
-     */
+    //!
+    //! \brief prepare
+    //! \return
+    //!
     virtual bool prepare() const;
 
-    /**
-     * @brief prepareCache
-     * @return
-     */
+    //!
+    //! \brief prepareCache
+    //! \return
+    //!
     virtual bool prepareCache() const;
 
-    /**
-     * @brief exec
-     * @return
-     */
+    //!
+    //! \brief exec
+    //! \return
+    //!
     virtual bool exec();
 
-    /**
-     * @brief exec
-     * @param command
-     * @return
-     */
+    //!
+    //! \brief exec
+    //! \param command
+    //! \return
+    //!
     virtual bool exec(const QVariant&command);
 
-    /**
-     * @brief execBatch
-     * @param mode
-     * @return
-     */
+    //!
+    //! \brief execBatch
+    //! \return
+    //!
     virtual bool execBatch();
+
+    //!
+    //! \brief execBatch
+    //! \param mode
+    //! \return
+    //!
     virtual bool execBatch(int mode);
 
-    /**
-     * @brief bindValue
-     * @param placeholder
-     * @param val
-     * @param type
-     */
+    //!
+    //! \brief bindValue
+    //! \param placeholder
+    //! \param val
+    //! \param type
+    //!
     virtual void bindValue(const QString& placeholder, const QVariant& val, QSql::ParamType type = QSql::In);
 
-    /**
-     * @brief bindValue
-     * @param pos
-     * @param val
-     * @param type
-     */
+    //!
+    //! \brief bindValue
+    //! \param pos
+    //! \param val
+    //! \param type
+    //!
     virtual void bindValue(int pos, const QVariant& val, QSql::ParamType type = QSql::In);
 
-    /**
-     * @brief addBindValue
-     * @param val
-     * @param type
-     */
+    //!
+    //! \brief addBindValue
+    //! \param val
+    //! \param type
+    //!
     virtual void addBindValue(const QVariant& val, QSql::ParamType type = QSql::In);
-
-    /**
-     * @brief boundValues
-     * @return
-     */
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    //!
+    //! \brief boundValues
+    //! \return
+    //!
+    QMap<QString, QVariant> boundValues() const;
+#else
+    //!
+    //! \brief boundValues
+    //! \return
+    //!
     virtual QVariantList boundValues() const;
+#endif
 
-    /**
-     * @brief executedQuery
-     * @return
-     */
+    //!
+    //! \brief executedQuery
+    //! \return
+    //!
     virtual QString executedQuery() const;
 
-    /**
-     * @brief value
-     * @param column
-     * @return
-     */
+    //!
+    //! \brief value
+    //! \param column
+    //! \return
+    //!
     virtual QVariant value(const int&column) const;
 
-    /**
-     * @brief value
-     * @param columnName
-     * @return
-     */
+    //!
+    //! \brief value
+    //! \param columnName
+    //! \return
+    //!
     virtual QVariant value(QString &columnName) const;
 
-    /**
-     * @brief lastInsertId
-     * @return
-     */
+    //!
+    //! \brief lastInsertId
+    //! \return
+    //!
     virtual QVariant lastInsertId() const;
 
-    /**
-     * @brief parser
-     * @return
-     */
+    //!
+    //! \brief parser
+    //! \return
+    //!
     virtual QOrm::SqlSuitableKeyWord&parser();
 
 public:

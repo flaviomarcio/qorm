@@ -4,18 +4,57 @@
 
 namespace QOrm {
 
-    class Wrapper
-    {
-    public:
-        Q_INVOKABLE explicit Wrapper(const QVariant&v);
-        Q_INVOKABLE explicit Wrapper(ResultValue &v);
-        Q_INVOKABLE ~Wrapper();
-        Wrapper&w(const QString &propertySrc, const QString &propertyDestine);
-        Wrapper&w(const QString &propertySrc);
-        virtual Wrapper&clear();
-        virtual QVariant &v() const;
-    private:
-        void*p=nullptr;
-    };
+//!
+//! \brief The Wrapper class
+//!
+class Wrapper
+{
+public:
+    //!
+    //! \brief Wrapper
+    //! \param v
+    //!
+    explicit Wrapper(const QVariant&v);
 
-} // namespace QOrm
+    //!
+    //! \brief Wrapper
+    //! \param v
+    //!
+    explicit Wrapper(ResultValue &v);
+
+    //!
+    //! \brief ~Wrapper
+    //!
+    ~Wrapper();
+
+    //!
+    //! \brief w
+    //! \param propertySrc
+    //! \param propertyDestine
+    //! \return
+    //!
+    Wrapper&w(const QString &propertySrc, const QString &propertyDestine);
+
+    //!
+    //! \brief w
+    //! \param propertySrc
+    //! \return
+    //!
+    Wrapper&w(const QString &propertySrc);
+
+    //!
+    //! \brief clear
+    //! \return
+    //!
+    virtual Wrapper&clear();
+
+    //!
+    //! \brief v
+    //! \return
+    //!
+    virtual QVariant &v() const;
+private:
+    void*p=nullptr;
+};
+
+}

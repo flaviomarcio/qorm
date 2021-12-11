@@ -91,7 +91,8 @@ QVariantHash ConnectionManager::paramaters() const
         const auto&v=i.value();
         if(k.trimmed().isEmpty())
             continue;
-        else if(v->isValid())
+
+        if(v->isValid())
             paramaters.insert(k, v->toMap());
     }
     return paramaters;
@@ -104,7 +105,7 @@ void ConnectionManager::setParamaters(const QVariantHash &value)
     qDeleteAll(lst);
     p.settings.clear();
     for(auto&v:value){
-        if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
+        if(qTypeId(v)==QMetaType_QVariantMap || qTypeId(v)==QMetaType_QVariantHash)
             this->insert(v.toHash());
     }
 }
@@ -149,43 +150,39 @@ ConnectionPool &ConnectionManager::pool(const QByteArray &value)
 QVariantMap ConnectionManager::toMap() const
 {
     if(this->isEmpty() || !this->isLoaded())
-        return QVariantMap();
-    else{
-        QVariantMap RETURN;
-        for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
-            auto property=this->metaObject()->property(row);
-            if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
-                continue;
-            else{
-                const auto key=property.name();
-                const auto value = property.read(this);
-                if(!value.isNull())
-                    RETURN.insert(key, value);
-            }
-        }
-        return RETURN;
+        return {};
+
+    QVariantMap RETURN;
+    for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
+        auto property=this->metaObject()->property(row);
+        if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
+            continue;
+
+        const auto key=property.name();
+        const auto value = property.read(this);
+        if(!value.isNull())
+            RETURN.insert(key, value);
     }
+    return RETURN;
 }
 
 QVariantHash ConnectionManager::toHash() const
 {
     if(this->isEmpty() || !this->isLoaded())
         return {};
-    else{
-        QVariantHash RETURN;
-        for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
-            auto property=this->metaObject()->property(row);
-            if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
-                continue;
-            else{
-                const auto key=property.name();
-                const auto value = property.read(this);
-                if(!value.isNull())
-                    RETURN.insert(key, value);
-            }
-        }
-        return RETURN;
+
+    QVariantHash RETURN;
+    for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
+        auto property=this->metaObject()->property(row);
+        if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
+            continue;
+
+        const auto key=property.name();
+        const auto value = property.read(this);
+        if(!value.isNull())
+            RETURN.insert(key, value);
     }
+    return RETURN;
 }
 
 bool ConnectionManager::isEmpty() const

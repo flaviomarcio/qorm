@@ -52,7 +52,7 @@ public:
     ModelDtoLinks<ModelDtoControls> links;
     ModelDtoCrud<ModelDtoControls> crud;
     ModelDtoItems<ModelDtoControls> items;
-    ModelDtoResultInfo resultInfo;
+    QStm::ResultInfo resultInfo;
     QObject*dto=nullptr;
 
     explicit ModelDtoControlsPvt(ModelDtoControls*parent)
@@ -132,15 +132,15 @@ public:
 
             }
 
-            vHash.insert(vpId, this->id);
-            vHash.insert(vpText, this->text);
-            vHash.insert(vpType, this->type);
-            vHash.insert(vpLayout, this->layout);
-            vHash.insert(vpHeaders, vHeader );
-            vHash.insert(vpFilters, vFilter);
-            vHash.insert(vpItems, vItems );
-            vHash.insert(vpLinks, vLinks );
-            vHash.insert(vpResultInfo, this->resultInfo.toHash() );
+            vHash[vpId]=this->id;
+            vHash[vpText]=this->text;
+            vHash[vpType]=this->type;
+            vHash[vpLayout]=this->layout;
+            vHash[vpHeaders]=vHeader;
+            vHash[vpFilters]=vFilter;
+            vHash[vpItems]=vItems;
+            vHash[vpLinks]=vLinks;
+            vHash[vpResultInfo]=this->resultInfo.toHash();
 
             {
                 Q_V_HASH_ITERATOR(this->sort){
@@ -195,13 +195,13 @@ ModelDtoControls::~ModelDtoControls()
     delete&p;
 }
 
-ModelDtoResultInfo &ModelDtoControls::resultInfo()
+QStm::ResultInfo &ModelDtoControls::resultInfo()
 {
     dPvt();
     return p.resultInfo;
 }
 
-ModelDtoControls &ModelDtoControls::setResultInfo(const ModelDtoResultInfo &resultInfo)
+ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
     dPvt();
     p.resultInfo.fromHash(resultInfo.toHash());
@@ -226,12 +226,9 @@ QVariant ModelDtoControls::type() const
     dPvt();
     const auto&map=__DTOFormTypeMap;
     auto value=p.type;
-    QVariant __return;
-    if(value.typeId()==QMetaType::LongLong)
-        __return=map[QString::number(value.toLongLong())];
-    else
-        __return=map.value(value.toString().toLower());
-    return __return;
+    if(qTypeId(value)==QMetaType_LongLong)
+        return map[QString::number(value.toLongLong())];
+    return map.value(value.toString().toLower());
 }
 
 ModelDtoControls &ModelDtoControls::type(const QVariant &v)
@@ -253,12 +250,9 @@ QVariant ModelDtoControls::layout() const
     dPvt();
     const auto&map=__DTOFormLayoutMap;
     auto value=p.layout;
-    QVariant __return;
-    if(value.typeId()==QMetaType::LongLong)
-        __return=map.value(QString::number(value.toLongLong()));
-    else
-        __return=map.value(value.toString().toLower());
-    return __return;
+    if(qTypeId(value)==QMetaType_LongLong)
+        return map.value(QString::number(value.toLongLong()));
+    return map.value(value.toString().toLower());
 }
 
 ModelDtoControls &ModelDtoControls::layout(const QVariant &v)

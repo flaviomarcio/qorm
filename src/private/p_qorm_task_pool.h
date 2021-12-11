@@ -47,20 +47,19 @@ public:
     bool start(const QSqlDatabase&connection){
         if(!this->running.tryLock(1))
             return false;
+
+        this->resultBool=true;
+        this->taskQueueResponse.clear();
+        this->taskQueueStarted.clear();
+        this->connectionSetting=QOrm::ConnectionSetting(connection, nullptr).toHash();
+        if(this->isRunning())
+            this->threadInit();
         else{
-            this->resultBool=true;
-            this->taskQueueResponse.clear();
-            this->taskQueueStarted.clear();
-            this->connectionSetting=QOrm::ConnectionSetting(connection, nullptr).toHash();
-            if(this->isRunning())
-                this->threadInit();
-            else{
-                QThread::start();
-                while(this->eventDispatcher()==nullptr)
-                    this->msleep(1);
-            }
-            return true;
+            QThread::start();
+            while(this->eventDispatcher()==nullptr)
+                this->msleep(1);
         }
+        return true;
     }
 
     void run() override{
@@ -160,4 +159,4 @@ private:
     void*p=nullptr;
 };
 
-} // namespace QOrm
+}

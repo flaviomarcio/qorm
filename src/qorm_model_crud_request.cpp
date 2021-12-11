@@ -101,15 +101,14 @@ namespace QOrm {
         if(!strategy.isEmpty()){
             return QOrm::Undefined;
         }
-        else{
-            QVariant vFy=strategy;
-            if(vFy.typeId()==vFy.String || vFy.typeId()==vFy.ByteArray || vFy.typeId()==vFy.Char || vFy.typeId()==vFy.BitArray){
-                vFy=vFy.toString().toLower();
-                vFy=__stringToStrategy.value(vFy.toString());
-            }
-            vFy=__listToStrategy.contains(vFy)?vFy:QOrm::Undefined;
-            return QOrm::CRUDStrategy(vFy.toInt());
+
+        QVariant vFy=strategy;
+        if(qTypeId(vFy)==QMetaType_QString || qTypeId(vFy)==QMetaType_QByteArray || qTypeId(vFy)==QMetaType_QChar || qTypeId(vFy)==QMetaType_QBitArray){
+            vFy=vFy.toString().toLower();
+            vFy=__stringToStrategy.value(vFy.toString());
         }
+        vFy=__listToStrategy.contains(vFy)?vFy:QOrm::Undefined;
+        return QOrm::CRUDStrategy(vFy.toInt());
     }
 
     bool CRUDRequest::isStrategy(const CRUDStrategy v)

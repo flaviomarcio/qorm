@@ -12,14 +12,12 @@ public:
         Q_UNUSED(object)
     }
     virtual ~ControllerPvt(){
-        {
-            auto map=this->localConnection;
-            this->localConnection.clear();
-            QHashIterator<QString, ConnectionPool*> i(map);
-            while (i.hasNext()) {
-                i.next();
-                i.value()->finish(i.key());
-            }
+        auto map=this->localConnection;
+        this->localConnection.clear();
+        QHashIterator<QString, ConnectionPool*> i(map);
+        while (i.hasNext()) {
+            i.next();
+            i.value()->finish(i.key());
         }
     }
 };

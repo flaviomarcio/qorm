@@ -10,44 +10,47 @@
 
 namespace QOrm {
 
+//!
+//! \brief The ObjectDb class
+//!
 class Q_ORM_EXPORT ObjectDb: public QStm::Object
 {
     Q_OBJECT
 public:
+    //!
+    //! \brief ObjectDb
+    //! \param parent
+    //!
     Q_INVOKABLE explicit ObjectDb(QObject *parent = nullptr);
-    Q_INVOKABLE explicit ObjectDb(const QSqlDatabase&connection, QObject *parent = nullptr);
-    Q_INVOKABLE virtual ~ObjectDb();
+    explicit ObjectDb(const QSqlDatabase&connection, QObject *parent = nullptr);
+    virtual ~ObjectDb();
 
-    /**
-     * @brief connection
-     * @return
-     */
+    //!
+    //! \brief connection
+    //! \return
+    //!
     Q_INVOKABLE virtual QSqlDatabase connection() const;
 
-    /**
-     * @brief setConnection
-     * @param connection
-     * @return
-     */
+    //!
+    //! \brief setConnection
+    //! \param connection
+    //! \return
+    //!
     Q_INVOKABLE virtual bool setConnection(const QSqlDatabase &connection);
 
-    /**
-     * @brief setConnection
-     * @param connectionName
-     * @return
-     */
+    //!
+    //! \brief setConnection
+    //! \param connectionId
+    //! \return
+    //!
     Q_INVOKABLE virtual bool setConnection(const QString &connectionId);
 
-    /**
-     * @brief connectionId
-     * @return
-     */
+    //!
+    //! \brief connectionId
+    //! \return
+    //!
     Q_INVOKABLE virtual QByteArray connectionId() const;
 
-    /**
-     * @brief vUtil
-     * @return
-     */
     QT_DEPRECATED_X("Use Q_DECLARE_VU;")
     Q_INVOKABLE virtual VariantUtil&vu();
     QT_DEPRECATED_X("Use Q_DECLARE_VU;")
@@ -57,11 +60,6 @@ public:
     QT_DEPRECATED_X("Use Q_DECLARE_VU;")
     Q_INVOKABLE virtual VariantUtil&vUtil(const QVariant&v);
     QT_DEPRECATED_X("Use Q_DECLARE_VU;")
-
-    /**
-     * @brief dateUtil
-     * @return
-     */
     QT_DEPRECATED_X("Use Q_DECLARE_DU;")
     Q_INVOKABLE virtual DateUtil&dtUtil();
     QT_DEPRECATED_X("Use Q_DECLARE_DU;")
@@ -70,11 +68,6 @@ public:
     Q_INVOKABLE virtual DateUtil&dtu();
     QT_DEPRECATED_X("Use Q_DECLARE_DU;")
     Q_INVOKABLE virtual DateUtil&dtu(const QVariant&v);
-
-    /**
-     * @brief dbUtil
-     * @return
-     */
     QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
     Q_INVOKABLE virtual DoubleUtil&dbUtil();
     QT_DEPRECATED_X("Use Q_DECLARE_DBU;")

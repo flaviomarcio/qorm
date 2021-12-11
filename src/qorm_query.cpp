@@ -86,7 +86,7 @@ QVariantList Query::makeRecordList()
         auto&sqlRecord=this->sqlRecord();
         for (int col = 0; col < sqlRecord.count(); ++col){
             const auto v=sqlRecord.value(col);
-            record.insert(sqlRecord.fieldName(col), v);
+            record[sqlRecord.fieldName(col)]=v;
         }
         records<<record;
     }
@@ -110,7 +110,7 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
             auto&sqlRecord=this->sqlRecord();
             for (int col = 0; col < sqlRecord.count(); ++col){
                 const auto v=sqlRecord.value(col);
-                record.insert(sqlRecord.fieldName(col), v);
+                record[sqlRecord.fieldName(col)]=v;
             }
             recordList<<record;
         }
@@ -132,7 +132,7 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
                     if(!fieldName.isEmpty()){
                         auto index=sqlRecord.indexOf(fieldName);
                         if(index>=0)
-                            recordsIndex.insert(index, property.name());
+                            recordsIndex[index]=property.name();
                     }
                 }
             }
@@ -142,7 +142,7 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
             while (i.hasNext()) {
                 i.next();
                 const auto v=sqlRecord.value(i.key());
-                record.insert(i.value(), v);
+                record[i.value()]=v;
             }
             recordList<<record;
         }
@@ -158,7 +158,7 @@ QVariantHash Query::makeRecord()const
         auto&sqlRecord=p.sqlRecord;
         for (int col = 0; col < p.sqlRecord.count(); ++col){
             const auto v=sqlRecord.value(col);
-            record.insert(sqlRecord.fieldName(col), v);
+            record[sqlRecord.fieldName(col)]=v;
         }
         return record;
     }
@@ -229,10 +229,11 @@ bool Query::modelRead(QOrm::Model *model) const
     return RETURN;
 }
 
-void Query::close()
+Query &Query::close()
 {
     dPvt();
     p.close();
+    return*this;
 }
 
 bool Query::next()const
@@ -308,7 +309,11 @@ void Query::addBindValue(const QVariant &val, QSql::ParamType type)
     p.sqlQuery.addBindValue(val, type);
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+QMap<QString, QVariant> Query::boundValues() const
+#else
 QVariantList Query::boundValues() const
+#endif
 {
     dPvt();
     return p.sqlQuery.boundValues();

@@ -32,8 +32,7 @@ public:
         auto method=this->actionMethod.value(methodName.toUtf8());
         if(method==nullptr)
             return this->parent->lr();
-        else
-            return this->parent->lr(method(this->parent, this->source));
+        return this->parent->lr(method(this->parent, this->source));
     }
 
     auto&actionNothing(QOrm::ObjectDb*controller, const QVariant&vBody){
@@ -64,11 +63,14 @@ public:
     }
 
     void source_set(const QVariant&source){
-        if(source.typeId()==source.String || source.typeId()==source.ByteArray || source.typeId()==source.Char || source.typeId()==source.BitArray){
-            auto vSource=QJsonDocument::fromJson(source.toByteArray()).toVariant();
-            this->source=vSource;
-        }
-        else{
+        switch (qTypeId(source)) {
+        case QMetaType_QString:
+            this->source=QJsonDocument::fromJson(source.toByteArray()).toVariant();
+            return;
+        case QMetaType_QByteArray:
+            this->source=QJsonDocument::fromJson(source.toByteArray()).toVariant();
+            return;
+        default:
             this->source=source;
         }
     }
@@ -127,9 +129,8 @@ QVariant ModelReportBase::type() const
 {
     dPvt();
     QVariant type=p.dto.type();
-    if(type.isNull() && !type.isValid()){
+    if(type.isNull() && !type.isValid())
         type=this->defaultType();
-    }
     return type;
 }
 
@@ -162,8 +163,7 @@ QByteArray ModelReportBase::reportName() const
     dPvt();
     if(p.reportName.trimmed().isEmpty())
         return this->metaObject()->className();
-    else
-        return p.reportName;
+    return p.reportName;
 }
 
 ModelReportBase &ModelReportBase::reportName(const QVariant &value)
@@ -178,8 +178,7 @@ QByteArray ModelReportBase::reportDescription() const
     dPvt();
     if(p.reportDescription.trimmed().isEmpty())
         return this->metaObject()->className();
-    else
-        return p.reportDescription;
+    return p.reportDescription;
 }
 
 ModelReportBase &ModelReportBase::reportDescription(const QVariant &value)

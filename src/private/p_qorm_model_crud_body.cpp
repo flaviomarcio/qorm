@@ -5,12 +5,12 @@ CRUDBody::CRUDBody(const QVariant &other):QVariantHash(other.toHash())
 
 }
 
-CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &source):QVariantHash({{qsl("strategy"), strategy}, {qsl("source"), source}})
+CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &source):QVariantHash{{qsl("strategy"), strategy}, {qsl("source"), source}}
 {
 
 }
 
-CRUDBody::CRUDBody(const QOrm::CRUDStrategy strategy, const QVariant &source):QVariantHash({{qsl("strategy"), strategy}, {qsl("source"), source}})
+CRUDBody::CRUDBody(const QOrm::CRUDStrategy strategy, const QVariant &source):QVariantHash{{qsl("strategy"), strategy}, {qsl("source"), source}}
 {
 
 }
@@ -25,14 +25,15 @@ QOrm::CRUDStrategy CRUDBody::strategy()const
     auto&vHash=*this;
     for(auto&vName:varName){
         const QVariant&v=vHash[vName];
-        if(v.isValid()){
-            auto vName=v.toString().toLower();
-            if(QOrm::__stringToStrategy.contains(vName)){
-                auto v=QOrm::__stringToStrategy.value(vName);
-                auto t=QOrm::CRUDStrategy(v.toUInt());
-                return t;
-            }
-        }
+        if(v.isNull() || !v.isValid())
+            continue;
+        auto name=v.toString().toLower();
+        if(!QOrm::__stringToStrategy.contains(name))
+            continue;
+
+        auto vStrategy=QOrm::__stringToStrategy.value(name);
+        auto tStrategy=QOrm::CRUDStrategy(vStrategy.toUInt());
+        return tStrategy;
     }
     return QOrm::CRUDStrategy::Undefined;
 }

@@ -79,23 +79,28 @@ public:
 
     bool queueCheckConnection(){
         QSqlDatabase db;
-        if(this->pool.get(db)){
-            if(!db.isValid() || !db.isOpen()){
-                auto dbmsType=db.driver()->dbmsType();
-                if(!listDbmsType.contains(dbmsType)){
-                    auto cnnMng=dynamic_cast<ConnectionManager*>(this->parent());
-                    if(cnnMng!=nullptr){
-                        if(this->pool.get(db)){
-                            if(this->notify->setConnection(db)){
-                                this->connectedDriver=db.driver();
-                                return this->connectedDriver!=nullptr;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+        if(!this->pool.get(db))
+            return false;
+
+        if(db.isValid() & db.isOpen())
+            return false;
+
+        auto dbmsType=db.driver()->dbmsType();
+        if(listDbmsType.contains(dbmsType))
+            return false;
+
+        auto cnnMng=dynamic_cast<ConnectionManager*>(this->parent());        
+        if(cnnMng==nullptr)
+            return false;
+
+        if(!this->pool.get(db))
+            return false;
+
+        if(!this->notify->setConnection(db))
+            return false;
+
+        this->connectedDriver=db.driver();
+        return this->connectedDriver!=nullptr;
     }
 
     bool queueStop(){
@@ -109,20 +114,23 @@ public:
 
     bool queueStart(){
         bool __return=false;
-        if(this->queueCheckConnection()){
-            if(!listDbmsType.contains(this->dbmsType())){
-                for(auto&v:this->subscribeToNotification){
-                    if(!this->connectedDriver->subscribeToNotification(v))
-                        sWarning()<<tr("Invalid channel(%1) for subscribeToNotification").arg(v);
-                    else{
-                        QObject::connect(this->connectedDriver, QOverload<const QString &, QSqlDriver::NotificationSource, const QVariant &>::of(&QSqlDriver::notification), this, &ConnectionNotifySubscribe::notification_receive);
-                        __return=true;
-                    }
-                }
-                if(!__return)
-                    this->queueStop();
+        if(!this->queueCheckConnection())
+            return (this->connectedDriver!=nullptr);
+
+        if(listDbmsType.contains(this->dbmsType()))
+            return (this->connectedDriver!=nullptr);
+
+        for(auto&v:this->subscribeToNotification){
+            if(!this->connectedDriver->subscribeToNotification(v)){
+                sWarning()<<tr("Invalid channel(%1) for subscribeToNotification").arg(v);
+                continue;
             }
+            QObject::connect(this->connectedDriver, QOverload<const QString &, QSqlDriver::NotificationSource, const QVariant &>::of(&QSqlDriver::notification), this, &ConnectionNotifySubscribe::notification_receive);
+            __return=true;
         }
+        if(!__return)
+            this->queueStop();
+
         return (this->connectedDriver!=nullptr);
     }
 
@@ -138,59 +146,67 @@ public:
         if(this->connectedDriver==nullptr)
             return false;
 
-        bool __return=false;
         QString payloadBytes;
 
         auto channelList=channel.trimmed().isEmpty()?this->subscribeToNotification:QStringList{channel.trimmed()};
 
         auto&v=payload;
-        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList)
-            payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
-        else if(v.typeId()==QMetaType::QUuid)
-            payloadBytes=v.toUuid().toString();
-        else if(v.typeId()==QMetaType::QUrl)
-            payloadBytes=v.toUrl().toString();
-        else
-            payloadBytes=payload.toByteArray().trimmed().toHex();
+        switch (qTypeId(v)) {
+            case QMetaType_QVariantHash:
+                payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
+                break;
+            case QMetaType_QVariantMap:
+                payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
+                break;
+            case QMetaType_QVariantList:
+                payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
+                break;
+            case QMetaType_QStringList:
+                payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
+                break;
+            case QMetaType_QUuid:
+                payloadBytes=v.toUuid().toString();
+                break;
+            case QMetaType_QUrl:
+                payloadBytes=v.toUrl().toString();
+                break;
+        default:
+                payloadBytes=payload.toByteArray().trimmed().toHex();
+        }
 
         QSqlDatabase localConnection;
 
         if(payloadBytes.isEmpty()){
             sWarning()<<tr("payload is empty");
-            __return=false;
+            return false;
         }
-        else if(!this->pool.get(localConnection)){
+
+        if(!this->pool.get(localConnection)){
             sWarning()<<tr("invalid connection on subscriber");
             return false;
         }
-        else{
-            QStringList commandList;
-            const auto dbmsType = this->dbmsType();
-            if(dbmsType==QSqlDriver::PostgreSQL){
-                for(auto&channel:channelList){
-                    commandList<<qsl("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
-                }
-            }
-            else{
-                sWarning()<<tr("Invalid database to notification");
-            }
 
-            __return=channelList.isEmpty();
-            for(auto&command:commandList){
-                auto q=localConnection.exec(command);
-                if(q.lastError().type()!=QSqlError::NoError){
-                    sWarning()<<tr("invalid execute %1").arg(q.lastError().text());
-                    break;
-                }
-                else{
-                    q.finish();
-                    q.clear();
-                    __return=true;
-                }
-            }
-
-            this->pool.finish(localConnection);
+        QStringList commandList;
+        const auto dbmsType = this->dbmsType();
+        if(dbmsType==QSqlDriver::PostgreSQL){
+            for(auto&channel:channelList)
+                commandList<<qsl("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
         }
+
+        auto __return=false;
+        for(auto&command:commandList){
+            auto q=localConnection.exec(command);
+            if(q.lastError().type()!=QSqlError::NoError){
+                sWarning()<<tr("invalid execute %1").arg(q.lastError().text());
+                break;
+            }
+
+            q.finish();
+            q.clear();
+            __return=true;
+        }
+
+        this->pool.finish(localConnection);
         return __return;
     }
 

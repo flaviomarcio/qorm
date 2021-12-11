@@ -27,7 +27,7 @@ public:
     QByteArray enviroment;
     QByteArray secret;
     QHash<QString, ConnectionSetting*> settings;
-    QMap<QString, ConnectionPool*> poolMap;
+    QMap<QString, ConnectionPool*> pools;
     ConnectionManager*parent=nullptr;
     QObject*parentParent=nullptr;
     ConnectionPool defaultPool;
@@ -52,24 +52,22 @@ public:
 
         auto detail=p.settings.value(value);
         if(detail==nullptr){
-            if(p.poolMap.isEmpty()){
+            if(p.pools.isEmpty()){
 #if Q_ORM_LOG
-                sWarning()<<qsl("invalid pool: ")<<value<<qsl(", keys==")<<p.poolMap.keys();
+                sWarning()<<qsl("invalid pool: ")<<value<<qsl(", keys==")<<p.pools.keys();
 #endif
                 return defaultPool;
             }
-            else{
-                ConnectionPool*pool=p.poolMap.first();
-                return*pool;
-            }
+
+            auto pool=p.pools.first();
+            return*pool;
         }
-        else{
-            if(!p.poolMap.contains(value))
-                p.poolMap.insert(value, new ConnectionPool(*detail));
-            auto setting=p.settingNameAdjust(value);
-            auto&pool=*p.poolMap.value(setting);
-            return pool;
-        }
+
+        if(!p.pools.contains(value))
+            p.pools.insert(value, new ConnectionPool(*detail));
+        auto setting=p.settingNameAdjust(value);
+        auto&pool=*p.pools.value(setting);
+        return pool;
     }
 
     bool isLoaded()const{
@@ -78,11 +76,10 @@ public:
             i.next();
             if(i.key().trimmed().isEmpty())
                 continue;
-            else{
-                auto&v=i.value();
-                if(v->isValid())
-                    return true;
-            }
+
+            auto&v=i.value();
+            if(v->isValid())
+                return true;
         }
         return false;
     }
@@ -103,7 +100,7 @@ public:
         qDeleteAll(_detail);
         this->enviroment.clear();
         this->secret.clear();
-        this->poolMap.clear();
+        this->pools.clear();
         this->settings.clear();
     }
 
@@ -148,10 +145,11 @@ public:
     }
 
     bool v_load(const QVariant &v){
-        if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList)
+        auto typeId=qTypeId(v);
+        if(QStmTypesVariantList.contains(typeId))
             return this->load(v.toStringList());
 
-        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap)
+        if(QStmTypesVariantDictionary.contains(typeId))
             return this->load(v.toHash());
 
         return this->load(v.toString());
@@ -168,66 +166,65 @@ public:
 
         if(vSettings.isEmpty()){
             p.clear();
+            return false;
         }
-        else if(settings.contains(qsl("host")) && settings.contains(qsl("user"))){
+
+        if(settings.contains(qsl("host")) && settings.contains(qsl("user"))){
             this->insert(settings);
-            RETURN=true;
+            return true;
         }
-        else{
 
-            auto enviroment = QByteArray(getenv(qbl("DATABASE_ENVIROMENT"))).trimmed();
+        auto enviroment = QByteArray(getenv(qbl("DATABASE_ENVIROMENT"))).trimmed();
 
-            QVariantHash defaultVariables;
-            QVariantHash defaultValues;
-            defaultVariables.insert(qsl("driver"        )  , qsl("DATABASE_DRIVER"  )    );
-            defaultVariables.insert(qsl("hostName"      )  , qsl("DATABASE_HOST"    )    );
-            defaultVariables.insert(qsl("userName"      )  , qsl("DATABASE_USERNAME")    );
-            defaultVariables.insert(qsl("password"      )  , qsl("DATABASE_PASSWORD")    );
-            defaultVariables.insert(qsl("dataBaseName"  )  , qsl("DATABASE_NAME"    )    );
-            defaultVariables.insert(qsl("connectOptions")  , qsl("DATABASE_OPTION"  )    );
-            defaultVariables.insert(qsl("port"          )  , qsl("DATABASE_PORT"    )    );
+        QVariantHash defaultVariables;
+        QVariantHash defaultValues;
+        defaultVariables.insert(qsl("driver"        )  , qsl("DATABASE_DRIVER"  )    );
+        defaultVariables.insert(qsl("hostName"      )  , qsl("DATABASE_HOST"    )    );
+        defaultVariables.insert(qsl("userName"      )  , qsl("DATABASE_USERNAME")    );
+        defaultVariables.insert(qsl("password"      )  , qsl("DATABASE_PASSWORD")    );
+        defaultVariables.insert(qsl("dataBaseName"  )  , qsl("DATABASE_NAME"    )    );
+        defaultVariables.insert(qsl("connectOptions")  , qsl("DATABASE_OPTION"  )    );
+        defaultVariables.insert(qsl("port"          )  , qsl("DATABASE_PORT"    )    );
 
-            if(!defaultVariables.isEmpty()){
-                QHashIterator<QString, QVariant> i(defaultVariables);
-                while (i.hasNext()) {
-                    i.next();
-                    auto env=i.value().toByteArray().trimmed();
-                    auto v = QByteArray(getenv(env)).trimmed();
-                    if(v.isEmpty())
-                        v = QByteArray(getenv(env.toLower())).trimmed();
-                    if(!v.isEmpty())
-                        defaultValues.insert(i.key(),v);
-                }
-            }
-            p.secret = settings.value(qsl("secret")).toByteArray();
-            p.enviroment = settings.value(qsl("enviroment")).toByteArray();
-            p.enviroment=enviroment.isEmpty()?p.enviroment:enviroment;
-            auto paramaters = settings.value(qsl("paramaters")).toHash();
-            QHashIterator<QString, QVariant> i(paramaters);
+        if(!defaultVariables.isEmpty()){
+            QHashIterator<QString, QVariant> i(defaultVariables);
             while (i.hasNext()) {
                 i.next();
-                auto name=i.key().trimmed();
-                if(name.trimmed().isEmpty())
-                    continue;
-                else{
-                    auto value = paramaters.value(name).toHash();
+                auto env=i.value().toByteArray().trimmed();
+                auto v = QByteArray(getenv(env)).trimmed();
+                if(v.isEmpty())
+                    v = QByteArray(getenv(env.toLower())).trimmed();
+                if(!v.isEmpty())
+                    defaultValues.insert(i.key(),v);
+            }
+        }
+        p.secret = settings.value(qsl("secret")).toByteArray();
+        p.enviroment = settings.value(qsl("enviroment")).toByteArray();
+        p.enviroment=enviroment.isEmpty()?p.enviroment:enviroment;
+        auto paramaters = settings.value(qsl("paramaters")).toHash();
+        QHashIterator<QString, QVariant> i(paramaters);
+        while (i.hasNext()) {
+            i.next();
+            auto name=i.key().trimmed();
+            if(name.trimmed().isEmpty())
+                continue;
 
-                    if(p.enviroment.toLower()==i.key().toLower()){
-                        QHashIterator<QString, QVariant> i(defaultValues);
-                        while (i.hasNext()) {
-                            i.next();
-                            auto v0=value.value(i.key()).toString();
-                            sWarning()<<qsl("replace [%1==%2] to [%1==%3]").arg(i.key(), v0, i.value().toString());
-                            value.insert(i.key(), i.value());
-                        }
-                    }
+            auto value = paramaters.value(name).toHash();
 
-                    if(!value.isEmpty()){
-                        value.insert(qsl("name"), name);
-                        p.insert(value);
-                        RETURN=true;
-                    }
+            if(p.enviroment.toLower()==i.key().toLower()){
+                QHashIterator<QString, QVariant> i(defaultValues);
+                while (i.hasNext()) {
+                    i.next();
+                    auto v0=value.value(i.key()).toString();
+                    sWarning()<<qsl("replace [%1==%2] to [%1==%3]").arg(i.key(), v0, i.value().toString());
+                    value.insert(i.key(), i.value());
                 }
+            }
+
+            if(!value.isEmpty()){
+                value.insert(qsl("name"), name);
+                p.insert(value);
+                RETURN=true;
             }
         }
         return RETURN;
@@ -237,33 +234,47 @@ public:
     {
         auto&p=*this;
         QFile file(settingsFileName);
-        if(settingsFileName.trimmed().isEmpty())
+        if(settingsFileName.trimmed().isEmpty()){
             sWarning()<<qsl("not file settings");
-        else if(!file.exists())
-            sWarning()<<qsl("file not exists %1").arg(file.fileName());
-        else if(!file.open(QFile::ReadOnly))
-            sWarning()<<qsl("%1, %2").arg(file.errorString(), file.fileName());
-        else{
-            auto bytes=file.readAll();
-            QJsonParseError*error=nullptr;
-            auto doc=QJsonDocument::fromJson(bytes, error);
-            if(error!=nullptr)
-                sWarning()<<qsl("%1, %2").arg(file.fileName(), error->errorString());
-            else if(doc.object().isEmpty())
-                sWarning()<<qsl("object is empty, %1").arg(file.fileName());
-            else{
-                auto settings=doc.object().toVariantHash();
-                if(!settings.contains(qsl("connection")))
-                    sWarning()<<qsl("tag connection not exists, %1").arg(file.fileName());
-                else if(!p.load(settings))
-                    this->settingsFileName.clear();
-                else{
-                    this->settingsFileName=settingsFileName;
-                    return true;
-                }
-            }
+            return false;
         }
-        return false;
+        if(!file.exists()){
+            sWarning()<<qsl("file not exists %1").arg(file.fileName());
+            return false;
+        }
+        if(!file.open(QFile::ReadOnly)){
+            sWarning()<<qsl("%1, %2").arg(file.errorString(), file.fileName());
+            return false;
+        }
+
+
+
+        auto bytes=file.readAll();
+        QJsonParseError*error=nullptr;
+        auto doc=QJsonDocument::fromJson(bytes, error);
+        if(error!=nullptr){
+            sWarning()<<qsl("%1, %2").arg(file.fileName(), error->errorString());
+            return false;
+        }
+
+        if(doc.object().isEmpty()){
+            sWarning()<<qsl("object is empty, %1").arg(file.fileName());
+            return false;
+        }
+
+        auto settings=doc.object().toVariantHash();
+        if(!settings.contains(qsl("connection"))){
+            sWarning()<<qsl("tag connection not exists, %1").arg(file.fileName());
+            return false;
+        }
+
+        if(!p.load(settings)){
+            this->settingsFileName.clear();
+            return false;
+        }
+
+        this->settingsFileName=settingsFileName;
+        return true;
     }
 
     bool load(const QStringList &settingsFileName)
@@ -274,39 +285,42 @@ public:
             QFile file(fileName);
             if(fileName.isEmpty())
                 continue;
-            else if(!file.exists())
+            if(!file.exists()){
 #if Q_ORM_LOG_DEBUG
                 sWarning()<<tr("file not exists %1").arg(file.fileName());
-#else
-                continue;
 #endif
-            else if(!file.open(QFile::ReadOnly))
+                continue;
+            }
+
+            if(!file.open(QFile::ReadOnly)){
 #if Q_ORM_LOG_DEBUG
                 sWarning()<<tr("%1, %2").arg(file.fileName(), file.errorString());
-#else
+#endif
                 continue;
-#endif
-            else{
-                auto bytes=file.readAll();
-                file.close();
-                QJsonParseError*error=nullptr;
-                auto doc=QJsonDocument::fromJson(bytes, error);
-                if(error!=nullptr)
-#if Q_ORM_LOG
-                    sWarning()<<qsl("%1, %2").arg(file.fileName(), error->errorString());
-#endif
-                else if(doc.object().isEmpty())
-#if Q_ORM_LOG
-                    sWarning()<<qsl("object is empty, %1").arg(file.fileName());
-#endif
-                else{
-                    auto map=doc.object().toVariantHash();
-                    if(!map.isEmpty())
-                        vList<<map;
-                }
             }
+
+            auto bytes=file.readAll();
+            file.close();
+            QJsonParseError*error=nullptr;
+            auto doc=QJsonDocument::fromJson(bytes, error);
+            if(error!=nullptr){
+#if Q_ORM_LOG
+                sWarning()<<qsl("%1, %2").arg(file.fileName(), error->errorString());
+#endif
+                continue;
+
+            }
+            if(doc.object().isEmpty()){
+#if Q_ORM_LOG
+                sWarning()<<qsl("object is empty, %1").arg(file.fileName());
+#endif
+                continue;
+            }
+            auto map=doc.object().toVariantHash();
+            if(!map.isEmpty())
+                vList<<map;
         }
-        VariantUtil vu;
+        Q_DECLARE_VU;
         auto vMap=vu.vMerge(vList).toHash();
         if(p.load(vMap))
             p.settingsFileName=settingsFileName;
@@ -317,23 +331,32 @@ public:
 
     bool load(QObject *settingsObject)
     {
+        static auto ignoreMethods=QVector<QByteArray>{"destroyed","objectNameChanged","deleteLater","_q_reregisterTimers"};
+        static auto staticNames=QVector<QByteArray>{qbl("settingsfilename"), qbl("settings_server"), qbl("settingsserver")};
         auto&p=*this;
-        if(settingsObject!=nullptr){
-            auto metaObject=settingsObject->metaObject();
-            for(int methodIndex = 0; methodIndex < metaObject->methodCount(); ++methodIndex) {
-                auto metaMethod = metaObject->method(methodIndex);
-                if(metaMethod.parameterCount()==0){
-                    auto methodName=QString(metaMethod.name()).toLower().trimmed();
-                    auto staticNames=QStringList{qsl("settingsfilename"),qsl("settings_server"),qsl("settingsserver")};
-                    if(staticNames.contains(methodName)){
-                        QVariant invokeReturn;
-                        auto argReturn=Q_RETURN_ARG(QVariant, invokeReturn);
-                        if(metaMethod.invoke(settingsObject, argReturn)){
-                            return p.v_load(invokeReturn);
-                        }
-                    }
-                }
-            }
+        if(settingsObject==nullptr)
+            return false;
+        auto metaObject=settingsObject->metaObject();
+        for(int methodIndex = 0; methodIndex < metaObject->methodCount(); ++methodIndex) {
+            auto metaMethod = metaObject->method(methodIndex);
+            if(metaMethod.parameterCount()>0)
+                continue;
+
+            if(ignoreMethods.contains(metaMethod.name()))
+                continue;
+
+            auto methodName=QByteArray(metaMethod.name()).toLower();
+            if(!staticNames.contains(methodName))
+                continue;
+
+            QVariant invokeReturn;
+            auto argReturn=Q_RETURN_ARG(QVariant, invokeReturn);
+            if(!metaMethod.invoke(settingsObject, argReturn))
+                continue;
+
+            if(!p.v_load(invokeReturn))
+                continue;
+            return true;
         }
         return false;
     }

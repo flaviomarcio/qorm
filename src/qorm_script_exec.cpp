@@ -35,8 +35,8 @@ public:
 
     QStringList scriptParser(const QVariant&v){
         QStringList __return;
-        if(v.typeId()==QMetaType::QString || v.typeId()==QMetaType::QByteArray || v.typeId()==QMetaType::QUrl){
-            auto url=v.typeId()==QMetaType::QUrl?v.toUrl():QUrl::fromLocalFile(v.toString());
+        if(qTypeId(v)==QMetaType_QString || qTypeId(v)==QMetaType_QByteArray || qTypeId(v)==QMetaType_QUrl){
+            auto url=qTypeId(v)==QMetaType_QUrl?v.toUrl():QUrl::fromLocalFile(v.toString());
             if(url.isLocalFile()){
                 QFile file(url.toLocalFile());
                 if(file.exists() && file.open(file.ReadOnly)){
@@ -50,14 +50,13 @@ public:
                                 line=line.trimmed();
                                 if(line.isEmpty())
                                     continue;
-                                else
-                                    __return<<line.trimmed();
+                                __return<<line.trimmed();
                             }
                         }
                     }
                 }
             }
-            else if(v.typeId()==QMetaType::QStringList){
+            else if(qTypeId(v)==QMetaType_QStringList){
                 __return=v.toStringList();
             }
             else{
@@ -93,14 +92,15 @@ public:
                 QSqlError sqlError;
                 if(scommand.isEmpty() || scommand.startsWith(qsl("--")))
                     continue;
-                else if(!query.exec(command))
+
+                if(!query.exec(command))
                     sqlError=query.lastError();
                 else{
                     query.finish();
                     query.clear();
                     continue;
                 }
-                __return<<qvh({{qsl_fy(nativeErrorCode), sqlError.nativeErrorCode()}, {qsl_fy(text), sqlError.text()}, {qsl_fy(command), command}});
+                __return<<qvh{{qsl_fy(nativeErrorCode), sqlError.nativeErrorCode()}, {qsl_fy(text), sqlError.text()}, {qsl_fy(command), command}};
             }
         }
         return this->parent->lr(__return)=__return.isEmpty();

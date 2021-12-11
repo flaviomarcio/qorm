@@ -218,4 +218,4 @@ void Transaction::setExceptionOnFail(bool value)
     p.exceptionOnFail = value;
 }
 
-} // namespace QOrm
+}

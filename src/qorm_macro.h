@@ -67,6 +67,12 @@ Q_INVOKABLE virtual const QMetaObject&descriptor(){\
     return name::staticMetaObject;\
 }
 
+#define QORM_DECLARE_TABLE_PK_COMPUSER(v1)\
+public:\
+    Q_INVOKABLE virtual QVariant tablePkCompuser()const{\
+        return QVariant(v1);\
+}
+
 #define QORM_DECLARE_TOPIC(v1)\
 public:\
     Q_INVOKABLE virtual QVariant topic()const{\
@@ -152,7 +158,7 @@ Q_INVOKABLE virtual QByteArray tableForeignPk()const{static const auto ___return
 
 #define QORM_DECLARE_TABLE_FOREIGN_KEY_ON_PRIMARY_KEY(fk_propertyName, pk_modelName, pk_propertyName)\
 Q_INVOKABLE virtual QVariantHash tableForeignKey_##fk_propertyName()const{ \
-    static const auto __return=QVariantHash({{qsl("fk"),qsl(#fk_propertyName)}, {qsl("pk.model"),qsl(#pk_modelName)}, {qsl("pk"),qsl(#pk_propertyName)}});\
+    static const auto __return=QVariantHash{{qsl("fk"),qsl(#fk_propertyName)}, {qsl("pk.model"),qsl(#pk_modelName)}, {qsl("pk"),qsl(#pk_propertyName)}};\
     return __return;\
 }
 
@@ -187,7 +193,7 @@ QORM_DECLARE_FIELD(propertyName,)\
 Q_PROPERTY(propertyType propertyName READ propertyName WRITE set_##propertyName NOTIFY changeProperty)\
 Q_INVOKABLE virtual QVariant propertyName##_keyValue(){\
     static const auto ___name=QByteArrayLiteral(#propertyName);\
-    return QVariantHash({{___name, this->property(___name)}});\
+    return QVariantHash{{___name, this->property(___name)}};\
 }\
 Q_INVOKABLE virtual propertyType propertyName()const{\
     return z____##propertyName;\
@@ -215,6 +221,13 @@ private:\
     propertyType z____##propertyName=propertyDefault;\
 public:
 
+
+#define QORM_DECLARE_FILTRABLE_FIELD(vList) \
+public:\
+Q_INVOKABLE virtual QVariantList tableFiltrableField()const\
+{\
+    return vList;\
+}\
 
 #define QORM_DECLARE_PROPERTY(propertyType, propertyName, propertyDefault)\
 public:\
@@ -509,6 +522,13 @@ static const QVariantHash filter_get_##propertyName(){\
 Q_DECLARE_VU;\
 if(vu.vIsEmpty(v))\
     return this->lr().setValidation(m);\
+}
+
+#define QORM_VARIABLE_INVERTER(valueA, valueB)\
+{\
+    auto aux=valueA;\
+    valueA=valueB;  \
+    valueB=aux;\
 }
 
 #define likeL(v)QStringLiteral("%")+v

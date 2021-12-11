@@ -18,7 +18,7 @@ namespace QOrm {
     TEST_F(Q_ORM_DTOTestUnit, serviceTestOutPut)
     {
         QVariantList records;
-        records<<QVariantHash({{"uuid",QUuid::createUuid()},{"name",QUuid::createUuid()},{"enabled",true}});
+        records<<QVariantHash{{"uuid",QUuid::createUuid()},{"name",QUuid::createUuid()},{"enabled",true}};
 
         QOrm::ModelDto dto;
         dto

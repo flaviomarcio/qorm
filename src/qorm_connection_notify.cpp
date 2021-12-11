@@ -58,16 +58,7 @@ bool ConnectionNotify::setConnection(const QSqlDatabase&connection)
 {
     Q_UNUSED(connection)
     qFatal("falta remover");
-//    if(connection.connectionName()==this->connectionId()){//no diffent
-//        return ObjectDb::setConnection(connection);
-//    }
-//    else{
-//        dPvt();
-//        p.queueStop();
-//        if(ObjectDb::setConnection(connection))//diferent
-//            return p.queueStart();
-//    }
     return false;
 }
 
-} // namespace QOrm
+}

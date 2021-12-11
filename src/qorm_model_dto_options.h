@@ -5,24 +5,45 @@
 
 namespace QOrm {
 
-    class Q_ORM_EXPORT ModelDtoOptions:public QObject
-    {
-        Q_OBJECT
-    public:
-        Q_INVOKABLE explicit ModelDtoOptions(QObject *parent=nullptr);
-        Q_INVOKABLE virtual ~ModelDtoOptions();
+//!
+//! \brief The ModelDtoOptions class
+//!
+class Q_ORM_EXPORT ModelDtoOptions:public QObject
+{
+    Q_OBJECT
+public:
+    //!
+    //! \brief ModelDtoOptions
+    //! \param parent
+    //!
+    Q_INVOKABLE explicit ModelDtoOptions(QObject *parent=nullptr);
 
-        ModelDtoOptions&operator=(const ModelDtoOptions&v);
+    //!
+    //! \brief ~ModelDtoOptions
+    //!
+    virtual ~ModelDtoOptions();
 
-        /**
-         * @brief searchOnEmptyFilter
-         * @return
-         */
-        Q_INVOKABLE virtual bool searchOnEmptyFilter() const;
-        Q_INVOKABLE virtual void setSearchOnEmptyFilter(bool value);
+    //!
+    //! \brief operator =
+    //! \param v
+    //! \return
+    //!
+    ModelDtoOptions&operator=(const ModelDtoOptions&v);
 
-    private:
-        void*p=nullptr;
-    };
+    //!
+    //! \brief searchOnEmptyFilter
+    //! \return
+    //!
+    Q_INVOKABLE virtual bool searchOnEmptyFilter() const;
+
+    //!
+    //! \brief setSearchOnEmptyFilter
+    //! \param value
+    //!
+    Q_INVOKABLE virtual void setSearchOnEmptyFilter(bool value);
+
+private:
+    void*p=nullptr;
+};
 
 }

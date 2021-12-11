@@ -32,10 +32,10 @@ static void initDtoSettingsCache(){
             fileSrc.close();
             QVariantList vList;
             auto vDoc=QJsonDocument::fromJson(bytes).toVariant();
-            if(vDoc.typeId()==QMetaType::QVariantHash || vDoc.typeId()==QMetaType::QVariantMap){
+            if(qTypeId(vDoc)==QMetaType_QVariantHash || qTypeId(vDoc)==QMetaType_QVariantMap){
                 vList<<vDoc;
             }
-            else if(vDoc.typeId()==QMetaType::QVariantList || vDoc.typeId()==QMetaType::QStringList){
+            else if(qTypeId(vDoc)==QMetaType_QVariantList || qTypeId(vDoc)==QMetaType_QStringList){
                 vList=vDoc.toList();
             }
             for(auto&v:vList){
@@ -160,9 +160,8 @@ QVariant ModelDto::layout() const
 {
     dPvt();
     auto value=p.dtoControls.layout();
-    if(value.isNull() && !value.isValid()){
-        value=this->defaultLayout();
-    }
+    if(value.isNull() && !value.isValid())
+        return this->defaultLayout();
     return value;
 }
 
@@ -229,7 +228,7 @@ ModelDtoControls &ModelDto::items(const ResultValue &lr)
     return p.dtoControls.items(lr.resultVariant());
 }
 
-ModelDtoResultInfo &ModelDto::resultInfo()
+QStm::ResultInfo &ModelDto::resultInfo()
 {
     dPvt();
     return p.dtoControls.resultInfo();
@@ -242,7 +241,7 @@ ModelDtoControls &ModelDto::resultInfo(const QVariant &v)
     return p.dtoControls;
 }
 
-ModelDtoControls &ModelDto::setResultInfo(const ModelDtoResultInfo &resultInfo)
+ModelDtoControls &ModelDto::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
     dPvt();
     p.dtoControls.resultInfo().fromHash(resultInfo.toHash());

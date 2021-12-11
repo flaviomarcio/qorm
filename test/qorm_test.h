@@ -11,6 +11,23 @@
 #include <QLocale>
 #include <QJsonDocument>
 #include <gtest/gtest.h>
+#include "./qstm_types.h"
+
+static const QVector<QByteArray> Q_ORM_CRUD_PROPERTY_LIST=QVector<QByteArray>{"resultInfo","items","links","text","filters","type","layout","headers","id"};
+
+#define CRUD_TESTER_BODY(vCrud){\
+auto ___hash=QVariant(vCrud).toHash();\
+    for(auto&property:Q_ORM_CRUD_PROPERTY_LIST){\
+        bool contains=___hash.contains(property);\
+        EXPECT_EQ(contains,true);\
+    }\
+}
+
+#define CRUD_TESTER_REQUEST(request, body, method)\
+request.call(QRpc::Get, method, body);\
+EXPECT_EQ(request.response().isOk(), true);\
+if(request.response().isOk())\
+    CRUD_TESTER_BODY(request.response().bodyHash());
 
 namespace QOrm {
 
@@ -40,7 +57,7 @@ namespace QOrm {
 
         static QByteArray toMd5(const QVariant&v){
             QByteArray bytes;
-            if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList || v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
+            if(QStmTypesObjectMetaData.contains(qTypeId(v)))
                 bytes=QJsonDocument::fromVariant(v).toJson(QJsonDocument::Compact);
             else
                 bytes=v.toByteArray();
@@ -48,10 +65,9 @@ namespace QOrm {
         }
 
         static QVariant toVar(const QVariant&v){
-            if(v.typeId()==QMetaType::QString || v.typeId()==QMetaType::QByteArray)
+            if(QStmTypesListString.contains(qTypeId(v)))
                 return QJsonDocument::fromJson(v.toByteArray()).toVariant();
-            else
-                return v;
+            return v;
         }
 
         static void SetUpTestCase()

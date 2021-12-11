@@ -104,128 +104,128 @@ public:
         }
 
         {
-            staticKeywordCache.insert(kgcAll                   , qbl("All "                                  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcAlter                 , qbl("Alter "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcAnd                   , qbl("And "                                  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcAny                   , qbl("%1 Any(%2) "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcAs                    , qbl("As "                                   ).trimmed().toLower());
-            staticKeywordCache.insert(kgcAsc                   , qbl("Asc "                                  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcAvg                   , qbl("Avg(%1) "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcAvgAs                 , qbl("Avg(%1) as %2 "                        ).trimmed().toLower());
-            staticKeywordCache.insert(kgcBetween               , qbl("%1 Between %2 and %3 "                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcNotBetween            , qbl("not %1 Between %2 and %3 "             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcBigger                , qbl("%1 > %2 "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcCascade               , qbl("cascade "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcCase                  , qbl("Case "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcCheck                 , qbl("Check "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcClustered             , qbl("Clustered "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcConstraint            , qbl("Constraint "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcCount                 , qbl("Count(%1) "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcCountAs               , qbl("Count(%1) as %2 "                      ).trimmed().toLower());
-            staticKeywordCache.insert(kgcCreate                , qbl("Create "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcCreateOrReplace       , qbl("create or Replace "                    ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDataBase              , qbl("DataBase "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDeclare               , qbl("Declare "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDefault               , qbl("Default "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDelete                , qbl("delete "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDeleteFrom            , qbl("delete from %1 "                       ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDeleteFromUsing       , qbl("delete from %1 using %2 %3 "           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDesc                  , qbl("Desc "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDistinct              , qbl("Distinct "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcDrop                  , qbl("Drop "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcEnd                   , qbl("End "                                  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcEqual                 , qbl("%1 = %2 "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcNotEqual              , qbl("%1 <> %2 "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcEqualBigger           , qbl("%1 >= %2 "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcEqualMinor            , qbl("%1 <= %2 "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcExists                , qbl("exists "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcForeignKey            , qbl("Foreign Key "                          ).trimmed().toLower());
-            staticKeywordCache.insert(kgcFrom                  , qbl("from "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcFromValues            , qbl("from(values %1 )as %2 (%3) "           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcFull                  , qbl("Full "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcFunction              , qbl("Function "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcFunction              , qbl("Function "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcGroupBy               , qbl("Group by "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcHaving                , qbl("Having "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcIfExists              , qbl("if exists "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcIn                    , qbl("%1 In (%2) "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcIndex                 , qbl("Index "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcInOut                 , qbl("not %1 in (%2) "                       ).trimmed().toLower());
-            staticKeywordCache.insert(kgcInsert                , qbl("Insert "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcInsertInto            , qbl("Insert into %1(%2) "                   ).trimmed().toLower());
-            staticKeywordCache.insert(kgcIsNull                , qbl(""                                      ).trimmed().toLower());
-            staticKeywordCache.insert(kgcIsNullCheckValue      , qbl(""                                      ).trimmed().toLower());
-            staticKeywordCache.insert(kgcValueIsNull           , qbl("%1 is null "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcValueIsNotNull        , qbl("not %1 is null "                       ).trimmed().toLower());
-            staticKeywordCache.insert(kgcJoin                  , qbl("Join "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcJoinFull              , qbl("Full Join "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcJoinInner             , qbl("Inner Join "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcJoinLeft              , qbl("Left Join "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcJoinRigth             , qbl("Rigth Join "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcKey                   , qbl("Key "                                  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcLeft                  , qbl("Left "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcILike                 , qbl("%1 like %2 "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcLike                  , qbl("%1 like %2 "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSoundexEqual          , qbl("soundex(%1) = soundex(%2)"             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcLimit                 , qbl("Limit %1 "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcOffset                , qbl("offset %1 "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcMax                   , qbl("Max(%1) "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcMaxAs                 , qbl("Max(%1) as %2 "                        ).trimmed().toLower());
-            staticKeywordCache.insert(kgcMin                   , qbl("Min(%1) "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcMinAs                 , qbl("Min(%1) as %2 "                        ).trimmed().toLower());
-            staticKeywordCache.insert(kgcMinor                 , qbl("%1 < %2 "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcNot                   , qbl("Not "                                  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcNotExists             , qbl("not Exists "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcNotNull               , qbl("Not Null "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcNull                  , qbl("Null "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcOn                    , qbl("On "                                   ).trimmed().toLower());
-            staticKeywordCache.insert(kgcOr                    , qbl("or "                                   ).trimmed().toLower());
-            staticKeywordCache.insert(kgcOrderBy               , qbl("Order by "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcJoinOuter             , qbl("Outer Join "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcPivot                 , qbl("Pivot "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcPrimary               , qbl("Primary "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcPrimaryKey            , qbl("Primary Key "                          ).trimmed().toLower());
-            staticKeywordCache.insert(kgcProcedure             , qbl("Procedure "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcReplace               , qbl("Replace "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcRigth                 , qbl("Rigth "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcRowNumber             , qbl("RowNumber "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSchema                , qbl("Schema "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSelect                , qbl("Select "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSelectTop             , qbl("Select Top %1 "                        ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSelectDistinct        , qbl("Select distinct "                      ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSelectDistinctTop     , qbl("Select distinct top %1 "               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSelectForExists       , qbl("Select null "                          ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSelectValues          , qbl("select %1 from(values(%2))as %3(%4) "  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSet                   , qbl("Set "                                  ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSum                   , qbl("sum(%1) "                              ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSumAs                 , qbl("sum(%1) as %2 "                        ).trimmed().toLower());
-            staticKeywordCache.insert(kgcTable                 , qbl("Table "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcTableTemp             , qbl("Temp Table "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcTemp                  , qbl("Temp "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcThen                  , qbl("Then "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcTruncate              , qbl("truncate "                             ).trimmed().toLower());
-            staticKeywordCache.insert(kgcTruncateTable         , qbl("truncate table %1 "                    ).trimmed().toLower());
-            staticKeywordCache.insert(kgcTruncateTableCacade   , qbl("truncate table %1 cascade "            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUnion                 , qbl("union "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUnionAll              , qbl("union all "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcIntersect             , qbl("intersect "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcIntersectAll          , qbl("intersect all "                        ).trimmed().toLower());
-            staticKeywordCache.insert(kgcExcept                , qbl("Except "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcExceptAll             , qbl("Except all "                           ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUnique                , qbl("unique "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUpdate                , qbl("update "                               ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUpdateSet             , qbl("update %1 set %2 %3 %4 %5 "            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUpdateSetValues       , qbl(" "                                     ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUpsertSet             , qbl(" "                                     ).trimmed().toLower());
-            staticKeywordCache.insert(kgcUsing                 , qbl("Using "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcValues                , qbl("values %1 "                            ).trimmed().toLower());
-            staticKeywordCache.insert(kgcView                  , qbl("view "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcWhen                  , qbl("when "                                 ).trimmed().toLower());
-            staticKeywordCache.insert(kgcWhere                 , qbl("where "                                ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSetApplicationName    , qbl(" "                                     ).trimmed().toLower());
-            staticKeywordCache.insert(kgcSetSearchPath         , qbl(" "                                     ).trimmed().toLower());
-            staticKeywordCache.insert(kgcNextVal               , QByteArray());
-            staticKeywordCache.insert(kgcNextValSelect         , QByteArray());
+            staticKeywordCache[kgcAll                   ]=qbl("All "                                  ).trimmed().toLower();
+            staticKeywordCache[kgcAlter                 ]=qbl("Alter "                                ).trimmed().toLower();
+            staticKeywordCache[kgcAnd                   ]=qbl("And "                                  ).trimmed().toLower();
+            staticKeywordCache[kgcAny                   ]=qbl("%1 Any(%2) "                           ).trimmed().toLower();
+            staticKeywordCache[kgcAs                    ]=qbl("As "                                   ).trimmed().toLower();
+            staticKeywordCache[kgcAsc                   ]=qbl("Asc "                                  ).trimmed().toLower();
+            staticKeywordCache[kgcAvg                   ]=qbl("Avg(%1) "                              ).trimmed().toLower();
+            staticKeywordCache[kgcAvgAs                 ]=qbl("Avg(%1) as %2 "                        ).trimmed().toLower();
+            staticKeywordCache[kgcBetween               ]=qbl("%1 Between %2 and %3 "                 ).trimmed().toLower();
+            staticKeywordCache[kgcNotBetween            ]=qbl("not %1 Between %2 and %3 "             ).trimmed().toLower();
+            staticKeywordCache[kgcBigger                ]=qbl("%1 > %2 "                              ).trimmed().toLower();
+            staticKeywordCache[kgcCascade               ]=qbl("cascade "                              ).trimmed().toLower();
+            staticKeywordCache[kgcCase                  ]=qbl("Case "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcCheck                 ]=qbl("Check "                                ).trimmed().toLower();
+            staticKeywordCache[kgcClustered             ]=qbl("Clustered "                            ).trimmed().toLower();
+            staticKeywordCache[kgcConstraint            ]=qbl("Constraint "                           ).trimmed().toLower();
+            staticKeywordCache[kgcCount                 ]=qbl("Count(%1) "                            ).trimmed().toLower();
+            staticKeywordCache[kgcCountAs               ]=qbl("Count(%1) as %2 "                      ).trimmed().toLower();
+            staticKeywordCache[kgcCreate                ]=qbl("Create "                               ).trimmed().toLower();
+            staticKeywordCache[kgcCreateOrReplace       ]=qbl("create or Replace "                    ).trimmed().toLower();
+            staticKeywordCache[kgcDataBase              ]=qbl("DataBase "                             ).trimmed().toLower();
+            staticKeywordCache[kgcDeclare               ]=qbl("Declare "                              ).trimmed().toLower();
+            staticKeywordCache[kgcDefault               ]=qbl("Default "                              ).trimmed().toLower();
+            staticKeywordCache[kgcDelete                ]=qbl("delete "                               ).trimmed().toLower();
+            staticKeywordCache[kgcDeleteFrom            ]=qbl("delete from %1 "                       ).trimmed().toLower();
+            staticKeywordCache[kgcDeleteFromUsing       ]=qbl("delete from %1 using %2 %3 "           ).trimmed().toLower();
+            staticKeywordCache[kgcDesc                  ]=qbl("Desc "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcDistinct              ]=qbl("Distinct "                             ).trimmed().toLower();
+            staticKeywordCache[kgcDrop                  ]=qbl("Drop "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcEnd                   ]=qbl("End "                                  ).trimmed().toLower();
+            staticKeywordCache[kgcEqual                 ]=qbl("%1 = %2 "                              ).trimmed().toLower();
+            staticKeywordCache[kgcNotEqual              ]=qbl("%1 <> %2 "                             ).trimmed().toLower();
+            staticKeywordCache[kgcEqualBigger           ]=qbl("%1 >= %2 "                             ).trimmed().toLower();
+            staticKeywordCache[kgcEqualMinor            ]=qbl("%1 <= %2 "                             ).trimmed().toLower();
+            staticKeywordCache[kgcExists                ]=qbl("exists "                               ).trimmed().toLower();
+            staticKeywordCache[kgcForeignKey            ]=qbl("Foreign Key "                          ).trimmed().toLower();
+            staticKeywordCache[kgcFrom                  ]=qbl("from "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcFromValues            ]=qbl("from(values %1 )as %2 (%3) "           ).trimmed().toLower();
+            staticKeywordCache[kgcFull                  ]=qbl("Full "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcFunction              ]=qbl("Function "                             ).trimmed().toLower();
+            staticKeywordCache[kgcFunction              ]=qbl("Function "                             ).trimmed().toLower();
+            staticKeywordCache[kgcGroupBy               ]=qbl("Group by "                             ).trimmed().toLower();
+            staticKeywordCache[kgcHaving                ]=qbl("Having "                               ).trimmed().toLower();
+            staticKeywordCache[kgcIfExists              ]=qbl("if exists "                            ).trimmed().toLower();
+            staticKeywordCache[kgcIn                    ]=qbl("%1 In (%2) "                           ).trimmed().toLower();
+            staticKeywordCache[kgcIndex                 ]=qbl("Index "                                ).trimmed().toLower();
+            staticKeywordCache[kgcInOut                 ]=qbl("not %1 in (%2) "                       ).trimmed().toLower();
+            staticKeywordCache[kgcInsert                ]=qbl("Insert "                               ).trimmed().toLower();
+            staticKeywordCache[kgcInsertInto            ]=qbl("Insert into %1(%2) "                   ).trimmed().toLower();
+            staticKeywordCache[kgcIsNull                ]=qbl(""                                      ).trimmed().toLower();
+            staticKeywordCache[kgcIsNullCheckValue      ]=qbl(""                                      ).trimmed().toLower();
+            staticKeywordCache[kgcValueIsNull           ]=qbl("%1 is null "                           ).trimmed().toLower();
+            staticKeywordCache[kgcValueIsNotNull        ]=qbl("not %1 is null "                       ).trimmed().toLower();
+            staticKeywordCache[kgcJoin                  ]=qbl("Join "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcJoinFull              ]=qbl("Full Join "                            ).trimmed().toLower();
+            staticKeywordCache[kgcJoinInner             ]=qbl("Inner Join "                           ).trimmed().toLower();
+            staticKeywordCache[kgcJoinLeft              ]=qbl("Left Join "                            ).trimmed().toLower();
+            staticKeywordCache[kgcJoinRigth             ]=qbl("Rigth Join "                           ).trimmed().toLower();
+            staticKeywordCache[kgcKey                   ]=qbl("Key "                                  ).trimmed().toLower();
+            staticKeywordCache[kgcLeft                  ]=qbl("Left "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcILike                 ]=qbl("%1 like %2 "                           ).trimmed().toLower();
+            staticKeywordCache[kgcLike                  ]=qbl("%1 like %2 "                           ).trimmed().toLower();
+            staticKeywordCache[kgcSoundexEqual          ]=qbl("soundex(%1) = soundex(%2)"             ).trimmed().toLower();
+            staticKeywordCache[kgcLimit                 ]=qbl("Limit %1 "                             ).trimmed().toLower();
+            staticKeywordCache[kgcOffset                ]=qbl("offset %1 "                            ).trimmed().toLower();
+            staticKeywordCache[kgcMax                   ]=qbl("Max(%1) "                              ).trimmed().toLower();
+            staticKeywordCache[kgcMaxAs                 ]=qbl("Max(%1) as %2 "                        ).trimmed().toLower();
+            staticKeywordCache[kgcMin                   ]=qbl("Min(%1) "                              ).trimmed().toLower();
+            staticKeywordCache[kgcMinAs                 ]=qbl("Min(%1) as %2 "                        ).trimmed().toLower();
+            staticKeywordCache[kgcMinor                 ]=qbl("%1 < %2 "                              ).trimmed().toLower();
+            staticKeywordCache[kgcNot                   ]=qbl("Not "                                  ).trimmed().toLower();
+            staticKeywordCache[kgcNotExists             ]=qbl("not Exists "                           ).trimmed().toLower();
+            staticKeywordCache[kgcNotNull               ]=qbl("Not Null "                             ).trimmed().toLower();
+            staticKeywordCache[kgcNull                  ]=qbl("Null "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcOn                    ]=qbl("On "                                   ).trimmed().toLower();
+            staticKeywordCache[kgcOr                    ]=qbl("or "                                   ).trimmed().toLower();
+            staticKeywordCache[kgcOrderBy               ]=qbl("Order by "                             ).trimmed().toLower();
+            staticKeywordCache[kgcJoinOuter             ]=qbl("Outer Join "                           ).trimmed().toLower();
+            staticKeywordCache[kgcPivot                 ]=qbl("Pivot "                                ).trimmed().toLower();
+            staticKeywordCache[kgcPrimary               ]=qbl("Primary "                              ).trimmed().toLower();
+            staticKeywordCache[kgcPrimaryKey            ]=qbl("Primary Key "                          ).trimmed().toLower();
+            staticKeywordCache[kgcProcedure             ]=qbl("Procedure "                            ).trimmed().toLower();
+            staticKeywordCache[kgcReplace               ]=qbl("Replace "                              ).trimmed().toLower();
+            staticKeywordCache[kgcRigth                 ]=qbl("Rigth "                                ).trimmed().toLower();
+            staticKeywordCache[kgcRowNumber             ]=qbl("RowNumber "                            ).trimmed().toLower();
+            staticKeywordCache[kgcSchema                ]=qbl("Schema "                               ).trimmed().toLower();
+            staticKeywordCache[kgcSelect                ]=qbl("Select "                               ).trimmed().toLower();
+            staticKeywordCache[kgcSelectTop             ]=qbl("Select Top %1 "                        ).trimmed().toLower();
+            staticKeywordCache[kgcSelectDistinct        ]=qbl("Select distinct "                      ).trimmed().toLower();
+            staticKeywordCache[kgcSelectDistinctTop     ]=qbl("Select distinct top %1 "               ).trimmed().toLower();
+            staticKeywordCache[kgcSelectForExists       ]=qbl("Select null "                          ).trimmed().toLower();
+            staticKeywordCache[kgcSelectValues          ]=qbl("select %1 from(values(%2))as %3(%4) "  ).trimmed().toLower();
+            staticKeywordCache[kgcSet                   ]=qbl("Set "                                  ).trimmed().toLower();
+            staticKeywordCache[kgcSum                   ]=qbl("sum(%1) "                              ).trimmed().toLower();
+            staticKeywordCache[kgcSumAs                 ]=qbl("sum(%1) as %2 "                        ).trimmed().toLower();
+            staticKeywordCache[kgcTable                 ]=qbl("Table "                                ).trimmed().toLower();
+            staticKeywordCache[kgcTableTemp             ]=qbl("Temp Table "                           ).trimmed().toLower();
+            staticKeywordCache[kgcTemp                  ]=qbl("Temp "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcThen                  ]=qbl("Then "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcTruncate              ]=qbl("truncate "                             ).trimmed().toLower();
+            staticKeywordCache[kgcTruncateTable         ]=qbl("truncate table %1 "                    ).trimmed().toLower();
+            staticKeywordCache[kgcTruncateTableCacade   ]=qbl("truncate table %1 cascade "            ).trimmed().toLower();
+            staticKeywordCache[kgcUnion                 ]=qbl("union "                                ).trimmed().toLower();
+            staticKeywordCache[kgcUnionAll              ]=qbl("union all "                            ).trimmed().toLower();
+            staticKeywordCache[kgcIntersect             ]=qbl("intersect "                            ).trimmed().toLower();
+            staticKeywordCache[kgcIntersectAll          ]=qbl("intersect all "                        ).trimmed().toLower();
+            staticKeywordCache[kgcExcept                ]=qbl("Except "                               ).trimmed().toLower();
+            staticKeywordCache[kgcExceptAll             ]=qbl("Except all "                           ).trimmed().toLower();
+            staticKeywordCache[kgcUnique                ]=qbl("unique "                               ).trimmed().toLower();
+            staticKeywordCache[kgcUpdate                ]=qbl("update "                               ).trimmed().toLower();
+            staticKeywordCache[kgcUpdateSet             ]=qbl("update %1 set %2 %3 %4 %5 "            ).trimmed().toLower();
+            staticKeywordCache[kgcUpdateSetValues       ]=qbl(" "                                     ).trimmed().toLower();
+            staticKeywordCache[kgcUpsertSet             ]=qbl(" "                                     ).trimmed().toLower();
+            staticKeywordCache[kgcUsing                 ]=qbl("Using "                                ).trimmed().toLower();
+            staticKeywordCache[kgcValues                ]=qbl("values %1 "                            ).trimmed().toLower();
+            staticKeywordCache[kgcView                  ]=qbl("view "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcWhen                  ]=qbl("when "                                 ).trimmed().toLower();
+            staticKeywordCache[kgcWhere                 ]=qbl("where "                                ).trimmed().toLower();
+            staticKeywordCache[kgcSetApplicationName    ]=qbl(" "                                     ).trimmed().toLower();
+            staticKeywordCache[kgcSetSearchPath         ]=qbl(" "                                     ).trimmed().toLower();
+            staticKeywordCache[kgcNextVal               ]=QByteArray();
+            staticKeywordCache[kgcNextValSelect         ]=QByteArray();
         }
         this->parent->init();
     }
@@ -257,6 +257,10 @@ SqlSuitableKeyWord::~SqlSuitableKeyWord()
 SqlSuitableKeyWord &SqlSuitableKeyWord::operator =(const SqlSuitableKeyWord &o)
 {
     dPvt();
+    auto keyWord=&o;
+    if(keyWord==nullptr)
+        return *this;
+
     auto&pp=*static_cast<SqlSuitableKeyWordPvt*>(o.p);
     p.drivers=pp.drivers;
     p.staticKeywordCache=p.staticKeywordCache;
@@ -282,14 +286,14 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
     QStringList RETURN;
     if(command==kgcInsertInto){
         QVariantList list;
-        if(value.typeId()==QMetaType::QVariantList)
+        if(qTypeId(value)==QMetaType_QVariantList)
             list=value.toList();
         else
             list<<value;
 
         QVariantList listRecords;
         for(auto&v:list){
-            if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
+            if(qTypeId(v)==QMetaType_QVariantMap || qTypeId(v)==QMetaType_QVariantHash)
                 listRecords<<v;
             else
                 listRecords<<QVariantHash();//deve gerar erro
@@ -308,11 +312,11 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
     else if(command==kgcUpdate || command==kgcUpdateSet || command==kgcUpdateSetValues){
         auto listRecords=value;
-        if(listRecords.typeId()==QMetaType::QVariantList){
+        if(qTypeId(listRecords)==QMetaType_QVariantList){
             auto l=listRecords.toList();
             listRecords=l.size()==1?l.first():l;
         }
-        else if(listRecords.typeId()==QMetaType::QStringList){
+        else if(qTypeId(listRecords)==QMetaType_QStringList){
             auto l=listRecords.toStringList();
             listRecords=l.size()==1?QVariant(l.first()):l;
         }
@@ -350,11 +354,11 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
     }
     else if(command==kgcDelete || command==kgcDeleteFrom || command==kgcDeleteFromUsing){
         auto listRecords=value;
-        if(listRecords.typeId()==QMetaType::QVariantList){
+        if(qTypeId(listRecords)==QMetaType_QVariantList){
             auto l=listRecords.toList();
             listRecords=l.size()==1?l.first():l;
         }
-        else if(listRecords.typeId()==QMetaType::QStringList){
+        else if(qTypeId(listRecords)==QMetaType_QStringList){
             auto l=listRecords.toStringList();
             listRecords=l.size()==1?QVariant(l.first()):l;
         }
@@ -481,77 +485,81 @@ QString SqlSuitableKeyWord::formatValue(const QVariant &v)
     if(!v.isValid())
         return qsl("null");
 
-    QMetaType::Type __type=QMetaType::Type(v.typeId());
-    if(__type==QMetaType::Int || __type==QMetaType::UInt)
+    auto __type=qTypeId(v);
+    if(__type==QMetaType_Int || __type==QMetaType_UInt)
         return QString::number(v.toInt());
 
-    if(__type==QMetaType::LongLong || __type==QMetaType::ULongLong)
+    if(__type==QMetaType_LongLong || __type==QMetaType_ULongLong)
         return QString::number(v.toLongLong());
 
-    if(__type>=QMetaType::User)
+    if(__type>=QMetaType_User)
         return QString::number(v.toLongLong());
 
-    if(__type==QMetaType::Double)
+    if(__type==QMetaType_Double)
         return QString::number(v.toDouble(),'f',6);
 
-    if(__type==QMetaType::Bool)
+    if(__type==QMetaType_Bool)
         return v.toString();
 
-    if(__type==QMetaType::QString || __type==QMetaType::QByteArray){
+    if(__type==QMetaType_QString || __type==QMetaType_QByteArray){
         auto s=v.toString().trimmed();
         return qsl("'")+s.replace(qsl("'"),qsl("''"))+qsl("'");
     }
 
-    if(__type==QMetaType::QBitArray || __type==QMetaType::QChar)
+    if(__type==QMetaType_QBitArray || __type==QMetaType_QChar)
         return v.toString();
 
-    if(__type==QMetaType::QDateTime){
+    if(__type==QMetaType_QDateTime){
         auto d=v.toDateTime();
         d = (d.date()>=__d1900)?d:__dt1900;
         return qsl("'")+d.toString(format_date_time)+qsl("'");
     }
 
-    if(__type==QMetaType::QDate){
+    if(__type==QMetaType_QDate){
         auto d=v.toDate();
         d = (d>=__d1900)?d:__d1900;
         return qsl("'")+d.toString(format_date)+qsl("'");
     }
 
-    if(__type==QMetaType::QTime)
+    if(__type==QMetaType_QTime)
         return qsl("'")+v.toTime().toString(format_date)+qsl("'");
 
-    if(__type==QMetaType::QUuid){
+    if(__type==QMetaType_QUuid){
         auto u = v.toUuid();
         return u.isNull()?qsl("null"):(qsl("'")+u.toByteArray()+qsl("'"));
     }
 
-    if(__type==QMetaType::QUrl){
+    if(__type==QMetaType_QUrl){
         auto u = v.toUrl();
         return u.isEmpty()?qsl("null"):(qsl("'")+u.toString()+qsl("'"));
     }
 
-    if(__type==QMetaType::QVariantList || __type==QMetaType::QStringList){
-        QVector<QString> ls;
+    if(__type==QMetaType_QVariantList || __type==QMetaType_QStringList){
+        QStringList ls;
         for(auto&vv : v.toList()){
             if(vv.isNull() || !vv.isValid()){
                 continue;
             }
-            else if(vv.typeId()==QMetaType::QString || vv.typeId()==QMetaType::QByteArray || vv.typeId()==QMetaType::QChar || vv.typeId()==QMetaType::QBitArray){
+
+            if(qTypeId(vv)==QMetaType_QString || qTypeId(vv)==QMetaType_QByteArray || qTypeId(vv)==QMetaType_QChar || qTypeId(vv)==QMetaType_QBitArray){
                 const auto ss=vv.toString().trimmed();
                 ls.append(qsl("'") + ss + qsl("'"));
+                continue;
             }
-            else if(vv.typeId()==QMetaType::QUuid){
+
+            if(qTypeId(vv)==QMetaType_QUuid){
                 const auto ss=vv.toUuid().toString();
                 ls.append(qsl("'") + ss + qsl("'"));
+                continue;
             }
-            else if(vv.typeId()==QMetaType::QUrl){
+
+            if(qTypeId(vv)==QMetaType_QUrl){
                 const auto ss=vv.toUrl().toString();
                 ls.append(qsl("'") + ss + qsl("'"));
                 continue;
             }
-            else{
-                ls.append(vv.toString().trimmed());
-            }
+
+            ls.append(vv.toString().trimmed());
         }
         if(!ls.isEmpty())
             return ls.join(qsl(","));
@@ -565,46 +573,46 @@ QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
 {
     QString __return=qsl("null");
     if(v.isValid()){
-        auto __type=v.typeId();
-        if(__type==QMetaType::Int || __type==QMetaType::UInt)
+        auto __type=qTypeId(v);
+        if(__type==QMetaType_Int || __type==QMetaType_UInt)
             __return=QString::number(v.toInt());
-        else if(__type==QMetaType::LongLong || __type==QMetaType::ULongLong)
+        else if(__type==QMetaType_LongLong || __type==QMetaType_ULongLong)
             __return=QString::number(v.toLongLong());
-        else if(__type==QMetaType::Double)
+        else if(__type==QMetaType_Double)
             __return=QString::number(v.toDouble(),'f',6);
-        else if(__type==QMetaType::Bool)
+        else if(__type==QMetaType_Bool)
             __return=v.toString();
-        else if(__type==QMetaType::QString || __type==QMetaType::QByteArray){
+        else if(__type==QMetaType_QString || __type==QMetaType_QByteArray){
             auto s=v.toString().trimmed();
             __return=qsl("'")+s.replace(qsl("'"),qsl("\'"))+qsl("'");
         }
-        else if(__type==QMetaType::QBitArray || __type==QMetaType::QChar){
+        else if(__type==QMetaType_QBitArray || __type==QMetaType_QChar){
             auto s=v.toString().trimmed();
             __return=qsl("'")+s.replace(qsl("'"),qsl("\'"))+qsl("'");
         }
-        else if(__type==QMetaType::QDateTime){
+        else if(__type==QMetaType_QDateTime){
             auto d=v.toDateTime();
             d = (d.date()>=__d1900)?d:__dt1900;
             __return=qsl("'")+d.toString(format_date_time)+qsl("'");
         }
-        else if(__type==QMetaType::QDate){
+        else if(__type==QMetaType_QDate){
             auto d=v.toDate();
             d = (d>=__d1900)?d:__d1900;
             __return=qsl("'")+d.toString(format_date)+qsl("'");
         }
-        else if(__type==QMetaType::QTime)
+        else if(__type==QMetaType_QTime)
             return qsl("'")+v.toTime().toString(format_date)+qsl("'");
-        else if(__type==QMetaType::QUuid){
+        else if(__type==QMetaType_QUuid){
             auto u = v.toUuid();
             __return=u.isNull()?qsl("null"):(qsl("'")+u.toByteArray()+qsl("'"));
         }
-        else if(__type==QMetaType::QUrl){
+        else if(__type==QMetaType_QUrl){
             auto u = v.toUrl();
             __return=u.isEmpty()?qsl("null"):(qsl("'")+u.toString()+qsl("'"));
         }
-        else if(__type==QMetaType::QVariantList || __type==QMetaType::QStringList){
+        else if(__type==QMetaType_QVariantList || __type==QMetaType_QStringList){
             QStringList ls;
-            if(__type==QMetaType::QStringList){
+            if(__type==QMetaType_QStringList){
                 for(auto&v:v.toStringList()){
                     ls<<this->formatParameter(v);
                 }
@@ -627,7 +635,7 @@ QStringList SqlSuitableKeyWord::formatValues(const QStringList &field, const QVa
     auto fieldFormat=field;
 
     QVariantList vList;
-    if(values.typeId()==QMetaType::QVariantList)
+    if(qTypeId(values)==QMetaType_QVariantList)
         vList=values.toList();
     else
         vList<<values;
@@ -665,9 +673,9 @@ QStringList SqlSuitableKeyWord::formatValues(const QVariant &value)
 {
     QVariantList values;
 
-    if(value.typeId()==QMetaType::QVariantList || value.typeId()==QMetaType::QStringList)
+    if(qTypeId(value)==QMetaType_QVariantList || qTypeId(value)==QMetaType_QStringList)
         values=value.toList();
-    else if(value.typeId()==QMetaType::QVariantMap || value.typeId()==QMetaType::QVariantHash)
+    else if(qTypeId(value)==QMetaType_QVariantMap || qTypeId(value)==QMetaType_QVariantHash)
         values<<value.toHash().values();
     else
         values<<value;
@@ -686,9 +694,9 @@ QStringList SqlSuitableKeyWord::formatValuesSet(const QStringList &field, const 
     QStringList RETURN;
     QVariantList values;
 
-    if(value.typeId()==QMetaType::QVariantList)
+    if(qTypeId(value)==QMetaType_QVariantList)
         values=value.toList();
-    else if(value.typeId()==QMetaType::QVariantMap || value.typeId()==QMetaType::QVariantHash)
+    else if(qTypeId(value)==QMetaType_QVariantMap || qTypeId(value)==QMetaType_QVariantHash)
         values<<value;
 
     for(auto&v:values){
@@ -723,14 +731,15 @@ QStringList SqlSuitableKeyWord::parserCallProcedure(const QVariant &value)
         s_object+=s_object.isEmpty()?qsl_null:s_object;
         return QStringList{qsl("%1; { call %2(%3) }").arg(s_database,s_object, s_values)};
     }
-    else if(this->drivers().contains(QSqlDriver::PostgreSQL)){
+
+    if(this->drivers().contains(QSqlDriver::PostgreSQL)){
         QString s_object=object.toString();
         s_object+=schema.isEmpty()?qsl_null:(schema+qsl("."));
         s_object+=s_object.isEmpty()?qsl_null:s_object;
         return QStringList{qsl("select %1(%2)").arg(s_object, s_values)};
     }
 
-    return QStringList();
+    return {};
 }
 
 QStringList SqlSuitableKeyWord::parserCallFunction(const QVariant &value)
@@ -752,7 +761,7 @@ QStringList SqlSuitableKeyWord::parserCallFunction(const QVariant &value)
         return QStringList{qsl("select %1(%2)").arg(s_object, s_values)};
     }
 
-    return QStringList();
+    return {};
 }
 
 QStringList SqlSuitableKeyWord::parserCallFunctionTable(const QVariant &value)
@@ -773,7 +782,7 @@ QStringList SqlSuitableKeyWord::parserCallFunctionTable(const QVariant &value)
         return QStringList{qsl("select * from %1(%2)").arg(s_object, s_values)};
     }
 
-    return QStringList();
+    return {};
 }
 
 void SqlSuitableKeyWord::init()

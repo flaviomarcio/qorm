@@ -5,88 +5,98 @@
 #include "./private/p_qorm_sql_suitable_parser_strategy.h"
 
 namespace QOrm {
-    class Query;
+class Query;
 
-    class Q_ORM_EXPORT SqlSuitableBuilder : public ObjectDb
-    {
-    public:
-        explicit SqlSuitableBuilder(Query *parent=nullptr);
-        Q_INVOKABLE ~SqlSuitableBuilder();
+//!
+//! \brief The SqlSuitableBuilder class
+//!
+class Q_ORM_EXPORT SqlSuitableBuilder : public ObjectDb
+{
+public:
+    //!
+    //! \brief SqlSuitableBuilder
+    //! \param parent
+    //!
+    explicit SqlSuitableBuilder(Query *parent=nullptr);
 
-        /**
-         * @brief insert
-         * @return
-         */
-        SqlParserInsert &insert();
+    //!
+    //! \brief ~SqlSuitableBuilder
+    //!
+    ~SqlSuitableBuilder();
 
-        /**
-         * @brief update
-         * @return
-         */
-        SqlParserUpdate &update();
+    //!
+    //! \brief insert
+    //! \return
+    //!
+    SqlParserInsert &insert();
 
-        /**
-         * @brief upsert
-         * @return
-         */
-        SqlParserUpsert &upsert();
+    //!
+    //! \brief update
+    //! \return
+    //!
+    SqlParserUpdate &update();
 
-        /**
-         * @brief exclusion
-         * @return
-         */
-        SqlParserRemove &remove();
+    //!
+    //! \brief upsert
+    //! \return
+    //!
+    SqlParserUpsert &upsert();
 
-        /**
-         * @brief select
-         * @return
-         */
-        SqlParserSelect &select();
+    //!
+    //! \brief remove
+    //! \return
+    //!
+    SqlParserRemove &remove();
 
-        /**
-         * @brief procedure
-         * @return
-         */
-        SqlParserProcedure &procedure();
+    //!
+    //! \brief select
+    //! \return
+    //!
+    SqlParserSelect &select();
 
-        /**
-         * @brief function
-         * @return
-         */
-        SqlParserFunction &function();
+    //!
+    //! \brief procedure
+    //! \return
+    //!
+    SqlParserProcedure &procedure();
 
-        /**
-         * @brief structure
-         * @return
-         */
-        SqlParserStructure &structure();
+    //!
+    //! \brief function
+    //! \return
+    //!
+    SqlParserFunction &function();
 
-        /**
-         * @brief combineSelect
-         * @return
-         */
-        SqlParserCombineSelect &combineSelect();
+    //!
+    //! \brief structure
+    //! \return
+    //!
+    SqlParserStructure &structure();
 
+    //!
+    //! \brief combineSelect
+    //! \return
+    //!
+    SqlParserCombineSelect &combineSelect();
 
-        /**
-         * @brief build
-         * @return
-         */
-        virtual bool build();
+    //!
+    //! \brief build
+    //! \return
+    //!
+    virtual bool build();
 
-        /**
-         * @brief preparedQuery
-         * @return
-         */
-        QStringList&preparedQuery() const;
+    //!
+    //! \brief preparedQuery
+    //! \return
+    //!
+    QStringList&preparedQuery() const;
 
-        /**
-         * @brief clear
-         */
-        virtual void clear();
-    private:
-        void*p=nullptr;
-    };
+    //!
+    //! \brief clear
+    //!
+    virtual void clear();
+private:
+    void*p=nullptr;
+};
 
 }
 

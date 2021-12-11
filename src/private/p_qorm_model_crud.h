@@ -5,7 +5,6 @@
 #include "./p_qorm_model_crud_body.h"
 #include "./p_qorm_model_action_method.h"
 #include "../qorm_model_dto_options.h"
-#include "../qorm_model_dto_resullt_info.h"
 #include "../qorm_model_crud_request.h"
 #include "../qorm_model_dao.h"
 #include "../qorm_model_dto.h"
@@ -62,14 +61,14 @@ public:
     //! \brief resultInfo
     //! \return
     //!
-    QOrm::ModelDtoResultInfo&resultInfo();
+    QStm::ResultInfo&resultInfo();
 
     //!
     //! \brief setResultInfo
     //! \param resultInfo
     //! \return
     //!
-    CRUDBase &setResultInfo(const QOrm::ModelDtoResultInfo&resultInfo);
+    CRUDBase &setResultInfo(const QStm::ResultInfo&resultInfo);
 
     //!
     //! \brief makeDefault
@@ -185,6 +184,13 @@ public:
     //! \return
     //!
     virtual ResultValue &crudify();
+
+    //!
+    //! \brief actionNulls
+    //! \return
+    //!
+    //! remove actions
+    virtual CRUDBase&actionNulls();
 
     //!
     //! \brief actionSearch

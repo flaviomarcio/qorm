@@ -59,9 +59,9 @@ TaskRunner &TaskRunner::vs(const QVariant &values)
 {
     dPvt();
     QVariantList vList;
-    if(values.typeId()==QMetaType::QVariantMap || values.typeId()==QMetaType::QVariantHash)
+    if(qTypeId(values)==QMetaType_QVariantMap || qTypeId(values)==QMetaType_QVariantHash)
         vList=values.toHash().values();
-    else if(values.typeId()==QMetaType::QVariantList || values.typeId()==QMetaType::QStringList)
+    else if(qTypeId(values)==QMetaType_QVariantList || qTypeId(values)==QMetaType_QStringList)
         vList=values.toList();
     else
         vList<<values;
@@ -161,13 +161,13 @@ void TaskRunner::clear()
 
 QUuid TaskRunner::taskAppend(const QVariant &taskValue)
 {
-     dPvt();
-     auto uuid=QUuid::createUuid();
-     QVariantHash vTask;
-     vTask.insert(qsl("uuid") , uuid.toString());
-     vTask.insert(qsl("order"), p.pool.taskQueueValue.size()+1);
-     vTask.insert(qsl("value"), taskValue);
-     p.pool.taskQueueValue<<vTask;
+    dPvt();
+    auto uuid=QUuid::createUuid();
+    QVariantHash vTask;
+    vTask.insert(qsl("uuid") , uuid.toString());
+    vTask.insert(qsl("order"), p.pool.taskQueueValue.size()+1);
+    vTask.insert(qsl("value"), taskValue);
+    p.pool.taskQueueValue<<vTask;
     return uuid;
 }
 
@@ -219,4 +219,4 @@ TaskRunner&TaskRunner::setTimeout(int value)
     return*this;
 }
 
-} // namespace QOrm
+}

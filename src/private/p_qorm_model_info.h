@@ -14,69 +14,75 @@ class Model;
 class Q_ORM_EXPORT ModelInfo:public QVariant{
     friend class ModelInfoPvt;
 public:
-    /**
-     * @brief ModelInfo
-     */
+    //!
+    //! \brief ModelInfo
+    //!
     explicit ModelInfo();
 
-    /**
-     * @brief ~ModelInfo
-     */
+    //!
+    //! \brief ~ModelInfo
+    //!
     virtual ~ModelInfo();
 
-    /**
-     * @brief modelInfo
-     * @param metaObject
-     * @return
-     */
+    //!
+    //! \brief modelInfo
+    //! \param v
+    //! \return
+    //!
     const static ModelInfo &modelInfo(const QVariant&v);
     const static ModelInfo &modelInfo(const QMetaObject&metaObject);
     static ModelInfo&modelInfoInit(const QMetaObject&staticMetaObject);
 
-    /**
-     * @brief modelName
-     * @return
-     */
+    //!
+    //! \brief modelName
+    //! \return
+    //!
     virtual QString &modelName() const;
     virtual void setModelName(const QString &value);
 
-    /**
-     * @brief modelDescription
-     * @return
-     */
+    //!
+    //! \brief modelDescription
+    //! \return
+    //!
     virtual QString &modelDescription() const;
     virtual void setModelDescription(const QString &value);
 
-    /**
-     * @brief className
-     * @return
-     */
+    //!
+    //! \brief className
+    //! \return
+    //!
     QByteArray className() const;
 
-    /**
-     * @brief staticMetaObject
-     * @return
-     */
+    //!
+    //! \brief staticMetaObject
+    //! \return
+    //!
     QMetaObject &staticMetaObject() const;
 
-    /**
-     * @brief propertyIgnoredList
-     * @return
-     */
+    //!
+    //! \brief propertyIgnoredList
+    //! \return
+    //!
     static const QStringList &propertyIgnoredList();
 
-    /**
-     * @brief property
-     * @return
-     */
+    //!
+    //! \brief property
+    //! \return
+    //!
     virtual QList<QMetaProperty>&property() const;
 
-    /**
-     * @brief propertyByFieldName
-     * @return
-     */
+    //!
+    //! \brief propertyByFieldName
+    //! \return
+    //!
     virtual QHash<QString, QMetaProperty>&propertyByFieldName() const;
     virtual QMetaProperty propertyByFieldName(const QString &fieldName)const;
+
+    //!
+    //! \brief propertyFiltrable
+    //! \return
+    //!
+    virtual QHash<QString, QMetaProperty>&propertyFiltrable() const;
 
     /**
      * @brief propertyByPropertyName
@@ -85,108 +91,110 @@ public:
     virtual QHash<QString, QMetaProperty>&propertyByPropertyName() const;
     virtual QMetaProperty propertyByPropertyName(const QString &propertyName) const;
 
-    /**
-     * @brief propertyList
-     * @return
-     */
+    //!
+    //! \brief propertyList
+    //! \return
+    //!
     virtual QStringList &propertyList() const;
 
-    /**
-     * @brief propertyTableList
-     * @return
-     */
+    //!
+    //! \brief propertyTableList
+    //! \return
+    //!
     virtual QStringList &propertyTableList() const;
 
-    /**
-     * @brief propertyTableVsShort
-     * @return
-     */
+    //!
+    //! \brief propertyTableVsShort
+    //! \return
+    //!
     virtual QHash<QString, QString> &propertyTableVsShort() const;
 
-    /**
-     * @brief propertyShotVsTable
-     * @return
-     */
+    //!
+    //! \brief propertyShortVsTable
+    //! \return
+    //!
     virtual QHash<QString, QString> &propertyShortVsTable() const;
 
-    /**
-     * @brief propertyInfo
-     * @return
-     */
+    //!
+    //! \brief propertyInfo
+    //! \return
+    //!
     virtual QHash<QString, QMetaProperty> &propertyInfo() const;
 
-    /**
-     * @brief propertyPK
-     * @return
-     */
+    //!
+    //! \brief propertyPK
+    //! \return
+    //!
     virtual QHash<QString, QMetaProperty> &propertyPK() const;
 
-    /**
-     * @brief propertyFK
-     * @return
-     */
+    //!
+    //! \brief propertyFK
+    //! \return
+    //!
     virtual QHash<QString, QMetaProperty> &propertyFK() const;
 
-    /**
-     * @brief propertyDescriptors
-     * @return
-     */
+    //!
+    //! \brief propertyDescriptors
+    //! \return
+    //!
     virtual QVariantList propertyDescriptors() const;
 
-    /**
-     * @brief propertySort
-     * @return
-     */
+    //!
+    //! \brief propertySort
+    //! \return
+    //!
     virtual QVariantHash propertySort() const;
 
-    /**
-     * @brief propertyParserToTable
-     * @return
-     */
+    //!
+    //! \brief propertyParserToTable
+    //! \param v
+    //! \return
+    //!
     virtual QVariantHash propertyParserToTable(const QVariant &v) const;
 
-    /**
-     * @brief propertyParserToProperty
-     * @return
-     */
+    //!
+    //! \brief propertyParserToProperty
+    //! \param v
+    //! \return
+    //!
     virtual QVariantHash propertyParserToProperty(const QVariant &v) const;
 
-    /**
-     * @brief propertyNameConvertMap
-     * @param propertyMap
-     * @return
-     */
+    //!
+    //! \brief propertyNameConvertMap
+    //! \param propertyMap
+    //! \return
+    //!
     virtual bool propertyNameConvertMap(QVariantHash &propertyMap);
 
-    /**
-     * @brief propertyDeactivateField
-     * @return
-     */
+    //!
+    //! \brief propertyDeactivateField
+    //! \return
+    //!
     virtual QVariantHash propertyDeactivateField() const;
 
 
-    /**
-     * @brief tableSchema
-     * @return
-     */
+    //!
+    //! \brief tableSchema
+    //! \return
+    //!
     virtual QString &tableSchema() const;
 
-    /**
-     * @brief tablePrefix
-     * @return
-     */
+    //!
+    //! \brief tablePrefix
+    //! \return
+    //!
     virtual QString &tablePrefix() const;
 
-    /**
-     * @brief tablePrefixSeparator
-     * @return
-     */
+    //!
+    //! \brief tablePrefixSeparator
+    //! \return
+    //!
     virtual QString tablePrefixSeparator() const;
 
-    /**
-     * @brief tableName
-     * @return
-     */
+    //!
+    //! \brief tableName
+    //! \return
+    //!
     virtual QString tableName() const;
 
     /**
@@ -195,34 +203,40 @@ public:
      */
     virtual QString tableNameFull() const;
 
-    /**
-     * @brief tableSequence
-     * @return
-     */
+    //!
+    //! \brief tableSequence
+    //! \return
+    //!
     virtual QVariantHash tableSequence() const;
 
-    /**
-     * @brief tablePk
-     * @return
-     */
+    //!
+    //! \brief tablePk
+    //! \return
+    //!
     virtual QStringList tablePk() const;
 
-    /**
-     * @brief tablePkField
-     * @return
-     */
+    //!
+    //! \brief tablePkField
+    //! \return
+    //!
     virtual QVariantList tablePkField() const;
 
-    /**
-     * @brief tableForeignKey
-     * @return
-     */
+    //!
+    //! \brief tableForeignKey
+    //! \return
+    //!
     virtual QVariantHash tableForeignKey() const;
 
-    /**
-     * @brief tableOrderBy
-     * @return
-     */
+    //!
+    //! \brief tableFiltrableField
+    //! \return
+    //!
+    virtual QVariantList tableFiltrableField() const;
+
+    //!
+    //! \brief tableOrderBy
+    //! \return
+    //!
     virtual QStringList tableOrderBy() const;
 
     /**
@@ -232,55 +246,58 @@ public:
      */
     virtual QVariantList tableOrderByField() const;
 
-    /**
-     * @brief tableDeactivateField
-     * @param v
-     * @return
-     */
+    //!
+    //! \brief tableDeactivateField
+    //! \return
+    //!
     virtual QVariantHash tableDeactivateField() const;
 
-    /**
-     * @brief tablePkAutoGenerate
-     * @return
-     */
+    //!
+    //! \brief tablePkAutoGenerate
+    //! \return
+    //!
     virtual bool tablePkAutoGenerate() const;
 
-    /**
-     * @brief tablePkSingle
-     * @return
-     */
+    //!
+    //! \brief tablePkSingle
+    //! \return
+    //!
     virtual QString tablePkSingle() const;
 
-    /**
-     * @brief toMap
-     * @return
-     */
+    //!
+    //! \brief toMap
+    //! \param object
+    //! \return
+    //!
     virtual QVariantMap toMap(const QObject *object) const;
 
-    /**
-     * @brief toMap
-     * @param object
-     * @return
-     */
+    //!
+    //! \brief toHash
+    //! \param object
+    //! \return
+    //!
     virtual QVariantHash toHash(const QObject *object) const;
 
-    /**
-     * @brief toHashModel
-     * @return
-     */
+    //!
+    //! \brief toMapModel
+    //! \param object
+    //! \return
+    //!
     virtual QVariantMap toMapModel(const QObject *object) const;
 
-    /**
-     * @brief toHashModel
-     * @return
-     */
+    //!
+    //! \brief toHashModel
+    //! \param object
+    //! \return
+    //!
     virtual QVariantHash toHashModel(const QObject *object) const;
 
-    /**
-     * @brief toForeign
-     * @param object
-     * @return
-     */
+    //!
+    //! \brief toForeign
+    //! \param vModel
+    //! \param v
+    //! \return
+    //!
     virtual QVariantHash toForeign(const QVariant&vModel, const QVariant &v) const;
 
 

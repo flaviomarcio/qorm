@@ -3,7 +3,8 @@
 
 namespace QOrm {
 
-TaskSlot::TaskSlot(TaskPool *pool, const QVariantHash &connectionSetting, TaskRunnerMethod methodExecute,TaskRunnerMethod methodSuccess,TaskRunnerMethod methodFailed):QThread(nullptr), cnnPool(connectionSetting){
+TaskSlot::TaskSlot(TaskPool *pool, const QVariantHash &connectionSetting, TaskRunnerMethod methodExecute,TaskRunnerMethod methodSuccess,TaskRunnerMethod methodFailed):QThread(nullptr), cnnPool(connectionSetting)
+{
     this->moveToThread(this);
     this->pool=pool;
     this->runner=pool->runner;
@@ -22,7 +23,8 @@ TaskSlot::TaskSlot(TaskPool *pool, const QVariantHash &connectionSetting, TaskRu
     QObject::connect(this, &TaskSlot::taskError     , this->runner  , &TaskRunner::taskError    );
 }
 
-TaskSlot::~TaskSlot(){
+TaskSlot::~TaskSlot()
+{
     QObject::disconnect(this, &TaskSlot::taskSend      , this          , &TaskSlot::on_taskSend    );
     QObject::disconnect(this, &TaskSlot::taskRequest   , this->pool    , &TaskPool::taskRequest    );
     QObject::disconnect(this, &TaskSlot::taskSuccess   , this->pool    , &TaskPool::taskResponse   );
@@ -63,24 +65,24 @@ void TaskSlot::on_taskRequest(){
 
 void TaskSlot::on_taskSend(const QVariant &task){
     QVariantHash vTask;
-    vTask.insert(qsl("request"), task);
+    vTask[qsl("request")]=task;
     emit taskStart(vTask);
     if(!this->connectionCheck()){
-        vTask.insert(qsl("error"), qsl("Invalid connection on Slot"));
+        vTask[qsl("error")]=qsl("Invalid connection on Slot");
         this->methodFailed(this->connection, task);
         emit taskError(vTask);
     }
     else{
         auto response=this->methodExecute(this->connection, task);
-        vTask.insert(qsl("response"), response);
+        vTask[qsl("response")]=response;
         this->connection.close();
         if(!this->connection.open()){
-            vTask.insert(qsl("error"),connection.lastError().text());
+            vTask[qsl("error")]=connection.lastError().text();
             this->methodFailed(this->connection, vTask);
         }
         else{
             auto r=this->methodSuccess(this->connection, response);
-            vTask.insert(qsl("response"), r);
+            vTask[qsl("response")]=r;
         }
         emit taskSuccess(vTask);
     }

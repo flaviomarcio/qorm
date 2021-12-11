@@ -14,14 +14,14 @@ public:
     }
     QVariant&wrapper(){
         QVariantList list;
-        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap)
+        if(qTypeId(v)==QMetaType_QVariantHash || qTypeId(v)==QMetaType_QVariantMap)
             list<<this->v;
-        else if(v.typeId()==QMetaType::QVariantList)
+        else if(qTypeId(v)==QMetaType_QVariantList)
             list=v.toList();
 
         for (int var = 0; var < list.count(); ++var) {
             auto&v=list[var];
-            if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap){
+            if(qTypeId(v)==QMetaType_QVariantHash || qTypeId(v)==QMetaType_QVariantMap){
                 auto map=v.toHash();
                 if(!map.isEmpty()){
                     QVariantHash wrapperMap;
@@ -33,7 +33,7 @@ public:
 
                         auto value=map[src];
                         if(value.isValid()){
-                            wrapperMap.insert(dst,value);
+                            wrapperMap[dst]=value;
                         }
                     }
                     v=QVariant(wrapperMap);
@@ -41,9 +41,9 @@ public:
             }
         }
 
-        if(v.typeId()==QMetaType::QVariantHash || v.typeId()==QMetaType::QVariantMap)
+        if(qTypeId(v)==QMetaType_QVariantHash || qTypeId(v)==QMetaType_QVariantMap)
             this->v=list.first();
-        else if(v.typeId()==QMetaType::QVariantList)
+        else if(qTypeId(v)==QMetaType_QVariantList)
             this->v=list;
 
         return this->v;
@@ -74,7 +74,7 @@ Wrapper::~Wrapper()
 Wrapper &Wrapper::w(const QString &propertySrc, const QString &propertyDestine)
 {
     dPvt();
-    p.wrapperNames.insert(propertySrc, propertyDestine);
+    p.wrapperNames[propertySrc]=propertyDestine;
     return*this;
 }
 
@@ -96,4 +96,4 @@ QVariant&Wrapper::v() const
     return p.wrapper();
 }
 
-} // namespace QOrm
+}

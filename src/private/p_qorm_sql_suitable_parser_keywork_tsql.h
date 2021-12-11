@@ -7,15 +7,14 @@ namespace QOrm {
 class Q_ORM_EXPORT SqlSuitableKeyWordTSQL : public SqlSuitableKeyWord{
 public:
     explicit SqlSuitableKeyWordTSQL(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::MSSqlServer, parent){
-        this->commands().insert(kgcSelectForExists, qbl("select top 1 null"));
-        this->commands().insert(kgcUpsertSet, qbl_null.trimmed().toLower());
-        this->commands().insert(kgcIsNull, qbl("isnull"));
-        this->commands().insert(kgcIsNullCheckValue, qbl("isnull(%1, %2)"));
-        this->commands().insert(kgcLimit, qbl_null);
-        this->commands().insert(kgcOffset, qbl_null);
-        this->commands().insert(kgcSetTransactionReadOnlyOn, qbl("ApplicationIntent=ReadOnly"));
-        this->commands().insert(kgcSetTransactionReadOnlyOff, qbl_null);
-        //ApplicationIntent=ReadOnly
+        this->commands()[kgcSelectForExists]=qbl("select top 1 null");
+        this->commands()[kgcUpsertSet]=qbl_null.trimmed().toLower();
+        this->commands()[kgcIsNull]=qbl("isnull");
+        this->commands()[kgcIsNullCheckValue]=qbl("isnull(%1, %2)");
+        this->commands()[kgcLimit]=qbl_null;
+        this->commands()[kgcOffset]=qbl_null;
+        this->commands()[kgcSetTransactionReadOnlyOn]=qbl("ApplicationIntent=ReadOnly");
+        this->commands()[kgcSetTransactionReadOnlyOff]=qbl_null;
     }
     ~SqlSuitableKeyWordTSQL(){
     }

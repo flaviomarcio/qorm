@@ -60,7 +60,7 @@ public:
             auto property = metaObject.property(col);
             if(__propertyIgnoredList.contains(property.name()))
                 continue;
-            else if(list.contains(property.name()))
+            if(list.contains(property.name()))
                 vBody[property.name()]=property.read(this->model);
         }
         return this->model->toMd5(vBody);
@@ -73,56 +73,67 @@ public:
             if(__propertyIgnoredList.contains(property.name()))
                 continue;
 
-            if(property.typeId()>=QMetaType::User){
-                this->write(property, 0);
-                continue;
+            switch (qTypeId(property)) {
+                case QMetaType_User:
+                    this->write(property, 0);
+                    continue;
+                case QMetaType_QUuid:
+                    this->write(property, QUuid());
+                    continue;
+                case QMetaType_QUrl:
+                    this->write(property, QUrl());
+                    continue;
+                case QMetaType_QDate:
+                    this->write(property, QDate());
+                    continue;
+                case QMetaType_QTime:
+                    this->write(property, QTime());
+                    continue;
+                case QMetaType_QDateTime:
+                    this->write(property, QDateTime());
+                    continue;
+                case QMetaType_Double:
+                    this->write(property, 0);
+                    continue;
+                case QMetaType_Int:
+                    this->write(property, 0);
+                    continue;
+                case QMetaType_UInt:
+                    this->write(property, 0);
+                    continue;
+                case QMetaType_LongLong:
+                    this->write(property, 0);
+                    continue;
+                case QMetaType_ULongLong:
+                    this->write(property, 0);
+                    continue;
+                case QMetaType_QString:
+                    this->write(property, qsl_null);
+                    continue;
+                case QMetaType_QByteArray:
+                    this->write(property, qsl_null);
+                    continue;
+                case QMetaType_QChar:
+                    this->write(property, qsl_null);
+                    continue;
+                case QMetaType_QBitArray:
+                    this->write(property, qsl_null);
+                    continue;
+                case QMetaType_QVariantMap:
+                    this->write(property, QVariantMap());
+                    continue;
+                case QMetaType_QVariantHash:
+                    this->write(property, QVariantHash());
+                    continue;
+                case QMetaType_QVariantList:
+                    this->write(property, QVariantList());
+                    continue;
+                case QMetaType_QStringList:
+                    this->write(property, QStringList());
+                    continue;
+            default:
+                this->write(property, QVariant());
             }
-
-            if(property.typeId()==QMetaType::QUuid){
-                this->write(property, QUuid());
-                continue;
-            }
-
-            if(property.typeId()==QMetaType::QUrl){
-                this->write(property, QUrl());
-                continue;
-            }
-
-            if(property.typeId()==QMetaType::QDate){
-                this->write(property, QDate());
-                continue;
-            }
-
-            if(property.typeId()==QMetaType::QTime){
-                this->write(property, QTime());
-                continue;
-            }
-
-            if(property.typeId()==QMetaType::QDateTime){
-                this->write(property, QDateTime());
-                continue;
-            }
-
-            if(property.typeId()==QMetaType::Double || property.typeId()==QMetaType::Int || property.typeId()==QMetaType::UInt || property.typeId()==QMetaType::LongLong || property.typeId()==QMetaType::ULongLong){
-                this->write(property, 0);
-                continue;
-            }
-
-            if(property.typeId()==QMetaType::QString || property.typeId()==QMetaType::QByteArray || property.typeId()==QMetaType::QChar || property.typeId()==QMetaType::QBitArray){
-                this->write(property, qsl_null);
-            }
-
-            if( property.typeId()==QMetaType::QVariantMap || property.typeId()==QMetaType::QVariantHash){
-                this->write(property, QVariantHash());
-                continue;
-            }
-
-            if(property.typeId()==QMetaType::QVariantList || property.typeId()==QMetaType::QStringList){
-                this->write(property, QVariantList());
-                continue;
-            }
-
-            this->write(property, QVariant());
         }
     }
 
@@ -150,13 +161,13 @@ public:
     }
 
     bool write(const QMetaProperty&property, const QVariant&value){
-        auto type = property.typeId();
+        auto type = qTypeId(property);
 
         QVariant vValue;
 
-        VariantUtil vu;
+        Q_DECLARE_VU;
 
-        if(type==QMetaType::QUuid && value.typeId()!=type)
+        if(type==QMetaType_QUuid && qTypeId(value)!=type)
             vValue=vu.toUuid(value);
         else
             vValue=value;
@@ -166,77 +177,77 @@ public:
 
         if(QStmTypesListString.contains(type)){
             QVariant v;
-            if(QStmTypesListObjects.contains(vValue.typeId()))
+            if(QStmTypesListObjects.contains(qTypeId(value)))
                 v=QJsonDocument::fromVariant(vValue).toJson(QJsonDocument::Compact);
-            else if(type==QMetaType::QUuid)
+            else if(type==QMetaType_QUuid)
                 v=vu.toUuid(vValue);
-            else if(type==QMetaType::QUrl)
+            else if(type==QMetaType_QUrl)
                 v=vu.toUrl(vValue);
             else
                 v=vValue;
 
-            if((property.typeId()>=QMetaType::User) && (property.write(this->model, vValue.toInt())))
+            if((qTypeId(property)>=QMetaType_User) && (property.write(this->model, vValue.toInt())))
                 return true;
-            if((type==QMetaType::QUuid) && (property.write(this->model, vValue.toUuid())))
+            if((type==QMetaType_QUuid) && (property.write(this->model, vValue.toUuid())))
                 return true;
-            if((type==QMetaType::QString) && (property.write(this->model, v.toString())))
+            if((type==QMetaType_QString) && (property.write(this->model, v.toString())))
                 return true;
-            if((type==QMetaType::QByteArray) && (property.write(this->model, v.toByteArray())))
+            if((type==QMetaType_QByteArray) && (property.write(this->model, v.toByteArray())))
                 return true;
-            if((type==QMetaType::QChar) && (property.write(this->model, v.toChar())))
+            if((type==QMetaType_QChar) && (property.write(this->model, v.toChar())))
                 return true;
-            if((type==QMetaType::QBitArray) && (property.write(this->model, v.toBitArray())))
+            if((type==QMetaType_QBitArray) && (property.write(this->model, v.toBitArray())))
                 return true;
         }
         else if(QStmTypesListNumeric.contains(type)){//ints
-            if((type==QMetaType::LongLong) && (property.write(this->model, static_cast<qlonglong>(QLocale::c().toDouble(vValue.toString())))))
+            if((type==QMetaType_LongLong) && (property.write(this->model, static_cast<qlonglong>(QLocale::c().toDouble(vValue.toString())))))
                 return true;
-            if((type==QMetaType::Int) && (property.write(this->model, QLocale::c().toInt(vValue.toString()))))
+            if((type==QMetaType_Int) && (property.write(this->model, QLocale::c().toInt(vValue.toString()))))
                 return true;
-            if((type==QMetaType::UInt) && (property.write(this->model, QLocale::c().toInt(vValue.toString()))))
+            if((type==QMetaType_UInt) && (property.write(this->model, QLocale::c().toInt(vValue.toString()))))
                 return true;
-            if((type==QMetaType::UInt) && (property.write(this->model, QLocale::c().toUInt(vValue.toString()))))
+            if((type==QMetaType_UInt) && (property.write(this->model, QLocale::c().toUInt(vValue.toString()))))
                 return true;
-            if((type==QMetaType::ULongLong || type==QMetaType::LongLong) && (property.write(this->model, QLocale::c().toLongLong(vValue.toString()))))
+            if((type==QMetaType_ULongLong || type==QMetaType_LongLong) && (property.write(this->model, QLocale::c().toLongLong(vValue.toString()))))
                 return true;
-            if((type==QMetaType::Double) && (property.write(this->model, QLocale::c().toDouble(vValue.toString()))))
+            if((type==QMetaType_Double) && (property.write(this->model, QLocale::c().toDouble(vValue.toString()))))
                 return true;
         }
         else if(QStmTypesListClass.contains(type)){
-            if((type==QMetaType::QUrl) && (property.write(this->model, vValue.toUrl())))
+            if((type==QMetaType_QUrl) && (property.write(this->model, vValue.toUrl())))
                 return true;
-            if((type==QMetaType::QVariantMap) && (property.write(this->model, vValue.toHash())))
+            if((type==QMetaType_QVariantMap) && (property.write(this->model, vValue.toHash())))
                 return true;
-            if((type==QMetaType::QVariantHash) && (property.write(this->model, vValue.toHash())))
+            if((type==QMetaType_QVariantHash) && (property.write(this->model, vValue.toHash())))
                 return true;
-            if((type==QMetaType::QVariantList) && (property.write(this->model, vValue.toList())))
+            if((type==QMetaType_QVariantList) && (property.write(this->model, vValue.toList())))
                 return true;
-            if((type==QMetaType::QStringList) && (property.write(this->model, vValue.toStringList())))
+            if((type==QMetaType_QStringList) && (property.write(this->model, vValue.toStringList())))
                 return true;
         }
         else if(QStmTypesListDates.contains(type)){
-            if((type==QMetaType::QDate) && (property.write(this->model, vValue.toDate())))
+            if((type==QMetaType_QDate) && (property.write(this->model, vValue.toDate())))
                 return true;
-            if((type==QMetaType::QDateTime) && (property.write(this->model, vValue.toDateTime())))
+            if((type==QMetaType_QDateTime) && (property.write(this->model, vValue.toDateTime())))
                 return true;
-            if((type==QMetaType::QTime) && (property.write(this->model, vValue.toTime())))
+            if((type==QMetaType_QTime) && (property.write(this->model, vValue.toTime())))
                 return true;
         }
-        else if(QStmTypesListBool.contains(type) || QStmTypesListBool.contains(vValue.typeId())){
+        else if(QStmTypesListBool.contains(type) || QStmTypesListBool.contains(qTypeId(value))){
             auto&v=vValue;
-            if((type==QMetaType::Bool) && (property.write(this->model, vValue.toBool())))
+            if((type==QMetaType_Bool) && (property.write(this->model, vValue.toBool())))
                 return true;
 
-            if(v.typeId()==QMetaType::Bool){
-                if(v.typeId()==QMetaType::Bool && property.write(this->model, vValue.toBool()))
+            if(qTypeId(v)==QMetaType_Bool){
+                if(qTypeId(v)==QMetaType_Bool && property.write(this->model, vValue.toBool()))
                     return true;
 
-                if(v.typeId()==QMetaType::Int || v.typeId()==QMetaType::UInt || v.typeId()==QMetaType::ULongLong || v.typeId()==QMetaType::LongLong || v.typeId()==QMetaType::Double){
+                if(qTypeId(v)==QMetaType_Int || qTypeId(v)==QMetaType_UInt || qTypeId(v)==QMetaType_ULongLong || qTypeId(v)==QMetaType_LongLong || qTypeId(v)==QMetaType_Double){
                     if(property.write(this->model, (vValue.toInt()==1)))
                         return true;
                 }
 
-                if(v.typeId()==QMetaType::QString || v.typeId()==QMetaType::QByteArray || v.typeId()==QMetaType::QChar){
+                if(qTypeId(v)==QMetaType_QString || qTypeId(v)==QMetaType_QByteArray || qTypeId(v)==QMetaType_QChar){
                     auto vv=vValue.toString().toLower();
                     bool vBool=(vv==qsl("true"));
                     if(property.write(this->model, vBool))
@@ -259,27 +270,24 @@ public:
         auto prefix = modelInfo.tablePrefix();
 
         QVariant record;
-        if(vRecord.typeId()!=QMetaType::QVariantList)
+        if(qTypeId(vRecord)!=QMetaType_QVariantList)
             record=vRecord;
         else{
             auto vList=vRecord.toList();
             auto v=vList.isEmpty()?QVariant():vList.first();
-            if(record.typeId()==QMetaType::QVariantMap || record.typeId()==QMetaType::QVariantHash)//check object
-                record=v;
-            else
-                record=vRecord;
+            //check object
+            record=(QStmTypesVariantDictionary.contains(qTypeId(v)))?v:QVariant();
         }
         if(record.isValid()){
-            if(record.typeId()==QMetaType::QVariantMap || record.typeId()==QMetaType::QVariantHash){
-                VariantUtil u;
+            if(QStmTypesVariantDictionary.contains(qTypeId(record))){
+                Q_DECLARE_VU;
                 auto recordMap=record.toHash();
                 if(recordMap.isEmpty())
                     return this->model->lr()=false;
 
                 for(auto&property:modelInfo.property()){
                     auto propertyName=QByteArray(property.name()).toLower().trimmed();
-                    QHashIterator<QString, QVariant> i(recordMap);
-                    while (i.hasNext()) {
+                    Q_V_HASH_ITERATOR (recordMap){
                         i.next();
                         auto valueName=i.key().toLower().trimmed();
                         if((valueName==propertyName) || valueName==prefix+propertyName){
@@ -290,23 +298,23 @@ public:
                         }
                     }
                 }
+                return this->model->lr();
             }
-            else {
-                auto tablePk = this->modelInfo().tablePk();
-                if(tablePk.size()==1){
-                    auto name=tablePk.first().trimmed();
-                    if(name.startsWith(prefix)){
-                        name=name.split(prefix).last();
-                    }
-                    if(record.typeId()==QMetaType::QUuid){
-                        auto uuid=record.toUuid();
-                        if(!this->model->setProperty(name.toUtf8(), uuid)){
-                            sWarning()<<qsl("no setProperty('%1', %2)").arg(name, record.toString());
-                        }
-                    }
-                    else if(!this->model->setProperty(name.toUtf8(), record)){
+
+            auto tablePk = this->modelInfo().tablePk();
+            if(tablePk.size()==1){
+                auto name=tablePk.first().trimmed();
+                if(name.startsWith(prefix))
+                    name=name.split(prefix).last();
+
+                if(qTypeId(record)==QMetaType_QUuid){
+                    auto uuid=record.toUuid();
+                    if(!this->model->setProperty(name.toUtf8(), uuid)){
                         sWarning()<<qsl("no setProperty('%1', %2)").arg(name, record.toString());
                     }
+                }
+                else if(!this->model->setProperty(name.toUtf8(), record)){
+                    sWarning()<<qsl("no setProperty('%1', %2)").arg(name, record.toString());
                 }
             }
 
@@ -348,14 +356,12 @@ public:
 
             //auto value=record.value(property.name());
             auto propertyName=QByteArray(property.name()).toLower().trimmed();
-            QHashIterator<QString, QVariant> i(record);
-            while (i.hasNext()) {
+            Q_V_HASH_ITERATOR (record){
                 i.next();
                 auto valueName=i.key().toLower().trimmed();
                 if((valueName==propertyName) || valueName==prefix+propertyName){
-                    if(!this->write(property, i.value())){
+                    if(!this->write(property, i.value()))
                         return this->model->lr().setValidation(QObject::tr("Invalid data model"));
-                    }
                     break;
                 }
             }
@@ -369,9 +375,10 @@ public:
         const auto&mapWrapper=this->mapWrapper.value(name);
         QVariantList vList;
         QVariantList rList;
-        if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
+        auto typeId=qTypeId(v);
+        if(QStmTypesVariantDictionary.contains(typeId))
             vList<<v.toHash();
-        else if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList)
+        if(QStmTypesVariantList.contains(typeId))
             vList=v.toList();
 
         for(auto&v:vList){
@@ -380,37 +387,50 @@ public:
                 continue;
             
             const auto&modelInfo = this->modelInfo();
-            QVariantHash rMap;
+            QVariantHash rHash;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QHashIterator<QByteArray, QByteArray> i(mapWrapper);
+#else
             QMultiHashIterator<QByteArray, QByteArray> i(mapWrapper);
+#endif
             while (i.hasNext()) {
                 i.next();
                 auto&k=modelInfo.tablePrefix()+i.key();
                 auto&s=i.value();
                 auto v=record.value(k);
-                if(v.isValid()){
-                    if(v.typeId()==QMetaType::QUuid)
-                        rMap.insert(s,v.toString());
-                    else if(v.typeId()==QMetaType::QUrl)
-                        rMap.insert(s,v.toString());
-                    else if(v.typeId()>=QMetaType::User)
-                        rMap.insert(s,v.toInt());
-                    else
-                        rMap.insert(s,v);
-                }
-                else{
+                if(!v.isValid()){
                     auto&k=i.key();
                     auto v=record.value(k);
-                    if(v.typeId()==QMetaType::QUuid)
-                        rMap.insert(s,v.toString());
-                    else if(v.typeId()==QMetaType::QUrl)
-                        rMap.insert(s,v.toString());
-                    else if(v.typeId()>=QMetaType::User)
-                        rMap.insert(s,v.toInt());
-                    else
-                        rMap.insert(s,v);
+                    switch (qTypeId(v)){
+                    case QMetaType_QUuid:
+                        rHash.insert(s,v.toUuid().toString());
+                        break;
+                    case QMetaType_QUrl:
+                        rHash.insert(s,v.toUrl().toString());
+                        break;
+                    case QMetaType_User:
+                        rHash.insert(s,v.toInt());
+                        break;
+                    default:
+                        rHash.insert(s,v);
+                    }
+                    continue;
+                }
+                switch (qTypeId(v)){
+                case QMetaType_QUuid:
+                    rHash.insert(s,v.toUuid().toString());
+                    break;
+                case QMetaType_QUrl:
+                    rHash.insert(s,v.toUrl().toString());
+                    break;
+                case QMetaType_User:
+                    rHash.insert(s,v.toInt());
+                    break;
+                default:
+                    rHash.insert(s,v);
                 }
             }
-            rList<<rMap;
+            rList<<rHash;
         }
         return rList;
     }
@@ -516,11 +536,32 @@ Model::~Model()
     dPvt();delete&p;
 }
 
+QVariant Model::tablePkCompuser() const
+{
+    return {};
+}
+
 Model &Model::clear()
 {
     dPvt();
     p.clear();
     return*this;
+}
+
+bool Model::makeUuid()
+{
+    return true;
+//    Q_DECLARE_VU;
+//    QVariantList vList;
+//    //qvl{this->day_week(), this->specialties_uuid(), this->establishment_uuid()}
+//    auto uuid=vu.toUuidCompuser(vList);
+//    this->set_uuid(uuid);
+//    return true;
+}
+
+bool Model::autoMakeUuid()
+{
+    return this->makeUuid();
 }
 
 QByteArray Model::storedMd5Make() const
@@ -532,8 +573,7 @@ QByteArray Model::storedMd5Make() const
 bool Model::isModifier(const QVariantHash &vMap)
 {
     auto tMap=this->toHash();
-    QHashIterator<QString, QVariant> i(vMap);
-    while (i.hasNext()) {
+    Q_V_HASH_ITERATOR (vMap){
         i.next();
         auto&k=i.key();
         auto v0=i.value().toString().trimmed();
@@ -586,14 +626,39 @@ QVariantHash Model::toMapPKValues() const
     const auto&propertyShortVsTable=modelInfo.propertyShortVsTable();
     auto pList=modelInfo.propertyPK().values();
     for(auto&property:pList){
-        if(property.isValid()){
-            auto fieldName=propertyShortVsTable[property.name()].trimmed();
-            if(!fieldName.isEmpty()){
-                const auto k=SqlParserItem::createObject(fieldName);
-                const auto v=SqlParserItem::createValue(property.read(this));
-                map.insert(k,v);
-            }
+        if(!property.isValid())
+            return {};
+        auto fieldName=propertyShortVsTable[property.name()].trimmed();
+        if(fieldName.isEmpty())
+            return {};
+
+        auto value=property.read(this);
+        auto typeId=qTypeId(property);
+
+        if(typeId==QMetaType_QUuid){
+            auto v=value.toUuid();
+            if(v.isNull())
+                return {};
+            value=v;
         }
+        if(QStmTypesVariantDictionary.contains(typeId)){
+            auto v=value.toHash();
+            if(v.isEmpty())
+                return {};
+            value=v;
+        }
+        if(QStmTypesListString.contains(typeId)){
+            auto v=value.toString().trimmed();
+            if(v.isEmpty())
+                return {};
+            value=v;
+        }
+
+        value=property.read(this);
+        const auto k=SqlParserItem::createObject(fieldName);
+        const auto v=SqlParserItem::createValue(value);
+        map.insert(k,v);
+
     }
     return QVariant(map).toHash();
 }
@@ -629,10 +694,9 @@ QVariantHash Model::toWrapper(const QString &wrapperName) const
     auto map=this->toHashModel();
     if(map.isEmpty())
         return map;
-    else{
-        auto l=p.toWrapper(wrapperName, map);
-        return l.isEmpty()?QVariantHash():l.first().toHash();
-    }
+
+    auto l=p.toWrapper(wrapperName, map);
+    return l.isEmpty()?QVariantHash():l.first().toHash();
 }
 
 QVariantList Model::toWrapper(const QString &wrapperName, const QVariantList &v) const
@@ -686,10 +750,9 @@ bool Model::addWrapper(const QString &wrapperName, const QString &src, const QSt
 
 bool Model::writeToWrapper(QVariantHash &wrapper) const
 {
-    QHashIterator<QString, QVariant> i(this->toWrapper());
-    while (i.hasNext()) {
+    Q_V_HASH_ITERATOR (this->toWrapper()){
         i.next();
-        wrapper.insert(i.key(),i.value());
+        wrapper[i.key()]=i.value();
     }
     return true;
 }
@@ -715,9 +778,7 @@ bool Model::appendToWrapper(QVariantHash &wrapper, const QString &fromWrapper, c
         wrapper.insert(toWrapper, v);
         return true;
     }
-    else{
-        return false;
-    }
+    return false;
 }
 
 bool Model::isWrapperModifier(const QVariantHash &wrapper, const QString &fromWrapper)
@@ -736,9 +797,8 @@ bool Model::isWrapperModifierSet(const QVariantHash &wrapper, const QString &fro
 {
     dPvt();
     auto tMap=p.wrapperToModelMap(fromWrapper, wrapper);
-    if(this->isModifier(tMap)){
+    if(this->isModifier(tMap))
         return this->readFrom(tMap);
-    }
     return false;
 }
 
@@ -773,7 +833,6 @@ void Model::setCursor(QSqlQuery &cursor)
         p.cursorClear();
         p.cursorQuery=&cursor;
         p.cursorMake();
-
     }
 }
 
@@ -815,8 +874,7 @@ ResultValue &Model::readFrom(const ResultValue &resultValue)
 
 ResultValue &Model::readFrom(const Model &model)
 {
-    auto map=model.toHash();
-    return this->readFrom(map);
+    return this->readFrom(model.toHash());
 }
 
 ResultValue &Model::readWrapper(const QString &wrapper, const QVariant &vMap)
@@ -870,7 +928,7 @@ ResultValue &Model::mergeFrom(QSqlQuery &record)
 ResultValue &Model::mergeFrom(ResultValue &resultValue)
 {
     dPvt();
-    return p.merge(resultValue.resultMap());
+    return p.merge(resultValue.resultHash());
 }
 
 bool Model::setProperty(const char *name, const QVariant &value)
@@ -879,9 +937,8 @@ bool Model::setProperty(const char *name, const QVariant &value)
     auto index=this->metaObject()->indexOfProperty(name);
     if(index>=0){
         auto property=this->metaObject()->property(index);
-        if(property.isValid()){
+        if(property.isValid())
             return p.write(property, value);
-        }
     }
     return false;
 }
@@ -899,11 +956,10 @@ ResultValue &Model::uuidSet()
     Q_V_PROPERTY_ITERATOR(modelInfo.propertyPK()){
         i.next();
         auto&property=i.value();
-        if(property.typeId()==QMetaType::QUuid){
-            auto v=property.read(this);
-            if(v.isNull() || !v.isValid()){
+        if(qTypeId(property)==QMetaType_QUuid){
+            auto v=property.read(this).toUuid();
+            if(v.isNull())
                 property.write(this, this->uuidGenerator());
-            }
         }
     }
     return this->lr()=true;
@@ -915,17 +971,15 @@ ResultValue &Model::deactivateSetValues()
     auto propertyDeactivateField=p.modelInfo().propertyDeactivateField();
     if(propertyDeactivateField.isEmpty())
         return this->lr()=false;
-    else{
-        Q_V_HASH_ITERATOR(propertyDeactivateField){
-            i.next();
-            const auto k=i.key().toUtf8();
-            const auto&v=i.value();
-            if(!this->setProperty(k, v)){
-                return this->lr().setValidation(tr("Invalid data to define in the model as deleted"));
-            }
-        }
-        return this->lr();
+
+    Q_V_HASH_ITERATOR(propertyDeactivateField){
+        i.next();
+        const auto k=i.key().toUtf8();
+        const auto&v=i.value();
+        if(!this->setProperty(k, v))
+            return this->lr().setValidation(tr("Invalid data to define in the model as deleted"));
     }
+    return this->lr();
 }
 
 ResultValue &Model::datetimeSet()
@@ -936,23 +990,29 @@ ResultValue &Model::datetimeSet()
         i.next();
         auto&property=i.value();
         auto v=property.read(this);
-        if(property.typeId()==QMetaType::QDateTime){
-            auto dt=v.toDateTime();
-            if(dt.isNull() || !v.isValid()){
-                property.write(this, QDateTime::currentDateTime());
+        switch (qTypeId(property)) {
+            case QMetaType_QDateTime:{
+                auto dt=v.toDateTime();
+                if(dt.isNull() || !v.isValid()){
+                    property.write(this, QDateTime::currentDateTime());
+                }
+                break;
             }
-        }
-        else if(property.typeId()==QMetaType::QDate){
-            auto dt=v.toDate();
-            if(dt.isNull() || !v.isValid()){
-                property.write(this, QDate::currentDate());
-            }
-        }
-        else if(property.typeId()==QMetaType::QTime){
-            auto dt=v.toTime();
-            if(dt.isNull() || !v.isValid()){
-                property.write(this, QTime::currentTime());
-            }
+            case QMetaType_QDate:{
+                    auto dt=v.toDate();
+                    if(dt.isNull() || !v.isValid()){
+                        property.write(this, QDate::currentDate());
+                    }
+                }
+                break;
+            case QMetaType_QTime:{
+                    auto dt=v.toTime();
+                    if(dt.isNull() || !v.isValid()){
+                        property.write(this, QTime::currentTime());
+                    }
+                }
+                break;
+            default:;
         }
     }
     return this->lr()=true;

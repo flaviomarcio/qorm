@@ -4,30 +4,61 @@
 #include "../qorm_model_dao.h"
 
 namespace QOrm {
-    typedef std::function<ResultValue*(QOrm::ObjectDb*controller, const QVariant&vBody)> ModelActionMethod;
+//!
+//! \brief ModelActionMethod
+//!
+typedef std::function<ResultValue*(QOrm::ObjectDb*controller, const QVariant&vBody)> ModelActionMethod;
 
-    class Q_ORM_EXPORT ModelAction : public QOrm::ObjectDb
-    {
-    public:
-        Q_PROPERTY(QVariant Strategy READ strategy WRITE strategy )
+//!
+//! \brief The ModelAction class
+//!
+class Q_ORM_EXPORT ModelAction : public QOrm::ObjectDb
+{
+public:
+    Q_PROPERTY(QVariant Strategy READ strategy WRITE strategy )
 
-        /**
-         * @brief ModelAction
-         * @param parent
-         */
-        Q_INVOKABLE explicit ModelAction(QObject *parent = nullptr);
+    //!
+    //! \brief ModelAction
+    //! \param parent
+    //!
+    Q_INVOKABLE explicit ModelAction(QObject *parent = nullptr);
 
-        virtual ResultValue&action(const QVariant&vSource);
+    //!
+    //! \brief action
+    //! \param vSource
+    //! \return
+    //!
+    virtual ResultValue&action(const QVariant&vSource);
 
-        Q_INVOKABLE ~ModelAction();
+    //!
+    //! \brief ~ModelAction
+    //!
+    Q_INVOKABLE ~ModelAction();
 
-        virtual ModelAction&onActionBefore(ModelActionMethod action);
-        virtual ModelAction&onAction(ModelActionMethod action);
-        virtual ModelAction&onActionAfter(ModelActionMethod action);
+    //!
+    //! \brief onActionBefore
+    //! \param action
+    //! \return
+    //!
+    virtual ModelAction&onActionBefore(ModelActionMethod action);
 
-    private:
-        void*p=nullptr;
-    };
+    //!
+    //! \brief onAction
+    //! \param action
+    //! \return
+    //!
+    virtual ModelAction&onAction(ModelActionMethod action);
+
+    //!
+    //! \brief onActionAfter
+    //! \param action
+    //! \return
+    //!
+    virtual ModelAction&onActionAfter(ModelActionMethod action);
+
+private:
+    void*p=nullptr;
+};
 
 }
 

@@ -48,4 +48,4 @@ bool TransactionScope::rollback()
     return p.transaction.rollback();
 }
 
-} // namespace QOrm
+}

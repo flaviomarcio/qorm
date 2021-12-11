@@ -7,13 +7,13 @@ namespace QOrm {
 class Q_ORM_EXPORT SqlSuitableKeyWordMySql : public SqlSuitableKeyWord{
 public:
     explicit SqlSuitableKeyWordMySql(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::MySqlServer, parent){
-        this->commands().insert(kgcSelectTop, qbl_null);
-        this->commands().insert(kgcUpsertSet, qbl_null.trimmed().toLower());
+        this->commands()[kgcSelectTop]=qbl_null;
+        this->commands()[kgcUpsertSet]=qbl_null;
     }
     ~SqlSuitableKeyWordMySql(){
     }
     virtual void init(){
-        this->commands().insert(kgcSelectTop, qbl_null);
+        this->commands()[kgcSelectTop]=qbl_null;
     }
 };
 

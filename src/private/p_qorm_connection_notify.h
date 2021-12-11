@@ -78,5 +78,5 @@ signals:
     void notification_send(const QString &channel, const QVariant &payload);
 };
 
-} // namespace QOrm
+}
 

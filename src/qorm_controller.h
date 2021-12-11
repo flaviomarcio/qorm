@@ -8,19 +8,33 @@
 
 namespace QOrm {
 
+//!
+//! \brief The Controller class
+//!
 class Q_ORM_EXPORT Controller : public ObjectDb
 {
     Q_OBJECT
 public:
+    //!
+    //! \brief Controller
+    //! \param parent
+    //!
     Q_INVOKABLE explicit Controller(QObject *parent = nullptr);
-    Q_INVOKABLE explicit Controller(const QSqlDatabase&connection, QObject *parent = nullptr);
-    Q_INVOKABLE ~Controller();
 
-    /**
-     * @brief dbConnect
-     * @param db
-     * @return
-     */
+    //!
+    //! \brief Controller
+    //! \param connection
+    //! \param parent
+    //!
+    explicit Controller(const QSqlDatabase&connection, QObject *parent = nullptr);
+
+    ~Controller();
+
+    //!
+    //! \brief dbConnect
+    //! \param objectConnection
+    //! \return
+    //!
     bool dbConnect(QObject *objectConnection);
 
     /**
@@ -30,25 +44,25 @@ public:
      */
     bool dbConnect(ConnectionManager &connectionManager);
 
-    /**
-     * @brief dbConnect
-     * @param connectionPool
-     * @return
-     */
+    //!
+    //! \brief dbConnect
+    //! \param connectionPool
+    //! \return
+    //!
     bool dbConnect(ConnectionPool &connectionPool);
 
-    /**
-     * @brief dbConnect
-     * @param db
-     * @return
-     */
+    //!
+    //! \brief dbConnect
+    //! \param connection
+    //! \return
+    //!
     bool dbConnect(const QSqlDatabase&connection);
 
-    /**
-     * @brief dbConnect
-     * @param connectionName
-     * @return
-     */
+    //!
+    //! \brief dbConnect
+    //! \param connectionId
+    //! \return
+    //!
     bool dbConnect(const QString&connectionId);
 private:
     void*p=nullptr;

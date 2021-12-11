@@ -139,7 +139,7 @@ void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
-        d.insert(i.key(), i.value());
+        d[i.key()]=i.value();
     }
 
     d[vpValue]=name;
@@ -183,7 +183,7 @@ void ModelDescriptor::addEdit(const QString &name, const QVariantHash &v)
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
-        d.insert(i.key(), i.value());
+        d[i.key()]=i.value();
     }
     p.edit[name]=d;
 }
@@ -213,7 +213,7 @@ void ModelDescriptor::addPerfumery(const QString &name, const QVariantHash &v)
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
-        d.insert(i.key(), i.value());
+        d[i.key()]=i.value();
     }
     p.perfumery[name]=d;
 }
@@ -243,7 +243,7 @@ void ModelDescriptor::addFlag(const QString &name, const QVariantHash &v)
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
-        d.insert(i.key(), i.value());
+        d[i.key()]=i.value();
     }
     p.flags[name]=d;
 }
@@ -273,7 +273,7 @@ void ModelDescriptor::addOption(const QString &name, const QVariantHash &v)
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
-        d.insert(i.key(), i.value());
+        d[i.key()]=i.value();
     }
     p.options[name]=d;
 }

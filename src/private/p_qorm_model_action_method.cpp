@@ -27,12 +27,9 @@ public:
 
     QVariantList makeBodyLoop(const QVariant&v){
         auto vHash=v.toHash();
-        QVariantList vList;
         if(vHash.contains(qsl("id")) && vHash.contains(qsl("items")))
-            vList=vHash[qsl("items")].toList();
-        else
-            vList.append(vHash);
-        return vList;
+            return vHash[qsl("items")].toList();
+        return qvl{vHash};
     }
 
 
@@ -76,26 +73,17 @@ ResultValue &ModelAction::action(const QVariant &vSource)
     for(auto&vSource:vList){
         if(p.actionBefore!=nullptr){
             auto&lr=*p.actionBefore(p.parentDb, vSource);
-            if(!lr)
-                return this->lr(lr);
-            else
-                this->lr(lr);
+            this->lr(lr);
         }
 
         if(p.action!=nullptr){
             auto&lr=*p.action(p.parentDb, vSource);
-            if(!lr)
-                return this->lr(lr);
-            else
-                this->lr(lr);
+            this->lr(lr);
         }
 
         if(p.actionAfter!=nullptr){
             auto&lr=*p.actionAfter(p.parentDb, vSource);
-            if(!lr)
-                return this->lr(lr);
-            else
-                this->lr(lr);
+            this->lr(lr);
         }
     }
     return this->lr();

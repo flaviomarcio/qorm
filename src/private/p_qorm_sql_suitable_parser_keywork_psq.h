@@ -14,25 +14,25 @@ public:
     ~SqlSuitableKeyWordPSql(){
     }
     virtual void init(){
-        this->commands().insert(kgcSelectTop                        , qbl("select"));
-        this->commands().insert(kgcSelectForExists                  , qbl("select"));
-        this->commands().insert(kgcSelectDistinct                   , qbl("select distinct"));
-        this->commands().insert(kgcSelectDistinctTop                , qbl("select distinct"));
-        this->commands().insert(kgcIsNull                           , qbl("coalesce"));
-        this->commands().insert(kgcIsNullCheckValue                 , qbl("coalesce(%1, %2)"));
-        this->commands().insert(kgcUpsertSetValues                  , qbl("merge %1 u using(%2)as m on when matched update set %3 when not matched %4 %5"));
-        this->commands().insert(kgcUpsertSet                        , qbl_null);
-        this->commands().insert(kgcSetApplicationName               , qbl("set application_name to '%1'"));
-        this->commands().insert(kgcSetSearchPath                    , qbl("set search_path = %1"));
-        this->commands().insert(kgcSetTransactionReadOnlyOn         , qbl("set default_transaction_read_only = on"));
-        this->commands().insert(kgcSetTransactionReadOnlyOff        , qbl("set default_transaction_read_only = off"));
-        this->commands().insert(kgcForUpdateFinishScript            , qbl("for update"));
-        this->commands().insert(kgcForSkipLockedFinishScript        , qbl("for update skip locked"));
-        this->commands().insert(kgcNextVal                          , qbl("nextval"));
-        this->commands().insert(kgcNextValSelect                    , qbl("select nextval('%1') as value"));
-        this->commands().insert(kgcOffset                           , qbl("offset %1"));
-        this->commands().insert(kgcILike                            , qbl("%1 ilike %2 ").trimmed().toLower());
-        this->commands().insert(kgcLike                             , qbl("%1 ilike %2 ").trimmed().toLower());
+        this->commands()[kgcSelectTop                ]=qbl("select");
+        this->commands()[kgcSelectForExists          ]=qbl("select");
+        this->commands()[kgcSelectDistinct           ]=qbl("select distinct");
+        this->commands()[kgcSelectDistinctTop        ]=qbl("select distinct");
+        this->commands()[kgcIsNull                   ]=qbl("coalesce");
+        this->commands()[kgcIsNullCheckValue         ]=qbl("coalesce(%1, %2)");
+        this->commands()[kgcUpsertSetValues          ]=qbl("merge %1 u using(%2)as m on when matched update set %3 when not matched %4 %5");
+        this->commands()[kgcUpsertSet                ]=qbl_null;
+        this->commands()[kgcSetApplicationName       ]=qbl("set application_name to '%1'");
+        this->commands()[kgcSetSearchPath            ]=qbl("set search_path = %1");
+        this->commands()[kgcSetTransactionReadOnlyOn ]=qbl("set default_transaction_read_only = on");
+        this->commands()[kgcSetTransactionReadOnlyOff]=qbl("set default_transaction_read_only = off");
+        this->commands()[kgcForUpdateFinishScript    ]=qbl("for update");
+        this->commands()[kgcForSkipLockedFinishScript]=qbl("for update skip locked");
+        this->commands()[kgcNextVal                  ]=qbl("nextval");
+        this->commands()[kgcNextValSelect            ]=qbl("select nextval('%1') as value");
+        this->commands()[kgcOffset                   ]=qbl("offset %1");
+        this->commands()[kgcILike                    ]=qbl("%1 ilike %2 ").trimmed().toLower();
+        this->commands()[kgcLike                     ]=qbl("%1 ilike %2 ").trimmed().toLower();
 
     }
 
@@ -44,11 +44,11 @@ public:
         QStringList RETURN;
         if(command==kgcUpdate || command==kgcUpdateSet || command==kgcUpdateSetValues){
             auto listRecords=value;
-            if(listRecords.typeId()==QMetaType::QVariantList){
+            if(qTypeId(listRecords)==QMetaType_QVariantList){
                 auto l=listRecords.toList();
                 listRecords=l.size()==1?l.first():l;
             }
-            else if(listRecords.typeId()==QMetaType::QStringList){
+            else if(qTypeId(listRecords)==QMetaType_QStringList){
                 auto l=listRecords.toStringList();
                 listRecords=l.size()==1?QVariant(l.first()):l;
             }
@@ -67,13 +67,13 @@ public:
                     QStringList fields;
                     for(auto&v1:propertyTableList){
                         auto property=modelInfo->propertyByFieldName().value(v1);
-                        auto vType=property.typeId();
+                        auto vType=qTypeId(property);
                         auto v2=v1;
-                        if(vType==QMetaType::QUuid)
+                        if(vType==QMetaType_QUuid)
                             v2+=qsl("::uuid");
-                        else if(vType==QMetaType::QDateTime)
+                        else if(vType==QMetaType_QDateTime)
                             v2+=qsl("::timestamp");
-                        else if(vType==QMetaType::QDate)
+                        else if(vType==QMetaType_QDate)
                             v2+=qsl("::date");
                         fields << qsl("%1=s.%2").arg(v1, v2);
                     }
@@ -93,14 +93,14 @@ public:
                     for(auto&v1:modelInfo->tablePk()){
 
                         auto property=modelInfo->propertyByFieldName().value(v1);
-                        auto vType=property.typeId();
+                        auto vType=qTypeId(property);
 
                         auto v2=v1;
-                        if(vType==QMetaType::QUuid)
+                        if(vType==QMetaType_QUuid)
                             v2+=qsl("::uuid");
-                        else if(vType==QMetaType::QDateTime)
+                        else if(vType==QMetaType_QDateTime)
                             v2+=qsl("::timestamp");
-                        else if(vType==QMetaType::QDate)
+                        else if(vType==QMetaType_QDate)
                             v2+=qsl("::date");
 
                         fieldsWhere<<qsl("u.%1 = s.%2").arg(v1,v2);
@@ -118,14 +118,14 @@ public:
 
             auto propertyTableList=modelInfo->propertyTableList();
             QVariantList list;
-            if(value.typeId()==QMetaType::QVariantList)
+            if(qTypeId(value)==QMetaType_QVariantList)
                 list=value.toList();
             else
                 list<<value;
 
             QVariantList listRecords;
             for(auto&v:list){
-                if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
+                if(qTypeId(v)==QMetaType_QVariantMap || qTypeId(v)==QMetaType_QVariantHash)
                     listRecords<<v;
                 else
                     listRecords<<QVariantMap();//deve gerar erro
@@ -153,13 +153,13 @@ public:
                         QStringList fields;
                         for(auto&v1:propertyTableList){
                             auto property=modelInfo->propertyByFieldName().value(v1);
-                            auto vType=property.typeId();
+                            auto vType=qTypeId(property);
                             auto v2=v1;
-                            if(vType==QMetaType::QUuid)
+                            if(vType==QMetaType_QUuid)
                                 v2+=qsl("::uuid");
-                            else if(vType==QMetaType::QDateTime)
+                            else if(vType==QMetaType_QDateTime)
                                 v2+=qsl("::timestamp");
-                            else if(vType==QMetaType::QDate)
+                            else if(vType==QMetaType_QDate)
                                 v2+=qsl("::date");
                             fields << qsl("%1=excluded.%2").arg(v1, v2);
                         }

@@ -404,7 +404,7 @@ public:
     }
 
     virtual ModelDtoHeader<T>&value(const QString&v){
-        return this->value(QVariantHash({{vpValue,v}}));
+        return this->value(QVariantHash{{vpValue,v}});
     }
 
     virtual ModelDtoHeader<T>&value(const QVariantHash&v){

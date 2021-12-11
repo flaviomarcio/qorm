@@ -207,7 +207,7 @@ namespace QOrm {
                             group<<i.key();
                         }
                     }
-                    else if(parser_fields.typeId()==QMetaType::QVariantMap || parser_fields.typeId()==QMetaType::QVariantHash || parser_fields.typeId()==QMetaType::QVariantList || parser_fields.typeId()==QMetaType::QStringList){
+                    else if(qTypeId(parser_fields)==QMetaType_QVariantMap || qTypeId(parser_fields)==QMetaType_QVariantHash || qTypeId(parser_fields)==QMetaType_QVariantList || qTypeId(parser_fields)==QMetaType_QStringList){
                         auto map=parser_fields.toMap();
                         auto grouping=map.value(qsl("grouping")).toInt();
                         auto value=map.value(qsl("value")).toString().trimmed();
@@ -257,7 +257,7 @@ namespace QOrm {
                             }
                         }
                         else{
-                            if(parser_order.typeId()==QMetaType::QVariantMap || parser_order.typeId()==QMetaType::QVariantHash){
+                            if(qTypeId(parser_order)==QMetaType_QVariantMap || qTypeId(parser_order)==QMetaType_QVariantHash){
                                 auto item = SqlParserItem::from(parser_order);
                                 QString name;
                                 if(item.info()==koiObject)
@@ -267,7 +267,7 @@ namespace QOrm {
                                 if(!fields.contains(name))
                                     fields<<name;
                             }
-                            else if(parser_order.typeId()==QMetaType::QVariantList || parser_order.typeId()==QMetaType::QVariantList){
+                            else if(qTypeId(parser_order)==QMetaType_QVariantList || qTypeId(parser_order)==QMetaType_QVariantList){
                                 for(auto&v:parser_order.toList()){
                                     auto name=v.toByteArray().trimmed();
                                     if(!fields.contains(name))
@@ -441,16 +441,6 @@ namespace QOrm {
 
         virtual QStringList toScript(SqlSuitableKeyWord&parser){
             auto mapObject=this->toMap();
-            //auto parser_combination;
-            //int seq=0;
-            //QMapIterator<QString, QVariant> i(mapObject);
-            //while (i.hasNext()) {
-            //    i.next();
-            //    auto key=QString("%1.%2").arg(i.key()).arg(++seq);
-            //    auto value=i.value();
-            //    if(key.startsWith("from") || key.startsWith("join") || key.startsWith("where"))
-            //        parser_combination.insert(key, value);
-            //}
             static auto parser_combination=appendMapStartsWith(qvsl{qsl("from"), qsl("join"), qsl("where"), qsl("using")}, mapObject);
             QStringList output;
             if(!parser_combination.isEmpty()){
@@ -486,8 +476,8 @@ namespace QOrm {
             auto object=new SqlParserCommand();
             object->makeUuid();
             QVariantMap map;
-            map.insert(qsl("type"),kgcNextValSelect);
-            map.insert(qsl("object"),v);
+            map[qsl("type")]=kgcNextValSelect;
+            map[qsl("object")]=v;
             object->setValue(map);
             this->setPointer(this->suuid(), object);
             return*this;
@@ -530,8 +520,8 @@ namespace QOrm {
             auto object=new SqlParserCommand();
             object->makeUuid();
             QVariantMap map;
-            map.insert(qsl("type"),kgcTruncateTable);
-            map.insert(qsl("object"),v);
+            map[qsl("type")]=kgcTruncateTable;
+            map[qsl("object")]=v;
             object->setValue(map);
             this->setPointer(this->suuid(), object);
             return*this;
@@ -541,8 +531,8 @@ namespace QOrm {
             auto object=new SqlParserCommand();
             object->makeUuid();
             QVariantMap map;
-            map.insert(qsl("type"),kgcTruncateTableCacade);
-            map.insert(qsl("object"),v);
+            map[qsl("type")]=kgcTruncateTableCacade;
+            map[qsl("object")]=v;
             object->setValue(map);
             this->setPointer(this->suuid(), object);
             return*this;

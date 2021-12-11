@@ -1,12 +1,12 @@
 #pragma once
 
+#include "./qstm_result_info.h"
 #include "../qorm_sql_suitable_types.h"
 #include "./private/p_qorm_model_dto_items.h"
 #include "./private/p_qorm_model_dto_header.h"
 #include "./private/p_qorm_model_dto_filter.h"
 #include "./private/p_qorm_model_dto_link.h"
 #include "./private/p_qorm_model_dto_crud.h"
-#include "../qorm_model_dto_resullt_info.h"
 
 namespace QOrm {
 
@@ -30,8 +30,8 @@ public:
     //! \brief resultInfo
     //! \return
     //!
-    virtual ModelDtoResultInfo&resultInfo();
-    virtual ModelDtoControls&setResultInfo(const ModelDtoResultInfo&resultInfo);
+    virtual QStm::ResultInfo&resultInfo();
+    virtual ModelDtoControls&setResultInfo(const QStm::ResultInfo&resultInfo);
 
     /**
      * @brief name

@@ -55,4 +55,4 @@ private:
     bool connectionCheck();
 };
 
-} // namespace QOrm
+}

@@ -13,7 +13,7 @@ public:
     }
 
     virtual void init(){
-        this->commands().insert(kgcSelectTop, qbl_null);
+        this->commands()[kgcSelectTop]=qbl_null;
     }
 };
 

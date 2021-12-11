@@ -9,7 +9,7 @@ namespace QOrm {
     class CRUDBlockPvt{
     public:
         ModelDtoOptions options;
-        QOrm::ModelDtoResultInfo resultInfo;
+        QStm::ResultInfo resultInfo;
         CRUDBlock*parent=nullptr;
         QVariant crudBody;
         QMap<QByteArray, PrivateQOrm::CRUDBase*> crudMap;
@@ -47,7 +47,7 @@ namespace QOrm {
         return p.options;
     }
 
-    ModelDtoResultInfo &CRUDBlock::resultInfo()
+    QStm::ResultInfo &CRUDBlock::resultInfo()
     {
         dPvt();
         return p.resultInfo;
@@ -133,121 +133,117 @@ namespace QOrm {
         Q_DECLARE_VU;
         if(p.crudMap.isEmpty())
             return this->lr().clear().setBadRequest(tr("crud block is empty"));
-        else{
-            QVariantList __return;
-            QVariantHash ___hash, crudHash;
-            CRUDBody crudBody(p.crudBody);
 
-            {
+        QVariantList __return;
+        QVariantHash ___hash, crudHash;
+        CRUDBody crudBody(p.crudBody);
 
-                auto vCrudSource=crudBody.source().toHash();
-                if(vCrudSource.contains(qsl("crud"))){
-                    auto vList=vCrudSource[qsl("crud")].toList();
-                    for(auto&v:vList){
-                        auto vMap=v.toHash();
-                        auto crudName=vMap[qsl("id")].toString().toLower().trimmed();
-                        crudHash.insert(crudName, vMap);
-                    }
+        {
+            auto vCrudSource=crudBody.source().toHash();
+            if(vCrudSource.contains(qsl("crud"))){
+                auto vList=vCrudSource[qsl("crud")].toList();
+                for(auto&v:vList){
+                    auto vHash=v.toHash();
+                    auto crudName=vHash[qsl("id")].toString().toLower().trimmed();
+                    crudHash[crudName]=vHash;
                 }
             }
+        }
 
-            for(auto&crud:p.crudList){
-                const auto crudName=crud->crudName().toLower();
-                crud->setOptions(p.options);
-                crud->setResultInfo(p.resultInfo);
-                crud->unMakeDefault();
-                QVariantList crudList;
-                QVariant crudSource;
-                CRUDBody crudItem(crudBody);
+        for(auto&crud:p.crudList){
+            const auto crudName=crud->crudName().toLower();
+            crud->setOptions(p.options);
+            crud->setResultInfo(p.resultInfo);
+            crud->unMakeDefault();
+            QVariantList crudList;
+            QVariant crudSource;
+            CRUDBody crudItem(crudBody);
 
-                if(!crudHash.isEmpty()){
-                    crudSource=crudHash.value(crudName);
-                }
+            if(!crudHash.isEmpty()){
+                crudSource=crudHash.value(crudName);
+            }
 
-                if(!crudHash.contains(crudName)){
-                    crudList<<crudBody;
-                }
-                else if(vu.vIsList(crudSource)){
-                    for(auto&v:crudSource.toList())
-                        crudList<<v;
-                }
-                else if(vu.vIsMap(crudSource)){
-                    auto vMap=crudSource.toHash();
-                    if(vMap.contains(qsl("id")) && vMap.contains(qsl("items"))){
-                        auto list=vMap[qsl("items")].toList();
-                        for(auto&v:list)
-                            crudList<<CRUDBody(crudBody.strategy(), v);
-                    }
-                    else{
-                        crudList<<crudBody;
-                    }
+            if(!crudHash.contains(crudName)){
+                crudList<<crudBody;
+            }
+            else if(vu.vIsList(crudSource)){
+                for(auto&v:crudSource.toList())
+                    crudList<<v;
+            }
+            else if(vu.vIsMap(crudSource)){
+                auto vMap=crudSource.toHash();
+                if(vMap.contains(qsl("id")) && vMap.contains(qsl("items"))){
+                    auto list=vMap[qsl("items")].toList();
+                    for(auto&v:list)
+                        crudList<<CRUDBody(crudBody.strategy(), v);
                 }
                 else{
                     crudList<<crudBody;
                 }
+            }
+            else{
+                crudList<<crudBody;
+            }
 
 
-                auto makeItem=[&__return](PrivateQOrm::CRUDBase*crud, const QVariant&crudSource){
-                    CRUDBody crudRecord(crudSource);
+            auto makeItem=[&__return](PrivateQOrm::CRUDBase*crud, const QVariant&crudSource){
+                CRUDBody crudRecord(crudSource);
 
-                    QVariantHash lastCrud=__return.isEmpty()?QVariantHash():__return.last().toHash();
-                    if(lastCrud.isEmpty())
-                        crudRecord=CRUDBody(crudSource);
+                QVariantHash lastCrud=__return.isEmpty()?QVariantHash():__return.last().toHash();
+                if(lastCrud.isEmpty())
+                    crudRecord=CRUDBody(crudSource);
+                else{
+                    QVariantHash record, vHash;
+                    if(!lastCrud.contains(qsl("crud")))
+                        record=lastCrud;
                     else{
-                        QVariantHash record, vHash;
-                        if(!lastCrud.contains(qsl("crud")))
-                            record=lastCrud;
-                        else{
-                            auto crud=lastCrud[qsl("crud")].toList();
-                            if(!crud.isEmpty()){
-                                vHash = crud.first().toHash();
-                                if(vHash.contains(qsl("items")))
-                                    record=vHash;
-                                else{
-                                    crud=vHash[qsl("items")].toList();
-                                    record=crud.isEmpty()?QVariantHash():crud.first().toHash();
-                                }
+                        auto crud=lastCrud[qsl("crud")].toList();
+                        if(!crud.isEmpty()){
+                            vHash = crud.first().toHash();
+                            if(vHash.contains(qsl("items")))
+                                record=vHash;
+                            else{
+                                crud=vHash[qsl("items")].toList();
+                                record=crud.isEmpty()?QVariantHash():crud.first().toHash();
                             }
                         }
-                        const auto&modelInfo=crud->modelInfo();
-                        auto crudSourceFields=modelInfo.toForeign(crudRecord.source(), record);
-                        crudRecord=CRUDBody(crudRecord.strategy(), crudSourceFields);
                     }
-                    return crudRecord;
-                };
-
-
-                if(crudBody.isStrategy(QOrm::CRUDStrategy::Remove) || crudBody.isStrategy(QOrm::CRUDStrategy::Deactivate)){
-                    auto crudListCopy=crudList;
-                    while(!crudListCopy.isEmpty()){
-                        const auto&crudSource=crudListCopy.takeLast();
-                        CRUDBody crudMaked(crudSource);
-                        if(!crudListCopy.isEmpty()){
-                            crudMaked=makeItem(crud, crudSource);
-                        }
-                        if(!crud->crudBody(crudMaked).crudify())
-                            return this->lr(crud->lr());
-                        else
-                            __return<<crud->lr().resultVariant();
-                    }
+                    const auto&modelInfo=crud->modelInfo();
+                    auto crudSourceFields=modelInfo.toForeign(crudRecord.source(), record);
+                    crudRecord=CRUDBody(crudRecord.strategy(), crudSourceFields);
                 }
-                else {
-                    for(auto&crudSource:crudList){
-                        auto crudMaked=makeItem(crud, crudSource);
-                        if(!crud->crudBody(crudMaked).crudify())
-                            return this->lr(crud->lr());
-                        else{
-                            if(___hash.isEmpty())
-                                ___hash=crud->lr().resultHash();
-                            __return<<crud->lr().resultVariant();
-                        }
-                    }
-                }
+                return crudRecord;
+            };
 
+
+            if(crudBody.isStrategy(QOrm::CRUDStrategy::Remove) || crudBody.isStrategy(QOrm::CRUDStrategy::Deactivate)){
+                auto crudListCopy=crudList;
+                while(!crudListCopy.isEmpty()){
+                    const auto&crudSource=crudListCopy.takeLast();
+                    CRUDBody crudMaked(crudSource);
+                    if(!crudListCopy.isEmpty()){
+                        crudMaked=makeItem(crud, crudSource);
+                    }
+                    if(!crud->crudBody(crudMaked).crudify())
+                        return this->lr(crud->lr());
+                    __return<<crud->lr().resultVariant();
+                }
             }
-            ___hash[qsl("crud")]=__return;
-            return this->lr(___hash);
+            else {
+                for(auto&crudSource:crudList){
+                    auto crudMaked=makeItem(crud, crudSource);
+                    if(!crud->crudBody(crudMaked).crudify())
+                        return this->lr(crud->lr());
+
+                    if(___hash.isEmpty())
+                        ___hash=crud->lr().resultHash();
+                    __return<<crud->lr().resultVariant();
+                }
+            }
+
         }
+        ___hash[qsl("crud")]=__return;
+        return this->lr(___hash);
     }
 
 }

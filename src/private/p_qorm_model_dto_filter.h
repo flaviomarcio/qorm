@@ -224,7 +224,7 @@ public:
     }
 
     virtual ModelDtoFilter<T>&value(const QString&v){
-        return this->value(QVariantHash({{vpType,v}}));
+        return this->value(QVariantHash{{vpType,v}});
     }
 
     virtual ModelDtoFilter<T>&value(const QVariantHash&v){

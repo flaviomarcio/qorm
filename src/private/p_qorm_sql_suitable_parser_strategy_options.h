@@ -42,7 +42,7 @@ public:
 
     QVariantMap appendMapStartsWith(const QVariant&vKey, const QVariantMap&mapSrc){
         QVariantMap mapDst;
-        QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
+        QStringList lKey=qTypeId(vKey)==QMetaType_QStringList?vKey.toStringList():QStringList{vKey.toString()};
         QMapIterator<QString, QVariant> i(mapSrc);
         while (i.hasNext()) {
             i.next();
@@ -59,7 +59,7 @@ public:
 
     QVariantMap unionMapStartsWith(const QVariant&vKey, const QVariantMap&mapSrc){
 
-        QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
+        QStringList lKey=qTypeId(vKey)==QMetaType_QStringList?vKey.toStringList():QStringList{vKey.toString()};
         QVariantMap mapDst;
         QVariantMap mapUni;
         {
@@ -80,8 +80,6 @@ public:
             QMapIterator<QString, QVariant> i(mapUni);
             while (i.hasNext()) {
                 i.next();
-                //auto key=qsl("%1").arg(i.key()).toLower();
-
                 QMapIterator<QString, QVariant> ii(i.value().toMap());
                 while (ii.hasNext()) {
                     ii.next();
@@ -93,7 +91,7 @@ public:
     }
 
     QVariant getVariantStartsWith(const QVariant&vKey, const QVariantMap&mapSrc){
-        QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
+        QStringList lKey=qTypeId(vKey)==QMetaType_QStringList?vKey.toStringList():QStringList{vKey.toString()};
         QMapIterator<QString, QVariant> i(mapSrc);
         while (i.hasNext()) {
             i.next();
@@ -120,7 +118,7 @@ public:
 
     virtual QStringList toScript(SqlSuitableKeyWord&parser){
         Q_UNUSED(parser)
-        return QStringList();
+        return {};
     }
 
     virtual void setPropertys(){
@@ -180,12 +178,11 @@ public:
         this->make(QVariant());
     }
 
-    virtual void make(const QVariant&v){
-        Q_UNUSED(v)
+    virtual void make(const QVariant&){
     }
 
     virtual bool makeObject(){
-        bool r=false;
+        bool __return=false;
         if(!this->mapPointer.isEmpty()){
             VariantUtil u;
             auto vThis=this->toMap();
@@ -197,22 +194,25 @@ public:
 
                 if(i.value()!=nullptr){
                     auto v=i.value();
-                    if(v!=nullptr){
-                        if(v!=this)v->makeObject();
-                        if(v->typeId()==QMetaType::QVariantMap || v->typeId()==QMetaType::QVariantHash){
-                            auto map=v->toMap();
-                            vThis.insert(key, map);
-                        }
-                        else if(v->typeId()==QMetaType::User){
-                            vThis.insert(key, QVariant(*v));
-                        }
-                        r=true;
+                    if(v==nullptr)
+                        continue;
+                    if(v!=this)v->makeObject();
+                    auto typeId=qTypeId(*v);
+                    if(QStmTypesVariantDictionary.contains(typeId)){
+                        auto map=v->toHash();
+                        vThis.insert(key, map);
+                        __return=true;
+                    }
+
+                    if(typeId==QMetaType_User){
+                        vThis.insert(key, qv(*v));
+                        __return=true;
                     }
                 }
             }
             this->setValue(vThis);
         }
-        return r;
+        return __return;
     }
 
 
@@ -230,7 +230,7 @@ private:
             }
             this->mapPointer.clear();
         }
-        this->setValue(QVariant());
+        this->setValue(qv_null);
     }
 };
 
@@ -241,19 +241,19 @@ public:
     friend class SqlParserField;
 public:
     explicit SqlParserItem():SqlParserCommand(){
-        auto map=this->toMap();
+        auto map=this->toHash();
         map.insert(qsl("info"),KeywordObjectInfo::koiObject);
         this->init(map);
     }
     explicit SqlParserItem(const QVariant&value):SqlParserCommand(){
-        auto map=this->toMap();
+        auto map=this->toHash();
         map.insert(qsl("info"),KeywordObjectInfo::koiObject);
         map.insert(qsl("value"),value);
         this->init(map);
     }
 
     explicit SqlParserItem(const QVariant&value, const QVariant&title, const KeywordObjectInfo&info):SqlParserCommand(){
-        auto map=this->toMap();
+        auto map=this->toHash();
         map.insert(qsl("info"),info);
         map.insert(qsl("value"),value);
         if(title.isValid() && !title.isNull())
@@ -261,7 +261,7 @@ public:
         this->init(map);
     }
 
-    void init(QVariantMap&map){
+    void init(QVariantHash&map){
         this->_____zzzzz_uuid=++sequence_zzzz;//QUuid::createUuidV5(QUuid::createUuid(),QString::number(++staticInit).toUtf8());
         map.insert(qsl("uuid"), this->_____zzzzz_uuid);
         this->setValue(map);
@@ -293,83 +293,89 @@ public:
         if(this->info()==KeywordObjectInfo::koiValue){
             if(defValue.isValid() && !defValue.isNull() && v.isNull())
                 return parser.formatValue(defValue);
-            else
-                return parser.formatValue(v);
+            return parser.formatValue(v);
         }
-        else{
-            auto name=v.toString();
-            if(defValue.isValid() && !defValue.isNull()){
-                auto command =parser.parserCommand(KeywordGenericCommand::kgcIsNullCheckValue);
-                if(command.contains(qsl("%1")) && command.contains(qsl("%2"))){
-                    auto defValueFormated=parser.formatValue(defValue);
-                    name=command.arg(name, defValueFormated);
-                }
+
+        auto name=v.toString();
+        if(defValue.isValid() && !defValue.isNull()){
+            auto command =parser.parserCommand(KeywordGenericCommand::kgcIsNullCheckValue);
+            if(command.contains(qsl("%1")) && command.contains(qsl("%2"))){
+                auto defValueFormated=parser.formatValue(defValue);
+                name=command.arg(name, defValueFormated);
             }
-            return name;
         }
+        return name;
     }
 
     virtual QString toFormat(SqlSuitableKeyWord &parser)const{
         auto v=this->value();
         if(this->info()==KeywordObjectInfo::koiValue)
             return parser.formatValue(v);
-        else
-            return v.toString();
+        return v.toString();
     }
 
     static const SqlParserItem from(const QVariant&v){
         SqlParserItem r;
-        VariantUtil vu;
+        Q_DECLARE_VU;
         auto vValue=vu.toVariant(v);
         auto rMap=r.toMap();
-        if(vValue.typeId()==QMetaType::QVariantMap || vValue.typeId()==QMetaType::QVariantHash){
+        auto typeId=qTypeId(vValue);
+        if(QStmTypesVariantDictionary.contains(typeId)){
             auto map=vValue.toMap();
+            typeId=map.value(qsl("typeId")).toInt();
+            auto&value=map[qsl("value")];
             map.insert(qsl("uuid"), rMap.value(qsl("uuid")));
+            value=vu.convertTo(value, typeId);
             r.setValue(map);
+            return r;
         }
-        else{
-            QVariantMap map;
-            map.insert(qsl("uuid"),rMap.value(qsl("uuid")));
-            map.insert(qsl("info"),KeywordObjectInfo::koiValue);
-            map.insert(qsl("value"),vValue);
-            r.setValue(map);
-        }
+
+        vValue=vu.convertTo(vValue, typeId);
+        QVariantMap map;
+        map.insert(qsl("uuid"), rMap.value(qsl("uuid")));
+        map.insert(qsl("info"), KeywordObjectInfo::koiValue);
+        map.insert(qsl("value"), vValue);
+        map.insert(qsl("typeId"), typeId);
+        r.setValue(map);
         return r;
 
     }
 
     static auto createObject(const QVariant&v){
         SqlParserItem r;
-        VariantUtil vu;
+        Q_DECLARE_VU;
         auto vValue=vu.toVariant(v);
         auto rMap=r.toHash();
         QVariantHash map;
 
-        if(vValue.typeId()==QMetaType::QVariantMap || vValue.typeId()==QMetaType::QVariantHash){
-            auto map=vValue.toMap();
+        auto typeId=qTypeId(vValue);
+        if(QStmTypesVariantDictionary.contains(typeId)){
+            auto map=vValue.toHash();
             if(!map.contains(qsl("uuid"))){
                 map.insert(qsl("uuid"),rMap.value(qsl("uuid")));
             }
             map.insert(qsl("info"),KeywordObjectInfo::koiObject);
+            return r;
         }
-        else{
-            map.insert(qsl("uuid"),rMap.value(qsl("uuid")));
-            map.insert(qsl("info"),KeywordObjectInfo::koiObject);
-            map.insert(qsl("value"),vValue);
-        }
+
+        map.insert(qsl("uuid"), rMap.value(qsl("uuid")));
+        map.insert(qsl("info"), KeywordObjectInfo::koiObject);
+        map.insert(qsl("value"), vValue);
+        map.insert(qsl("typeId"), qTypeId(vValue));
         r.setValue(map);
         return r;
     }
 
     static auto createValue(const QVariant&v){
         SqlParserItem r;
-        VariantUtil vu;
+        Q_DECLARE_VU;
         auto vValue=vu.toVariant(v);
-        auto rMap=r.toMap();
+        auto rMap=r.toHash();
         QVariantMap map;
         map.insert(qsl("uuid"),rMap.value(qsl("uuid")));
         map.insert(qsl("info"),KeywordObjectInfo::koiValue);
         map.insert(qsl("value"),vValue);
+        map.insert(qsl("typeId"),qTypeId(vValue));
         r.setValue(map);
         return r;
     }
@@ -382,34 +388,41 @@ public:
         QVariant::setValue(value);
     }
     KeywordObjectInfo info()const{
-        auto v=this->toMap().value(qsl("info"));
+        auto v=this->toHash().value(qsl("info"));
         return KeywordObjectInfo(v.toInt());
     }
     QVariant value()const{
-        auto v=this->toMap().value(qsl("value"));
-        auto d=this->toMap().value(qsl("defaultValue"));
+        auto vHash=this->toHash();
+        auto v=vHash.value(qsl("value"));
+        auto d=vHash.value(qsl("defaultValue"));
         v=v.isValid() && !v.isNull()?v:d;
         return v;
     }
 
+    QVariant valueTypeId()const{
+        auto vHash=this->toHash();
+        auto v=vHash.value(qsl("value"));
+        auto d=vHash.value(qsl("defaultValue"));
+        v=v.isValid() && !v.isNull()?v:d;
+        return qTypeId(v);
+    }
+
     bool isList()const{
         const auto&v=this->value();
-        return v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList;
+        return qTypeId(v)==QMetaType_QVariantList || qTypeId(v)==QMetaType_QStringList;
     }
 
     bool isMap()const{
         const auto&v=this->value();
-        return v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash;
+        return qTypeId(v)==QMetaType_QVariantMap || qTypeId(v)==QMetaType_QVariantHash;
     }
 
     QVariant name()const{
         if(this->info()==KeywordObjectInfo::koiObject){
-            auto v=this->toMap().value(qsl("value"));
+            auto v=this->toHash().value(qsl("value"));
             return v;
         }
-        else{
-            return {};
-        }
+        return {};
     }
 
     bool isObject()const{
@@ -422,12 +435,10 @@ public:
 
     QVariant title()const{
         if(this->info()==KeywordObjectInfo::koiObject){
-            auto v=this->toMap().value(qsl("title"));
+            auto v=this->toHash().value(qsl("title"));
             return v;
         }
-        else{
-            return {};
-        }
+        return {};
     }
 
 };
@@ -458,7 +469,7 @@ public:
     }
 
     explicit SqlParserField(const KeywordGrouping&grouping, const QVariant&name, const QVariant&nameAs, const QVariant&value, const QVariant&defaultValue):SqlParserItem(value){
-        auto map=this->toMap();
+        auto map=this->toHash();
         map.insert(qsl("grouping"),grouping);
         map.insert(qsl("name"),name);
         map.insert(qsl("nameAs"),nameAs);
@@ -471,12 +482,10 @@ public:
     }
 
     virtual QString toFormat(SqlSuitableKeyWord &parser)const{
-        if(this->typeId()==QMetaType::QVariantMap || this->typeId()==QMetaType::QVariantHash){
+        auto typeId=qTypeId(qTypeId(*this));
+        if(QStmTypesVariantDictionary.contains(typeId))
             return qsl_null;
-        }
-        else{
-            return SqlParserItem::toFormat(parser);
-        }
+        return SqlParserItem::toFormat(parser);
     }
 };
 
@@ -537,30 +546,31 @@ public:
         QMapIterator<QString, SqlParserCommand*> i(this->mPointer());
         while (i.hasNext()) {
             i.next();
-            if(i.key().startsWith(__func__)){
+            if(i.key().startsWith(__func__))
                 c=static_cast<SqlParserItem*>(i.value());
-            }
         }
         if(c==nullptr){
             c = new SqlParserItem(v);
             this->setPointer(c->makeUuid().toString(), c);
         }
 
-        if(v.typeId()==QMetaType::QVariantList || v.typeId()==QMetaType::QStringList){
-            for(auto&i:v.toList()){
+        auto typeId=qTypeId(v);
+        if(QStmTypesVariantList.contains(typeId)){
+            for(auto&i:v.toList())
                 this->value(i);
-            }
+            return*this;
         }
-        else if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash){
-            QMapIterator<QString, QVariant> i(v.toMap());
+
+        if(QStmTypesVariantDictionary.contains(typeId)){
+            QHashIterator<QString, QVariant> i(v.toHash());
             while (i.hasNext()) {
                 i.next();
                 this->value(i.value());
             }
+            return*this;
         }
-        else{
-            this->value(v);
-        }
+
+        this->value(v);
         return*this;
     }
 
@@ -594,7 +604,7 @@ public:
 
 
         explicit SqlParserCondition(QString funcName, const QVariant&field, const QVariant&valueA, const QVariant&valueB, const KeywordOperator&keywordOperator, const KeywordLogical&keywordLogical):SqlParserCommand(){
-            auto map=this->toMap();
+            auto map=this->toHash();
             this->funcName=funcName;
             map.insert(qsl("funcName"),funcName);
             map.insert(qsl("field"),field);
@@ -606,7 +616,7 @@ public:
         }
 
         explicit SqlParserCondition(QString funcName, const QVariant&valueA, const QVariant&valueB, const KeywordOperator&keywordOperator, const KeywordLogical&keywordLogical):SqlParserCommand(){
-            auto map=this->toMap();
+            auto map=this->toHash();
             this->funcName=funcName;
             map.insert(qsl("funcName"),funcName);
             map.insert(qsl("valueA"),valueA);
@@ -617,34 +627,57 @@ public:
         }
 
         QStringList toScript(SqlSuitableKeyWord &parser){
-            QStringList output;
-
-            auto map=this->toMap();
+            auto map=this->toHash();
             auto first = map.value(qsl("first")).toBool();
             auto keywordOperator = KeywordOperator( map.contains(qsl("keywordOperator"))?map.value(qsl("keywordOperator")).toInt(): -1 );
 
-            if(first){
+            if(first)
                 map.insert(qsl("keywordLogical"), KeywordLogical::klNone);
-            }
+
 
             auto field = map.value(qsl("field"));
             auto valueA = map.value(qsl("valueA"));
+            auto valueATypeId=qTypeId(valueA);
+            auto valueAval = valueA.toHash().value(qsl("value"));
+            auto valueAvalTypeId=qTypeId(valueAval);
+
             auto valueB = map.value(qsl("valueB"));
+            auto valueBTypeId=qTypeId(valueB);
 
-            auto valueBval      = valueB.toMap().value(qsl("value"));
-            if(valueBval.typeId()==QMetaType::QVariantMap || valueBval.typeId()==QMetaType::QVariantHash )//if Map, import values
-                valueBval=valueBval.toMap().values();
+            auto valueBval = valueB.toHash().value(qsl("value"));
+            auto valueBvalTypeId=qTypeId(valueBval);
 
-            if((!valueA.isValid()) || (!valueB.isValid()) || valueA.isNull() || valueB.isNull()){
-                if(keywordOperator!=KeywordOperator::koIsNull && keywordOperator!=KeywordOperator::koIsNotNull){
-                    keywordOperator=KeywordOperator::koIsNull;
+            if(QStmTypesVariantDictionary.contains(valueBvalTypeId))
+                valueBval=valueBval.toHash().values();
+
+            {//checkOperatorIn
+                auto checkOperator=[&valueA, &valueB, &valueBTypeId, &valueAvalTypeId, &valueBvalTypeId, &keywordOperator](){
+                    if((!valueA.isValid()) || (!valueB.isValid()) || valueA.isNull() || valueB.isNull()){
+                        if(keywordOperator!=KeywordOperator::koIsNull && keywordOperator!=KeywordOperator::koIsNotNull)
+                            return KeywordOperator::koIsNull;
+                    }
+
+                    if(
+                        (keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut)
+                        &&
+                        (QStmTypesVariantList.contains(valueAvalTypeId) || QStmTypesVariantList.contains(valueBvalTypeId))
+                        ){
+                        return KeywordOperator::koIn;
+                    }
+
+                    return keywordOperator;
+                };
+
+                keywordOperator=checkOperator();//CheckOperatorIn
+
+                //fix values for parameter In/OutIn
+                if(keywordOperator == KeywordOperator::koIn && keywordOperator == KeywordOperator::koInOut){
+                    if(QStmTypesVariantList.contains(valueAvalTypeId) && !QStmTypesVariantList.contains(valueBvalTypeId)){
+                        QORM_VARIABLE_INVERTER(valueA, valueB)
+                        QORM_VARIABLE_INVERTER(valueATypeId, valueBTypeId)
+                        QORM_VARIABLE_INVERTER(valueAvalTypeId, valueBvalTypeId)
+                    }
                 }
-            }
-            else if((keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut) && (valueB.typeId()==QMetaType::QVariantList || valueB.typeId()==QMetaType::QStringList || valueBval.typeId()==QMetaType::QVariantList)){
-                keywordOperator=KeywordOperator::koIn;
-            }
-            else if((keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut) && (valueBval.typeId()==QMetaType::QVariantList || valueBval.typeId()==QMetaType::QStringList)){
-                keywordOperator=KeywordOperator::koIn;
             }
 
             auto vField = SqlParserItem::from(field).toFormat(parser);
@@ -655,18 +688,22 @@ public:
             auto kOperator = parser.parserCommand(keywordOperator );
             auto kLogical = parser.parserCommand(keywordLogical );
 
-            if(keywordOperator==koIsNull || keywordOperator==koIsNotNull)
-                output<<qsl(" %1 %2").arg(kLogical, kOperator.arg(vValueA)).trimmed();
-            else if(keywordOperator==koBetween || keywordOperator==koNotBetween)
-                output<<qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vField, vValueA, vValueB))).trimmed();
-            else
-                output<<qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vValueA, vValueB))).trimmed();
+            static const auto vLikeNulls=QVector<QString>{qsl_null, qsl("''"), qsl("'%'"), qsl("'%%'")};
 
-            return output;
+            if((keywordOperator==koLike && vLikeNulls.contains(vValueB)) || (keywordOperator==koLike && vLikeNulls.contains(vValueA)))
+                return {};
+
+            if(keywordOperator==koIsNull || keywordOperator==koIsNotNull)
+                return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.arg(vValueA)).trimmed()};
+
+            if(keywordOperator==koBetween || keywordOperator==koNotBetween)
+                return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vField, vValueA, vValueB))).trimmed()};
+
+            return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vValueA, vValueB))).trimmed()};
         }
 
         virtual void defineFirst(){
-            auto map=this->toMap();
+            auto map=this->toHash();
             map.insert(qsl("first"), true);
             this->setValue(map);
         }
@@ -696,41 +733,56 @@ public:
             auto valueC=SqlParserItem::from(param.valueC());
             auto keywordOperator=param.keywordOperator();
             auto keywordLogical=param.keywordLogical();
-            if(valueB.isList())
+            if(valueB.isList() || valueA.isList()){
                 this->in(valueA, valueB);
-            else{
-                if (keywordOperator==koEqual)
-                    this->equal(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koNotEqual)
-                    this->notEqual(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koEqualMinor)
-                    this->equalMinor(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koEqualBigger)
-                    this->equalBigger(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koBigger)
-                    this->bigger(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koMinor)
-                    this->minor(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koIn)
-                    this->in(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koInOut)
-                    this->inOut(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koLike)
-                    this->like(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koNotNull)
-                    this->isNotNull(valueA, valueB, keywordLogical);
-                else if (keywordOperator==koBetween && param.valueC().isValid())
+                continue;
+            }
+
+            switch (keywordOperator) {
+            case koEqual:
+                this->equal(valueA, valueB, keywordLogical);
+                break;
+            case koNotEqual:
+                this->notEqual(valueA, valueB, keywordLogical);
+                break;
+            case koEqualMinor:
+                this->equalMinor(valueA, valueB, keywordLogical);
+                break;
+            case koEqualBigger:
+                this->equalBigger(valueA, valueB, keywordLogical);
+                break;
+            case koBigger:
+                this->bigger(valueA, valueB, keywordLogical);
+                break;
+            case koMinor:
+                this->minor(valueA, valueB, keywordLogical);
+                break;
+            case koIn:
+                this->in(valueA, valueB, keywordLogical);
+                break;
+            case koInOut:
+                this->inOut(valueA, valueB, keywordLogical);
+                break;
+            case koLike:
+                this->like(valueA, valueB, keywordLogical);
+                break;
+            case koNotNull:
+                this->isNotNull(valueA, valueB, keywordLogical);
+                break;
+            case koBetween:
+                if(param.valueC().isValid())
                     this->between(valueA, valueB, valueC, keywordLogical);
-                else if (keywordOperator==koBetween)
+                else
                     this->between(valueA, valueB, keywordLogical);
-                //                else if (keywordOperator==koNotBetween)
-                //                    this->between(param.valueA(), param.valueB(), keywordLogical);
-                else if (keywordOperator==koIsNull)
-                    this->isNull(param.valueA(), param.valueB(), keywordLogical);
-                else if (keywordOperator==koIsNotNull)
-                    this->isNotNull(param.valueA(), param.valueB(), keywordLogical);
-                //                else if (keywordOperator==koAny)
-                //                    this->bigger(param.valueA(), param.valueB(), keywordLogical);
+                break;
+            case koIsNull:
+                this->isNull(param.valueA(), param.valueB(), keywordLogical);
+                break;
+            case koIsNotNull:
+                this->isNotNull(param.valueA(), param.valueB(), keywordLogical);
+                break;
+            default:
+                break;
             }
         }
         return*this;
@@ -788,13 +840,11 @@ public:
         return this->addCondition(new SqlParserCondition(__func__, valueA, valueB, KeywordOperator::koIsNotNull, keywordLogical));
     }
     auto&between(const QVariant&field, const QVariant&valueA, const KeywordLogical&keywordLogical=KeywordLogical::klAnd){
-        if(valueA.typeId()==QMetaType::QDateTime || valueA.typeId()==QMetaType::QDate || valueA.typeId()==QMetaType::QTime){
+        if(qTypeId(valueA)==QMetaType_QDateTime || qTypeId(valueA)==QMetaType_QDate || qTypeId(valueA)==QMetaType_QTime){
             auto valueB=QDateTime(valueA.toDateTime().date(), QTime(23,59,59,998));
             return this->addCondition(new SqlParserCondition(__func__, field, valueA, valueB, KeywordOperator::koBetween, keywordLogical));
         }
-        else{
-            return this->equal(field, valueA, keywordLogical);
-        }
+        return this->equal(field, valueA, keywordLogical);
     }
     auto&between(const QVariant&field, const QVariant&valueA, const QVariant&valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd){
         return this->addCondition(new SqlParserCondition(__func__, field, valueA, valueB, KeywordOperator::koBetween, keywordLogical));
@@ -810,7 +860,7 @@ public:
             output<<parser.parserCommand(KeywordCombine::kcWhere);
             auto first=true;
             for(auto&v:list){
-                auto map=v.toMap();
+                auto map=v.toHash();
                 if(first){
                     map.remove(qsl("keywordLogical"));
                     first=false;
@@ -853,23 +903,22 @@ public:
             if(combine==KeywordCombine::kcWhere){
                 this->setValue(map);
                 this->c().condition(condition);
-            }
-            else{
-                map.insert(qsl("on"),condition);
-                this->setValue(map);
+                return;
             }
 
+            map.insert(qsl("on"),condition);
+            this->setValue(map);
         }
 
         auto&makeOperator(const KeywordOperator&keywordOperator=KeywordOperator::koEqual){
-            auto map=this->toMap();
+            auto map=this->toHash();
             map.insert(qsl("keywordOperator"),keywordOperator);
             this->setValue(map);
             return*this;
         }
 
         auto&makeLogical(const KeywordLogical&keywordLogical=KeywordLogical::klAnd){
-            auto map=this->toMap();
+            auto map=this->toHash();
             map.insert(qsl("keywordLogical"),keywordLogical);
             this->setValue(map);
             return*this;
@@ -955,92 +1004,97 @@ public:
 
         virtual QStringList toScript(SqlSuitableKeyWord&parser){
 
-            QStringList output;
-
             QVariantMap map;
-            if(this->typeId()==QMetaType::QVariantMap || this->typeId()==QMetaType::QVariantHash){
-                map=this->toMap();
+            {//convercao para mapa
+                auto typeId=qTypeId(*this);
+                switch (typeId) {
+                case QMetaType_QVariantList:
+                {
+                    auto l=this->toList();
+                    map=l.isEmpty()?map:l.first().toMap();
+                    break;
+                }
+                default:
+                    map=this->toMap();
+                }
             }
-            else if(this->typeId()==QMetaType::QVariantList){
-                auto l=this->toList();
-                map=l.isEmpty()?map:l.first().toMap();
-            }
+
+            if(map.isEmpty())
+                return {};
 
             auto kCombine=KeywordCombine(map.value(qsl("combine")).toInt());
             auto kCombineAlias=map.value(qsl("alias")).toString();
-            auto kCombineConditions=getVariantStartsWith(qsl("condition"),map).toMap();
+            auto kCombineConditions=getVariantStartsWith(qsl("condition"), map).toMap();
 
             auto kCombineOn=map.value(qsl("on"));
             const auto&modelInfo=QOrm::ModelInfo::modelInfo(kCombineOn);
             auto tableName=modelInfo.tableNameFull();
             auto connection=parser.parserCommand(kCombine);
 
-            if      (kCombine==KeywordCombine::kcFrom       ){
+            static const auto kCombineCheckList=QVector<int>{
+                KeywordCombine::kcJoin,
+                KeywordCombine::kcJoinLeft,
+                KeywordCombine::kcJoinInner,
+                KeywordCombine::kcJoinOuter,
+                KeywordCombine::kcJoinCross,
+                KeywordCombine::kcJoinFull,
+                KeywordCombine::kcWhere
+            };
+
+            switch (kCombine) {
+            case KeywordCombine::kcFrom:
                 if(kCombineAlias.isEmpty())
-                    output<<qsl("%1 %2").arg(connection, tableName);
-                else
-                    output<<qsl("%1 %2 as %3").arg(connection, tableName, kCombineAlias);
-            }
-            else if (kCombine==KeywordCombine::kcWorkTable  ){
-
-            }
-            else if (kCombine==KeywordCombine::kcCte        ){
-
-            }
-
-            else if (
-                (kCombine==KeywordCombine::kcJoin       )
-                ||
-                (kCombine==KeywordCombine::kcJoinLeft   )
-                ||
-                (kCombine==KeywordCombine::kcJoinInner  )
-                ||
-                (kCombine==KeywordCombine::kcJoinOuter  )
-                ||
-                (kCombine==KeywordCombine::kcJoinCross  )
-                ||
-                (kCombine==KeywordCombine::kcJoinFull   )
-                ||
-                (kCombine==KeywordCombine::kcWhere      )
-                )
-            {
-
-                if(kCombine!=KeywordCombine::kcWhere){
-                    if(kCombineAlias.isEmpty())
-                        connection=qsl("%1 %2").arg(connection, tableName);
-                    else
-                        connection=qsl("%1 %2 as %3").arg(connection, tableName, kCombineAlias);
-                }
-
-                QStringList cond;
-                QStringList lstCond;
-
-                QMapIterator<QString, QVariant> i(kCombineConditions);
-                bool first=true;
-                while (i.hasNext()) {
-                    i.next();
-                    auto map=i.value();
-                    SqlParserConditions<SqlParserCommand>::SqlParserCondition cond(map);
-                    if(first){
-                        first=false;
-                        cond.defineFirst();
+                    return QStringList{qsl("%1 %2").arg(connection, tableName)};
+                return QStringList{qsl("%1 %2 as %3").arg(connection, tableName, kCombineAlias)};
+            default:
+                if (kCombineCheckList.contains(kCombine)){
+                    if(kCombine!=KeywordCombine::kcWhere){
+                        if(kCombineAlias.isEmpty())
+                            connection=qsl("%1 %2").arg(connection, tableName);
+                        else
+                            connection=qsl("%1 %2 as %3").arg(connection, tableName, kCombineAlias);
                     }
-                    lstCond<<cond.toScript(parser);
-                }
 
-                if(kCombine==KeywordCombine::kcJoinCross){
-                    output<<connection;
-                }
-                else if(!lstCond.isEmpty()){
+                    QStringList cond;
+                    QStringList lstCond;
+
+                    QMapIterator<QString, QVariant> i(kCombineConditions);
+                    bool first=true;
+                    while (i.hasNext()) {
+                        i.next();
+                        const auto&map=i.value();
+                        SqlParserConditions<SqlParserCommand>::SqlParserCondition cond(map);
+                        if(first){
+                            first=false;
+                            cond.defineFirst();
+                        }
+                        auto line=cond.toScript(parser);
+                        if(line.isEmpty()){
+                            if(first)
+                                first=false;
+                            continue;
+                        }
+                        lstCond<<line;
+                    }
+
+                    if(kCombine==KeywordCombine::kcJoinCross){
+                        return QStringList{connection};
+                    }
+
+                    if(lstCond.isEmpty())
+                        return {};
+
+                    QStringList output;
                     if(kCombine==KeywordCombine::kcWhere)
                         output<<connection;
                     else
                         output<<(connection+qsl(" on "));
                     for(auto&v:lstCond)
                         output<<v;
+                    return output;
                 }
             }
-            return output;
+            return {};
         }
     };
 
@@ -1146,55 +1200,57 @@ public:
     }
 
     void make(){
-        auto map=this->toMap();
+        auto map=this->toHash();
         map.insert(qsl("combination"), this->combination());
         this->setValue(map);
     }
 
     QStringList toScript(SqlSuitableKeyWord &parser) {
         auto map=this->toMap();
-        QVariantList lst;
-        if(!map.isEmpty()){
-            QVariantList lstOther;
-            QVariantList lstFrom;
-            QVariantList lstJoin;
-            QVariantList lstWhere;
-            QMapIterator<QString, QVariant> i(map);
-            while (i.hasNext()) {
-                i.next();
-                auto lst=&lstOther;
-                auto map=i.value().toMap();
-                auto kCombine=KeywordCombine(map.value(qsl("combine")).toInt());
-                if(kCombine==KeywordCombine::kcFrom)
-                    lst=&lstFrom;
-                else if (
-                    (kCombine==KeywordCombine::kcJoin       )
-                    ||
-                    (kCombine==KeywordCombine::kcJoinLeft   )
-                    ||
-                    (kCombine==KeywordCombine::kcJoinInner  )
-                    ||
-                    (kCombine==KeywordCombine::kcJoinOuter  )
-                    ||
-                    (kCombine==KeywordCombine::kcJoinCross  )
-                    ||
-                    (kCombine==KeywordCombine::kcJoinFull   )
-                    )
-                    lst=&lstJoin;
-                else if(kCombine==KeywordCombine::kcWhere)
-                    lst=&lstWhere;
-                lst->append(map);
-            }
+        if(map.isEmpty())
+            return {};
+        QVariantList lstFrom;
+        QVariantList lstJoin;
+        QVariantList lstWhere;
 
-            for(auto&v:lstFrom)
-                lst<<v;
-            for(auto&v:lstJoin)
-                lst<<v;
-            for(auto&v:lstOther)
-                lst<<v;
-            for(auto&v:lstWhere)
-                lst<<v;
+        static const auto kCombineCheckList=QVector<int>{
+            KeywordCombine::kcJoin,
+            KeywordCombine::kcJoinLeft,
+            KeywordCombine::kcJoinInner,
+            KeywordCombine::kcJoinOuter,
+            KeywordCombine::kcJoinCross,
+            KeywordCombine::kcJoinFull
+        };
+
+        QMapIterator<QString, QVariant> i(map);
+        while (i.hasNext()) {
+            i.next();
+            QVariantList*lst=nullptr;
+            auto map=i.value().toMap();
+            auto kCombine=KeywordCombine(map.value(qsl("combine")).toInt());
+            switch (kCombine) {
+            case KeywordCombine::kcFrom:
+                lst=&lstFrom;
+                break;
+            case KeywordCombine::kcWhere:
+                lst=&lstWhere;
+                break;
+            default:
+                if (kCombineCheckList.contains(kCombine))
+                    lst=&lstJoin;
+            }
+            if(lst==nullptr)
+                continue;
+            lst->append(map);
         }
+
+        QVariantList lst;
+        for(auto&v:lstFrom)
+            lst<<v;
+        for(auto&v:lstJoin)
+            lst<<v;
+        for(auto&v:lstWhere)
+            lst<<v;
 
         QStringList output;
         for(auto&vCombine:lst){
@@ -1205,6 +1261,9 @@ public:
         return output;
     }
 };
+
+
+
 
 template <class T>
 class Q_ORM_EXPORT SqlParserFrom:public SqlParserCombinations<T>{

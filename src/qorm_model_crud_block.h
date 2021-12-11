@@ -3,78 +3,125 @@
 #include "./qorm_model_crud.h"
 
 #define QORM_CRUD_BLOCK_MAKER(crud_block)\
-    QOrm::CRUDBlock crud_block(this);\
-    QOrm::CRUDBlock::makeBlock(crud_block, vBody)
+QOrm::CRUDBlock crud_block(this);\
+QOrm::CRUDBlock::makeBlock(crud_block, vBody)
 
 namespace QOrm {
 
-    class Q_ORM_EXPORT CRUDBlock:public QOrm::ObjectDb
-    {
-        Q_OBJECT
-    public:
-        Q_INVOKABLE explicit CRUDBlock(QObject *parent=nullptr);
-        Q_INVOKABLE explicit CRUDBlock(const QVariant &crudBody, QObject *parent=nullptr);
-        Q_INVOKABLE virtual ~CRUDBlock();
+//!
+//! \brief The CRUDBlock class
+//!
+class Q_ORM_EXPORT CRUDBlock:public QOrm::ObjectDb
+{
+    Q_OBJECT
+public:
+    //!
+    //! \brief CRUDBlock
+    //! \param parent
+    //!
+    Q_INVOKABLE explicit CRUDBlock(QObject *parent=nullptr);
 
-        Q_INVOKABLE virtual QOrm::ModelDtoOptions&options();
-        Q_INVOKABLE virtual QOrm::ModelDtoResultInfo&resultInfo();
+    //!
+    //! \brief CRUDBlock
+    //! \param crudBody
+    //! \param parent
+    //!
+    explicit CRUDBlock(const QVariant &crudBody, QObject *parent=nullptr);
 
-         /**
-         * @brief operator +=
-         * @param v
-         * @return
-         */
-        CRUDBlock&operator+=(PrivateQOrm::CRUDBase*crud);
-        CRUDBlock&operator-=(PrivateQOrm::CRUDBase*crud);
-        CRUDBlock&operator<<(PrivateQOrm::CRUDBase*crud);
+    //!
+    //! \brief ~CRUDBlock
+    //!
+    virtual ~CRUDBlock();
 
-        /**
-         * @brief crudName
-         * @return
-         */
-        Q_INVOKABLE virtual QVariant crudBody()const;
-        virtual CRUDBlock&crudBody(const QVariant&v);
+    //!
+    //! \brief options
+    //! \return
+    //!
+    virtual QOrm::ModelDtoOptions&options();
 
-        /**
-         * @brief clear
-         * @return
-         */
-        static CRUDBlock &makeBlock(CRUDBlock &crudBlock, const QVariant&crudBody);
+    //!
+    //! \brief resultInfo
+    //! \return
+    //!
+    virtual QStm::ResultInfo&resultInfo();
 
-        /**
-         * @brief clear
-         * @return
-         */
-        virtual CRUDBlock&clear();
+    //!
+    //! \brief operator +=
+    //! \param crud
+    //! \return
+    //!
+    CRUDBlock&operator+=(PrivateQOrm::CRUDBase*crud);
 
-        /**
-         * @brief insert
-         * @return
-         */
-        virtual CRUDBlock&insert(PrivateQOrm::CRUDBase*crud);
+    //!
+    //! \brief operator -=
+    //! \param crud
+    //! \return
+    //!
+    CRUDBlock&operator-=(PrivateQOrm::CRUDBase*crud);
 
-        /**
-         * @brief remove
-         * @param v
-         * @return
-         */
-        virtual CRUDBlock&remove(PrivateQOrm::CRUDBase*crud);
+    //!
+    //! \brief operator <<
+    //! \param crud
+    //! \return
+    //!
+    CRUDBlock&operator<<(PrivateQOrm::CRUDBase*crud);
 
-        /**
-         * @brief remove
-         * @param v
-         * @return
-         */
-        virtual CRUDBlock&remove(const QByteArray&crudName);
+    //!
+    //! \brief crudBody
+    //! \return
+    //!
+    Q_INVOKABLE virtual QVariant crudBody()const;
 
-        /**
-         * @brief crudify
-         * @return
-         */
-        virtual ResultValue &crudify();
+    //!
+    //! \brief crudBody
+    //! \param v
+    //! \return
+    //!
+    virtual CRUDBlock&crudBody(const QVariant&v);
 
-    private:
-        void*p=nullptr;
-    };
+    //!
+    //! \brief makeBlock
+    //! \param crudBlock
+    //! \param crudBody
+    //! \return
+    //!
+    static CRUDBlock &makeBlock(CRUDBlock &crudBlock, const QVariant&crudBody);
+
+    //!
+    //! \brief clear
+    //! \return
+    //!
+    virtual CRUDBlock&clear();
+
+    //!
+    //! \brief insert
+    //! \param crud
+    //! \return
+    //!
+    virtual CRUDBlock&insert(PrivateQOrm::CRUDBase*crud);
+
+    //!
+    //! \brief remove
+    //! \param crud
+    //! \return
+    //!
+    virtual CRUDBlock&remove(PrivateQOrm::CRUDBase*crud);
+
+    //!
+    //! \brief remove
+    //! \param crudName
+    //! \return
+    //!
+    virtual CRUDBlock&remove(const QByteArray&crudName);
+
+    //!
+    //! \brief crudify
+    //! \return
+    //!
+    virtual ResultValue &crudify();
+
+private:
+    void*p=nullptr;
+};
 
 }

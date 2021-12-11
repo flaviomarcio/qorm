@@ -6,13 +6,38 @@
 
 namespace QOrm {
 
+//!
+//! \brief The Dao class
+//!
 class Q_ORM_EXPORT Dao : public ObjectDb
 {
 public:
+    //!
+    //! \brief Dao
+    //! \param parent
+    //!
     Q_INVOKABLE explicit Dao(QObject *parent = nullptr);
-    Q_INVOKABLE explicit Dao(const QSqlDatabase&connection, QObject *parent = nullptr);
-    Q_INVOKABLE ~Dao();
+
+    //!
+    //! \brief Dao
+    //! \param connection
+    //! \param parent
+    //!
+    explicit Dao(const QSqlDatabase&connection, QObject *parent = nullptr);
+
+    //!
+    //!
+    ~Dao();
+
+    //!
+    //! \brief format
+    //! \return
+    //!
     QOrm::SqlSuitableValue&format();
+
+    //!
+    //! \brief f
+    //!
     QOrm::SqlSuitableValue&f=format();
 private:
     void*p=nullptr;

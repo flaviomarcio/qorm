@@ -121,21 +121,20 @@ bool ConnectionSetting::isValid()const
         auto property=this->metaObject()->property(row);
         if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
             continue;
-        else{
-            auto vGet = property.read(this);
-            if(vGet.isValid()){
-                auto t=vGet.typeId();
-                if((t==QMetaType::QString || t==QMetaType::QByteArray) && vGet.toString().trimmed().isEmpty())
-                    continue;
-                if((t==QMetaType::Double || t==QMetaType::Int || t==QMetaType::UInt || t==QMetaType::LongLong || t==QMetaType::ULongLong) && vGet.toLongLong()>0)
-                    continue;
-                if((t==QMetaType::QVariantHash || t==QMetaType::QVariantHash) && vGet.toHash().isEmpty())
-                    continue;
-                if((t==QMetaType::QVariantList || t==QMetaType::QStringList) && vGet.toList().isEmpty())
-                    continue;
-                
-		return true;
-            }
+
+        auto vGet = property.read(this);
+        if(vGet.isValid()){
+            auto t=qTypeId(vGet);
+            if((t==QMetaType_QString || t==QMetaType_QByteArray) && vGet.toString().trimmed().isEmpty())
+                continue;
+            if((t==QMetaType_Double || t==QMetaType_Int || t==QMetaType_UInt || t==QMetaType_LongLong || t==QMetaType_ULongLong) && vGet.toLongLong()>0)
+                continue;
+            if((t==QMetaType_QVariantHash || t==QMetaType_QVariantMap) && vGet.toHash().isEmpty())
+                continue;
+            if((t==QMetaType_QVariantList || t==QMetaType_QStringList) && vGet.toList().isEmpty())
+                continue;
+
+            return true;
         }
     }
     return false;
@@ -161,12 +160,11 @@ QVariantHash ConnectionSetting::toHash() const
         auto property=this->metaObject()->property(row);
         if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
             continue;
-        else{
-            const auto key=property.name();
-            const auto value = property.read(this);
-            if(!value.isNull())
-                RETURN.insert(key, value);
-        }
+
+        const auto key=property.name();
+        const auto value = property.read(this);
+        if(!value.isNull())
+            RETURN.insert(key, value);
     }
     return RETURN;
 }
@@ -185,29 +183,29 @@ ConnectionSetting &ConnectionSetting::fromMap(const QVariantHash &map)
         auto property=metaObject.property(row);
         QString key = property.name();
         auto value = vMap.value(key.toLower());
-        auto type=property.typeId();
+        auto type=qTypeId(property);
         if(value.isNull() || !value.isValid())
             continue;
-        else if(!property.write(this,value)){
-            if(type==QMetaType::Int || type==QMetaType::UInt)
+        if(!property.write(this,value)){
+            if(type==QMetaType_Int || type==QMetaType_UInt)
                 property.write(this,value.toInt());
-            else if(type==QMetaType::LongLong || type==QMetaType::ULongLong)
+            else if(type==QMetaType_LongLong || type==QMetaType_ULongLong)
                 property.write(this,value.toLongLong());
-            else if(type==QMetaType::Double)
+            else if(type==QMetaType_Double)
                 property.write(this,value.toDouble());
-            else if(type==QMetaType::QVariantHash){
+            else if(type==QMetaType_QVariantHash){
                 auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
                 property.write(this,v.toHash());
             }
-            else if(type==QMetaType::QVariantMap){
+            else if(type==QMetaType_QVariantMap){
                 auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
                 property.write(this,v.toHash());
             }
-            else if(type==QMetaType::QVariantList){
+            else if(type==QMetaType_QVariantList){
                 auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
                 property.write(this,v.toList());
             }
-            else if(type==QMetaType::QStringList){
+            else if(type==QMetaType_QStringList){
                 auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
                 property.write(this,v.toString());
             }
@@ -219,14 +217,13 @@ ConnectionSetting &ConnectionSetting::fromMap(const QVariantHash &map)
 ConnectionSetting&ConnectionSetting::fromConnection(const QSqlDatabase &connection)
 {
     QVariantHash map;
-    map.insert(qsl("driver"        ) , connection.driverName    ());
-    map.insert(qsl("dataBaseName"  ) , connection.databaseName  ());
-    map.insert(qsl("userName"      ) , connection.userName      ());
-    map.insert(qsl("password"      ) , connection.password      ());
-    map.insert(qsl("hostName"      ) , connection.hostName      ());
-    map.insert(qsl("port"          ) , connection.port          ());
-    map.insert(qsl("connectOptions") , connection.connectOptions());
-
+    map[qsl("driver"        )]=connection.driverName    ();
+    map[qsl("dataBaseName"  )]=connection.databaseName  ();
+    map[qsl("userName"      )]=connection.userName      ();
+    map[qsl("password"      )]=connection.password      ();
+    map[qsl("hostName"      )]=connection.hostName      ();
+    map[qsl("port"          )]=connection.port          ();
+    map[qsl("connectOptions")]=connection.connectOptions();
     return this->fromMap(map);
 }
 

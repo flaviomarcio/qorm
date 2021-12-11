@@ -211,17 +211,32 @@ enum KeywordGrouping{
 };
 
 
-/**
- * @brief The TypeUtil class
- */
+//!
+//! \brief The TypeUtil class
+//!
 class Q_ORM_EXPORT TypeUtil{
 public:
+    //!
+    //! \brief TypeUtil
+    //!
     explicit TypeUtil();
 
+    //!
+    //! \brief ~TypeUtil
+    //!
     virtual ~TypeUtil();
 
+    //!
+    //! \brief strToDataType
+    //! \param driverName
+    //! \return
+    //!
     static QSqlDriver::DbmsType strToDataType(const QString &driverName);
 
+    //!
+    //! \brief keywordGroupingTypes
+    //! \return
+    //!
     static const QList<int> keywordGroupingTypes();
 
 };
