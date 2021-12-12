@@ -6,43 +6,44 @@ namespace QOrm {
 ConnectionManager::ConnectionManager(QObject *parent) : QStm::Object(nullptr)
 {
     this->p = new ConnectionManagerPrv(this);
-    if(parent!=nullptr){
-        if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
-            sWarning()<<"Invalid parent";
-        else
-            this->setParent(parent);
-        dPvt();
-        p.parentParent = parent;
-        p.load(p.parentParent);
-    }
+    if(parent==nullptr)
+        return;
+    if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
+        sWarning()<<"Invalid parent";
+    else
+        this->setParent(parent);
+    dPvt();
+    p.parentParent = parent;
+    p.load(p.parentParent);
 }
 
 ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent):QStm::Object(nullptr)
 {
     this->p = new ConnectionManagerPrv(this);
-    if(parent!=nullptr){
-        if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
-            sWarning()<<"Invalid parent";
-        else
-            this->setParent(parent);
-        dPvt();
-        p.parentParent = parent;
-        p.load(manager.toHash());
-    }
+    if(parent==nullptr)
+        return;
+
+    if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
+        sWarning()<<"Invalid parent";
+    else
+        this->setParent(parent);
+    dPvt();
+    p.parentParent = parent;
+    p.load(manager.toHash());
 }
 
 ConnectionManager::ConnectionManager(const QVariant&setting, QObject *parent):QStm::Object(nullptr)
 {
     this->p = new ConnectionManagerPrv(this);
-    if(parent!=nullptr){
-        if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
-            sWarning()<<"Invalid parent";
-        else
-            this->setParent(parent);
-        dPvt();
-        p.parentParent = parent;
-        p.v_load(setting);
-    }
+    if(parent==nullptr)
+        return;
+    if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
+        sWarning()<<"Invalid parent";
+    else
+        this->setParent(parent);
+    dPvt();
+    p.parentParent = parent;
+    p.v_load(setting);
 }
 
 ConnectionManager::~ConnectionManager()
@@ -105,8 +106,9 @@ void ConnectionManager::setParamaters(const QVariantHash &value)
     qDeleteAll(lst);
     p.settings.clear();
     for(auto&v:value){
-        if(qTypeId(v)==QMetaType_QVariantMap || qTypeId(v)==QMetaType_QVariantHash)
-            this->insert(v.toHash());
+        if(!QStmTypesVariantDictionary.contains(qTypeId(v)))
+            continue;
+        this->insert(v.toHash());
     }
 }
 

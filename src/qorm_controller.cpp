@@ -8,10 +8,12 @@ namespace QOrm {
 class ControllerPvt{
 public:
     QHash<QString, ConnectionPool*>localConnection;
-    explicit ControllerPvt(QObject*object){
+    explicit ControllerPvt(QObject*object)
+    {
         Q_UNUSED(object)
     }
-    virtual ~ControllerPvt(){
+    virtual ~ControllerPvt()
+    {
         auto map=this->localConnection;
         this->localConnection.clear();
         QHashIterator<QString, ConnectionPool*> i(map);
@@ -40,16 +42,17 @@ Controller::~Controller()
 bool Controller::dbConnect(QObject *objectConnection)
 {
     auto connectionPool=dynamic_cast<ConnectionPool*>(objectConnection);
-    if(connectionPool==nullptr){
-        auto connectionManager=dynamic_cast<ConnectionManager*>(objectConnection);
-        if(connectionManager!=nullptr){
-            connectionPool=&connectionManager->pool();
-            if(connectionPool!=nullptr){
-                return this->dbConnect(*connectionPool);
-            }
-        }
-    }
-    return false;
+    if(connectionPool!=nullptr)
+        return this->dbConnect(*connectionPool);
+
+    auto connectionManager=dynamic_cast<ConnectionManager*>(objectConnection);
+    if(connectionManager==nullptr)
+        return false;
+
+    connectionPool=&connectionManager->pool();
+    if(connectionPool==nullptr)
+        return false;
+    return this->dbConnect(*connectionPool);
 }
 
 bool Controller::dbConnect(ConnectionManager &connectionManager)
@@ -61,12 +64,12 @@ bool Controller::dbConnect(ConnectionManager &connectionManager)
 bool Controller::dbConnect(ConnectionPool &connectionPool)
 {
     QSqlDatabase db;
-    if(connectionPool.get(db)){
-        dPvt();
-        p.localConnection.insert(db.connectionName(), &connectionPool);
-        return this->setConnection(db);
-    }
-    return false;
+    if(!connectionPool.get(db))
+        return false;
+
+    dPvt();
+    p.localConnection.insert(db.connectionName(), &connectionPool);
+    return this->setConnection(db);
 }
 
 bool Controller::dbConnect(const QSqlDatabase &db)

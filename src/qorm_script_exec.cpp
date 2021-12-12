@@ -66,7 +66,8 @@ public:
         return __return;
     }
 
-    const QStringList&scriptedMaker(){
+    const QStringList&scriptedMaker()
+    {
         if(this->scriptedValues.isEmpty()){
             for(auto&v:this->scriptValues){
                 auto lines=this->scriptParser(v);
@@ -78,30 +79,31 @@ public:
     }
 
 
-    ResultValue&scriptExec(){
+    ResultValue&scriptExec()
+    {
         QVariantList __return;
         const auto&script=this->scriptedMaker();
         auto db=this->parent->connection();
         if(!db.isValid() || !db.isOpen()){
             sWarning()<<qsl("connection is not valid");
+            return this->parent->lr(__return)=__return.isEmpty();
         }
-        else{
-            for(auto&command:script){
-                auto scommand=command.trimmed();
-                QSqlQuery query(db);
-                QSqlError sqlError;
-                if(scommand.isEmpty() || scommand.startsWith(qsl("--")))
-                    continue;
 
-                if(!query.exec(command))
-                    sqlError=query.lastError();
-                else{
-                    query.finish();
-                    query.clear();
-                    continue;
-                }
-                __return<<qvh{{qsl_fy(nativeErrorCode), sqlError.nativeErrorCode()}, {qsl_fy(text), sqlError.text()}, {qsl_fy(command), command}};
+        for(auto&command:script){
+            auto scommand=command.trimmed();
+            QSqlQuery query(db);
+            QSqlError sqlError;
+            if(scommand.isEmpty() || scommand.startsWith(qsl("--")))
+                continue;
+
+            if(query.exec(command)){
+                query.finish();
+                query.clear();
+                continue;
             }
+
+            sqlError=query.lastError();
+            __return<<qvh{{qsl_fy(nativeErrorCode), sqlError.nativeErrorCode()}, {qsl_fy(text), sqlError.text()}, {qsl_fy(command), command}};
         }
         return this->parent->lr(__return)=__return.isEmpty();
     }

@@ -63,14 +63,17 @@ public:
     QSqlDriver::DbmsType dbType=QSqlDriver::UnknownDbms;
     QString connectionName;
 public:
-    explicit SqlSuitableValuePvt(){
+    explicit SqlSuitableValuePvt()
+    {
     }
 
-    virtual ~SqlSuitableValuePvt(){
+    virtual ~SqlSuitableValuePvt()
+    {
 
     }
 
-    static QString parserTextLike(const QVariant&v){
+    static QString parserTextLike(const QVariant&v)
+    {
         auto text=v.toString().trimmed();
         Q_V_HASH_ITERATOR_STRING(chartoUtf8){
             text=text.replace(i.key(), i.value());
@@ -79,15 +82,18 @@ public:
     }
 };
 
-QString SqlSuitableValue::Format::timesTamp() const{
+QString SqlSuitableValue::Format::timesTamp() const
+{
     return qsl("yyyy-MM-dd hh:mm:ss.zzz");
 }
 
-QString SqlSuitableValue::Format::date() const{
+QString SqlSuitableValue::Format::date() const
+{
     return qsl("yyyy-MM-dd");
 }
 
-QString SqlSuitableValue::Format::time() const{
+QString SqlSuitableValue::Format::time() const
+{
     return qsl("hh:mm:ss.zzz");
 }
 
@@ -157,10 +163,9 @@ QString SqlSuitableValue::toStr(const QString &v)
 {
     if(v.isEmpty() || v.isNull() || v.startsWith(QChar('\0')))
         return qsl("''");
-    else{
-        auto str=QString(v).replace(qsl("'"), qsl_space).trimmed();
-        return qsl("'%1'").arg(str);
-    }
+
+    auto str=QString(v).replace(qsl("'"), qsl_space).trimmed();
+    return qsl("'%1'").arg(str);
 }
 
 QString SqlSuitableValue::toStr(const QByteArray &v)

@@ -21,27 +21,30 @@ public:
     QVariant source;
     CRUDBase*parent=nullptr;
 
-    explicit CRUDBasePvt(CRUDBase*parent):options(parent),dto(parent){
+    explicit CRUDBasePvt(CRUDBase*parent):options(parent),dto(parent)
+    {
         this->parent=parent;
         dto.setType(dftNormalForm);
     }
     virtual ~CRUDBasePvt(){
     }
-    auto&doModelAction(const QString&methodName){
+    auto&doModelAction(const QString&methodName)
+    {
         auto method=this->actionMethod.value(methodName.toUtf8());
         if(method==nullptr)
             return this->parent->lr();
-        else
-            return this->parent->lr(method(this->parent, this->source));
+        return this->parent->lr(method(this->parent, this->source));
     }
 
-    auto&actionNothing(QOrm::ObjectDb*crudController, const QVariant&vBody){
+    auto&actionNothing(QOrm::ObjectDb*crudController, const QVariant&vBody)
+    {
         Q_UNUSED(crudController)
         Q_UNUSED(vBody)
         return*this->parent;
     }
 
-    void set_crud(const QVariant&crud){
+    void set_crud(const QVariant&crud)
+    {
         auto vCrud=CRUDBody(crud);
         auto vStrategy=[&vCrud](){
             QVariant v;
@@ -64,7 +67,7 @@ public:
     }
 
     void source_set(const QVariant&source){
-        if(qTypeId(source)==QMetaType_QString || qTypeId(source)==QMetaType_QByteArray || qTypeId(source)==QMetaType_QChar || qTypeId(source)==QMetaType_QBitArray){
+        if(QStmTypesListString.contains(qTypeId(source))){
             auto vSource=QJsonDocument::fromJson(source.toByteArray()).toVariant();
             this->source=vSource;
         }
@@ -76,16 +79,15 @@ public:
     void strategy_set(const QVariant&strategy){
         if(!strategy.isValid() || strategy.isNull()){
             this->strategy=QOrm::Undefined;
+            return;
         }
-        else{
-            QVariant vFy=strategy;
-            if(qTypeId(vFy)==QMetaType_QString || qTypeId(vFy)==QMetaType_QByteArray || qTypeId(vFy)==QMetaType_QChar || qTypeId(vFy)==QMetaType_QBitArray){
-                vFy=vFy.toString().toLower();
-                vFy=QOrm::__stringToStrategy.value(vFy.toString());
-            }
-            vFy=QOrm::__listToStrategy.contains(vFy)?vFy:QOrm::Undefined;
-            this->strategy=QOrm::CRUDStrategy(vFy.toInt());
+        QVariant vFy=strategy;
+        if(QStmTypesListString.contains(qTypeId(vFy))){
+            vFy=vFy.toString().toLower();
+            vFy=QOrm::__stringToStrategy.value(vFy.toString());
         }
+        vFy=QOrm::__listToStrategy.contains(vFy)?vFy:QOrm::Undefined;
+        this->strategy=QOrm::CRUDStrategy(vFy.toInt());
     }
 };
 
@@ -257,27 +259,23 @@ ResultValue &CRUDBase::crudify()
 {
     dPvt();
     p.dto.setResultInfo(this->resultInfo());
-
     auto strategy=this->strategy();
-    if(strategy==QOrm::Search)
+    switch (strategy) {
+    case QOrm::Search:
         return this->canActionSearch();
-
-    if(strategy==QOrm::Insert)
+    case QOrm::Insert:
         return this->canActionInsert();
-
-    if(strategy==QOrm::Update)
+    case QOrm::Update:
         return this->canActionUpdate();
-
-    if(strategy==QOrm::Upsert)
+    case QOrm::Upsert:
         return this->canActionUpsert();
-
-    if(strategy==QOrm::Remove)
+    case QOrm::Remove:
         return this->canActionRemove();
-
-    if(strategy==QOrm::Deactivate)
+    case QOrm::Deactivate:
         return this->canActionDeactivate();
-
-    return this->lr().setValidation(tr("Invalid strategy"));
+    default:
+        return this->lr().setValidation(tr("Invalid strategy"));
+    }
 }
 
 CRUDBase &CRUDBase::actionNulls()

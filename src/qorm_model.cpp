@@ -411,6 +411,9 @@ public:
                     case QMetaType_User:
                         rHash.insert(s,v.toInt());
                         break;
+                    case QMetaType_CustomType:
+                        rHash.insert(s,v.toInt());
+                        break;
                     default:
                         rHash.insert(s,v);
                     }
@@ -424,6 +427,9 @@ public:
                     rHash.insert(s,v.toUrl().toString());
                     break;
                 case QMetaType_User:
+                    rHash.insert(s,v.toInt());
+                    break;
+                case QMetaType_CustomType:
                     rHash.insert(s,v.toInt());
                     break;
                 default:
@@ -551,12 +557,6 @@ Model &Model::clear()
 bool Model::makeUuid()
 {
     return true;
-//    Q_DECLARE_VU;
-//    QVariantList vList;
-//    //qvl{this->day_week(), this->specialties_uuid(), this->establishment_uuid()}
-//    auto uuid=vu.toUuidCompuser(vList);
-//    this->set_uuid(uuid);
-//    return true;
 }
 
 bool Model::autoMakeUuid()
@@ -572,14 +572,15 @@ QByteArray Model::storedMd5Make() const
 
 bool Model::isModifier(const QVariantHash &vMap)
 {
-    auto tMap=this->toHash();
+    auto vHash=this->toHash();
     Q_V_HASH_ITERATOR (vMap){
         i.next();
         auto&k=i.key();
         auto v0=i.value().toString().trimmed();
-        auto v1=tMap.value(k).toString().trimmed();
-        if(v0!=v1)
-            return true;
+        auto v1=vHash.value(k).toString().trimmed();
+        if(v0==v1)
+            continue;
+        return true;
     }
     return false;
 }
@@ -593,8 +594,9 @@ QVariantList Model::toList(const QVariantList &vList)
 {
     QVariantList rList;
     for(const auto&v:vList){
-        if(this->readFrom(v))
-            rList<<this->toHash();
+        if(!this->readFrom(v))
+            continue;
+        rList<<this->toHash();
     }
     return rList;
 }
@@ -614,8 +616,8 @@ QVariantHash Model::toHash() const
 QVariantHash Model::toHashModel() const
 {
     dPvt();
-    auto vMap=p.modelInfo().toHashModel(this);
-    return vMap;
+    auto vHash=p.modelInfo().toHashModel(this);
+    return vHash;
 }
 
 QVariantHash Model::toMapPKValues() const
@@ -671,14 +673,14 @@ QVariantHash Model::toMapFKValues() const
     const auto&propertyShortVsTable=modelInfo.propertyShortVsTable();
     auto pList=modelInfo.propertyFK().values();
     for(auto&property:pList){
-        if(property.isValid()){
-            auto fieldName=propertyShortVsTable[property.name()].trimmed();
-            if(!fieldName.isEmpty()){
-                const auto k=SqlParserItem::createObject(fieldName);
-                const auto v=SqlParserItem::createValue(property.read(this));
-                map.insert(k,v);
-            }
-        }
+        if(!property.isValid())
+            continue;
+        auto fieldName=propertyShortVsTable[property.name()].trimmed();
+        if(fieldName.isEmpty())
+            continue;
+        const auto k=SqlParserItem::createObject(fieldName);
+        const auto v=SqlParserItem::createValue(property.read(this));
+        map.insert(k,v);
     }
     return QVariant(map).toHash();
 }
@@ -935,12 +937,12 @@ bool Model::setProperty(const char *name, const QVariant &value)
 {
     dPvt();
     auto index=this->metaObject()->indexOfProperty(name);
-    if(index>=0){
-        auto property=this->metaObject()->property(index);
-        if(property.isValid())
-            return p.write(property, value);
-    }
-    return false;
+    if(index<0)
+        return false;
+    auto property=this->metaObject()->property(index);
+    if(!property.isValid())
+        return false;
+    return p.write(property, value);
 }
 
 bool Model::setProperty(const QMetaProperty &property, const QVariant &value)
@@ -956,11 +958,12 @@ ResultValue &Model::uuidSet()
     Q_V_PROPERTY_ITERATOR(modelInfo.propertyPK()){
         i.next();
         auto&property=i.value();
-        if(qTypeId(property)==QMetaType_QUuid){
-            auto v=property.read(this).toUuid();
-            if(v.isNull())
-                property.write(this, this->uuidGenerator());
-        }
+        if(qTypeId(property)!=QMetaType_QUuid)
+            continue;
+        auto v=property.read(this).toUuid();
+        if(!v.isNull())
+            continue;
+        property.write(this, this->uuidGenerator());
     }
     return this->lr()=true;
 }
@@ -976,8 +979,9 @@ ResultValue &Model::deactivateSetValues()
         i.next();
         const auto k=i.key().toUtf8();
         const auto&v=i.value();
-        if(!this->setProperty(k, v))
-            return this->lr().setValidation(tr("Invalid data to define in the model as deleted"));
+        if(this->setProperty(k, v))
+            continue;
+        return this->lr().setValidation(tr("Invalid data to define in the model as deleted"));
     }
     return this->lr();
 }

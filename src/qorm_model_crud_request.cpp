@@ -103,7 +103,7 @@ namespace QOrm {
         }
 
         QVariant vFy=strategy;
-        if(qTypeId(vFy)==QMetaType_QString || qTypeId(vFy)==QMetaType_QByteArray || qTypeId(vFy)==QMetaType_QChar || qTypeId(vFy)==QMetaType_QBitArray){
+        if(QStmTypesListString.contains(qTypeId(vFy))){
             vFy=vFy.toString().toLower();
             vFy=__stringToStrategy.value(vFy.toString());
         }

@@ -37,8 +37,7 @@ bool ModelDescriptor::isValid() const{
     const auto m2=ModelDescriptor::staticMetaObject.className();
     if(m1==m2)
         return false;
-    else
-        return true;
+    return true;
 }
 
 QVariantList ModelDescriptor::descriptors()const
@@ -52,11 +51,11 @@ QVariantList ModelDescriptor::descriptors()const
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
-            if(mapCheck.contains(i.key())){
-                auto h=descriptors[i.key()].toMap();
-                h[vpEdit]=mapCheck[i.key()];
-                descriptors[i.key()]=h;
-            }
+            if(!mapCheck.contains(i.key()))
+                continue;
+            auto h=descriptors[i.key()].toMap();
+            h[vpEdit]=mapCheck[i.key()];
+            descriptors[i.key()]=h;
         }
     }
 
@@ -65,11 +64,11 @@ QVariantList ModelDescriptor::descriptors()const
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
-            if(mapCheck.contains(i.key())){
-                auto h=descriptors[i.key()].toMap();
-                h[vpPerfumery]=mapCheck[i.key()];
-                descriptors[i.key()]=h;
-            }
+            if(!mapCheck.contains(i.key()))
+                continue;
+            auto h=descriptors[i.key()].toMap();
+            h[vpPerfumery]=mapCheck[i.key()];
+            descriptors[i.key()]=h;
         }
     }
 
@@ -78,11 +77,11 @@ QVariantList ModelDescriptor::descriptors()const
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
-            if(mapCheck.contains(i.key())){
-                auto h=descriptors[i.key()].toMap();
-                h[vpFlags]=mapCheck[i.key()];
-                descriptors[i.key()]=h;
-            }
+            if(!mapCheck.contains(i.key()))
+                continue;
+            auto h=descriptors[i.key()].toMap();
+            h[vpFlags]=mapCheck[i.key()];
+            descriptors[i.key()]=h;
         }
     }
 
@@ -91,11 +90,11 @@ QVariantList ModelDescriptor::descriptors()const
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
-            if(mapCheck.contains(i.key())){
-                auto h=descriptors[i.key()].toMap();
-                h[vpOptions]=mapCheck[i.key()];
-                descriptors[i.key()]=h;
-            }
+            if(!mapCheck.contains(i.key()))
+                continue;
+            auto h=descriptors[i.key()].toMap();
+            h[vpOptions]=mapCheck[i.key()];
+            descriptors[i.key()]=h;
         }
     }
 
@@ -137,7 +136,7 @@ void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
         p.descriptorsOrder.append(name);
     auto d=p.descriptors.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
-    while (i.hasNext()) {
+    while (i.hasNext()){
         i.next();
         d[i.key()]=i.value();
     }

@@ -154,7 +154,8 @@ public:
     }
 
 
-    void setSettings(const QVariant&value){
+    void setSettings(const QVariant&value)
+    {
         auto dtoMap=value.toHash();
         QVariantHash v;
         if(!dtoMap.isEmpty()){
@@ -176,7 +177,8 @@ public:
         }
     }
 
-    void clear(){
+    void clear()
+    {
         this->headers.clear();
         this->filters.clear();
         this->items.clear();
@@ -226,9 +228,12 @@ QVariant ModelDtoControls::type() const
     dPvt();
     const auto&map=__DTOFormTypeMap;
     auto value=p.type;
-    if(qTypeId(value)==QMetaType_LongLong)
+    switch (qTypeId(value)) {
+    case QMetaType_LongLong:
         return map[QString::number(value.toLongLong())];
-    return map.value(value.toString().toLower());
+    default:
+        return map.value(value.toString().toLower());
+    }
 }
 
 ModelDtoControls &ModelDtoControls::type(const QVariant &v)
@@ -250,9 +255,12 @@ QVariant ModelDtoControls::layout() const
     dPvt();
     const auto&map=__DTOFormLayoutMap;
     auto value=p.layout;
-    if(qTypeId(value)==QMetaType_LongLong)
+    switch (qTypeId(value)) {
+    case QMetaType_LongLong:
         return map.value(QString::number(value.toLongLong()));
-    return map.value(value.toString().toLower());
+    default:
+        return map.value(value.toString().toLower());
+    }
 }
 
 ModelDtoControls &ModelDtoControls::layout(const QVariant &v)

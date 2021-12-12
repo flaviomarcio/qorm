@@ -8,10 +8,12 @@ namespace QOrm {
 class DaoPrv{
 public:
     QOrm::SqlSuitableValue suitableValue;
-    explicit DaoPrv(QObject*object){
+    explicit DaoPrv(QObject*object)
+    {
         Q_UNUSED(object)
     }
-    virtual ~DaoPrv(){
+    virtual ~DaoPrv()
+    {
     }
 };
 

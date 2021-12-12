@@ -28,13 +28,16 @@ public:
     QByteArray _connectOptions;
     QStringList _commandBeforeOpen;
     QStringList _commandAfterClose;
-    explicit ConnectionSettingPrv(QObject*parent){
+    explicit ConnectionSettingPrv(QObject*parent)
+    {
         this->parent=parent;
     }
-    virtual ~ConnectionSettingPrv(){
+    virtual ~ConnectionSettingPrv()
+    {
     }
 
-    QByteArray replaceVar(const QString&value)const{
+    QByteArray replaceVar(const QString&value)const
+    {
         auto v=value;
         QHashIterator<QString, QVariant> i(this->_variables);
         while (i.hasNext()) {
@@ -49,7 +52,8 @@ public:
 };
 
 
-ConnectionSetting::ConnectionSetting(QObject *parent):QObject(parent){
+ConnectionSetting::ConnectionSetting(QObject *parent):QObject(parent)
+{
     this->p = new ConnectionSettingPrv(this);
 }
 
@@ -61,7 +65,8 @@ ConnectionSetting::ConnectionSetting(const QSqlDatabase &detail, QObject *parent
     this->fromConnection(detail);
 }
 
-ConnectionSetting::ConnectionSetting(const ConnectionSetting &detail, QObject *parent):QObject(parent){
+ConnectionSetting::ConnectionSetting(const ConnectionSetting &detail, QObject *parent):QObject(parent)
+{
     this->p = new ConnectionSettingPrv(this);
     auto name=detail.name();
     dPvt();
@@ -92,7 +97,8 @@ ConnectionSetting::ConnectionSetting(const QByteArray&name, const QVariantHash &
     }
 }
 
-ConnectionSetting::~ConnectionSetting(){
+ConnectionSetting::~ConnectionSetting()
+{
     dPvt();delete&p;
 }
 
@@ -123,19 +129,20 @@ bool ConnectionSetting::isValid()const
             continue;
 
         auto vGet = property.read(this);
-        if(vGet.isValid()){
-            auto t=qTypeId(vGet);
-            if((t==QMetaType_QString || t==QMetaType_QByteArray) && vGet.toString().trimmed().isEmpty())
-                continue;
-            if((t==QMetaType_Double || t==QMetaType_Int || t==QMetaType_UInt || t==QMetaType_LongLong || t==QMetaType_ULongLong) && vGet.toLongLong()>0)
-                continue;
-            if((t==QMetaType_QVariantHash || t==QMetaType_QVariantMap) && vGet.toHash().isEmpty())
-                continue;
-            if((t==QMetaType_QVariantList || t==QMetaType_QStringList) && vGet.toList().isEmpty())
-                continue;
+        if(!vGet.isValid())
+            continue;
 
-            return true;
-        }
+        auto t=qTypeId(vGet);
+        if((t==QMetaType_QString || t==QMetaType_QByteArray) && vGet.toString().trimmed().isEmpty())
+            continue;
+        if((t==QMetaType_Double || t==QMetaType_Int || t==QMetaType_UInt || t==QMetaType_LongLong || t==QMetaType_ULongLong) && vGet.toLongLong()>0)
+            continue;
+        if((t==QMetaType_QVariantHash || t==QMetaType_QVariantMap) && vGet.toHash().isEmpty())
+            continue;
+        if((t==QMetaType_QVariantList || t==QMetaType_QStringList) && vGet.toList().isEmpty())
+            continue;
+
+        return true;
     }
     return false;
 }
@@ -183,32 +190,56 @@ ConnectionSetting &ConnectionSetting::fromMap(const QVariantHash &map)
         auto property=metaObject.property(row);
         QString key = property.name();
         auto value = vMap.value(key.toLower());
-        auto type=qTypeId(property);
+
         if(value.isNull() || !value.isValid())
             continue;
-        if(!property.write(this,value)){
-            if(type==QMetaType_Int || type==QMetaType_UInt)
-                property.write(this,value.toInt());
-            else if(type==QMetaType_LongLong || type==QMetaType_ULongLong)
-                property.write(this,value.toLongLong());
-            else if(type==QMetaType_Double)
-                property.write(this,value.toDouble());
-            else if(type==QMetaType_QVariantHash){
-                auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
-                property.write(this,v.toHash());
-            }
-            else if(type==QMetaType_QVariantMap){
-                auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
-                property.write(this,v.toHash());
-            }
-            else if(type==QMetaType_QVariantList){
-                auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
-                property.write(this,v.toList());
-            }
-            else if(type==QMetaType_QStringList){
-                auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
-                property.write(this,v.toString());
-            }
+
+        if(property.write(this,value))
+            continue;
+
+        auto type=qTypeId(property);
+        switch (type) {
+        case QMetaType_Int:
+            property.write(this,value.toInt());
+            break;
+        case QMetaType_UInt:
+            property.write(this,value.toInt());
+            break;
+        case QMetaType_LongLong:
+            property.write(this,value.toLongLong());
+            break;
+        case QMetaType_ULongLong:
+            property.write(this,value.toLongLong());
+            break;
+        case QMetaType_Double:
+            property.write(this,value.toDouble());
+            break;
+        case QMetaType_QVariantHash:
+        {
+            auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
+            property.write(this,v.toHash());
+        }
+        break;
+        case QMetaType_QVariantMap:
+        {
+            auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
+            property.write(this,v.toHash());
+        }
+        break;
+        case QMetaType_QVariantList:
+        {
+            auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
+            property.write(this,v.toList());
+        }
+        break;
+        case QMetaType_QStringList:
+        {
+            auto v=QJsonDocument::fromJson(value.toByteArray()).toVariant();
+            property.write(this,v.toString());
+        }
+        break;
+        default:
+            break;
         }
     }
     return*this;
@@ -217,12 +248,12 @@ ConnectionSetting &ConnectionSetting::fromMap(const QVariantHash &map)
 ConnectionSetting&ConnectionSetting::fromConnection(const QSqlDatabase &connection)
 {
     QVariantHash map;
-    map[qsl("driver"        )]=connection.driverName    ();
-    map[qsl("dataBaseName"  )]=connection.databaseName  ();
-    map[qsl("userName"      )]=connection.userName      ();
-    map[qsl("password"      )]=connection.password      ();
-    map[qsl("hostName"      )]=connection.hostName      ();
-    map[qsl("port"          )]=connection.port          ();
+    map[qsl("driver")]=connection.driverName();
+    map[qsl("dataBaseName")]=connection.databaseName();
+    map[qsl("userName")]=connection.userName();
+    map[qsl("password")]=connection.password();
+    map[qsl("hostName")]=connection.hostName();
+    map[qsl("port")]=connection.port();
     map[qsl("connectOptions")]=connection.connectOptions();
     return this->fromMap(map);
 }

@@ -20,7 +20,8 @@ public:
     bool rollbackOnError=true;
     bool exceptionOnFail=true;
     Transaction*parent=nullptr;
-    explicit TransactionPvt(Transaction*parent):QObject(parent){
+    explicit TransactionPvt(Transaction*parent):QObject(parent)
+    {
         this->parent=parent;
     }
 
@@ -57,12 +58,14 @@ public:
         this->objTran=nullptr;
     }
 
-    bool inTransaction(){
+    bool inTransaction()
+    {
         auto objectTransaction=this->objectTransaction();
         return (objectTransaction==nullptr);
     }
 
-    void failTryException(const QString&v){
+    void failTryException(const QString&v)
+    {
         this->parent->lr().setCritical(v);
         if(!this->exceptionOnFail)
             sWarning()<<tr("dangerous failure detected and ignored during try-rollback, try-transaction or try-commit");
@@ -70,7 +73,8 @@ public:
             qFatal("dangerous failure detected and ignored during try-rollback, try-transaction or try-commit");
     }
 
-    Transaction*objectTransaction(){
+    Transaction*objectTransaction()
+    {
         if(this->objTran==nullptr){
             QMutexLocker locker(&___mutex_cache);
             auto cnn=this->parent->connectionId();

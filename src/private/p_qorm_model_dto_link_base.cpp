@@ -30,19 +30,22 @@ public:
     QObject*parent=nullptr;
     QObject*___d=nullptr;
     QHash<QString, ModelDtoLinkItem*> ___objectList;
-    explicit ModelDtoLinkBaseCollectionPvt(QObject*parent):QObject(parent){
+    explicit ModelDtoLinkBaseCollectionPvt(QObject*parent):QObject(parent)
+    {
     }
     ~ModelDtoLinkBaseCollectionPvt(){
     }
 };
 
-ModelDtoLinkItem::ModelDtoLinkItem(QObject *dtpParent, QObject *parent):QStm::Object(parent){
+ModelDtoLinkItem::ModelDtoLinkItem(QObject *dtpParent, QObject *parent):QStm::Object(parent)
+{
     this->p=new ModelDtoLinkItemPvt(this);
     dPvtI();
     p.___d=dtpParent;
 }
 
-ModelDtoLinkItem::~ModelDtoLinkItem(){
+ModelDtoLinkItem::~ModelDtoLinkItem()
+{
 }
 
 QUuid &ModelDtoLinkItem::uuid() const
@@ -142,7 +145,8 @@ QVariant &ModelDtoLinkItem::parameters() const
 ModelDtoLinkItem &ModelDtoLinkItem::setParameters(const QVariant &value)
 {
     dPvtI();
-    if(qTypeId(value)==QMetaType_QString || qTypeId(value)==QMetaType_QByteArray || qTypeId(value)==QMetaType_QBitArray || qTypeId(value)==QMetaType_QChar){
+    auto typeId=qTypeId(value);
+    if(QStmTypesListString.contains(typeId)){
         auto name=value.toString().trimmed();
         if(name.isEmpty())
             p.parameters=QVariantHash{{name, qsl("${%1}").arg(name)}};
@@ -151,12 +155,14 @@ ModelDtoLinkItem &ModelDtoLinkItem::setParameters(const QVariant &value)
     return*this;
 }
 
-QVariant ModelDtoLinkItem::toVariant() const{
+QVariant ModelDtoLinkItem::toVariant() const
+{
     auto v=this->toHash();
     return v;
 }
 
-ModelDtoLinkCollection::ModelDtoLinkCollection(QObject *dtoParent, QObject *parent):QStm::Object(parent){
+ModelDtoLinkCollection::ModelDtoLinkCollection(QObject *dtoParent, QObject *parent):QStm::Object(parent)
+{
     this->p = new ModelDtoLinkBaseCollectionPvt(this);
     dPvtA();
     p.___d=dtoParent;
@@ -174,12 +180,14 @@ QVariant ModelDtoLinkCollection::toVar() const
     return vList;
 }
 
-QObject &ModelDtoLinkCollection::d(){
+QObject &ModelDtoLinkCollection::d()
+{
     dPvtA();
     return*p.___d;
 }
 
-QObject &ModelDtoLinkCollection::ref(ModelDtoLinkItem *link){
+QObject &ModelDtoLinkCollection::ref(ModelDtoLinkItem *link)
+{
     dPvtA();
     if(link==nullptr)
         link=new ModelDtoLinkItem(p.___d, this);
@@ -197,9 +205,9 @@ ModelDtoLinkItem *ModelDtoLinkCollection::find(const QVariant &ref)
     while (i.hasNext()) {
         i.next();
         auto iRef=i.value();
-        if(iRef->ref().toString().toLower().trimmed()==_ref){
-            return iRef;
-        }
+        if(iRef->ref().toString().toLower().trimmed()!=_ref)
+            continue;
+        return iRef;
     }
     return nullptr;
 }

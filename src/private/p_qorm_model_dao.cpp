@@ -10,7 +10,8 @@ namespace PrivateQOrm {
 class ModelDaoPvt : public QObject{
 public:
     QOrm::SqlSuitableValue suitableValue;
-    explicit ModelDaoPvt(QObject*parent):QObject(parent){
+    explicit ModelDaoPvt(QObject*parent):QObject(parent)
+    {
     }
     ~ModelDaoPvt(){
     }
@@ -27,7 +28,8 @@ ModelDao::~ModelDao()
     p.deleteLater();
 }
 
-QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QVariant &value) const{
+QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QVariant &value) const
+{
     SearchParameters map;
     Q_DECLARE_VU;
     if(!value.isValid() || value.isNull())
@@ -43,16 +45,20 @@ QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QV
             auto k=vu.toVariant(i.key());
             auto v=vu.toVariant(i.value());
             auto key=QOrm::SqlParserItem::from(k);
-            if(qTypeId(v)==QMetaType_QUuid)
+            switch (qTypeId(v)) {
+            case QMetaType_QUuid:
                 map.insert(key,v.toUuid().toString());
-            else if(qTypeId(v)==QMetaType_QUrl)
+                break;
+            case QMetaType_QUrl:
                 map.insert(key,v.toUrl().toString());
-            else
+                break;
+            default:
                 map.insert(key,v);
+                break;
+            }
         }
         return map.buildVariant();
     }
-
 
     const auto&propertyByFieldName=modelRef.propertyByFieldName();
     const auto&propertyByPropertyName=modelRef.propertyByPropertyName();

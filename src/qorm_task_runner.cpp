@@ -10,14 +10,17 @@ class TaskRunnerPvt:public ObjectDb{
 public:
     TaskPool pool;
     int timeout=0;
-    explicit TaskRunnerPvt(TaskRunner*parent):ObjectDb(parent), pool(parent){
+    explicit TaskRunnerPvt(TaskRunner*parent):ObjectDb(parent), pool(parent)
+    {
     }
-    virtual ~TaskRunnerPvt(){
+    virtual ~TaskRunnerPvt()
+    {
         pool.quit();
         pool.wait(1000);
     }
 
-    void clear(){
+    void clear()
+    {
         this->pool.clear();
         this->timeout=0;
     }
@@ -59,15 +62,24 @@ TaskRunner &TaskRunner::vs(const QVariant &values)
 {
     dPvt();
     QVariantList vList;
-    if(qTypeId(values)==QMetaType_QVariantMap || qTypeId(values)==QMetaType_QVariantHash)
+    switch (qTypeId(values)) {
+    case QMetaType_QVariantHash:
         vList=values.toHash().values();
-    else if(qTypeId(values)==QMetaType_QVariantList || qTypeId(values)==QMetaType_QStringList)
+        break;
+    case QMetaType_QVariantMap:
+        vList=values.toHash().values();
+        break;
+    case QMetaType_QVariantList:
         vList=values.toList();
-    else
+        break;
+    case QMetaType_QStringList:
+        vList=values.toList();
+        break;
+    default:
         vList<<values;
-    for(auto&v:vList){
-        p.pool.taskQueueValue<<v;
     }
+    for(auto&v:vList)
+        p.pool.taskQueueValue<<v;
     return*this;
 }
 

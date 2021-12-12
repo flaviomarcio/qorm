@@ -15,11 +15,13 @@ namespace QOrm {
         QMap<QByteArray, PrivateQOrm::CRUDBase*> crudMap;
         QList<PrivateQOrm::CRUDBase*> crudList;
 
-        explicit CRUDBlockPvt(CRUDBlock*parent):options(parent){
+        explicit CRUDBlockPvt(CRUDBlock*parent):options(parent)
+        {
             this->parent=parent;
-            //options.setSearchOnEmptyFilter(false);
         }
-        virtual ~CRUDBlockPvt(){
+
+        virtual ~CRUDBlockPvt()
+        {
         }
     };
 
@@ -191,28 +193,25 @@ namespace QOrm {
 
                 QVariantHash lastCrud=__return.isEmpty()?QVariantHash():__return.last().toHash();
                 if(lastCrud.isEmpty())
-                    crudRecord=CRUDBody(crudSource);
-                else{
-                    QVariantHash record, vHash;
-                    if(!lastCrud.contains(qsl("crud")))
-                        record=lastCrud;
-                    else{
-                        auto crud=lastCrud[qsl("crud")].toList();
-                        if(!crud.isEmpty()){
-                            vHash = crud.first().toHash();
-                            if(vHash.contains(qsl("items")))
-                                record=vHash;
-                            else{
-                                crud=vHash[qsl("items")].toList();
-                                record=crud.isEmpty()?QVariantHash():crud.first().toHash();
-                            }
+                    return CRUDBody(crudSource);
+
+                QVariantHash vHash;
+                auto record=lastCrud;
+                if(lastCrud.contains(qsl("crud"))){
+                    auto crud=lastCrud[qsl("crud")].toList();
+                    if(!crud.isEmpty()){
+                        vHash = crud.first().toHash();
+                        if(vHash.contains(qsl("items")))
+                            record=vHash;
+                        else{
+                            crud=vHash[qsl("items")].toList();
+                            record=crud.isEmpty()?QVariantHash():crud.first().toHash();
                         }
                     }
-                    const auto&modelInfo=crud->modelInfo();
-                    auto crudSourceFields=modelInfo.toForeign(crudRecord.source(), record);
-                    crudRecord=CRUDBody(crudRecord.strategy(), crudSourceFields);
                 }
-                return crudRecord;
+                const auto&modelInfo=crud->modelInfo();
+                auto crudSourceFields=modelInfo.toForeign(crudRecord.source(), record);
+                return CRUDBody(crudRecord.strategy(), crudSourceFields);
             };
 
 
@@ -221,9 +220,9 @@ namespace QOrm {
                 while(!crudListCopy.isEmpty()){
                     const auto&crudSource=crudListCopy.takeLast();
                     CRUDBody crudMaked(crudSource);
-                    if(!crudListCopy.isEmpty()){
+                    if(!crudListCopy.isEmpty())
                         crudMaked=makeItem(crud, crudSource);
-                    }
+
                     if(!crud->crudBody(crudMaked).crudify())
                         return this->lr(crud->lr());
                     __return<<crud->lr().resultVariant();

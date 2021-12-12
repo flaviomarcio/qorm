@@ -114,38 +114,38 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
             }
             recordList<<record;
         }
+        return recordList;
     }
-    else{
-        QHash<int,QByteArray> recordsIndex;
-        QStringList propertys;
-        auto propertyTableList = modelInfo.propertyShortVsTable();
 
-        while(this->next()){
-            QVariantHash record;
-            auto&sqlRecord=p.sqlRecord;
+    QHash<int,QByteArray> recordsIndex;
+    QStringList propertys;
+    auto propertyTableList = modelInfo.propertyShortVsTable();
 
-            if(recordsIndex.isEmpty()){
-                for(int col = 0; col < metaObject.propertyCount(); ++col) {
-                    auto property = metaObject.property(col);
-                    auto propertyName=QByteArray(property.name()).toLower().trimmed();
-                    auto fieldName=propertyTableList.value(propertyName).trimmed();
-                    if(!fieldName.isEmpty()){
-                        auto index=sqlRecord.indexOf(fieldName);
-                        if(index>=0)
-                            recordsIndex[index]=property.name();
-                    }
-                }
+    while(this->next()){
+        QVariantHash record;
+        auto&sqlRecord=p.sqlRecord;
+
+        if(recordsIndex.isEmpty()){
+            for(int col = 0; col < metaObject.propertyCount(); ++col){
+                auto property = metaObject.property(col);
+                auto propertyName=QByteArray(property.name()).toLower().trimmed();
+                auto fieldName=propertyTableList.value(propertyName).trimmed();
+                if(fieldName.isEmpty())
+                    continue;
+                auto index=sqlRecord.indexOf(fieldName);
+                if(index<0)
+                    continue;
+                recordsIndex[index]=property.name();
             }
-
-
-            QHashIterator<int, QByteArray> i(recordsIndex);
-            while (i.hasNext()) {
-                i.next();
-                const auto v=sqlRecord.value(i.key());
-                record[i.value()]=v;
-            }
-            recordList<<record;
         }
+
+        QHashIterator<int, QByteArray> i(recordsIndex);
+        while (i.hasNext()) {
+            i.next();
+            const auto v=sqlRecord.value(i.key());
+            record[i.value()]=v;
+        }
+        recordList<<record;
     }
     return recordList;
 }
@@ -153,16 +153,16 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
 QVariantHash Query::makeRecord()const
 {
     dPvt();
-    if(p.initNext()){
-        QVariantHash record;
-        auto&sqlRecord=p.sqlRecord;
-        for (int col = 0; col < p.sqlRecord.count(); ++col){
-            const auto v=sqlRecord.value(col);
-            record[sqlRecord.fieldName(col)]=v;
-        }
-        return record;
+    if(!p.initNext())
+        return {};
+
+    QVariantHash record;
+    auto&sqlRecord=p.sqlRecord;
+    for (int col = 0; col < p.sqlRecord.count(); ++col){
+        const auto v=sqlRecord.value(col);
+        record[sqlRecord.fieldName(col)]=v;
     }
-    return {};
+    return record;
 }
 
 QVariantHash Query::makeRecord(const QMetaObject &metaObject) const
@@ -174,36 +174,35 @@ QVariantHash Query::makeRecord(const QMetaObject &metaObject) const
 QVariantHash Query::makeRecord(const ModelInfo &modelInfo)const
 {
     dPvt();
-    if(p.initNext()){
-        auto metaObject=modelInfo.staticMetaObject();
-        auto propertyTableList=modelInfo.propertyShortVsTable();
-        if(metaObject.methodCount()==0){
-            QVariantHash record;
-            for (int col = 0; col < p.sqlRecord.count(); ++col)
-                record.insert(p.sqlRecord.fieldName(col), p.sqlRecord.value(col));
-            return record;
-        }
-        else{
-            QList<int> recordsIndex;
-            QStringList propertys;
-            for(int col = 0; col < metaObject.propertyCount(); ++col) {
-                auto property = metaObject.property(col);
-                QString propertyName=QByteArray(property.name()).toLower().trimmed();
-                propertyName=propertyTableList.value(propertyName).trimmed();
-                if(!propertyName.isEmpty()){
-                    auto index=p.sqlRecord.indexOf(propertyName);
-                    if(index>=0)
-                        recordsIndex<<index;
-                }
-            }
+    if(!p.initNext())
+        return {};
 
-            QVariantHash record;
-            for (auto&col:recordsIndex)
-                record.insert(p.sqlRecord.fieldName(col), p.sqlRecord.value(col));
-            return record;
+    auto metaObject=modelInfo.staticMetaObject();
+    auto propertyTableList=modelInfo.propertyShortVsTable();
+    if(metaObject.methodCount()==0){
+        QVariantHash record;
+        for (int col = 0; col < p.sqlRecord.count(); ++col)
+            record.insert(p.sqlRecord.fieldName(col), p.sqlRecord.value(col));
+        return record;
+    }
+
+    QList<int> recordsIndex;
+    QStringList propertys;
+    for(int col = 0; col < metaObject.propertyCount(); ++col) {
+        auto property = metaObject.property(col);
+        QString propertyName=QByteArray(property.name()).toLower().trimmed();
+        propertyName=propertyTableList.value(propertyName).trimmed();
+        if(!propertyName.isEmpty()){
+            auto index=p.sqlRecord.indexOf(propertyName);
+            if(index>=0)
+                recordsIndex<<index;
         }
     }
-    return {};
+
+    QVariantHash record;
+    for (auto&col:recordsIndex)
+        record.insert(p.sqlRecord.fieldName(col), p.sqlRecord.value(col));
+    return record;
 }
 
 bool Query::modelRead(QOrm::Model *model) const
@@ -216,15 +215,15 @@ bool Query::modelRead(QOrm::Model *model) const
     for(int col = 0; col < metaObject.propertyCount(); ++col) {
         auto property = metaObject.property(col);
         auto propertyName=QByteArray(property.name()).toLower().trimmed();
-        if(p.sqlQueryFields.contains(propertyName)){
-            auto index=p.sqlRecord.indexOf(propertyName);
-            if(index>=0){
-                auto value=p.sqlRecord.value(index);
-                if(!model->setProperty(property, value))
-                    return false;
-                RETURN=true;
-            }
-        }
+        if(!p.sqlQueryFields.contains(propertyName))
+            continue;
+        auto index=p.sqlRecord.indexOf(propertyName);
+        if(index<0)
+            continue;
+        auto value=p.sqlRecord.value(index);
+        if(!model->setProperty(property, value))
+            return false;
+        RETURN=true;
     }
     return RETURN;
 }
@@ -241,11 +240,10 @@ bool Query::next()const
     dPvt();
     if(!p.next())
         return false;
-    else{
-        if(p.sqlRecord.isEmpty())
-            p.sqlRecord=p.sqlQuery.record();
-        return true;
-    }
+
+    if(p.sqlRecord.isEmpty())
+        p.sqlRecord=p.sqlQuery.record();
+    return true;
 }
 
 bool Query::prepare() const

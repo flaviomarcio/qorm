@@ -2,48 +2,48 @@
 
 namespace QOrm {
 
-    #define dPvt()\
-        auto&p = *reinterpret_cast<ModelDtoOptionsPvt*>(this->p)
+#define dPvt()\
+auto&p = *reinterpret_cast<ModelDtoOptionsPvt*>(this->p)
 
-    class ModelDtoOptionsPvt{
-    public:
-        ModelDtoOptions*parent=nullptr;
-        bool searchOnEmptyFilter=true;
-        explicit ModelDtoOptionsPvt(ModelDtoOptions*parent){
-            this->parent=parent;
-        }
-        virtual ~ModelDtoOptionsPvt(){
-        }
-    };
-
-    ModelDtoOptions::ModelDtoOptions(QObject *parent):QObject(parent)
-    {
-        this->p = new ModelDtoOptionsPvt(this);
+          class ModelDtoOptionsPvt{
+public:
+    ModelDtoOptions*parent=nullptr;
+    bool searchOnEmptyFilter=true;
+    explicit ModelDtoOptionsPvt(ModelDtoOptions*parent){
+        this->parent=parent;
     }
-
-    ModelDtoOptions::~ModelDtoOptions()
-    {
-        dPvt();
-        delete&p;
+    virtual ~ModelDtoOptionsPvt(){
     }
+};
 
-    bool ModelDtoOptions::searchOnEmptyFilter() const
-    {
-        dPvt();
-        return p.searchOnEmptyFilter;
-    }
+ModelDtoOptions::ModelDtoOptions(QObject *parent):QObject(parent)
+{
+    this->p = new ModelDtoOptionsPvt(this);
+}
 
-    void ModelDtoOptions::setSearchOnEmptyFilter(bool value)
-    {
-        dPvt();
-        p.searchOnEmptyFilter = value;
-    }
+ModelDtoOptions::~ModelDtoOptions()
+{
+    dPvt();
+    delete&p;
+}
 
-    QOrm::ModelDtoOptions &QOrm::ModelDtoOptions::operator =(const QOrm::ModelDtoOptions &v)
-    {
-        dPvt();
-        p.searchOnEmptyFilter=v.searchOnEmptyFilter();
-        return*this;
-    }
+bool ModelDtoOptions::searchOnEmptyFilter() const
+{
+    dPvt();
+    return p.searchOnEmptyFilter;
+}
 
-    }
+void ModelDtoOptions::setSearchOnEmptyFilter(bool value)
+{
+    dPvt();
+    p.searchOnEmptyFilter = value;
+}
+
+QOrm::ModelDtoOptions &QOrm::ModelDtoOptions::operator =(const QOrm::ModelDtoOptions &v)
+{
+    dPvt();
+    p.searchOnEmptyFilter=v.searchOnEmptyFilter();
+    return*this;
+}
+
+}

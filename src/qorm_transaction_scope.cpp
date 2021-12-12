@@ -10,7 +10,8 @@ namespace QOrm {
 class TransactionScopePvt:public QObject{
 public:
     Transaction transaction;
-    explicit TransactionScopePvt(QObject*parent):QObject(parent), transaction(parent){
+    explicit TransactionScopePvt(QObject*parent):QObject(parent), transaction(parent)
+    {
         transaction.setRollbackOnError(true);
         transaction.setExceptionOnFail(true);
         if(!transaction.transaction())
@@ -21,7 +22,8 @@ public:
         this->transaction.commit();
     }
 
-    void failTryException(const QString&v){
+    void failTryException(const QString&v)
+    {
         this->transaction.lr().setCritical(v);
         if(!this->transaction.exceptionOnFail())
             sWarning()<<qsl("dangerous failure detected and ignored during try-rollback, try-transaction or try-commit");

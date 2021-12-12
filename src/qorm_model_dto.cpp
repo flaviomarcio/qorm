@@ -27,24 +27,34 @@ static void initDtoSettingsCache(){
 #if Q_ORM_LOG
             sWarning()<<qsl("No open file:")<<fileSrc.fileName()<<qsl(", error: ")<<fileSrc.errorString();
 #endif
-        else{
-            auto bytes=fileSrc.readAll();
-            fileSrc.close();
-            QVariantList vList;
-            auto vDoc=QJsonDocument::fromJson(bytes).toVariant();
-            if(qTypeId(vDoc)==QMetaType_QVariantHash || qTypeId(vDoc)==QMetaType_QVariantMap){
-                vList<<vDoc;
-            }
-            else if(qTypeId(vDoc)==QMetaType_QVariantList || qTypeId(vDoc)==QMetaType_QStringList){
-                vList=vDoc.toList();
-            }
-            for(auto&v:vList){
-                auto vDoc=v.toHash();
-                QHashIterator<QString, QVariant> i(vDoc);
-                while (i.hasNext()) {
-                    i.next();
-                    __dtoSettings.insert(i.key(), i.value());
-                }
+        continue;
+
+        auto bytes=fileSrc.readAll();
+        fileSrc.close();
+        QVariantList vList;
+        auto vDoc=QJsonDocument::fromJson(bytes).toVariant();
+        switch (qTypeId(vDoc)) {
+        case QMetaType_QVariantHash:
+            vList<<vDoc;
+            break;
+        case QMetaType_QVariantMap:
+            vList<<vDoc;
+            break;
+        case QMetaType_QVariantList:
+            vList<<vDoc;
+            break;
+        case QMetaType_QStringList:
+            vList<<vDoc;
+            break;
+        default:
+            break;
+        }
+        for(auto&v:vList){
+            auto vDoc=v.toHash();
+            QHashIterator<QString, QVariant> i(vDoc);
+            while (i.hasNext()) {
+                i.next();
+                __dtoSettings.insert(i.key(), i.value());
             }
         }
     }
@@ -60,15 +70,16 @@ public:
 
     QObject*dto=nullptr;
 
-    explicit ModelDtoPvt(ModelDto*parent){
+    explicit ModelDtoPvt(ModelDto*parent)
+    {
         this->dto=parent;
         auto pParent=parent->parent();
-        if(pParent!=nullptr){
+        if(pParent!=nullptr)
             this->initDescriptors(pParent);
-        }
     }
 
-    virtual ~ModelDtoPvt(){
+    virtual ~ModelDtoPvt()
+    {
     }
 
     void initObjects(){
@@ -81,15 +92,16 @@ public:
         this->dtoControls.clear();
     }
 
-    void initDescriptors(QObject*object){
+    void initDescriptors(QObject*object)
+    {
         auto model=dynamic_cast<QOrm::Model*>(object);
-        if(model!=nullptr){
-            const auto&modelInfo=ModelInfo::modelInfo(model->metaObject()->className());
-            const auto&descriptors=modelInfo.propertyDescriptors();
-            this->dtoControls.headers().clear().makeDefault();
-            for(auto&v:descriptors){
-                this->dtoControls.headers().value(v.toHash());
-            }
+        if(model==nullptr)
+            return;
+        const auto&modelInfo=ModelInfo::modelInfo(model->metaObject()->className());
+        const auto&descriptors=modelInfo.propertyDescriptors();
+        this->dtoControls.headers().clear().makeDefault();
+        for(auto&v:descriptors){
+            this->dtoControls.headers().value(v.toHash());
         }
     }
 };

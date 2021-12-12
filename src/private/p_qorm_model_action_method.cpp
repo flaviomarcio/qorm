@@ -16,23 +16,23 @@ public:
     ModelActionMethod actionBefore=nullptr;
     ModelActionMethod action=nullptr;
     ModelActionMethod actionAfter=nullptr;
-    explicit ModelActionPvt(ModelAction*parent){
+    explicit ModelActionPvt(ModelAction*parent)
+    {
         this->parent=parent;
         if(this->parent)
             this->parentDb = dynamic_cast<ObjectDb*>(this->parent->parent());
     }
-    virtual ~ModelActionPvt(){
+    virtual ~ModelActionPvt()
+    {
     }
 
-
-    QVariantList makeBodyLoop(const QVariant&v){
+    QVariantList makeBodyLoop(const QVariant&v)
+    {
         auto vHash=v.toHash();
         if(vHash.contains(qsl("id")) && vHash.contains(qsl("items")))
             return vHash[qsl("items")].toList();
         return qvl{vHash};
     }
-
-
 };
 
 ModelAction::ModelAction(QObject *parent) : QOrm::ObjectDb(parent)
