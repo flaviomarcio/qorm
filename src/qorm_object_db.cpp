@@ -22,13 +22,11 @@ public:
     DoubleUtil dbUtil;
     QObject*parent=nullptr;
     QByteArray ___connectionId;
-    explicit ObjectDbPvt(QObject*parent):QObject(parent)
-    {
+    explicit ObjectDbPvt(QObject*parent):QObject(parent){
         this->parent=parent;
     }
 
-    static QSqlDatabase invokeMethodConnection(QObject*objectCheck)
-    {
+    static QSqlDatabase invokeMethodConnection(QObject*objectCheck){
         auto metaObject=objectCheck->metaObject();
         for(int mi = 0; mi < metaObject->methodCount(); ++mi) {
             auto method = metaObject->method(mi);
@@ -42,16 +40,10 @@ public:
             QString _textStr;
             QGenericReturnArgument invokeReturn;
 
-            switch (method.returnType()) {
-            case QMetaType_QString:
+            if(method.returnType()==QMetaType_QString)
                 invokeReturn=Q_RETURN_ARG(QString, _textStr);
-                break;;
-            case QMetaType_QByteArray:
+            else
                 invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
-                break;
-            default:
-                continue;
-            }
 
             if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)){
 #ifdef Q_ORM_LOG_SUPER_VERBOSE
@@ -69,8 +61,7 @@ public:
         return QSqlDatabase();
     };
 
-    QSqlDatabase connectionGet()
-    {
+    QSqlDatabase connectionGet(){
         if(!this->___connectionId.isEmpty())
             return QSqlDatabase::database(this->___connectionId);
         QSqlDatabase connection;
@@ -93,8 +84,7 @@ public:
         return QSqlDatabase();
     }
 
-    QByteArray connectionId()const
-    {
+    QByteArray connectionId()const{
         return this->___connectionId;
     }
 

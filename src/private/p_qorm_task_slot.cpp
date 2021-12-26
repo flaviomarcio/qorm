@@ -13,7 +13,7 @@ TaskSlot::TaskSlot(TaskPool *pool, const QVariantHash &connectionSetting, TaskRu
     this->methodSuccess=methodSuccess;
     this->methodFailed=methodFailed;
 
-    QObject::connect(this, &TaskSlot::taskSend      , this          , &TaskSlot::onTaskSend    );
+    QObject::connect(this, &TaskSlot::taskSend      , this          , &TaskSlot::on_taskSend    );
     QObject::connect(this, &TaskSlot::taskRequest   , this->pool    , &TaskPool::taskRequest    );
     QObject::connect(this, &TaskSlot::taskSuccess   , this->pool    , &TaskPool::taskResponse   );
     QObject::connect(this, &TaskSlot::taskError     , this->pool    , &TaskPool::taskResponse   );
@@ -25,7 +25,7 @@ TaskSlot::TaskSlot(TaskPool *pool, const QVariantHash &connectionSetting, TaskRu
 
 TaskSlot::~TaskSlot()
 {
-    QObject::disconnect(this, &TaskSlot::taskSend      , this          , &TaskSlot::onTaskSend    );
+    QObject::disconnect(this, &TaskSlot::taskSend      , this          , &TaskSlot::on_taskSend    );
     QObject::disconnect(this, &TaskSlot::taskRequest   , this->pool    , &TaskPool::taskRequest    );
     QObject::disconnect(this, &TaskSlot::taskSuccess   , this->pool    , &TaskPool::taskResponse   );
     QObject::disconnect(this, &TaskSlot::taskError     , this->pool    , &TaskPool::taskResponse   );
@@ -59,13 +59,11 @@ void TaskSlot::init()
     emit this->taskRequest(this);
 }
 
-void TaskSlot::onTaskRequest()
-{
+void TaskSlot::on_taskRequest(){
     emit taskRequest(this);
 }
 
-void TaskSlot::onTaskSend(const QVariant &task)
-{
+void TaskSlot::on_taskSend(const QVariant &task){
     QVariantHash vTask;
     vTask[qsl("request")]=task;
     emit taskStart(vTask);

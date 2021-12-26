@@ -12,7 +12,7 @@ namespace QOrm {
 
     TEST_F(Q_ORM_DTOTestUnit, serviceStart)
     {
-        EXPECT_TRUE(this->serviceStart())<<"fail: service start";
+        EXPECT_EQ(this->serviceStart(),true)<<"fail: service start";
     }
 
     TEST_F(Q_ORM_DTOTestUnit, serviceTestOutPut)
@@ -57,7 +57,7 @@ namespace QOrm {
 
     TEST_F(Q_ORM_DTOTestUnit, serviceStop)
     {
-        EXPECT_TRUE(this->serviceStop())<<"fail: service stop";
+        EXPECT_EQ(this->serviceStop(),true)<<"fail: service stop";
     }
 
 }

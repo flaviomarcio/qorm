@@ -9,12 +9,10 @@ auto&p = *reinterpret_cast<ModelDtoOptionsPvt*>(this->p)
 public:
     ModelDtoOptions*parent=nullptr;
     bool searchOnEmptyFilter=true;
-    explicit ModelDtoOptionsPvt(ModelDtoOptions*parent)
-    {
+    explicit ModelDtoOptionsPvt(ModelDtoOptions*parent){
         this->parent=parent;
     }
-    virtual ~ModelDtoOptionsPvt()
-    {
+    virtual ~ModelDtoOptionsPvt(){
     }
 };
 

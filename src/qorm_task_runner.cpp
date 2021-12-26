@@ -64,10 +64,14 @@ TaskRunner &TaskRunner::vs(const QVariant &values)
     QVariantList vList;
     switch (qTypeId(values)) {
     case QMetaType_QVariantHash:
+        vList=values.toHash().values();
+        break;
     case QMetaType_QVariantMap:
         vList=values.toHash().values();
         break;
     case QMetaType_QVariantList:
+        vList=values.toList();
+        break;
     case QMetaType_QStringList:
         vList=values.toList();
         break;

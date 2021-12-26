@@ -16,23 +16,22 @@ namespace QOrm {
 #define dPvt()\
     auto&p = *reinterpret_cast<ConnectionPoolPvt*>(this->p)
 
-static QStringList initOdbc()
-{
-    QStringList odbcDrivers;
-    QSettings setting(qsl("/etc/odbcinst.ini"), QSettings::IniFormat);
-    return setting.childGroups();
-}
-
 static qlonglong connectionCount=0;
-static const QStringList odbcDrivers=initOdbc();
 
-
-//static void init()
-//{
-//    initOdbc();
-//}
-
-//Q_COREAPP_STARTUP_FUNCTION(init);
+static const QStringList&initOdbc(){
+    static QStringList odbcDrivers;
+    static bool ___initOdbc=false;
+    if(!___initOdbc){
+        static QMutex ___mutexOdbc;
+        QMutexLocker locker(&___mutexOdbc);
+        if(!___initOdbc){
+            ___initOdbc=true;
+            QSettings setting(qsl("/etc/odbcinst.ini"), QSettings::IniFormat);
+            odbcDrivers=setting.childGroups();
+        }
+    }
+    return odbcDrivers;
+}
 
 class ConnectionPoolPvt{
 public:
@@ -41,14 +40,14 @@ public:
     ConnectionSetting connectionSetting;
     QStringList connectionList;
     QObject*parent=nullptr;
+    QStringList odbcDrivers;
     QSqlError lastError;
-    explicit ConnectionPoolPvt(QObject*parent, const ConnectionSetting&cnnSetting) : connectionSetting(cnnSetting, parent)
-    {
+    explicit ConnectionPoolPvt(QObject*parent, const ConnectionSetting&cnnSetting) : connectionSetting(cnnSetting, parent){
+        this->odbcDrivers=initOdbc();
         this->parent=parent;
         this->baseName=(this->parent!=nullptr)?this->parent->objectName().trimmed():"";
         if(!this->baseName.isEmpty())
             return;
-
         auto thread=QThread::currentThread();
         if(thread==nullptr)
             return;
@@ -56,48 +55,40 @@ public:
         this->baseName=thread->objectName().trimmed();
         if(!this->baseName.isEmpty())
             return;
-
         auto threadId=QString::number(qlonglong(QThread::currentThreadId()), 16);
         this->baseName=qsl("pool%1").arg(threadId);
 
     }
-
-    virtual ~ConnectionPoolPvt()
-    {
-
+    virtual ~ConnectionPoolPvt(){
     }
 
     bool finish(QSqlDatabase&connection)
     {
         auto&p=*this;
-        if(!connection.isValid())
-            return true;
-        QMutexLocker locker(&p.locker);
-        auto connectionName=connection.connectionName();
-        p.connectionList.removeAll(connectionName);
-        connection.close();
-        connection=QSqlDatabase();
-        QSqlDatabase::removeDatabase(connectionName);
-        return true;
+        if(connection.isValid()){
+            QMutexLocker locker(&p.locker);
+            auto connectionName=connection.connectionName();
+            p.connectionList.removeAll(connectionName);
+            connection.close();
+            connection=QSqlDatabase();
+            QSqlDatabase::removeDatabase(connectionName);
+        }
+        return !connection.isValid();
     }
 
-    virtual bool from(ConnectionPool&pool)
-    {
+    virtual bool from(ConnectionPool&pool){
         return connectionSetting.fromSetting(pool.setting()).isValid();
     }
 
-    virtual bool from(const ConnectionSetting &setting)
-    {
+    virtual bool from(const ConnectionSetting &setting){
         return connectionSetting.fromSetting(setting).isValid();
     }
 
-    virtual bool from(const QVariant &setting)
-    {
+    virtual bool from(const QVariant &setting){
         return connectionSetting.fromMap(setting.toHash()).isValid();
     }
 
-    virtual bool from(const QSqlDatabase &db)
-    {
+    virtual bool from(const QSqlDatabase &db){
         return connectionSetting.fromConnection(db).isValid();
     }
 
@@ -161,16 +152,16 @@ public:
         QString connectOptions=p.connectionSetting.connectOptions().trimmed();
         auto schameNames=p.connectionSetting.schemaNames();
 
-        if(__connection.driverName()==driver_QODBC){
+        if(__connection.driverName()==qsl("QODBC")){
             QString odbcDriver;
-            if(odbcDrivers.isEmpty())
+            if(p.odbcDrivers.isEmpty())
                 odbcDriver.clear();
-            else if(odbcDrivers.contains(qsl("freetds")))
+            else if(p.odbcDrivers.contains(qsl("freetds")))
                 odbcDriver=qsl("freetds");
-            else if(odbcDrivers.contains(qsl("ODBC Driver 17 for SQL Server")))
+            else if(p.odbcDrivers.contains(qsl("ODBC Driver 17 for SQL Server")))
                 odbcDriver=qsl("ODBC Driver 17 for SQL Server");
             else
-                odbcDriver=odbcDrivers.first();
+                odbcDriver=p.odbcDrivers.first();
 
             if(odbcDriver.isEmpty()){
                 auto name=__connection.connectionName();
@@ -391,17 +382,16 @@ void ConnectionPool::finish()
 
 bool ConnectionPool::finish(QSqlDatabase&connection)
 {
-    if(!connection.isValid())
-        return false;
-
-    dPvt();
-    QMutexLocker locker(&p.locker);
-    auto connectionName=connection.connectionName();
-    p.connectionList.removeAll(connectionName);
-    connection.close();
-    connection=QSqlDatabase();
-    if(!connectionName.isEmpty())
-        QSqlDatabase::removeDatabase(connectionName);
+    if(connection.isValid()){
+        dPvt();
+        QMutexLocker locker(&p.locker);
+        auto connectionName=connection.connectionName();
+        p.connectionList.removeAll(connectionName);
+        connection.close();
+        connection=QSqlDatabase();
+        if(!connectionName.isEmpty())
+            QSqlDatabase::removeDatabase(connectionName);
+    }
     return !connection.isValid();
 }
 
@@ -409,12 +399,14 @@ bool ConnectionPool::finish(QString connection)
 {
     auto _connection=QSqlDatabase::database(connection);
     return this->finish(_connection);
+
 }
 
 QSqlError &ConnectionPool::lastError()
 {
     dPvt();
     return p.lastError;
+
 }
 //set default_transaction_read_only = on;
 }

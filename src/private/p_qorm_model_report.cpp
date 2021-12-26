@@ -22,32 +22,26 @@ public:
     QVariant source;
     ModelReportBase*parent=nullptr;
 
-    explicit ModelReportBasePvt(ModelReportBase*parent):options(parent), dto(parent)
-    {
+    explicit ModelReportBasePvt(ModelReportBase*parent):options(parent),dto(parent){
         this->parent=parent;
         dto.setType(dftNormalForm);
     }
-
-    virtual ~ModelReportBasePvt()
-    {
+    virtual ~ModelReportBasePvt(){
     }
-    auto&doModelAction(const QString&methodName)
-    {
+    auto&doModelAction(const QString&methodName){
         auto method=this->actionMethod.value(methodName.toUtf8());
         if(method==nullptr)
             return this->parent->lr();
         return this->parent->lr(method(this->parent, this->source));
     }
 
-    auto&actionNothing(QOrm::ObjectDb*controller, const QVariant&vBody)
-    {
+    auto&actionNothing(QOrm::ObjectDb*controller, const QVariant&vBody){
         Q_UNUSED(controller)
         Q_UNUSED(vBody)
         return*this->parent;
     }
 
-    void set_report(const QVariant&v)
-    {
+    void set_report(const QVariant&v){
         auto vObject=ReportBody(v);
         auto vStrategy=[&vObject](){
             QVariant v;
@@ -68,16 +62,16 @@ public:
         this->source_set(vSource());
     }
 
-    void source_set(const QVariant&source)
-    {
+    void source_set(const QVariant&source){
         switch (qTypeId(source)) {
         case QMetaType_QString:
+            this->source=QJsonDocument::fromJson(source.toByteArray()).toVariant();
+            return;
         case QMetaType_QByteArray:
             this->source=QJsonDocument::fromJson(source.toByteArray()).toVariant();
-            break;
+            return;
         default:
             this->source=source;
-            break;
         }
     }
 
@@ -283,7 +277,7 @@ ModelReportBase &ModelReportBase::onFailed(QOrm::ReportActionMethod method)
 
 ResultValue &ModelReportBase::canActionSearch()
 {
-    Q_DECLARE_VU;
+    VariantUtil vu;
     dPvt();
     static auto name=QByteArray(__func__).replace(qbl("canAction"), qbl("action"));
     QVariant v;

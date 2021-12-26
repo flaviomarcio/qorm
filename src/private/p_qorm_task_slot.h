@@ -48,8 +48,8 @@ signals:
     void taskError(const QVariantHash&task);
     void taskSuccess(const QVariantHash&task);
 private slots:
-    void onTaskRequest();
-    void onTaskSend(const QVariant&task);
+    void on_taskRequest();
+    void on_taskSend(const QVariant&task);
 private:
     void*p=nullptr;
     bool connectionCheck();

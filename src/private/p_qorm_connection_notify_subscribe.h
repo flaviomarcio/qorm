@@ -214,7 +214,7 @@ public slots:
     void notification_receive(const QString &channel, QSqlDriver::NotificationSource, const QVariant &payload){
         auto bytes=payload.toByteArray().trimmed();
         if(!bytes.isEmpty()){
-            Q_DECLARE_VU;
+            VariantUtil vu;
             bytes=vu.isHex(bytes)?QByteArray::fromHex(bytes):bytes;
             emit this->notification(channel, bytes);
         }
