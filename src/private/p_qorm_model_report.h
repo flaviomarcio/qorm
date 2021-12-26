@@ -46,7 +46,7 @@ namespace PrivateQOrm{
         /**
          * @brief ~ModelReportBase
          */
-        Q_INVOKABLE ~ModelReportBase();
+        ~ModelReportBase();
 
         /**
          * @brief options

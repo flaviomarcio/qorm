@@ -20,7 +20,7 @@ public:
     //!
     //! \brief ~ConnectionNotify
     //!
-    Q_INVOKABLE ~ConnectionNotify();
+    ~ConnectionNotify();
 public:
     //!
     //! \brief notify_send

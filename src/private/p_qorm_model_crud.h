@@ -42,7 +42,7 @@ public:
     //!
     //! \brief ~CRUDBase
     //!
-    Q_INVOKABLE ~CRUDBase();
+    ~CRUDBase();
 
     //!
     //! \brief options

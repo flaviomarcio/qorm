@@ -18,7 +18,7 @@ public:
 
     Q_INVOKABLE explicit ReportItem(QObject *parent = nullptr);
     Q_INVOKABLE explicit ReportItem(const QVariant&itemBody, QObject *parent = nullptr);
-    Q_INVOKABLE ~ReportItem();
+    ~ReportItem();
 
     ReportItem&operator=(const QVariant&v);
 

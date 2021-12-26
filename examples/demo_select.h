@@ -10,7 +10,7 @@ class Q_ORM_EXPORT ControllerSELECT : public QOrm::ObjectDb
 public:
     Q_INVOKABLE explicit ControllerSELECT(QObject *parent = nullptr):QOrm::ObjectDb(parent){
     }
-    Q_INVOKABLE ~ControllerSELECT(){
+    ~ControllerSELECT(){
     }
 };
 

@@ -15,7 +15,7 @@ public:
 
     Q_INVOKABLE explicit ModelDtoLinkItem(QObject*dtpParent, QObject*parent=nullptr);
 
-    Q_INVOKABLE ~ModelDtoLinkItem();
+    ~ModelDtoLinkItem();
 
     QUuid&uuid() const;
 
@@ -62,7 +62,7 @@ public:
 
     explicit ModelDtoLinkCollection(QObject*dtoParent, QObject*parent=nullptr);
 
-    Q_INVOKABLE ~ModelDtoLinkCollection();
+    ~ModelDtoLinkCollection();
 
     QVariant toVar() const;
 

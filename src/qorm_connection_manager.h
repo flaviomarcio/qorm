@@ -37,7 +37,7 @@ public:
     //!
     //! \brief ~ConnectionManager
     //!
-    Q_INVOKABLE ~ConnectionManager();
+    ~ConnectionManager();
 
     Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment )
     Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey )

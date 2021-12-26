@@ -11,7 +11,7 @@ class Q_ORM_EXPORT ControllerCRUD : public QOrm::ObjectDb
 public:
     Q_INVOKABLE explicit ControllerCRUD(QObject *parent = nullptr):QOrm::ObjectDb(parent){
     }
-    Q_INVOKABLE ~ControllerCRUD(){
+    ~ControllerCRUD(){
     }
 
     ResultValue &crud(const QVariant &vBody)

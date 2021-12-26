@@ -32,7 +32,7 @@ public:
     explicit ConnectionNotifySubscribe(ConnectionNotify*parent = nullptr):QThread(nullptr), notify(parent), subscribeToNotification(parent->subscribeToNotification()){
         this->moveToThread(this);
     }
-    Q_INVOKABLE ~ConnectionNotifySubscribe(){
+    ~ConnectionNotifySubscribe(){
     }
 public:
 

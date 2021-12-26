@@ -21,7 +21,7 @@ public:
     //!
     //! \brief ~ModelDao
     //!
-    Q_INVOKABLE ~ModelDao();
+    ~ModelDao();
 
     //!
     //! \brief variantToParameters

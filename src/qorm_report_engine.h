@@ -10,7 +10,7 @@ class Q_ORM_EXPORT ReportEngine : public ObjectDb
 {
 public:
     Q_INVOKABLE explicit ReportEngine(QObject *parent = nullptr);
-    Q_INVOKABLE ~ReportEngine();
+    ~ReportEngine();
 
     /**
      * @brief canResolver

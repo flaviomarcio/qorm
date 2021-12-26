@@ -22,7 +22,7 @@ public:
     //!
     //! \brief ~TaskRunner
     //!
-    Q_INVOKABLE ~TaskRunner();
+    ~TaskRunner();
 
     //!
     //! \brief print

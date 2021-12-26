@@ -33,7 +33,7 @@ public:
     QSqlDatabase connection;
     QOrm::ConnectionPool cnnPool;
     explicit TaskSlot(TaskPool*pool, const QVariantHash&connectionSetting, TaskRunnerMethod methodExecute, TaskRunnerMethod methodSuccess, TaskRunnerMethod methodFailed);
-    Q_INVOKABLE ~TaskSlot();
+    ~TaskSlot();
 
     bool start();
 

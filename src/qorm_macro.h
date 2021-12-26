@@ -43,7 +43,7 @@ public:\
     Q_INVOKABLE explicit ModelName(QObject *parent, QSqlQuery &record):Model(parent){this->readFrom(record);};\
     Q_INVOKABLE explicit ModelName(QObject *parent, QOrm::Query &record):Model(parent){this->readFrom(record);};\
     Q_INVOKABLE explicit ModelName(QObject *parent, const ResultValue &record):Model(parent){this->readFrom(record);};\
-    Q_INVOKABLE ~ModelName(){};
+    ~ModelName(){};
 
 #define QORM_MODEL(modelClass)\
 public:\
@@ -294,7 +294,7 @@ private:\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE ~ModelName##GDao(){\
+        ~ModelName##GDao(){\
         }\
     };\
     static const auto&ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
@@ -308,7 +308,7 @@ private:\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE ~ModelName##GDao(){\
+        ~ModelName##GDao(){\
         }\
     };\
     static const auto&ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
@@ -324,7 +324,7 @@ private:\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE ~ModelName##CRUD(){\
+        ~ModelName##CRUD(){\
         }\
     };\
 
@@ -336,7 +336,7 @@ private:\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE ~ModelName##GDao(){\
+        ~ModelName##GDao(){\
         }\
     };\
     static const auto&ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
@@ -352,7 +352,7 @@ private:\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE ~ModelName##Report(){\
+        ~ModelName##Report(){\
         }\
     };\
 

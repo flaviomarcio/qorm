@@ -56,7 +56,7 @@ public:
     //!
     //! \brief ~ModelDescriptor
     //!
-    Q_INVOKABLE ~ModelDescriptor();
+    ~ModelDescriptor();
 public:
 
     //!

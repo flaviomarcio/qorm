@@ -38,7 +38,7 @@ namespace QOrm{
             return QSqlDriver::UnknownDbms;
         }
 
-        Q_INVOKABLE ~SqlSuitableBuilderPvt(){
+        ~SqlSuitableBuilderPvt(){
         }
 
         QByteArray makeQuery(){

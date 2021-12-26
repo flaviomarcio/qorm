@@ -33,7 +33,7 @@ public:
     //!
     //! \brief ~ModelAction
     //!
-    Q_INVOKABLE ~ModelAction();
+    ~ModelAction();
 
     //!
     //! \brief onActionBefore

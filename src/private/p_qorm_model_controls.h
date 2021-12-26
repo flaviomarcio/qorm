@@ -24,7 +24,7 @@ public:
     /**
      * @brief ~ModelRESTControl
      */
-    Q_INVOKABLE ~ModelDtoControls();
+    ~ModelDtoControls();
 
     //!
     //! \brief resultInfo

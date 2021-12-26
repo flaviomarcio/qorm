@@ -55,7 +55,7 @@ public:
     //!
     //! \brief ~ConnectionSetting
     //!
-    Q_INVOKABLE ~ConnectionSetting();
+    ~ConnectionSetting();
 
     //!
     //! \brief printLog

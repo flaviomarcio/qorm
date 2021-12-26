@@ -9,7 +9,7 @@ class Q_ORM_EXPORT ReportStrategy : public QStm::Object
 public:
     Q_INVOKABLE explicit ReportStrategy(QObject *parent = nullptr);
     Q_INVOKABLE explicit ReportStrategy(const QVariantHash&strategy, QObject *parent = nullptr);
-    Q_INVOKABLE ~ReportStrategy();
+    ~ReportStrategy();
 
     virtual ResultValue &isValid();
 
