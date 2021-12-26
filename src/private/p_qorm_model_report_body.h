@@ -2,7 +2,6 @@
 
 #include <QVariant>
 #include <QVariantHash>
-
 #include "../qorm_global.h"
 
 class Q_ORM_EXPORT ReportBody:public QVariantHash

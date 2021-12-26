@@ -3,7 +3,6 @@
 #include <QVariant>
 #include <QVariantHash>
 #include <QVariantHash>
-
 #include "../qorm_global.h"
 #include "../qorm_sql_suitable_types.h"
 

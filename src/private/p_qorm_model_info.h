@@ -307,6 +307,6 @@ private:
 
 }
 
-Q_DECLARE_METATYPE(QOrm::ModelInfo);
-Q_DECLARE_METATYPE(QOrm::ModelInfo*);
+Q_DECLARE_METATYPE(QOrm::ModelInfo)
+Q_DECLARE_METATYPE(QOrm::ModelInfo*)
 

@@ -7,11 +7,11 @@ namespace PrivateQOrm {
 class ModelDtoLinkItem : public QStm::Object{
     Q_OBJECT
 public:
-    Q_PROPERTY(QVariantHash header      READ header     WRITE setHeader        )
-    Q_PROPERTY(QVariant     method      READ method     WRITE setMethod      )
-    Q_PROPERTY(QVariant     ref         READ ref        WRITE setRef         )
-    Q_PROPERTY(QVariant     hRef        READ hRef       WRITE setHRef        )
-    Q_PROPERTY(QVariant     parameters  READ parameters WRITE setParameters  )
+    Q_PROPERTY(QVariantHash header READ header WRITE setHeader)
+    Q_PROPERTY(QVariant method READ method WRITE setMethod)
+    Q_PROPERTY(QVariant ref READ ref WRITE setRef)
+    Q_PROPERTY(QVariant hRef READ hRef WRITE setHRef)
+    Q_PROPERTY(QVariant parameters READ parameters WRITE setParameters)
 
     Q_INVOKABLE explicit ModelDtoLinkItem(QObject*dtpParent, QObject*parent=nullptr);
 

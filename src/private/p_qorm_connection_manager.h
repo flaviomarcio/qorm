@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../qorm_connection_manager.h"
+#include "./qstm_types.h"
 #include <QFile>
 #include <QDir>
 #include <QSettings>
@@ -31,11 +32,13 @@ public:
     ConnectionManager*parent=nullptr;
     QObject*parentParent=nullptr;
     ConnectionPool defaultPool;
-    explicit ConnectionManagerPrv(ConnectionManager*parent):notify(parent),defaultPool(parent){
+    explicit ConnectionManagerPrv(ConnectionManager*parent):notify(parent),defaultPool(parent)
+    {
         this->parent=parent;
         this->init();
     }
-    virtual ~ConnectionManagerPrv(){
+    virtual ~ConnectionManagerPrv()
+    {
         this->clear();
     }
 
@@ -43,7 +46,8 @@ public:
         this->detailGetCheck(this->enviroment);
     }
 
-    ConnectionPool&pool(const QByteArray &value){
+    ConnectionPool&pool(const QByteArray &value)
+    {
         auto&p=*this;
         if(p.parentParent!=nullptr){
             if(!p.isLoaded())
@@ -70,7 +74,8 @@ public:
         return pool;
     }
 
-    bool isLoaded()const{
+    bool isLoaded()const
+    {
         QHashIterator<QString, ConnectionSetting*> i(this->settings);
         while (i.hasNext()) {
             i.next();
@@ -84,7 +89,8 @@ public:
         return false;
     }
 
-    bool isEmpty()const{
+    bool isEmpty()const
+    {
         QHashIterator<QString, ConnectionSetting*> i(this->settings);
         while (i.hasNext()) {
             i.next();
@@ -95,7 +101,8 @@ public:
         return true;
     }
 
-    void clear(){
+    void clear()
+    {
         auto _detail=this->settings;
         qDeleteAll(_detail);
         this->enviroment.clear();
@@ -104,14 +111,16 @@ public:
         this->settings.clear();
     }
 
-    QByteArray settingNameAdjust(QByteArray settingName){
+    QByteArray settingNameAdjust(QByteArray settingName)
+    {
         auto setting=settingName.trimmed().isEmpty()? this->enviroment : settingName.trimmed();
         if(!this->settings.contains(setting))
             setting=this->enviroment;
         return setting;
     }
 
-    ConnectionSetting&detailGetCheck(QByteArray&settingName){
+    ConnectionSetting&detailGetCheck(QByteArray&settingName)
+    {
         auto RETURN=this->settingNameAdjust(settingName);
         if(!settings.contains(RETURN))
             settings.insert(RETURN, new ConnectionSetting(parent));
@@ -144,7 +153,8 @@ public:
         return*this->parent;
     }
 
-    bool v_load(const QVariant &v){
+    bool v_load(const QVariant &v)
+    {
         auto typeId=qTypeId(v);
         if(QStmTypesVariantList.contains(typeId))
             return this->load(v.toStringList());

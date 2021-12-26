@@ -9,8 +9,8 @@
 #include <QUuid>
 #include <QThread>
 #include <QSqlDatabase>
-#include "./qorm_global.h"
-#include "./qorm_connection_pool.h"
+#include "../qorm_global.h"
+#include "../qorm_connection_pool.h"
 
 namespace QOrm {
 

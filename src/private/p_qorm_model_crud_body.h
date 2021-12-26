@@ -2,7 +2,6 @@
 
 #include <QVariant>
 #include <QVariantHash>
-
 #include "../qorm_model_crud_types.h"
 
 //!
