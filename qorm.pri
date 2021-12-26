@@ -2,7 +2,7 @@ QT += core
 QT += network
 QT += sql
 
-INCLUDEPATH += $$PWD/src
+#INCLUDEPATH += $$PWD/src
 
 HEADERS += \
     $$PWD/src/private/p_qorm_connection_manager.h \
@@ -62,10 +62,6 @@ HEADERS += \
     $$PWD/src/qorm_object.h \
     $$PWD/src/qorm_object_db.h \
     $$PWD/src/qorm_query.h \
-    #$$PWD/src/qorm_report_engine.h \
-    #$$PWD/src/qorm_report_item.h \
-    #$$PWD/src/qorm_report_runner.h \
-    #$$PWD/src/qorm_report_strategy.h \
     $$PWD/src/qorm_script_exec.h \
     $$PWD/src/qorm_sql_suitable_builder.h \
     $$PWD/src/qorm_sql_suitable_types.h \

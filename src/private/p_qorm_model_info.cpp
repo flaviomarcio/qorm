@@ -1,6 +1,6 @@
 #include "./p_qorm_model_info.h"
-#include "./qorm_model.h"
 #include "./p_qorm_const.h"
+#include "../qorm_model.h"
 #include <QMutex>
 #include <QCoreApplication>
 

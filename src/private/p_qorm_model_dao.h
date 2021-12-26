@@ -3,7 +3,7 @@
 #include "../qorm_object_db.h"
 #include "../qorm_sql_suitable_value.h"
 #include "./p_qorm_sql_suitable_parser_strategy_options.h"
-#include "./private/p_qorm_model_info.h"
+#include "./p_qorm_model_info.h"
 #include <QVariant>
 
 namespace PrivateQOrm{
