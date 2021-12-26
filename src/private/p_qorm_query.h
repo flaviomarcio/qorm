@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./qorm_sql_suitable_builder.h"
+#include "../qorm_sql_suitable_builder.h"
 #include "../qorm_object_db.h"
 #include "../qorm_model.h"
 #include "../qorm_query.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../qorm_connection_manager.h"
-#include "../../qstm/src/qstm_types.h"
+#include "../../../qstm/src/qstm_types.h"
 #include <QFile>
 #include <QDir>
 #include <QSettings>

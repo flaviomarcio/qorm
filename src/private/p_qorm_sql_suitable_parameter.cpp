@@ -1,6 +1,6 @@
 #include "./p_qorm_sql_suitable_parameter.h"
 #include "./p_qorm_sql_suitable_parser_strategy.h"
-#include "../../qstm/src/qstm_util_variant.h"
+#include "../../../qstm/src/qstm_util_variant.h"
 #include <QJsonDocument>
 
 #define dPvt()\

@@ -10,7 +10,7 @@
 #include <QList>
 #include <QVariantList>
 #include <QVariantMap>
-#include "../../qstm/src/qstm_types.h"
+#include "../../../qstm/src/qstm_types.h"
 #include "../qorm_sql_suitable_types.h"
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_sql_suitable_parser_keywork.h"
