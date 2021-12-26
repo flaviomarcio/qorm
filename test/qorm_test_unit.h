@@ -8,7 +8,8 @@ namespace QOrm {
 class SDKGoogleTestUnit : public SDKGoogleTest{
 public:
 
-    explicit SDKGoogleTestUnit():SDKGoogleTest(){
+    explicit SDKGoogleTestUnit():SDKGoogleTest()
+    {
     }
 
 public:

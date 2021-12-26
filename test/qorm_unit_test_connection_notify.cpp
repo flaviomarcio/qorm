@@ -2,7 +2,7 @@
 #define Q_ORM_ConnectionNotifyTestUnit_H
 
 #include "./qorm_test_unit.h"
-#include "../../qstm/src/qstm_util_variant.h"
+
 
 namespace QOrm {
 
