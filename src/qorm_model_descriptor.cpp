@@ -17,9 +17,11 @@ public:
     QVariantHash flags;
     QVariantHash options;
     QVariantHash sort;
-    explicit ModelDescriptorPvt(){
+    explicit ModelDescriptorPvt()
+    {
     }
-    virtual ~ModelDescriptorPvt(){
+    virtual ~ModelDescriptorPvt()
+    {
     }
 };
 

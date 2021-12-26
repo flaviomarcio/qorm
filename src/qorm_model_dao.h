@@ -18,7 +18,8 @@ public:
     //! \brief ModelDao
     //! \param parent
     //!
-    Q_INVOKABLE explicit ModelDao(QObject *parent = nullptr) : PrivateQOrm::ModelDao(parent){
+    Q_INVOKABLE explicit ModelDao(QObject *parent = nullptr) : PrivateQOrm::ModelDao(parent)
+    {
     }
 
     //!
@@ -26,7 +27,8 @@ public:
     //! \param value
     //! \return
     //!
-    QVariant variantToParameters(const QVariant&value)const{
+    QVariant variantToParameters(const QVariant&value)const
+    {
         auto __return=PrivateQOrm::ModelDao::variantToParameters(this->modelRef, value);
         return __return;
     }
@@ -35,7 +37,8 @@ public:
     //! \brief record
     //! \return
     //!
-    auto&record(){
+    auto&record()
+    {
         return this->record(QVariant());
     }
 
@@ -44,7 +47,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&record(const QVariant&v){
+    auto&record(const QVariant&v)
+    {
         Query query(this);
         auto&strategy=query.builder().select();
         strategy.limit(1).fieldsFrom(modelRef);
@@ -70,7 +74,8 @@ public:
     //! \brief recordList
     //! \return
     //!
-    auto&recordList(){
+    auto&recordList()
+    {
         return this->recordList(QVariant());
     }
 
@@ -79,7 +84,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&recordList(const QVariant&v){
+    auto&recordList(const QVariant&v)
+    {
         Query query(this);
         auto&strategy=query.builder().select();
         strategy.fieldsFrom(modelRef);
@@ -108,7 +114,8 @@ public:
     //! \brief recordMap
     //! \return
     //!
-    auto&recordMap(){
+    auto&recordMap()
+    {
         return this->recordMap(QVariant());
     }
 
@@ -117,7 +124,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&recordMap(const QVariant&v){
+    auto&recordMap(const QVariant&v)
+    {
         auto tablePk=this->modelRef.tablePk();
         if(tablePk.isEmpty())
             return this->lr(QVariant())=true;
@@ -148,15 +156,31 @@ public:
             for(auto&pkField:tablePk){
                 const auto property = modelRef.propertyByFieldName(pkField);
                 const auto vMapValue=vMap.value(pkField);
-                const auto vType=qTypeId(property);
-                if(vType==vMapValue.Invalid || !vMapValue.isValid() || vMapValue.isNull())
+
+                if(!vMapValue.isValid() || vMapValue.isNull()){
                     key<<qsl_null;
-                else if(vType==vMapValue.Uuid)
+                    continue;
+                }
+
+                switch (qTypeId(property)){
+                case QMetaType_QUuid:
                     key<<vMapValue.toUuid().toString();
-                else if(vType==vMapValue.Url)
+                    break;
+                case QMetaType_QUrl:
                     key<<vMapValue.toUrl().toString();
-                else
+                    break;
+                case QMetaType_QString:
+                case QMetaType_QByteArray:
+                case QMetaType_QChar:
+                case QMetaType_QBitArray:
                     key<<vMapValue.toString();
+                    break;
+                case QMetaType_UnknownType:
+                    key<<qsl_null;
+                    break;
+                default:
+                    key<<vMapValue.toString();
+                }
             }
             map.insert(key.join('.'),v);
         }
@@ -167,7 +191,8 @@ public:
     //! \brief exists
     //! \return
     //!
-    auto&exists(){
+    auto&exists()
+    {
         return this->exists(QVariant());
     }
 
@@ -176,7 +201,8 @@ public:
     //! \param model
     //! \return
     //!
-    auto&exists(T&model){
+    auto&exists(T&model)
+    {
         auto map=model.toMapPKValues();
         if(map.isEmpty())
             map=model.toMapFKValues();
@@ -188,7 +214,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&exists(const QVariant&v){
+    auto&exists(const QVariant&v)
+    {
         QOrm::Query query(this);
         auto&strategy=query.builder().select();
         strategy.fromExists(modelRef);
@@ -220,7 +247,8 @@ public:
     //! \param value
     //! \return
     //!
-    auto&insert(T&value){
+    auto&insert(T&value)
+    {
         return this->insert(value.toHashModel());
     }
 
@@ -229,19 +257,23 @@ public:
     //! \param value
     //! \return
     //!
-    auto&insert(const QVariant&value){
+    auto&insert(const QVariant&value)
+    {
         if(value.isNull() || !value.isValid())
             return this->lr()=false;
 
         QVariantList list;
-        if(qTypeId(value)==QMetaType_QVariantList){
+        switch (qTypeId(value)){
+        case QMetaType_QVariantList:
+        {
             for(auto&v:value.toList()){
                 T model(v);
                 model.autoMakeUuid();
                 list<<model.toHashModel();
             }
+            break;
         }
-        else{
+        default:
             T model(value);
             model.autoMakeUuid();
             list<<model.toHashModel();
@@ -263,7 +295,8 @@ public:
     //! \param value
     //! \return
     //!
-    auto&update(T&value){
+    auto&update(T&value)
+    {
         Q_UNUSED(value)
         return this->update(value.toHashModel());
     }
@@ -273,17 +306,21 @@ public:
     //! \param value
     //! \return
     //!
-    auto&update(const QVariant&value){
+    auto&update(const QVariant&value)
+    {
         if(value.isNull() || !value.isValid())
             return this->lr()=false;
         QVariantList list;
-        if(qTypeId(value)==QMetaType_QVariantList){
+        switch (qTypeId(value)){
+        case QMetaType_QVariantList:
+        {
             for(auto&v:value.toList()){
                 T model(v);
                 list<<model.toHashModel();
             }
+            break;
         }
-        else{
+        default:
             list<<value;
         }
         for(auto&v:list){
@@ -303,7 +340,8 @@ public:
     //! \param value
     //! \return
     //!
-    auto&upsert(T&value){
+    auto&upsert(T&value)
+    {
         auto map=value.toHashModel();
         if(this->upsert(map)){
             value.readFrom(map);
@@ -317,18 +355,23 @@ public:
     //! \param value
     //! \return
     //!
-    auto&upsert(const QVariant&value){
+    auto&upsert(const QVariant&value)
+    {
         if(value.isNull() || !value.isValid())
             return this->lr()=false;
+
         QVariantList list;
-        if(qTypeId(value)==QMetaType_QVariantList){
+        switch (qTypeId(value)){
+        case QMetaType_QVariantList:
+        {
             for(auto&v:value.toList()){
                 T model(v);
                 model.autoMakeUuid();
                 list<<model.toHashModel();
             }
+            break;
         }
-        else{
+        default:
             T model(value);
             model.autoMakeUuid();
             list<<model.toHashModel();
@@ -350,7 +393,8 @@ public:
     //! \param value
     //! \return
     //!
-    auto&deactivate(T&value){
+    auto&deactivate(T&value)
+    {
         auto map=value.toHashModel();
         if(!value.deactivateSetValues()){
             return this->lr(value.lr())=false;
@@ -369,15 +413,19 @@ public:
     //! \param value
     //! \return
     //!
-    auto&deactivate(const QVariant&value){
+    auto&deactivate(const QVariant&value)
+    {
         QVariantList list;
-        if(qTypeId(value)==QMetaType_QVariantList){
+        switch (qTypeId(value)) {
+        case QMetaType_QVariantList:
+        {
             for(auto&v:value.toList()){
                 T model(v);
                 list<<model.toHashModel();
             }
+            break;
         }
-        else{
+        default:
             list<<value;
         }
         for(auto&v:list){
@@ -394,7 +442,8 @@ public:
     //! \param model
     //! \return
     //!
-    auto&remove(T&model){
+    auto&remove(T&model)
+    {
         auto map=model.toMapPKValues();
         if(map.isEmpty())
             map=model.toMapFKValues();
@@ -406,7 +455,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&remove(const QVariant&v){
+    auto&remove(const QVariant&v)
+    {
         Query query(this);
         auto&strategy=query.builder().remove();
         strategy.from(modelRef);
@@ -431,7 +481,8 @@ public:
     //! \brief remove
     //! \return
     //!
-    auto&remove(){
+    auto&remove()
+    {
         auto list=this->lr().resultList();
         if(list.isEmpty())
             return this->lr()=true;
@@ -449,7 +500,8 @@ public:
     //! \param model
     //! \return
     //!
-    auto&reload(T&model){
+    auto&reload(T&model)
+    {
         auto map=model.toMapPKValues();
         if(map.isEmpty())
             map=model.toMapFKValues();
@@ -462,7 +514,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&reload(T&model, const QVariant&v){
+    auto&reload(T&model, const QVariant&v)
+    {
         auto record = this->record(v).resultVariant();
         if(!record.isValid()){
             model.clear();
@@ -480,7 +533,8 @@ public:
     //! \param model
     //! \return
     //!
-    auto&lock(T&model){
+    auto&lock(T&model)
+    {
         auto map=model.toMapPKValues();
         if(map.isEmpty())
             map=model.toMapFKValues();
@@ -503,7 +557,8 @@ public:
     //! \param value
     //! \return
     //!
-    auto&lock(T&model, const QVariant&value){
+    auto&lock(T&model, const QVariant&value)
+    {
         if(!this->lock(value))
             return this->lr()=false;
 
@@ -521,7 +576,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&lock(const QVariant&v){
+    auto&lock(const QVariant&v)
+    {
         Query query(this);
         auto&strategy=query.builder().select();
         strategy.lock().fieldsFrom(modelRef);
@@ -544,7 +600,8 @@ public:
     //! \brief truncateTable
     //! \return
     //!
-    auto&truncateTable(){
+    auto&truncateTable()
+    {
         Query query(this);
         query
             .builder()
@@ -563,7 +620,8 @@ public:
     //! \brief truncateTableCascade
     //! \return
     //!
-    auto&truncateTableCascade(){
+    auto&truncateTableCascade()
+    {
         Query query(this);
         query
             .builder()
@@ -582,7 +640,8 @@ public:
     //! \brief nextVal
     //! \return
     //!
-    auto&nextVal(){
+    auto&nextVal()
+    {
         return this->nextVal(this->modelRef.tableSequence());
     }
 
@@ -591,7 +650,8 @@ public:
     //! \param v
     //! \return
     //!
-    auto&nextVal(const QVariant&v){
+    auto&nextVal(const QVariant&v)
+    {
         Query query(this);
         query
             .builder()
@@ -607,26 +667,27 @@ public:
     //!
     //! \brief values
     //!
-    auto values(){
+    QVariantList values()
+    {
         QVariantList __return;
         auto vListRecord=this->lr().resultList();
-        if(!vListRecord.isEmpty()){
-            auto tablePk=this->modelRef.tablePkField();
-            if(tablePk.size()==1)
-                return this->values(tablePk.first());
+        if(!vListRecord.isEmpty())
+            return {};
+        auto tablePk=this->modelRef.tablePkField();
+        if(tablePk.size()==1)
+            return this->values(tablePk.first());
 
-            for(auto&v:vListRecord){
-                auto map=v.toHash();
-                QVariantHash record;
-                for(auto&v:tablePk){
-                    auto vField=SqlParserItem::from(v);
-                    auto f_name=vField.name().toString();
-                    auto f_value=map.value(f_name);
-                    if(!record.contains(f_name))
-                        record.insert(f_name, f_value);
-                }
-                __return.append(record);
+        for(auto&v:vListRecord){
+            auto map=v.toHash();
+            QVariantHash record;
+            for(auto&v:tablePk){
+                auto vField=SqlParserItem::from(v);
+                auto f_name=vField.name().toString();
+                auto f_value=map.value(f_name);
+                if(!record.contains(f_name))
+                    record[f_name]=f_value;
             }
+            __return.append(record);
         }
         return __return;
     }
@@ -635,17 +696,19 @@ public:
     //! \brief values
     //! \param field
     //!
-    auto values(const SqlParserItem&field){
-        QVariantList __return;
+    QVariantList values(const SqlParserItem&field)
+    {
         auto vListRecord=this->lr().resultList();
         auto vField=SqlParserItem::from(field);
-        if(vField.isObject()){
-            for(auto&v:vListRecord){
-                auto map=v.toHash();;
-                auto f_value=map.value(vField.name().toString());
-                if(!__return.contains(f_value))
-                    __return<<f_value;
-            }
+        if(!vField.isObject())
+            return {};
+
+        QVariantList __return;
+        for(auto&v:vListRecord){
+            auto map=v.toHash();;
+            auto f_value=map.value(vField.name().toString());
+            if(!__return.contains(f_value))
+                __return<<f_value;
         }
         return __return;
     }
@@ -656,7 +719,8 @@ public:
     //! \param values
     //! \return
     //!
-    auto&setRecordsValues(const SqlParserItem&field, QVariantList&values){
+    auto&setRecordsValues(const SqlParserItem&field, QVariantList&values)
+    {
         values=this->values(field);
         return this->lr();
     }
@@ -666,7 +730,8 @@ public:
     //! \param values
     //! \return
     //!
-    auto&setRecords(QVariantList&values){
+    auto&setRecords(QVariantList&values)
+    {
         values=this->lr().resultList();
         return this->lr();
     }

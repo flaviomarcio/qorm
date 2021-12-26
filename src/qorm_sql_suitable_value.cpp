@@ -241,11 +241,9 @@ QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
     {//primitive type area area
         switch (vType) {
         case QMetaType_Int:
-            return SqlSuitableValue::toInt(v.toInt());
         case QMetaType_UInt:
             return SqlSuitableValue::toInt(v.toInt());
         case QMetaType_LongLong:
-            return SqlSuitableValue::toLng(v.toLongLong());
         case QMetaType_ULongLong:
             return SqlSuitableValue::toLng(v.toLongLong());
         case QMetaType_Double:
@@ -261,11 +259,8 @@ QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
     {//string area
         switch (vType) {
         case QMetaType_QString:
-            return toStr(v.toString());
         case QMetaType_QByteArray:
-            return toStr(v.toString());
         case QMetaType_QBitArray:
-            return toStr(v.toString());
         case QMetaType_QChar:
             return toStr(v.toString());
         default:

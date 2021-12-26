@@ -32,23 +32,6 @@ public:
     QORM_DECLARE_TABLE_PRIMARY_KEY_NON_AUTO()
     QORM_DECLARE_FILTRABLE_FIELD(qvl{})
 
-    //!
-    //! \brief The Cursor class
-    //!
-    class Cursor{
-    public:
-        /**
-         * @brief read
-         * @param record
-         * @return
-         */
-        explicit Cursor(void*p);
-        virtual ~Cursor();
-
-        bool next();
-    private:
-        void*p=nullptr;
-    };
 public:
     //!
     //! \brief Model
@@ -278,30 +261,6 @@ public:
     //! \return
     //!
     virtual bool propertyAfterSet(const QByteArray&property, const QVariant&value) const;
-
-    //!
-    //! \brief setCursor
-    //! \param cursor
-    //!
-    virtual void setCursor(QVariantList&cursor);
-
-    //!
-    //! \brief setCursor
-    //! \param cursor
-    //!
-    virtual void setCursor(QSqlQuery&cursor);
-
-    //!
-    //! \brief setCursor
-    //! \param cursor
-    //!
-    virtual void setCursor(Query&cursor);
-
-    //!
-    //! \brief cursor
-    //! \return
-    //!
-    virtual Cursor&cursor();
 
     //!
     //! \brief readFrom

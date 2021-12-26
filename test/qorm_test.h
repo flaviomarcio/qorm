@@ -13,21 +13,20 @@
 #include <gtest/gtest.h>
 #include "./qstm_types.h"
 
-static const QVector<QByteArray> Q_ORM_CRUD_PROPERTY_LIST=QVector<QByteArray>{"resultInfo","items","links","text","filters","type","layout","headers","id"};
+#define Q_ORM_CRUD_PROPERTY_LIST QVector<QString>({"type","id","resultInfo","layout","links","text","items","filters","headers"})
 
-#define CRUD_TESTER_BODY(vCrud){\
-auto ___hash=QVariant(vCrud).toHash();\
-    for(auto&property:Q_ORM_CRUD_PROPERTY_LIST){\
-        bool contains=___hash.contains(property);\
-        EXPECT_EQ(contains,true);\
-    }\
+
+template <class T=QVariant>
+bool Q_ORM_CRUD_TESTER(const T&vCrud)
+{
+    auto ___hash=QVariant(vCrud).toHash();
+    for(auto&property:Q_ORM_CRUD_PROPERTY_LIST){
+        bool contains=___hash.contains(property);
+        if(!contains)
+            return false;
+    }
+    return true;
 }
-
-#define CRUD_TESTER_REQUEST(request, body, method)\
-request.call(QRpc::Get, method, body);\
-EXPECT_EQ(request.response().isOk(), true);\
-if(request.response().isOk())\
-    CRUD_TESTER_BODY(request.response().bodyHash());
 
 namespace QOrm {
 

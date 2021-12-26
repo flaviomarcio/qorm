@@ -21,6 +21,12 @@
 #include "./qstm_vvm.h"
 #include "./qstm_svm.h"
 #include "./qstm_url.h"
+#include "./qstm_util_date.h"
+#include "./qstm_util_formatting.h"
+#include "./qstm_util_double.h"
+#include "./qstm_util_meta_object.h"
+#include "./qstm_util_path.h"
+#include "./qstm_util_variant.h"
 
 namespace QOrm {
 

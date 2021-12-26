@@ -16,14 +16,10 @@ public:
         QVariantList list;
         switch (qTypeId(v)) {
         case QMetaType_QVariantHash:
-            list<<this->v;
-            break;
         case QMetaType_QVariantMap:
             list<<this->v;
             break;
         case QMetaType_QVariantList:
-            list=v.toList();
-            break;
         case QMetaType_QStringList:
             list=v.toList();
             break;
@@ -57,14 +53,10 @@ public:
 
         switch (qTypeId(v)) {
         case QMetaType_QVariantHash:
-            this->v=list.first();
-            break;
         case QMetaType_QVariantMap:
             this->v=list.first();
             break;
         case QMetaType_QVariantList:
-            this->v=list;
-            break;
         case QMetaType_QStringList:
             this->v=list;
             break;

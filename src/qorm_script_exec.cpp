@@ -17,51 +17,68 @@ public:
     QOrm::ObjectDb*parent=nullptr;
     QVariantList scriptValues;
     QStringList scriptedValues;
-    explicit ScriptExecPvt(QOrm::ObjectDb*parent){
+    explicit ScriptExecPvt(QOrm::ObjectDb*parent)
+    {
         this->parent=parent;
     }
 
-    virtual ~ScriptExecPvt(){
+    virtual ~ScriptExecPvt()
+    {
     }
 
-    void scriptedClear(){
+    void scriptedClear()
+    {
         this->scriptedValues.clear();
     }
 
-    void scriptAppend(const QVariant&v){
+    void scriptAppend(const QVariant&v)
+    {
         this->scriptedClear();
         this->scriptValues<<v;
     }
 
-    QStringList scriptParser(const QVariant&v){
+    QStringList scriptParser(const QVariant&v)
+    {
         QStringList __return;
-        if(qTypeId(v)==QMetaType_QString || qTypeId(v)==QMetaType_QByteArray || qTypeId(v)==QMetaType_QUrl){
-            auto url=qTypeId(v)==QMetaType_QUrl?v.toUrl():QUrl::fromLocalFile(v.toString());
-            if(url.isLocalFile()){
-                QFile file(url.toLocalFile());
-                if(file.exists() && file.open(file.ReadOnly)){
-                    QString bytes=file.readAll().trimmed();
-                    file.close();
-                    if(!bytes.isEmpty()){
-                        auto lines=bytes.split(qsl("\n"));
-                        for(auto&v:lines){
-                            auto vLines=v.split(qsl(";"));
-                            for(auto line:vLines){
-                                line=line.trimmed();
-                                if(line.isEmpty())
-                                    continue;
-                                __return<<line.trimmed();
-                            }
-                        }
-                    }
+        auto typeId=qTypeId(v);
+
+        switch (typeId) {
+        case QMetaType_QStringList:
+            __return=v.toStringList();
+            break;
+        case QMetaType_QString:
+        case QMetaType_QByteArray:
+        case QMetaType_QChar:
+        case QMetaType_QBitArray:
+        case QMetaType_QUrl:
+        {
+            auto url=(typeId==QMetaType_QUrl)?v.toUrl():QUrl::fromLocalFile(v.toString());
+            if(!url.isLocalFile())
+                return {};
+
+            QFile file(url.toLocalFile());
+            if(!file.exists() || !file.open(file.ReadOnly))
+                return {};
+
+            QString bytes=file.readAll().trimmed();
+            file.close();
+            if(bytes.isEmpty())
+                return {};
+
+            auto lines=bytes.split(qsl("\n"));
+            for(auto&v:lines){
+                auto vLines=v.split(qsl(";"));
+                for(auto&line:vLines){
+                    line=line.trimmed();
+                    if(line.isEmpty())
+                        continue;
+                    __return<<line.trimmed();
                 }
             }
-            else if(qTypeId(v)==QMetaType_QStringList){
-                __return=v.toStringList();
-            }
-            else{
-                __return<<v.toString();
-            }
+            return __return;
+        }
+        default:
+            break;
         }
         return __return;
     }
@@ -116,6 +133,8 @@ ScriptExec::ScriptExec(QObject *parent):QOrm::ObjectDb(parent)
 
 ScriptExec::~ScriptExec()
 {
+    dPvt();
+    delete&p;
 }
 
 ScriptExec &ScriptExec::operator=(const QVariant &v)

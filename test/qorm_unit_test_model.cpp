@@ -11,12 +11,12 @@ namespace QOrm {
 
     TEST_F(Q_ORM_ModelTestUnit, serviceStart)
     {
-        EXPECT_EQ(this->serviceStart(),true)<<"fail: service start";
+        EXPECT_TRUE(this->serviceStart())<<"fail: service start";
     }
 
     TEST_F(Q_ORM_ModelTestUnit, serviceStop)
     {
-        EXPECT_EQ(this->serviceStop(),true)<<"fail: service stop";
+        EXPECT_TRUE(this->serviceStop())<<"fail: service stop";
     }
 
 }

@@ -699,8 +699,6 @@ const ModelInfo&ModelInfo::modelInfo(const QVariant &v)
 
     switch (qTypeId(v)) {
     case QMetaType_QVariantHash:
-        className=v.toHash().value(qsl("classname")).toByteArray();
-        break;
     case QMetaType_QVariantMap:
         className=v.toHash().value(qsl("classname")).toByteArray();
         break;
@@ -898,8 +896,6 @@ QVariantHash ModelInfo::propertyParserToProperty(const QVariant&v) const
 
         switch (qTypeId(i.value())) {
         case QMetaType_QVariantHash:
-            iv=i.value();
-            break;
         case QMetaType_QVariantMap:
             iv=i.value();
             break;
@@ -1041,8 +1037,6 @@ QVariantMap ModelInfo::toMap(const QObject *object)const
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
-            value=property.read(object).toInt();
-            break;
         case QMetaType_CustomType:
             value=property.read(object).toInt();
             break;
@@ -1065,8 +1059,6 @@ QVariantHash ModelInfo::toHash(const QObject *object) const
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
-            value=property.read(object).toInt();
-            break;
         case QMetaType_CustomType:
             value=property.read(object).toInt();
             break;
