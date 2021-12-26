@@ -6,7 +6,7 @@
 
 namespace PrivateQOrm{
     typedef QHash<QByteArray, QOrm::ModelInfo*> ByteModelInfo;
-    Q_GLOBAL_STATIC(ByteModelInfo, __static_model_info);
+    Q_GLOBAL_STATIC(ByteModelInfo, __static_model_info)
 }
 
 namespace QOrm {

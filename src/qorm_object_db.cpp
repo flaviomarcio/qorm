@@ -4,7 +4,7 @@
 #include <QMetaObject>
 
 namespace PrivateOrm {
-Q_GLOBAL_STATIC_WITH_ARGS(QByteArray,connectionIdMethod,("connectionid"));
+Q_GLOBAL_STATIC_WITH_ARGS(QByteArray,connectionIdMethod,("connectionid"))
 }
 
 

@@ -72,6 +72,8 @@ set(qorm_SRCS
     qorm_wrapper.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/src)
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
     add_library(qorm STATIC ${qorm_SRCS})
 else()

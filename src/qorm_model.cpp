@@ -5,16 +5,16 @@
 #include "./private/p_qorm_model_info.h"
 #include <QCryptographicHash>
 #include <QMetaProperty>
-#include <QSqlField>
-#include <QSqlError>
-#include <QSqlRecord>
-#include <QSqlQuery>
+#include <QtSql/QSqlField>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlRecord>
+#include <QtSql/QSqlQuery>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QBitArray>
 
 namespace PrivateOrm {
-Q_GLOBAL_STATIC_WITH_ARGS(QByteArray,__static_uuid_base_data,(QUuid::createUuid().toString().toUtf8()));
+Q_GLOBAL_STATIC_WITH_ARGS(QByteArray,__static_uuid_base_data,(QUuid::createUuid().toString().toUtf8()))
 }
 
 namespace QOrm {

@@ -1,6 +1,6 @@
 #include "./p_qorm_model_dao.h"
 #include "./p_qorm_sql_suitable_parser_strategy_options.h"
-#include "./qstm_util_variant.h"
+#include "../../qstm/src/qstm_util_variant.h"
 
 namespace PrivateQOrm {
 

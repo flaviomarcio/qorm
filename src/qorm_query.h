@@ -1,7 +1,7 @@
 #pragma once
 
 #include "./qorm_sql_suitable_builder.h"
-#include <QSqlRecord>
+#include <QtSql/QSqlRecord>
 
 namespace QOrm {
 class Model;

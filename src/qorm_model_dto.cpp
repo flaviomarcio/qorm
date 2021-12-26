@@ -7,7 +7,7 @@
 #include <QJsonObject>
 
 namespace PrivateOrm {
-    Q_GLOBAL_STATIC(QVariantHash, dtoSettings);
+    Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
 }
 
 namespace QOrm {

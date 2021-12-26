@@ -4,8 +4,8 @@
 namespace QOrm {
 
 typedef QMap<Transaction*,QString> TransactionStringMap ;
-Q_GLOBAL_STATIC(QMutex, ___mutex_cache__);
-Q_GLOBAL_STATIC(TransactionStringMap, ___connections__);
+Q_GLOBAL_STATIC(QMutex, ___mutex_cache__)
+Q_GLOBAL_STATIC(TransactionStringMap, ___connections__)
 
 static auto&___mutex_cache=*___mutex_cache__;
 static auto&___connections=*___connections__;

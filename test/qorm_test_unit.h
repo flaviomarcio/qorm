@@ -1,7 +1,7 @@
 #pragma once
 
 #include "./qorm_test.h"
-#include "./qstm_util_variant.h"
+#include "../../qstm/src/qstm_util_variant.h"
 
 namespace QOrm {
 

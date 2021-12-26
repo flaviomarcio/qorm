@@ -7,11 +7,11 @@
 #include <QThread>
 #include <QObject>
 #include <QVariant>
-#include <QSqlDatabase>
-#include <QSqlDriver>
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlDriver>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>

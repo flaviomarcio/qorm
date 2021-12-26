@@ -8,19 +8,19 @@
 #include <QUuid>
 #include <QVariant>
 #include <QVariantHash>
-#include <QSqlError>
 #include <QVariant>
-#include <QSqlDatabase>
-#include <QSqlDriver>
-#include <QSqlRecord>
-#include <QSqlError>
 #include <QList>
 #include <QVector>
-#include "./qstm_types.h"
-#include "./qstm_currency.h"
-#include "./qstm_vvm.h"
-#include "./qstm_svm.h"
-#include "./qstm_url.h"
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlDriver>
+#include <QtSql/QSqlRecord>
+#include <QtSql/QSqlError>
+#include "../../qstm/src/qstm_types.h"
+#include "../../qstm/src/qstm_currency.h"
+#include "../../qstm/src/qstm_vvm.h"
+#include "../../qstm/src/qstm_svm.h"
+#include "../../qstm/src/qstm_url.h"
 
 namespace QOrm {
 

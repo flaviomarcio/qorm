@@ -7,9 +7,9 @@
 #include <QThread>
 #include <QDir>
 #include <QMutex>
-#include <QSqlRecord>
-#include <QSqlError>
-#include <QSqlQuery>
+#include <QtSql/QSqlRecord>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlQuery>
 #include <QCoreApplication>
 
 namespace QOrm{
@@ -78,7 +78,7 @@ namespace QOrm{
         }
     }
 
-    Q_COREAPP_STARTUP_FUNCTION(static_log_init_dir);
+    Q_COREAPP_STARTUP_FUNCTION(static_log_init_dir)
 
 
     class QueryPvt:public QObject{

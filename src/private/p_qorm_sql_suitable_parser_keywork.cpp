@@ -16,15 +16,15 @@ typedef QMap<QSqlDriver::DbmsType,QOrm::SqlSuitableKeyWord*> DriverSuiteMap;
 typedef QList<QOrm::SqlSuitableKeyWord*> DriverSuiteList;
 
 
-Q_GLOBAL_STATIC_WITH_ARGS(QString, format_date_time, ("yyyy-MM-dd hh:mm:ss.zzz"));
-Q_GLOBAL_STATIC_WITH_ARGS(QString, format_date, ("yyyy-MM-dd"));
-Q_GLOBAL_STATIC_WITH_ARGS(QString, format_time, ("hh:mm:ss.zzz"));
-Q_GLOBAL_STATIC_WITH_ARGS(QDate, __d1900, (QDate(1900,01,01)));
-Q_GLOBAL_STATIC_WITH_ARGS(QDateTime, __dt1900, (QDateTime(QDate(1900,01,01),QTime())));
+Q_GLOBAL_STATIC_WITH_ARGS(QString, format_date_time, ("yyyy-MM-dd hh:mm:ss.zzz"))
+Q_GLOBAL_STATIC_WITH_ARGS(QString, format_date, ("yyyy-MM-dd"))
+Q_GLOBAL_STATIC_WITH_ARGS(QString, format_time, ("hh:mm:ss.zzz"))
+Q_GLOBAL_STATIC_WITH_ARGS(QDate, __d1900, (QDate(1900,01,01)))
+Q_GLOBAL_STATIC_WITH_ARGS(QDateTime, __dt1900, (QDateTime(QDate(1900,01,01),QTime())))
 
-Q_GLOBAL_STATIC(QMutex, staticSqlSuitableKeyWordLocker);
-Q_GLOBAL_STATIC(DriverSuiteMap, staticSqlSuitableKeyWord);
-Q_GLOBAL_STATIC(DriverSuiteList, staticSqlSuitableKeyWordList);
+Q_GLOBAL_STATIC(QMutex, staticSqlSuitableKeyWordLocker)
+Q_GLOBAL_STATIC(DriverSuiteMap, staticSqlSuitableKeyWord)
+Q_GLOBAL_STATIC(DriverSuiteList, staticSqlSuitableKeyWordList)
 
 }
 

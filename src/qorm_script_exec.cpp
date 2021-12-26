@@ -4,8 +4,8 @@
 #include <QMetaObject>
 #include <QFile>
 #include <QUrl>
-#include <QSqlQuery>
-#include <QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 
 namespace QOrm {
 

@@ -1,5 +1,5 @@
 #include "./qorm_model_crud_block.h"
-#include "./qstm_util_variant.h"
+#include "../../qstm/src/qstm_util_variant.h"
 
 namespace QOrm {
 

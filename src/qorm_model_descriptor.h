@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "./qstm_types.h"
+#include "../../qstm/src/qstm_types.h"
 #include "./private/p_qorm_model_controls.h"
 #include <QVariant>
 #include <QVariantHash>

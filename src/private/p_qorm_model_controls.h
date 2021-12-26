@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../qorm_sql_suitable_types.h"
-#include "./qstm_result_info.h"
+#include "../../qstm/src/qstm_result_info.h"
 #include "./private/p_qorm_model_dto_items.h"
 #include "./private/p_qorm_model_dto_header.h"
 #include "./private/p_qorm_model_dto_filter.h"

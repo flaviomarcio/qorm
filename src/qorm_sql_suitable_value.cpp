@@ -51,7 +51,7 @@ static const QHash<QString,QString>&ChartoUtf8(){
         {qsl("°" ), qsl("_") }
     } );
     return __return;
-};
+}
 
 static const auto&chartoUtf8=ChartoUtf8();
 

@@ -1,15 +1,15 @@
 #include <QCoreApplication>
-#include <QSqlQuery>
 #include <QSettings>
 #include <QThread>
 #include <QMutex>
 #include <QDebug>
-#include <QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QMutex>
 #include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
-#include "./private/p_qorm_sql_suitable_parser_keywork.h"
 #include "./qorm_macro.h"
+#include "./private/p_qorm_sql_suitable_parser_keywork.h"
 
 namespace QOrm {
 

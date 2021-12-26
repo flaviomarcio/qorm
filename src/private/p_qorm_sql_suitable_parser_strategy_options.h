@@ -10,7 +10,7 @@
 #include <QList>
 #include <QVariantList>
 #include <QVariantMap>
-#include "./qstm_types.h"
+#include "../../qstm/src/qstm_types.h"
 #include "../qorm_sql_suitable_types.h"
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_sql_suitable_parser_keywork.h"
@@ -204,6 +204,7 @@ public:
     {
         if(!this->mapPointer.isEmpty())
             return false;
+        bool __return=false;
         Q_DECLARE_VU;
         auto vThis=this->toMap();
         QMapIterator<QString, SqlParserCommand*> i(this->mapPointer);
@@ -937,14 +938,16 @@ public:
         auto valueB=SqlParserObject(qsl(":%1").arg(valueA.toString()));
         return this->addCondition(new SqlParserCondition(__func__, valueA, valueB, KeywordOperator::koIsNotNull, keywordLogical));
     }
-    auto&between(const QVariant&field, const QVariant&valueA, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
+    SqlParserConditions<TemplateParent>&between(const QVariant&field, const QVariant&valueA, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
     {
         switch (qTypeId(valueA)) {
         case QMetaType_QDateTime:
         case QMetaType_QDate:
         case QMetaType_QTime:
+        {
             auto valueB=QDateTime(valueA.toDateTime().date(), QTime(23,59,59,998));
             return this->addCondition(new SqlParserCondition(__func__, field, valueA, valueB, KeywordOperator::koBetween, keywordLogical));
+        }
         default:
             return this->equal(field, valueA, keywordLogical);
         }

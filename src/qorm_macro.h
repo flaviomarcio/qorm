@@ -2,7 +2,7 @@
 
 #include <QThread>
 #include <QMutex>
-#include "./qstm_macro.h"
+#include "../../qstm/src/qstm_macro.h"
 
 #define ORM_STRINGFY(name)\
 QT_STRINGIFY2(#name)

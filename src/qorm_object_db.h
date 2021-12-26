@@ -2,11 +2,11 @@
 
 #include "./qorm_global.h"
 #include "./qorm_types.h"
-#include "./qstm_object.h"
-#include "./qstm_result.h"
-#include "./qstm_util_variant.h"
-#include "./qstm_util_date.h"
-#include "./qstm_util_double.h"
+#include "../../qstm/src/qstm_object.h"
+#include "../../qstm/src/qstm_result.h"
+#include "../../qstm/src/qstm_util_variant.h"
+#include "../../qstm/src/qstm_util_date.h"
+#include "../../qstm/src/qstm_util_double.h"
 
 namespace QOrm {
 

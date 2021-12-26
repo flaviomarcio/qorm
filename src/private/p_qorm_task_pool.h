@@ -7,9 +7,9 @@
 #include <QUrl>
 #include <QUuid>
 #include <QMutex>
-#include "./qorm_task_runner.h"
-#include "./qorm_connection_pool.h"
-#include "./qorm_connection_setting.h"
+#include "../qorm_task_runner.h"
+#include "../qorm_connection_pool.h"
+#include "../qorm_connection_setting.h"
 #include "./p_qorm_task_slot.h"
 
 namespace QOrm {

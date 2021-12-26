@@ -17,7 +17,7 @@ static const QVariantHash __makeDTOFormType(){
             {QString(QT_STRINGIFY2(ReportForm)).toLower(), QString::number(dftReportForm)}
         };
     return ___return;
-};
+}
 
 static const QVariantHash __makeDTOFormLayout(){
     QVariantHash ___return=
@@ -30,7 +30,7 @@ static const QVariantHash __makeDTOFormLayout(){
             {QString(QT_STRINGIFY2(HorizontalControls)).toLower(), QString::number(dflHorizontalControls)}
         };
     return ___return;
-};
+}
 
 static const auto __DTOFormTypeMap = __makeDTOFormType();
 static const auto __DTOFormLayoutMap = __makeDTOFormLayout();

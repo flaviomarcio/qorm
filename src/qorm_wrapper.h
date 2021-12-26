@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./qstm_result.h"
+#include "../../qstm/src/qstm_result.h"
 
 namespace QOrm {
 
