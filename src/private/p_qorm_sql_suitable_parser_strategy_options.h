@@ -680,7 +680,7 @@ public:
         }
         explicit SqlParserCondition(QString funcName, const QVariant&field, const QVariant&valueA, const QVariant&valueB, const KeywordOperator&keywordOperator, const KeywordLogical&keywordLogical):SqlParserCommand()
         {
-            auto map=this->toHash();
+            auto map=this->toMap();
             this->funcName=funcName;
             map.insert(qsl("funcName"),funcName);
             map.insert(qsl("field"),field);
@@ -693,7 +693,7 @@ public:
 
         explicit SqlParserCondition(QString funcName, const QVariant&valueA, const QVariant&valueB, const KeywordOperator&keywordOperator, const KeywordLogical&keywordLogical):SqlParserCommand()
         {
-            auto map=this->toHash();
+            auto map=this->toMap();
             this->funcName=funcName;
             map.insert(qsl("funcName"),funcName);
             map.insert(qsl("valueA"),valueA);
@@ -705,7 +705,7 @@ public:
 
         QStringList toScript(SqlSuitableKeyWord &parser)
         {
-            auto map=this->toHash();
+            auto map=this->toMap();
             auto first = map.value(qsl("first")).toBool();
             auto keywordOperator = KeywordOperator( map.contains(qsl("keywordOperator"))?map.value(qsl("keywordOperator")).toInt(): -1 );
 
