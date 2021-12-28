@@ -17,7 +17,7 @@ public:
     QByteArray reportDescription;
     QOrm::ModelDto dto;
     QHash<QByteArray, QOrm::ModelAction*> actions;
-    QHash<QByteArray, QOrm::ReportActionMethod> actionMethod;
+    QHash<QByteArray, QOrm::ModelActionMethod> actionMethod;
     QVariant strategy;
     QVariant source;
     ModelReportBase*parent=nullptr;
@@ -254,21 +254,21 @@ ResultValue &ModelReportBase::search(const QVariant &value)
     return this->lr().setNotImplemented();
 }
 
-ModelReportBase &ModelReportBase::onBefore(QOrm::ReportActionMethod method)
+ModelReportBase &ModelReportBase::onBefore(QOrm::ModelActionMethod method)
 {
     dPvt();
     p.actionMethod[qbl("bofore")]=method;
     return*this;
 }
 
-ModelReportBase &ModelReportBase::onSuccess(QOrm::ReportActionMethod method)
+ModelReportBase &ModelReportBase::onSuccess(QOrm::ModelActionMethod method)
 {
     dPvt();
     p.actionMethod[qbl("success")]=method;
     return*this;
 }
 
-ModelReportBase &ModelReportBase::onFailed(QOrm::ReportActionMethod method)
+ModelReportBase &ModelReportBase::onFailed(QOrm::ModelActionMethod method)
 {
     dPvt();
     p.actionMethod[qbl("failed")]=method;

@@ -145,7 +145,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onBefore(ModelActionMethod method){
+    auto&onBefore(QOrm::ModelActionMethod method){
         auto obj=PrivateQOrm::ModelReportBase::onBefore(method);
         return*(dynamic_cast<ModelReport<T>*>(obj));
     }
@@ -155,7 +155,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onSuccess(ModelActionMethod method){
+    auto&onSuccess(QOrm::ModelActionMethod method){
         auto obj=PrivateQOrm::ModelReportBase::onSuccess(method);
         return*(dynamic_cast<ModelReport<T>*>(obj));
     }
@@ -165,7 +165,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onFailed(ModelActionMethod method){
+    auto&onFailed(QOrm::ModelActionMethod method){
         auto obj=PrivateQOrm::ModelReportBase::onFailed(method);
         return*(dynamic_cast<ModelReport<T>*>(obj));
     }
