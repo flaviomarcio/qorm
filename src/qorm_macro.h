@@ -401,7 +401,7 @@ private:\
     }                                                                           \
 }                                                                               \
 
-#define QORM_CONNECTION_SUPPORT \
+#define QORM_CONNECTION_SUPPORT() \
 private:\
     QByteArray ____connectionId;\
 public:\
