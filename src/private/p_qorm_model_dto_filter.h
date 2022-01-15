@@ -19,15 +19,18 @@ public:
     Q_PROPERTY(bool         filtrable       READ filtrable      WRITE setFiltrable       )
     Q_PROPERTY(QVariant     filterStyle     READ filterStyle    WRITE setFilterStyle     )
 
-    Q_INVOKABLE explicit ModelDtoFilter(T*dto, QObject*parent=nullptr):QStm::Object(parent){
+    Q_INVOKABLE explicit ModelDtoFilter(T*dto, QObject*parent=nullptr):QStm::Object(parent)
+    {
         this->___d=dto;
     }
 
-    Q_INVOKABLE virtual ~ModelDtoFilter(){
+    ~ModelDtoFilter()
+    {
 
     }
 
-    virtual T&d(){
+    virtual T&d()
+    {
         return*this->___d;
     }
 

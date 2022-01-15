@@ -59,7 +59,7 @@ public:
     //!
     //! \brief ~Model
     //!
-    Q_INVOKABLE virtual ~Model();
+    ~Model();
 
 public:
     //!

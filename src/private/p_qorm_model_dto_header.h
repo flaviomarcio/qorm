@@ -45,7 +45,7 @@ public:
         this->___d=dto;
     }
 
-    Q_INVOKABLE virtual ~ModelDtoHeader(){
+    ~ModelDtoHeader(){
 
     }
 

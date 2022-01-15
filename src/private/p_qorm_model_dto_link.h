@@ -9,7 +9,7 @@ class ModelDtoLinkItem : public PrivateQOrm::ModelDtoLinkItem{
 public:
     Q_INVOKABLE explicit ModelDtoLinkItem(QObject*dtoParent, QObject*parent=nullptr):PrivateQOrm::ModelDtoLinkItem(dtoParent, parent){
     }
-    Q_INVOKABLE virtual ~ModelDtoLinkItem(){
+    ~ModelDtoLinkItem(){
     }
     virtual T&d(){
         auto object=&PrivateQOrm::ModelDtoLinkItem::d();

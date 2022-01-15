@@ -8,12 +8,15 @@ namespace QOrm {
 
 class Q_ORM_EXPORT SqlSuitableKeyWordPSql : public SqlSuitableKeyWord{
 public:
-    explicit SqlSuitableKeyWordPSql(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::PostgreSQL, parent){
+    explicit SqlSuitableKeyWordPSql(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::PostgreSQL, parent)
+    {
 
     }
-    ~SqlSuitableKeyWordPSql(){
+    ~SqlSuitableKeyWordPSql()
+    {
     }
-    virtual void init(){
+    virtual void init()
+    {
         this->commands()[kgcSelectTop                ]=qbl("select");
         this->commands()[kgcSelectForExists          ]=qbl("select");
         this->commands()[kgcSelectDistinct           ]=qbl("select distinct");
