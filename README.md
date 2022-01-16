@@ -162,8 +162,7 @@ E[QSqlQuery]
 >
 >int main(int argc, char *argv[])
 >{
->     QCoreApplication a(argc, argv);
->     return return a.exec();
+>     ...more
 >}
 >```
 
