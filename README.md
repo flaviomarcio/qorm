@@ -15,7 +15,7 @@ A --> B(SqlSuitableBuilder)
 B --> BA(ANSI)--> C
 B --> BB(SQLite)--> C
 B --> BC(TSQL)--> C
-B --> BD(MySql)--> C
+B --> BD(PSQL)--> C
 B --> BE(MySql)--> C
 B --> BF(Oracle)--> C
 C[Strategy Selector]
