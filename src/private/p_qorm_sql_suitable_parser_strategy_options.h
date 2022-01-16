@@ -995,13 +995,15 @@ public:
         {
             return this->funcName+this->suuid(qsl("."));
         }
+
         SqlParserCombinations<T> * parent=nullptr;
         explicit SqlParserCombination(const QVariant&v=QVariant()):SqlParserCommand(v)
         {
             this->parent=nullptr;
             this->makeUuid();
         }
-        explicit SqlParserCombination(const QString&funcName, SqlParserCombinations<T> * parent, const KeywordCombine&combine, const QVariant&condition):SqlParserCommand()
+
+        explicit SqlParserCombination(const QString&funcName, SqlParserCombinations<T> * parent, const KeywordCombine&combine, const QVariant&condition, const QVariant&alias=QVariant()):SqlParserCommand()
         {
             this->makeUuid();
             this->funcName=funcName.toLower();
@@ -1015,8 +1017,19 @@ public:
                 return;
             }
 
+            if(alias.isValid())
+                map.insert(qsl("alias"), alias);
+
             map.insert(qsl("on"),condition);
             this->setValue(map);
+        }
+
+        auto&alias(const QString&alias)
+        {
+            auto map=this->toHash();
+            map.insert(qsl("alias"), alias);
+            this->setValue(map);
+            return*this;
         }
 
         auto&makeOperator(const KeywordOperator&keywordOperator=KeywordOperator::koEqual)
@@ -1249,6 +1262,11 @@ public:
 
     auto&from(const QVariant&fromObject)
     {
+        return this->from(fromObject, QString());
+    }
+
+    auto&from(const QVariant&fromObject, const QString&alias)
+    {
         SqlParserCombination*c=nullptr;
         QMapIterator<QString, SqlParserCommand*> i(this->mPointer());
         while (i.hasNext()) {
@@ -1258,7 +1276,7 @@ public:
             }
         }
         if(c==nullptr){
-            c = new SqlParserCombination(__func__, this, KeywordCombine::kcFrom, fromObject);
+            c = new SqlParserCombination(__func__, this, KeywordCombine::kcFrom, fromObject, alias);
             this->setPointer(c->sName(), c);
         }
         return*this;

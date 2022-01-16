@@ -176,6 +176,13 @@ public:
     Q_INVOKABLE virtual QVariant settingsFileName();
 
     //!
+    //! \brief setSettingsFileName
+    //! \param fileName
+    //! \return
+    //!
+    virtual bool setSettingsFileName(const QString&fileName);
+
+    //!
     //! \brief notify
     //! \return
     //!

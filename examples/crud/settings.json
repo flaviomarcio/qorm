@@ -1,0 +1,17 @@
+{
+   "connection":{
+       "secret": "YzUxNDFhMDA5",
+       "enviroment" : "debug",
+       "paramaters" : {
+           "debug":{
+               "driver":"QPSQL",
+               "hostName":"localhost",
+               "userName":"localuser",
+               "password":"localuser",
+               "port":5432,
+               "dataBaseName":"postgres",
+               "schemaNames":"public"
+           }
+       }
+   }
+}

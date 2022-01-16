@@ -1,11 +1,9 @@
-QT += testlib
-
 CONFIG += c++17
 CONFIG += testcase
 CONFIG += console
 CONFIG += silent
 CONFIG -= debug_and_release
-QT -= gui
+QT += gui core widgets
 
 TEMPLATE = app
 TARGET = demo
@@ -18,5 +16,9 @@ HEADERS += \
     $$PWD/personController.h
 
 SOURCES += \
+    $$PWD/personController.cpp \
     $$PWD/main.cpp
 
+
+RESOURCES += \
+    $$PWD/settings.qrc

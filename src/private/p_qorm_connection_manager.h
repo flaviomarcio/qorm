@@ -256,9 +256,6 @@ public:
             sWarning()<<qsl("%1, %2").arg(file.errorString(), file.fileName());
             return false;
         }
-
-
-
         auto bytes=file.readAll();
         QJsonParseError*error=nullptr;
         auto doc=QJsonDocument::fromJson(bytes, error);
