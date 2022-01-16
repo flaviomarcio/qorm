@@ -9,13 +9,6 @@
 #include "./p_qorm_model_report_body.h"
 #include "./p_qorm_model_action_method.h"
 
-namespace QOrm {
-
-typedef std::function<ResultValue&(QOrm::ObjectDb*controller, const QVariant&vBody)> ReportActionMethod;
-
-}
-
-
 namespace PrivateQOrm{
 
     /**
@@ -163,9 +156,9 @@ namespace PrivateQOrm{
          * @param method
          * @return
          */
-        ModelReportBase&onBefore(QOrm::ReportActionMethod method);
-        ModelReportBase&onSuccess(QOrm::ReportActionMethod method);
-        ModelReportBase&onFailed(QOrm::ReportActionMethod method);
+        ModelReportBase&onBefore(QOrm::ModelActionMethod method);
+        ModelReportBase&onSuccess(QOrm::ModelActionMethod method);
+        ModelReportBase&onFailed(QOrm::ModelActionMethod method);
 
 
         virtual ResultValue &canActionSearch();

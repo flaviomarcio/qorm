@@ -4,10 +4,6 @@
 #include "./p_qorm_model_crud_body.h"
 
 namespace QOrm {
-//!
-//! \brief ModelActionMethod
-//!
-typedef std::function<ResultValue*(QOrm::ObjectDb*controller, const QVariant&vBody)> ModelActionMethod;
 
 //!
 //! \brief The ModelAction class
@@ -40,21 +36,21 @@ public:
     //! \param action
     //! \return
     //!
-    virtual ModelAction&onActionBefore(ModelActionMethod action);
+    virtual ModelAction&onActionBefore(ModelActionMethodPointer action);
 
     //!
     //! \brief onAction
     //! \param action
     //! \return
     //!
-    virtual ModelAction&onAction(ModelActionMethod action);
+    virtual ModelAction&onAction(ModelActionMethodPointer action);
 
     //!
     //! \brief onActionAfter
     //! \param action
     //! \return
     //!
-    virtual ModelAction&onActionAfter(ModelActionMethod action);
+    virtual ModelAction&onActionAfter(ModelActionMethodPointer action);
 
 private:
     void*p=nullptr;

@@ -24,7 +24,7 @@ public:
     Q_INVOKABLE explicit ConnectionNotifyPvt(QObject*parent=nullptr):QObject(parent){
     }
 
-    Q_INVOKABLE virtual ~ConnectionNotifyPvt(){
+    ~ConnectionNotifyPvt(){
         this->queueStop();
     }
 

@@ -10,8 +10,9 @@ QT_STRINGIFY2(#name)
 #define Q_ORM_NAME(name)\
 QT_STRINGIFY2(#name)
 
-#define QORM_OBJECT(v)\
- \
+#define QORM_OBJECT(v)
+
+#define Q_ORM_CRUD_PROPERTY_LIST QVector<QString>({"type","id","resultInfo","layout","links","text","items","filters","headers"})
 
 #define QORM_DECLARE_INSTANCE(instanceClassName)\
 public:\
@@ -400,7 +401,7 @@ private:\
     }                                                                           \
 }                                                                               \
 
-#define QORM_CONNECTION_SUPPORT \
+#define QORM_CONNECTION_SUPPORT() \
 private:\
     QByteArray ____connectionId;\
 public:\

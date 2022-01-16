@@ -202,7 +202,7 @@ public:
 
     virtual bool makeObject()
     {
-        if(!this->mapPointer.isEmpty())
+        if(this->mapPointer.isEmpty())
             return false;
         bool __return=false;
         Q_DECLARE_VU;

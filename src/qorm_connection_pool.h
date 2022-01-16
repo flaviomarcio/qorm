@@ -41,7 +41,7 @@ public:
     //!
     //! \brief ~ConnectionPool
     //!
-    Q_INVOKABLE virtual ~ConnectionPool();
+    ~ConnectionPool();
 
     //!
     //! \brief setting

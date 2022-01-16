@@ -13,9 +13,9 @@ class ModelActionPvt{
 public:
     ModelAction*parent=nullptr;
     ObjectDb*parentDb=nullptr;
-    ModelActionMethod actionBefore=nullptr;
-    ModelActionMethod action=nullptr;
-    ModelActionMethod actionAfter=nullptr;
+    ModelActionMethodPointer actionBefore=nullptr;
+    ModelActionMethodPointer action=nullptr;
+    ModelActionMethodPointer actionAfter=nullptr;
     explicit ModelActionPvt(ModelAction*parent)
     {
         this->parent=parent;
@@ -45,21 +45,21 @@ ModelAction::~ModelAction(){
     delete&p;
 }
 
-ModelAction &ModelAction::onActionBefore(ModelActionMethod action)
+ModelAction &ModelAction::onActionBefore(ModelActionMethodPointer action)
 {
     dPvt();
-    p.actionBefore = action;
+    p.actionBefore=action;
     return*this;
 }
 
-ModelAction &ModelAction::onAction(ModelActionMethod action)
+ModelAction &ModelAction::onAction(ModelActionMethodPointer action)
 {
     dPvt();
     p.action = action;
     return*this;
 }
 
-ModelAction &ModelAction::onActionAfter(ModelActionMethod action)
+ModelAction &ModelAction::onActionAfter(ModelActionMethodPointer action)
 {
     dPvt();
     p.actionAfter = action;
@@ -72,18 +72,18 @@ ResultValue &ModelAction::action(const QVariant &vSource)
     auto vList=p.makeBodyLoop(vSource);
     for(auto&vSource:vList){
         if(p.actionBefore!=nullptr){
-            auto&lr=*p.actionBefore(p.parentDb, vSource);
-            this->lr(lr);
+            auto lr=p.actionBefore(p.parentDb, vSource);
+            this->lr(*lr);
         }
 
         if(p.action!=nullptr){
-            auto&lr=*p.action(p.parentDb, vSource);
-            this->lr(lr);
+            auto lr=p.action(p.parentDb, vSource);
+            this->lr(*lr);
         }
 
         if(p.actionAfter!=nullptr){
-            auto&lr=*p.actionAfter(p.parentDb, vSource);
-            this->lr(lr);
+            auto lr=p.actionAfter(p.parentDb, vSource);
+            this->lr(*lr);
         }
     }
     return this->lr();
