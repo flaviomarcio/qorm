@@ -46,6 +46,11 @@ public:\
     Q_INVOKABLE explicit ModelName(QObject *parent, const ResultValue &record):Model(parent){this->readFrom(record);};\
     ~ModelName(){};
 
+#define QORM_CONTROLLER_CONSTRUCTOR(ObjectName) \
+Q_INVOKABLE explicit ObjectName(QObject *parent = nullptr):QOrm::Controller(parent){};\
+Q_INVOKABLE explicit ObjectName(const QSqlDatabase&connection, QObject *parent = nullptr):QOrm::Controller(connection, parent){}\
+virtual ~ObjectName(){}
+
 #define QORM_MODEL(modelClass)\
 public:\
     virtual QByteArray modelName() const{\

@@ -42,11 +42,11 @@ static auto&staticSqlSuitableKeyWordList=*PrivateQOrm::staticSqlSuitableKeyWordL
 #define dPvt()\
     auto&p = *reinterpret_cast<SqlSuitableKeyWordPvt*>(this->p)
 
-static void deinitKeyWork(){
-    auto lst=staticSqlSuitableKeyWordList;
-    staticSqlSuitableKeyWord.clear();
+static void deinitKeyWork()
+{
+    qDeleteAll(staticSqlSuitableKeyWordList);
     staticSqlSuitableKeyWordList.clear();
-    qDeleteAll(lst);
+    staticSqlSuitableKeyWord.clear();
 }
 
 static bool initKeyWork(){

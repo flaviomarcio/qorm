@@ -6,7 +6,8 @@ namespace QOrm {
 
 class Q_ORM_EXPORT SqlSuitableKeyWordTSQL : public SqlSuitableKeyWord{
 public:
-    explicit SqlSuitableKeyWordTSQL(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::MSSqlServer, parent){
+    explicit SqlSuitableKeyWordTSQL(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::MSSqlServer, parent)
+    {
         this->commands()[kgcSelectForExists]=qbl("select top 1 null");
         this->commands()[kgcUpsertSet]=qbl_null.trimmed().toLower();
         this->commands()[kgcIsNull]=qbl("isnull");
@@ -16,7 +17,8 @@ public:
         this->commands()[kgcSetTransactionReadOnlyOn]=qbl("ApplicationIntent=ReadOnly");
         this->commands()[kgcSetTransactionReadOnlyOff]=qbl_null;
     }
-    ~SqlSuitableKeyWordTSQL(){
+    ~SqlSuitableKeyWordTSQL()
+    {
     }
 };
 

@@ -9,7 +9,7 @@ class ModelDtoCrudItem : public QStm::Object{
 public:
     Q_INVOKABLE explicit ModelDtoCrudItem(QObject*dtoParent, QObject*parent=nullptr):QStm::Object(parent), item(dtoParent, parent){
     }
-    Q_INVOKABLE virtual ~ModelDtoCrudItem(){
+    ~ModelDtoCrudItem(){
     }
     virtual T&d(){
         auto object=&this->item.d();

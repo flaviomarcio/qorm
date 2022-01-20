@@ -6,13 +6,17 @@ namespace QOrm {
 
 class Q_ORM_EXPORT SqlSuitableKeyWordOracle : public SqlSuitableKeyWord{
 public:
-    explicit SqlSuitableKeyWordOracle(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::Oracle, parent){
+    explicit SqlSuitableKeyWordOracle(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::Oracle, parent)
+    {
         this->commands()[kgcSelectTop]=qbl_null;
         this->commands()[kgcUpsertSet]=qbl_null;
     }
-    ~SqlSuitableKeyWordOracle(){
+
+    ~SqlSuitableKeyWordOracle()
+    {
     }
-    virtual void init(){
+    virtual void init()
+    {
         this->commands()[kgcSelectTop]=qbl_null;
     }
 };

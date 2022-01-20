@@ -2,7 +2,7 @@ QT += core
 QT += network
 QT += sql
 
-#INCLUDEPATH += $$PWD/src
+INCLUDEPATH += $$PWD/includes
 
 HEADERS += \
     $$PWD/src/private/p_qorm_connection_manager.h \

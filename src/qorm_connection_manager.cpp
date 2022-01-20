@@ -223,6 +223,12 @@ QVariant ConnectionManager::settingsFileName()
     return p.settingsFileName;
 }
 
+bool ConnectionManager::setSettingsFileName(const QString &fileName)
+{
+    dPvt();
+    return p.load(fileName);
+}
+
 ConnectionNotify &ConnectionManager::notify()
 {
     dPvt();

@@ -6,9 +6,11 @@ namespace QOrm {
 
 class Q_ORM_EXPORT SqlSuitableKeyWordSQLite : public SqlSuitableKeyWord{
 public:
-    explicit SqlSuitableKeyWordSQLite(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::SQLite, parent){
+    explicit SqlSuitableKeyWordSQLite(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::SQLite, parent)
+    {
     }
-    ~SqlSuitableKeyWordSQLite(){
+    ~SqlSuitableKeyWordSQLite()
+    {
     }
 
 };
