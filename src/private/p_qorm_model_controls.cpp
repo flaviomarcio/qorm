@@ -4,7 +4,8 @@
 
 namespace QOrm {
 
-static const QVariantHash __makeDTOFormType(){
+static const QVariantHash __makeDTOFormType()
+{
     QVariantHash ___return=
         {
             {QString::number(dftNormalForm), QString(QT_STRINGIFY2(NormalForm)).toLower()},
@@ -19,7 +20,8 @@ static const QVariantHash __makeDTOFormType(){
     return ___return;
 }
 
-static const QVariantHash __makeDTOFormLayout(){
+static const QVariantHash __makeDTOFormLayout()
+{
     QVariantHash ___return=
         {
             {QString::number(dflVerticalControls), QString(QT_STRINGIFY2(VerticalControls)).toLower()},
