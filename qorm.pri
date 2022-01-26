@@ -2,6 +2,9 @@ QT += core
 QT += network
 QT += sql
 
+QTREFORCE_QORM=true
+DEFINES+=QTREFORCE_QORM
+
 INCLUDEPATH += $$PWD/includes
 
 HEADERS += \
