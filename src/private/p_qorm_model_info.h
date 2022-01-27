@@ -161,10 +161,10 @@ public:
 
     //!
     //! \brief propertyNameConvertMap
-    //! \param propertyMap
+    //! \param propertyHash
     //! \return
     //!
-    virtual bool propertyNameConvertMap(QVariantHash &propertyMap);
+    virtual bool propertyNameConvertMap(QVariantHash &propertyHash);
 
     //!
     //! \brief propertyDeactivateField

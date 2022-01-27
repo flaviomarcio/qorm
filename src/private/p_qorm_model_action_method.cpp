@@ -22,6 +22,7 @@ public:
         if(this->parent)
             this->parentDb = dynamic_cast<ObjectDb*>(this->parent->parent());
     }
+
     virtual ~ModelActionPvt()
     {
     }

@@ -21,38 +21,70 @@ class Q_ORM_EXPORT TaskSlot : public QThread
 {
     Q_OBJECT
 public:
-    QVariantList taskQueueValue;
-    QVariantList resultList;
-    TaskRunnerMethod methodExecute;
-    TaskRunnerMethod methodSuccess;
-    TaskRunnerMethod methodFailed;
-    QVariantHash connectionSetting;
-    bool resultBool;
-    TaskPool*pool=nullptr;
-    TaskRunner*runner=nullptr;
-    QSqlDatabase connection;
-    QOrm::ConnectionPool cnnPool;
+    //!
+    //! \brief TaskSlot
+    //! \param pool
+    //! \param connectionSetting
+    //! \param methodExecute
+    //! \param methodSuccess
+    //! \param methodFailed
+    //!
     explicit TaskSlot(TaskPool*pool, const QVariantHash&connectionSetting, TaskRunnerMethod methodExecute, TaskRunnerMethod methodSuccess, TaskRunnerMethod methodFailed);
     ~TaskSlot();
 
+    //!
+    //! \brief start
+    //! \return
+    //!
     bool start();
 
+    //!
+    //! \brief run
+    //!
     void run() override;
+
+    //!
+    //! \brief init
+    //!
     void init();
 signals:
+    //!
+    //! \brief taskSend
+    //! \param task
+    //!
     void taskSend(const QVariant&task);
+
+    //!
+    //! \brief taskRequest
+    //! \param slot
+    //!
     void taskRequest(QOrm::TaskSlot*slot);
 
+    //!
+    //! \brief taskStart
+    //! \param task
+    //!
     void taskStart(const QVariantHash&task);
+
+    //!
+    //! \brief taskState
+    //! \param task
+    //!
     void taskState(const QVariantHash&task);
+
+    //!
+    //! \brief taskError
+    //! \param task
+    //!
     void taskError(const QVariantHash&task);
+
+    //!
+    //! \brief taskSuccess
+    //! \param task
+    //!
     void taskSuccess(const QVariantHash&task);
-private slots:
-    void on_taskRequest();
-    void on_taskSend(const QVariant&task);
 private:
     void*p=nullptr;
-    bool connectionCheck();
 };
 
 }

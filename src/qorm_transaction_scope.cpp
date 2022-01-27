@@ -18,7 +18,8 @@ public:
             this->failTryException(qsl("failt create transation"));
     }
 
-    ~TransactionScopePvt(){
+    ~TransactionScopePvt()
+    {
         this->transaction.commit();
     }
 

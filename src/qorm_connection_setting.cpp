@@ -28,10 +28,12 @@ public:
     QByteArray _connectOptions;
     QStringList _commandBeforeOpen;
     QStringList _commandAfterClose;
+
     explicit ConnectionSettingPrv(QObject*parent)
     {
         this->parent=parent;
     }
+
     virtual ~ConnectionSettingPrv()
     {
     }

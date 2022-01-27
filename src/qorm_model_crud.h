@@ -15,7 +15,8 @@ public:
     //! \brief CRUD
     //! \param parent
     //!
-    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr) : PrivateQOrm::CRUDBase(parent), p_dao(this), p_model(this){
+    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr) : PrivateQOrm::CRUDBase(parent), p_dao(this), p_model(this)
+    {
         this->init();
     }
 
@@ -37,7 +38,8 @@ public:
     //! \brief crudify
     //! \return
     //!
-    virtual ResultValue &crudify(){
+    virtual ResultValue &crudify()
+    {
         this->p_dto.type(this->type());
         this->p_dto.layout(this->layout());
         return PrivateQOrm::CRUDBase::crudify();
@@ -51,7 +53,8 @@ private:
     //!
     //! \brief init
     //!
-    void init(){
+    void init()
+    {
         this->dto().initDescriptors(&p_model);
         const auto&modelInfo=p_dao.modelRef;
         this->crudName(modelInfo.modelName()).crudDescription(modelInfo.modelDescription());
@@ -271,8 +274,8 @@ protected:
     {
         if(!this->p_dao.remove(value))
             return this->lr(this->p_dao.lr());
-        else
-            return this->lr().clear();
+
+        return this->lr().clear();
     }
 
     //!
@@ -290,7 +293,8 @@ protected:
     //! \brief remove
     //! \return
     //!
-    virtual ResultValue &remove(){
+    virtual ResultValue &remove()
+    {
         return this->remove(this->source());
     }
 

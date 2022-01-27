@@ -14,9 +14,9 @@ public:
     }
     virtual ~ControllerPvt()
     {
-        auto map=this->localConnection;
+        auto vHash=this->localConnection;
         this->localConnection.clear();
-        QHashIterator<QString, ConnectionPool*> i(map);
+        QHashIterator<QString, ConnectionPool*> i(vHash);
         while (i.hasNext()) {
             i.next();
             i.value()->finish(i.key());

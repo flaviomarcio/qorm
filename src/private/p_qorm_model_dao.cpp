@@ -13,7 +13,8 @@ public:
     explicit ModelDaoPvt(QObject*parent):QObject(parent)
     {
     }
-    ~ModelDaoPvt(){
+    ~ModelDaoPvt()
+    {
     }
 };
 
@@ -30,16 +31,19 @@ ModelDao::~ModelDao()
 
 QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QVariant &value) const
 {
-    SearchParameters map;
+    SearchParameters searchParameters;
     Q_DECLARE_VU;
     if(!value.isValid() || value.isNull())
-        return map.buildVariant();
+        return searchParameters.buildVariant();
 
     if(vu.vIsEmpty(value))
-        return map.buildVariant();
+        return searchParameters.buildVariant();
 
     auto typeIdValue=qTypeId(value);
-    if(QStmTypesVariantDictionary.contains(typeIdValue)){
+    switch (typeIdValue) {
+    case QMetaType_QVariantHash:
+    case QMetaType_QVariantMap:
+    {
         Q_V_HASH_ITERATOR (value.toHash()){
             i.next();
             auto k=vu.toVariant(i.key());
@@ -47,47 +51,49 @@ QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QV
             auto key=QOrm::SqlParserItem::from(k);
             switch (qTypeId(v)) {
             case QMetaType_QUuid:
-                map.insert(key,v.toUuid().toString());
+                searchParameters.insert(key,v.toUuid().toString());
                 break;
             case QMetaType_QUrl:
-                map.insert(key,v.toUrl().toString());
+                searchParameters.insert(key,v.toUrl().toString());
                 break;
             default:
-                map.insert(key,v);
+                searchParameters.insert(key,v);
                 break;
             }
         }
-        return map.buildVariant();
+        return searchParameters.buildVariant();
     }
-
-    const auto&propertyByFieldName=modelRef.propertyByFieldName();
-    const auto&propertyByPropertyName=modelRef.propertyByPropertyName();
-    if(QStmTypesVariantList.contains(typeIdValue)){
-        if(!map.canRead(value)){
+    case QMetaType_QVariantList:
+    case QMetaType_QStringList:
+    {
+        if(!searchParameters.canRead(value)){
             for(auto&i_key:modelRef.tablePk()){
                 auto key=QOrm::SqlParserItem::createObject(i_key);
                 auto v=QOrm::SqlParserItem::createValue(value);
-                map.insert(key,v);
+                searchParameters.insert(key,v);
             }
         }
         else{
-            map+=value;
+            searchParameters+=value;
         }
-        return map.buildVariant();
+        return searchParameters.buildVariant();
     }
+    default:
+        const auto&propertyByFieldName=modelRef.propertyByFieldName();
+        const auto&propertyByPropertyName=modelRef.propertyByPropertyName();
 
-    for(auto&i_key:modelRef.tablePk()){
-        auto key=QOrm::SqlParserItem::createObject(i_key);
+        for(auto&i_key:modelRef.tablePk()){
+            auto key=QOrm::SqlParserItem::createObject(i_key);
 
-        auto property = propertyByFieldName.value(i_key);
-        if(!property.isValid())
-            property = propertyByPropertyName.value(i_key);
+            auto property = propertyByFieldName.value(i_key);
+            if(!property.isValid())
+                property = propertyByPropertyName.value(i_key);
 
-        QVariant v=vu.convertTo(value, qTypeId(property));
-        map.insert(key,v);
+            QVariant v=vu.convertTo(value, qTypeId(property));
+            searchParameters.insert(key,v);
+        }
+        return searchParameters.buildVariant();
     }
-
-    return map.buildVariant();
 }
 
 QOrm::SqlSuitableValue &ModelDao::suitableValue()

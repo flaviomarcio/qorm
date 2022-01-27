@@ -2,11 +2,13 @@
 
 namespace QOrm {
 
-TypeUtil::TypeUtil(){
+TypeUtil::TypeUtil()
+{
 
 }
 
-TypeUtil::~TypeUtil(){
+TypeUtil::~TypeUtil()
+{
 
 }
 
@@ -26,16 +28,13 @@ QSqlDriver::DbmsType TypeUtil::strToDataType(const QString&driverName)
 
     if(driverName == driver_QMYSQL)
         return QSqlDriver::MySqlServer;
+
     return QSqlDriver::UnknownDbms;
 }
 
-const QList<int> TypeUtil::keywordGroupingTypes()
+const QList<int>&TypeUtil::keywordGroupingTypes()
 {
-   QList<int> __keywordGroupingTypes;
-   if(__keywordGroupingTypes.isEmpty()){
-       __keywordGroupingTypes<<kgMin<<kgMax<<kgAvg<<kgSum<<kgCount;
-       __keywordGroupingTypes<<kgMinAs<<kgMaxAs<<kgAvgAs<<kgSumAs<<kgCountAs;
-   }
+    static auto __keywordGroupingTypes=QList<int>{kgMin, kgMax, kgAvg, kgSum, kgCount, kgMinAs, kgMaxAs, kgAvgAs, kgSumAs, kgCountAs};
    return __keywordGroupingTypes;
 
 }

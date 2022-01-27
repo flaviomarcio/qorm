@@ -722,39 +722,103 @@ public:
             auto valueB = map.value(qsl("valueB"));
             auto valueBTypeId=qTypeId(valueB);
 
-            auto valueBval = valueB.toHash().value(qsl("value"));
+            QVariant valueBval;
+            switch (valueBTypeId) {
+            case QMetaType_QVariantHash:
+            case QMetaType_QVariantMap:
+            {
+                auto v=valueB.toHash();
+                if(v.contains(qsl("value"))){
+                    valueBval=valueB.toHash().value(qsl("value"));
+                    break;
+                }
+                valueBval=v.values();
+                break;
+            }
+            default:
+                valueBval=valueB;
+                break;
+            }
+
             auto valueBvalTypeId=qTypeId(valueBval);
 
-            if(QStmTypesVariantDictionary.contains(valueBvalTypeId))
+            switch (valueBvalTypeId) {
+            case QMetaType_QVariantHash:
+            case QMetaType_QVariantMap:
                 valueBval=valueBval.toHash().values();
+                valueBvalTypeId=qTypeId(valueBval);
+                break;
+            default:
+                break;
+            }
 
             {//checkOperatorIn
                 auto checkOperator=[&valueA, &valueB, &valueBTypeId, &valueAvalTypeId, &valueBvalTypeId, &keywordOperator](){
                     if((!valueA.isValid()) || (!valueB.isValid()) || valueA.isNull() || valueB.isNull()){
-                        if(keywordOperator!=KeywordOperator::koIsNull && keywordOperator!=KeywordOperator::koIsNotNull)
+                        switch (keywordOperator) {
+                        case KeywordOperator::koIsNull:
+                        case KeywordOperator::koIsNotNull:
+                            return keywordOperator;
+                        default:
                             return KeywordOperator::koIsNull;
+                        }
                     }
 
-                    if(
-                        (keywordOperator != KeywordOperator::koIn && keywordOperator != KeywordOperator::koInOut)
-                        &&
-                        (QStmTypesVariantList.contains(valueAvalTypeId) || QStmTypesVariantList.contains(valueBvalTypeId))
-                        ){
-                        return KeywordOperator::koIn;
-                    }
+                    switch (keywordOperator) {
+                    case KeywordOperator::koIn:
+                    case KeywordOperator::koInOut:
+                        return keywordOperator;
+                    default:
+                        switch (valueAvalTypeId) {
+                        case QMetaType_QVariantList:
+                        case QMetaType_QStringList:
+                            return KeywordOperator::koIn;
+                        default:
+                            break;
+                        }
 
-                    return keywordOperator;
+                        switch (valueBvalTypeId) {
+                        case QMetaType_QVariantList:
+                        case QMetaType_QStringList:
+                            return KeywordOperator::koIn;
+                        default:
+                            break;
+                        }
+
+                        return keywordOperator;
+                    }
                 };
 
                 keywordOperator=checkOperator();//CheckOperatorIn
 
-                //fix values for parameter In/OutIn
-                if(keywordOperator == KeywordOperator::koIn || keywordOperator == KeywordOperator::koInOut){
-                    if(QStmTypesVariantList.contains(valueAvalTypeId) && !QStmTypesVariantList.contains(valueBvalTypeId)){
-                        QORM_VARIABLE_INVERTER(valueA, valueB)
-                        QORM_VARIABLE_INVERTER(valueATypeId, valueBTypeId)
-                        QORM_VARIABLE_INVERTER(valueAvalTypeId, valueBvalTypeId)
+                switch (keywordOperator) {
+                case KeywordOperator::koIn:
+                case KeywordOperator::koInOut:
+                {
+                    switch (valueBvalTypeId) {
+                    case QMetaType_QVariantList:
+                    case QMetaType_QStringList:
+                    {
+
+                        switch (valueBvalTypeId) {
+                        case QMetaType_QVariantList:
+                        case QMetaType_QStringList:
+                            break;
+                        default:
+                            QORM_VARIABLE_INVERTER(valueA, valueB)
+                            QORM_VARIABLE_INVERTER(valueATypeId, valueBTypeId)
+                            QORM_VARIABLE_INVERTER(valueAvalTypeId, valueBvalTypeId)
+                            break;
+                        }
+                        break;
                     }
+                    default:
+                        break;
+                    }
+                    break;
+                }
+                default:
+                    break;
                 }
             }
 
@@ -768,16 +832,33 @@ public:
 
             static const auto vLikeNulls=QVector<QString>{qsl_null, qsl("''"), qsl("'%'"), qsl("'%%'")};
 
-            if((keywordOperator==koLike && vLikeNulls.contains(vValueB)) || (keywordOperator==koLike && vLikeNulls.contains(vValueA)))
-                return {};
-
-            if(keywordOperator==koIsNull || keywordOperator==koIsNotNull)
-                return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.arg(vValueA)).trimmed()};
-
-            if(keywordOperator==koBetween || keywordOperator==koNotBetween)
-                return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vField, vValueA, vValueB))).trimmed()};
-
-            return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vValueA, vValueB))).trimmed()};
+            switch (keywordOperator) {
+            case KeywordOperator::koLike:
+            {
+                if(vLikeNulls.contains(vValueB) || vLikeNulls.contains(vValueA))
+                    return {};
+                break;
+            }
+            case koIsNull:
+            case koIsNotNull:
+                return qvsl{qsl(" %1 %2").arg(kLogical, kOperator.arg(vValueA)).trimmed()};
+            case koBetween:
+            case koNotBetween:
+                return qvsl{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vField, vValueA, vValueB))).trimmed()};
+            default:
+                break;
+            }
+            return qvsl{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vValueA, vValueB))).trimmed()};
+            //if((keywordOperator==koLike && vLikeNulls.contains(vValueB)) || (keywordOperator==koLike && vLikeNulls.contains(vValueA)))
+            //    return {};
+            //
+            //if(keywordOperator==koIsNull || keywordOperator==koIsNotNull)
+            //    return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.arg(vValueA)).trimmed()};
+            //
+            //if(keywordOperator==koBetween || keywordOperator==koNotBetween)
+            //    return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vField, vValueA, vValueB))).trimmed()};
+            //
+            //return QStringList{qsl(" %1 %2").arg(kLogical, kOperator.isEmpty()?kOperator:(kOperator.arg(vValueA, vValueB))).trimmed()};
         }
 
         virtual void defineFirst()

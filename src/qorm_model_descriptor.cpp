@@ -17,22 +17,27 @@ public:
     QVariantHash flags;
     QVariantHash options;
     QVariantHash sort;
-    explicit ModelDescriptorPvt(){
+    explicit ModelDescriptorPvt()
+    {
     }
-    virtual ~ModelDescriptorPvt(){
+    virtual ~ModelDescriptorPvt()
+    {
     }
 };
 
-ModelDescriptor::ModelDescriptor(QObject *parent):QObject(parent){
+ModelDescriptor::ModelDescriptor(QObject *parent):QObject(parent)
+{
     this->p = new ModelDescriptorPvt();
 }
 
-ModelDescriptor::~ModelDescriptor(){
+ModelDescriptor::~ModelDescriptor()
+{
     dPvt();
     delete&p;
 }
 
-bool ModelDescriptor::isValid() const{
+bool ModelDescriptor::isValid() const
+{
     const auto m1=this->metaObject()->className();
     const auto m2=ModelDescriptor::staticMetaObject.className();
     if(m1==m2)

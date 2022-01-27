@@ -4,22 +4,16 @@
 #include <QUrl>
 #include <QUuid>
 
+Q_GLOBAL_STATIC_WITH_ARGS(QByteArray, static_null,("null"))
+//typedef QHash<int, QString> TypeVariantType;
+//Q_GLOBAL_STATIC(TypeVariantType, mapFormat)
 
-namespace PrivateQOrm {
-
-    typedef QHash<int, QString> TypeVariantType;
-    Q_GLOBAL_STATIC_WITH_ARGS(QByteArray,___static_null,("null"))
-    Q_GLOBAL_STATIC(TypeVariantType,___mapFormat)
-
-}
-
-static auto&__static_null=*PrivateQOrm::___static_null;
-static auto&mapFormat=*PrivateQOrm::___mapFormat;
 
 namespace QOrm
 {
 
-static const QHash<QString,QString>&ChartoUtf8(){
+static const QHash<QString,QString>&ChartoUtf8()
+{
     static auto __return= QHash<QString,QString>({
         {qsl("õe"), qsl("oe")},
         {qsl("ão"), qsl("ao")},
@@ -218,9 +212,13 @@ QString SqlSuitableValue::toTim(const QDateTime &v)
 QString SqlSuitableValue::toBoo(const bool &v)
 {
     auto db=this->connection();
-    if(db.driver()->dbmsType()==QSqlDriver::MSSqlServer || db.driver()->dbmsType()==QSqlDriver::SQLite)
+    switch (db.driver()->dbmsType()) {
+    case QSqlDriver::MSSqlServer:
+    case QSqlDriver::SQLite:
         return this->toInt(v?1:0);
-    return v?qsl("true"):qsl("false");
+    default:
+        return v?qsl("true"):qsl("false");
+    }
 }
 
 QString SqlSuitableValue::toVar(const QVariant &v)
@@ -231,72 +229,39 @@ QString SqlSuitableValue::toVar(const QVariant &v)
 QString SqlSuitableValue::toVar(const QVariant&v, const int &vType)
 {
     switch (vType) {
-    case QVariant::Invalid:
-        return __static_null;
+    case QMetaType_Int:
+        return SqlSuitableValue::toInt(v.toInt());
+    case QMetaType_UInt:
+        return SqlSuitableValue::toInt(v.toInt());
+    case QMetaType_LongLong:
+        return SqlSuitableValue::toLng(v.toLongLong());
+    case QMetaType_ULongLong:
+        return SqlSuitableValue::toLng(v.toLongLong());
+    case QMetaType_Double:
+        return SqlSuitableValue::toDbl(v.toDouble());
+    case QMetaType_Bool:
+        return SqlSuitableValue::toBoo(v.toBool());
+    case QMetaType_QString:
+        return toStr(v.toString());
+    case QMetaType_QByteArray:
+        return toStr(v.toString());
+    case QMetaType_QBitArray:
+        return toStr(v.toString());
+    case QMetaType_QChar:
+        return toStr(v.toString());
+    case QMetaType_QDate:
+        return v.toDate().isValid()?this->toDat(v.toDate()):*static_null;
+    case QMetaType_QTime:
+        return v.toTime().isValid()?this->toTim(v.toTime()):*static_null;
+    case QMetaType_QDateTime:
+        return v.toDateTime().isValid()?this->toDat(v.toDateTime()):*static_null;
+    case QMetaType_QUrl:
+        return toStr(v.toUrl().toString());
+    case QMetaType_QUuid:
+        return v.toUuid().isNull()?*static_null:toStr(v.toUuid().toByteArray());
     default:
-        break;
+        return *static_null;
     }
-
-
-    {//primitive type area area
-        switch (vType) {
-        case QMetaType_Int:
-            return SqlSuitableValue::toInt(v.toInt());
-        case QMetaType_UInt:
-            return SqlSuitableValue::toInt(v.toInt());
-        case QMetaType_LongLong:
-            return SqlSuitableValue::toLng(v.toLongLong());
-        case QMetaType_ULongLong:
-            return SqlSuitableValue::toLng(v.toLongLong());
-        case QMetaType_Double:
-            return SqlSuitableValue::toDbl(v.toDouble());
-        case QMetaType_Bool:
-            return SqlSuitableValue::toBoo(v.toBool());
-        default:
-            break;
-        }
-    }
-
-
-    {//string area
-        switch (vType) {
-        case QMetaType_QString:
-            return toStr(v.toString());
-        case QMetaType_QByteArray:
-            return toStr(v.toString());
-        case QMetaType_QBitArray:
-            return toStr(v.toString());
-        case QMetaType_QChar:
-            return toStr(v.toString());
-        default:
-            break;
-        }
-    }
-
-    {//date time area
-        switch (vType) {
-        case QMetaType_QDate:
-            return v.toDate().isValid()?this->toDat(v.toDate()):__static_null;
-        case QMetaType_QTime:
-            return v.toTime().isValid()?this->toTim(v.toTime()):__static_null;
-        case QMetaType_QDateTime:
-            return v.toDateTime().isValid()?this->toDat(v.toDateTime()):__static_null;
-        default:
-            break;
-        }
-    }
-
-    {//class type area
-        switch (vType) {
-        case QMetaType_QUrl:
-            return toStr(v.toUrl().toString());
-        case QMetaType_QUuid:
-            return v.toUuid().isNull()?__static_null:toStr(v.toUuid().toByteArray());
-        default:
-            break;
-        }
-    }
-    return __static_null;
 }
 
 QString SqlSuitableValue::toLikeLR(const QVariant &v)

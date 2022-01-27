@@ -8,12 +8,13 @@
 
 namespace QOrm {
 
-    enum CRUDStrategy{
-        Undefined=1, Search=2, Insert=4, Update=8, Upsert=16, Remove=32, Deactivate=64
-    };
+enum CRUDStrategy{
+    Undefined=1, Search=2, Insert=4, Update=8, Upsert=16, Remove=32, Deactivate=64
+};
 
-    static const QVariantList __listToStrategy={QOrm::Search, QOrm::Update, QOrm::Upsert, QOrm::Deactivate};
-    static const QVariantHash __stringToStrategy={
+static const auto __listToStrategy=QVariantList{QOrm::Search, QOrm::Update, QOrm::Upsert, QOrm::Deactivate};
+static const auto __stringToStrategy=QVariantHash
+    {
         {QString::number(QOrm::Search       ),QOrm::Search      }, {qsl("search")       ,QOrm::Search       }, {qsl("get"),QOrm::Search}, {qsl("find"),QOrm::Search},
         {QString::number(QOrm::Insert       ),QOrm::Insert      }, {qsl("insert")       ,QOrm::Insert       },
         {QString::number(QOrm::Upsert       ),QOrm::Upsert      }, {qsl("upsert")       ,QOrm::Upsert       }, {qsl("post"),QOrm::Upsert}, {qsl("save"),QOrm::Upsert},

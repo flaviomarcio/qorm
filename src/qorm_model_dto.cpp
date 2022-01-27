@@ -17,7 +17,8 @@ namespace QOrm {
 
 static auto&dtoSettings=*PrivateOrm::dtoSettings;
 
-static void initDtoSettingsCache(){
+static void initDtoSettingsCache()
+{
     QVariantHash __dtoSettings;
     QDir dir(qsl(":"));
     dir.setNameFilters(QStringList{qsl("settings.qorm.dto.json")});
@@ -82,13 +83,15 @@ public:
     {
     }
 
-    void initObjects(){
+    void initObjects()
+    {
         const auto className=QString::fromUtf8(this->dto->parent()->metaObject()->className()).toLower().trimmed();
         auto settings=dtoSettings.value(className).toHash();
         this->dtoControls.settings(settings);
     }
 
-    void clear(){
+    void clear()
+    {
         this->dtoControls.clear();
     }
 

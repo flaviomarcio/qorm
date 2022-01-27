@@ -26,8 +26,10 @@ public:
         this->parent=parent;
         dto.setType(dftNormalForm);
     }
-    virtual ~CRUDBasePvt(){
+    virtual ~CRUDBasePvt()
+    {
     }
+
     auto&doModelAction(const QString&methodName)
     {
         auto method=this->actionMethod.value(methodName.toUtf8());
@@ -66,12 +68,17 @@ public:
         this->parent->lr().resultInfo().fromVar(vCrud.value(qsl("resultInfo")));
     }
 
-    void source_set(const QVariant&source){
-        if(QStmTypesListString.contains(qTypeId(source))){
+    void source_set(const QVariant&source)
+    {
+        switch (qTypeId(source)) {
+        case QMetaType_QString:
+        case QMetaType_QByteArray:
+        {
             auto vSource=QJsonDocument::fromJson(source.toByteArray()).toVariant();
             this->source=vSource;
+            break;
         }
-        else{
+        default:
             this->source=source;
         }
     }

@@ -17,53 +17,67 @@ public:
     QOrm::ObjectDb*parent=nullptr;
     QVariantList scriptValues;
     QStringList scriptedValues;
-    explicit ScriptExecPvt(QOrm::ObjectDb*parent){
+    explicit ScriptExecPvt(QOrm::ObjectDb*parent)
+    {
         this->parent=parent;
     }
 
-    virtual ~ScriptExecPvt(){
+    virtual ~ScriptExecPvt()
+    {
     }
 
-    void scriptedClear(){
+    void scriptedClear()
+    {
         this->scriptedValues.clear();
     }
 
-    void scriptAppend(const QVariant&v){
+    void scriptAppend(const QVariant&v)
+    {
         this->scriptedClear();
         this->scriptValues<<v;
     }
 
-    QStringList scriptParser(const QVariant&v){
-        QStringList __return;
-        if(qTypeId(v)==QMetaType_QString || qTypeId(v)==QMetaType_QByteArray || qTypeId(v)==QMetaType_QUrl){
+    QStringList scriptParser(const QVariant&v)
+    {
+        switch (qTypeId(v)) {
+        case QMetaType_QString:
+        case QMetaType_QByteArray:
+        case QMetaType_QUrl:
+        {
+            QStringList __return;
             auto url=qTypeId(v)==QMetaType_QUrl?v.toUrl():QUrl::fromLocalFile(v.toString());
-            if(url.isLocalFile()){
-                QFile file(url.toLocalFile());
-                if(file.exists() && file.open(file.ReadOnly)){
-                    QString bytes=file.readAll().trimmed();
-                    file.close();
-                    if(!bytes.isEmpty()){
-                        auto lines=bytes.split(qsl("\n"));
-                        for(auto&v:lines){
-                            auto vLines=v.split(qsl(";"));
-                            for(auto line:vLines){
-                                line=line.trimmed();
-                                if(line.isEmpty())
-                                    continue;
-                                __return<<line.trimmed();
-                            }
-                        }
-                    }
+            if(url.isLocalFile())
+                return {};
+            QFile file(url.toLocalFile());
+            if(!file.exists())
+                return {};
+            if(!file.open(file.ReadOnly))
+                return {};
+
+            QString bytes=file.readAll().trimmed();
+            file.close();
+            if(bytes.isEmpty())
+                return {};
+
+            auto lines=bytes.split(qsl("\n"));
+            for(auto&v:lines){
+                auto vLines=v.split(qsl(";"));
+                for(auto line:vLines){
+                    line=line.trimmed();
+                    if(line.isEmpty())
+                        continue;
+                    __return<<line.trimmed();
                 }
             }
-            else if(qTypeId(v)==QMetaType_QStringList){
-                __return=v.toStringList();
-            }
-            else{
-                __return<<v.toString();
-            }
+            return __return;
         }
-        return __return;
+        case QMetaType_QStringList:
+            return v.toStringList();
+            break;
+        default:
+            return qvsl{v.toString()};
+        }
+        return {};
     }
 
     const QStringList&scriptedMaker()

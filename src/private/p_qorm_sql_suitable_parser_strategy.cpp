@@ -7,37 +7,45 @@
 
 namespace QOrm {
 
-    SqlParserCombineSelect::SqlParserCombineSelect(const QVariant &v):SqlParserCommand(v){
+    SqlParserCombineSelect::SqlParserCombineSelect(const QVariant &v):SqlParserCommand(v)
+{
     }
 
-    SqlParserCombineSelect::SqlParserCombineSelect():SqlParserCommand(){
+    SqlParserCombineSelect::SqlParserCombineSelect():SqlParserCommand()
+    {
     }
 
     SqlParserCombineSelect::~SqlParserCombineSelect()
     {
     }
 
-    SqlParserCombineSelect &SqlParserCombineSelect::unionMerge(){
+    SqlParserCombineSelect &SqlParserCombineSelect::unionMerge()
+    {
         return this->setV(QOrm::kgcUnion);
     }
 
-    SqlParserCombineSelect &SqlParserCombineSelect::unionAll(){
+    SqlParserCombineSelect &SqlParserCombineSelect::unionAll()
+    {
         return this->setV(QOrm::kgcUnionAll);
     }
 
-    SqlParserCombineSelect &SqlParserCombineSelect::intersect(){
+    SqlParserCombineSelect &SqlParserCombineSelect::intersect()
+    {
         return this->setV(QOrm::kgcIntersect);
     }
 
-    SqlParserCombineSelect &SqlParserCombineSelect::intersectAll(){
+    SqlParserCombineSelect &SqlParserCombineSelect::intersectAll()
+    {
         return this->setV(QOrm::kgcIntersectAll);
     }
 
-    SqlParserCombineSelect &SqlParserCombineSelect::except(){
+    SqlParserCombineSelect &SqlParserCombineSelect::except()
+    {
         return this->setV(QOrm::kgcExcept);
     }
 
-    SqlParserCombineSelect &SqlParserCombineSelect::exceptAll(){
+    SqlParserCombineSelect &SqlParserCombineSelect::exceptAll()
+    {
         return this->setV(QOrm::kgcExceptAll);
     }
 

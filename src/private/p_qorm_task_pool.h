@@ -35,16 +35,20 @@ public:
     bool resultBool=false;
     TaskRunner *runner=nullptr;
     QVariantHash connectionSetting;
-    explicit TaskPool(TaskRunner *parent):QThread(nullptr){
+    explicit TaskPool(TaskRunner *parent):QThread(nullptr)
+    {
         this->moveToThread(this);
         this->runner=parent;
         QObject::connect(this, &TaskPool::taskProgress, parent, &TaskRunner::taskProgress);
     }
-    ~TaskPool(){
+
+    ~TaskPool()
+    {
         this->threadDinit();
     }
 
-    bool start(const QSqlDatabase&connection){
+    bool start(const QSqlDatabase&connection)
+    {
         if(!this->running.tryLock(1))
             return false;
 
@@ -62,7 +66,8 @@ public:
         return true;
     }
 
-    void run() override{
+    void run() override
+    {
         QTimer::singleShot(10, this, [this](){this->threadInit();});
         this->exec();
         if(running.tryLock(100))
@@ -71,7 +76,8 @@ public:
             running.unlock();
     }
 
-    void clear(){
+    void clear()
+    {
         QMutexLocker locker(&this->running);
         this->methodExecute=__methodExecute;
         this->methodSuccess=__methodSuccess;
@@ -87,7 +93,8 @@ signals:
     void taskProgress(qlonglong maximum, qlonglong minimum, qlonglong value, qlonglong progress);
 public slots:
 
-    void threadInit(){
+    void threadInit()
+    {
         this->resultBool=true;
         this->taskQueueStarted=this->taskQueueValue;
 
@@ -100,29 +107,32 @@ public slots:
             sWarning()<<"no tasks";
 #endif
             this->running.unlock();
+            return;
         }
-        else if(slotCount<=0){
+
+        if(slotCount<=0){
 #if Q_ORM_LOG
             sWarning()<<"slotCount is zero";
 #endif
             this->running.unlock();
+            return;
         }
-        else {
-            auto&lst=this->taskSlotList;
-            for (int slot = 0; slot < idealSlotCount; ++slot) {
-                auto taskSlot=lst.value(slot);
-                if(taskSlot==nullptr){
-                    taskSlot=new TaskSlot(this, this->connectionSetting, methodExecute, methodSuccess, methodFailed);
-                    lst.insert(slot, taskSlot);
-                    auto poolName=qsl("Pool%1-%2").arg(slot).arg(QString::number(qlonglong(taskSlot->currentThreadId())));
-                    taskSlot->setObjectName(poolName);
-                }
-                taskSlot->init();
+
+        auto&lst=this->taskSlotList;
+        for (int slot = 0; slot < idealSlotCount; ++slot) {
+            auto taskSlot=lst.value(slot);
+            if(taskSlot==nullptr){
+                taskSlot=new TaskSlot(this, this->connectionSetting, methodExecute, methodSuccess, methodFailed);
+                lst.insert(slot, taskSlot);
+                auto poolName=qsl("Pool%1-%2").arg(slot).arg(QString::number(qlonglong(taskSlot->currentThreadId())));
+                taskSlot->setObjectName(poolName);
             }
+            taskSlot->init();
         }
     }
 
-    void threadDinit(){
+    void threadDinit()
+    {
         auto aux=this->taskSlotList;
         this->taskSlotList.clear();
         for (auto&slot:aux){
@@ -135,17 +145,19 @@ public slots:
         }
     }
 
-    void taskRequest(QOrm::TaskSlot*slot){
+    void taskRequest(QOrm::TaskSlot*slot)
+    {
         if(!this->taskQueueStarted.isEmpty()){
             auto task=this->taskQueueStarted.takeFirst();
             emit slot->taskSend(task);
+            return;
         }
-        else{
-            this->running.unlock();
-        }
+
+        this->running.unlock();
     }
 
-    void taskResponse(const QVariantHash&task){
+    void taskResponse(const QVariantHash&task)
+    {
         auto uuid=task[qsl("uuid")].toUuid();
         this->taskQueueResponse.insert(uuid, task);
         double maximum=this->taskQueueValue.size();

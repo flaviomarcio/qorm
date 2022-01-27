@@ -11,20 +11,23 @@ class WrapperPvt{
 public:
     QHash<QString,QString> wrapperNames;
     QVariant v;
-    explicit WrapperPvt(){
+    explicit WrapperPvt()
+    {
     }
-    QVariant&wrapper(){
+
+    virtual ~WrapperPvt()
+    {
+    }
+
+    QVariant&wrapper()
+    {
         QVariantList list;
         switch (qTypeId(v)) {
         case QMetaType_QVariantHash:
-            list<<this->v;
-            break;
         case QMetaType_QVariantMap:
             list<<this->v;
             break;
         case QMetaType_QVariantList:
-            list=v.toList();
-            break;
         case QMetaType_QStringList:
             list=v.toList();
             break;
@@ -32,40 +35,41 @@ public:
             break;
         }
 
-        for (int var = 0; var < list.count(); ++var) {
-            auto&v=list[var];
-            if(!QStmTypesVariantDictionary.contains(qTypeId(v)))
+        for(auto&v:list){
+            switch (qTypeId(v)) {
+            case QMetaType_QVariantHash:
+            case QMetaType_QVariantMap:
+                break;
+            default:
+                continue;//next
+            }
+
+            auto vHash=v.toHash();
+            if(vHash.isEmpty())
                 continue;
 
-            auto map=v.toHash();
-            if(map.isEmpty())
-                continue;
-
-            QVariantHash wrapperMap;
+            QVariantHash wrapperHash;
             QHashIterator<QString, QString> i(this->wrapperNames);
             while (i.hasNext()) {
                 i.next();
                 auto src=i.key();
                 auto dst=i.value();
 
-                auto value=map[src];
+                auto value=vHash[src];
                 if(!value.isValid())
                     continue;
-                wrapperMap[dst]=value;
+
+                wrapperHash[dst]=value;
             }
-            v=QVariant(wrapperMap);
+            v=QVariant(wrapperHash);
         }
 
         switch (qTypeId(v)) {
         case QMetaType_QVariantHash:
-            this->v=list.first();
-            break;
         case QMetaType_QVariantMap:
             this->v=list.first();
             break;
         case QMetaType_QVariantList:
-            this->v=list;
-            break;
         case QMetaType_QStringList:
             this->v=list;
             break;

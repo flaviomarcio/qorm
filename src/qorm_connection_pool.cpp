@@ -42,7 +42,8 @@ public:
     QObject*parent=nullptr;
     QStringList odbcDrivers;
     QSqlError lastError;
-    explicit ConnectionPoolPvt(QObject*parent, const ConnectionSetting&cnnSetting) : connectionSetting(cnnSetting, parent){
+    explicit ConnectionPoolPvt(QObject*parent, const ConnectionSetting&cnnSetting) : connectionSetting(cnnSetting, parent)
+    {
         this->odbcDrivers=initOdbc();
         this->parent=parent;
         this->baseName=(this->parent!=nullptr)?this->parent->objectName().trimmed():"";

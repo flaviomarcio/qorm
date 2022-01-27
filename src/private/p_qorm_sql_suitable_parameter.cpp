@@ -21,12 +21,15 @@ class SearchParametersPvt{
 public:
     QVariantList values;
     QList<SearchParam> vList;
-    explicit SearchParametersPvt(){
+    explicit SearchParametersPvt()
+    {
     }
-    virtual ~SearchParametersPvt(){
+    virtual ~SearchParametersPvt()
+    {
     }
 
-    void insert(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant &keywordOperator, const QVariant &keywordLogical){
+    void insert(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant &keywordOperator, const QVariant &keywordLogical)
+    {
         SearchParam vHash(valueA, valueB, valueC, keywordOperator, keywordLogical);
         if(vHash.isValid())
             this->values<<vHash;

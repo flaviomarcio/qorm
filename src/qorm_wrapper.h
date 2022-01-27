@@ -25,7 +25,7 @@ public:
     //!
     //! \brief ~Wrapper
     //!
-    ~Wrapper();
+    virtual ~Wrapper();
 
     //!
     //! \brief w

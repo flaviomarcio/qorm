@@ -16,9 +16,11 @@ public:
     QVariant parameters;
     QObject*parent=nullptr;
     QObject*___d=nullptr;
-    explicit ModelDtoLinkItemPvt(QObject*parent):QObject(parent){
+    explicit ModelDtoLinkItemPvt(QObject*parent):QObject(parent)
+    {
     }
-    ~ModelDtoLinkItemPvt(){
+    ~ModelDtoLinkItemPvt()
+    {
     }
 };
 
@@ -33,7 +35,8 @@ public:
     explicit ModelDtoLinkBaseCollectionPvt(QObject*parent):QObject(parent)
     {
     }
-    ~ModelDtoLinkBaseCollectionPvt(){
+    ~ModelDtoLinkBaseCollectionPvt()
+    {
     }
 };
 
@@ -46,6 +49,8 @@ ModelDtoLinkItem::ModelDtoLinkItem(QObject *dtpParent, QObject *parent):QStm::Ob
 
 ModelDtoLinkItem::~ModelDtoLinkItem()
 {
+//    dPvtI();
+//    delete&p;
 }
 
 QUuid &ModelDtoLinkItem::uuid() const

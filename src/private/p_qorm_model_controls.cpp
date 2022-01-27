@@ -34,8 +34,8 @@ static const QVariantHash __makeDTOFormLayout()
     return ___return;
 }
 
-static const auto __DTOFormTypeMap = __makeDTOFormType();
-static const auto __DTOFormLayoutMap = __makeDTOFormLayout();
+static const auto __DTOFormTypeHash = __makeDTOFormType();
+static const auto __DTOFormLayoutHash = __makeDTOFormLayout();
 
 #define dPvt()\
     auto&p = *reinterpret_cast<ModelDtoControlsPvt*>(this->p)
@@ -44,8 +44,8 @@ class ModelDtoControlsPvt{
 public:
     QString id;
     QString text;
-    QVariant type=__DTOFormTypeMap.key(dftReportForm);
-    QVariant layout=__DTOFormLayoutMap.key(dflVerticalControls);
+    QVariant type=__DTOFormTypeHash.key(dftReportForm);
+    QVariant layout=__DTOFormLayoutHash.key(dflVerticalControls);
     QVariantHash sort;
     QString settingName;
     QOrm::DtoOutPutStyle outPutStyle=QOrm::doRowObject;
@@ -228,7 +228,7 @@ ModelDtoControls &ModelDtoControls::id(const QVariant&v)
 QVariant ModelDtoControls::type() const
 {
     dPvt();
-    const auto&map=__DTOFormTypeMap;
+    const auto&map=__DTOFormTypeHash;
     auto value=p.type;
     switch (qTypeId(value)) {
     case QMetaType_LongLong:
@@ -255,7 +255,7 @@ ModelDtoControls &ModelDtoControls::setType(const QVariant &v)
 QVariant ModelDtoControls::layout() const
 {
     dPvt();
-    const auto&map=__DTOFormLayoutMap;
+    const auto&map=__DTOFormLayoutHash;
     auto value=p.layout;
     switch (qTypeId(value)) {
     case QMetaType_LongLong:

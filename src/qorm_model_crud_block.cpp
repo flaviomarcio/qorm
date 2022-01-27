@@ -173,9 +173,9 @@ namespace QOrm {
                     crudList<<v;
             }
             else if(vu.vIsMap(crudSource)){
-                auto vMap=crudSource.toHash();
-                if(vMap.contains(qsl("id")) && vMap.contains(qsl("items"))){
-                    auto list=vMap[qsl("items")].toList();
+                auto vHash=crudSource.toHash();
+                if(vHash.contains(qsl("id")) && vHash.contains(qsl("items"))){
+                    auto list=vHash[qsl("items")].toList();
                     for(auto&v:list)
                         crudList<<CRUDBody(crudBody.strategy(), v);
                 }
@@ -215,7 +215,10 @@ namespace QOrm {
             };
 
 
-            if(crudBody.isStrategy(QOrm::CRUDStrategy::Remove) || crudBody.isStrategy(QOrm::CRUDStrategy::Deactivate)){
+            switch (crudBody.strategy()) {
+            case QOrm::CRUDStrategy::Remove:
+            case QOrm::CRUDStrategy::Deactivate:
+            {
                 auto crudListCopy=crudList;
                 while(!crudListCopy.isEmpty()){
                     const auto&crudSource=crudListCopy.takeLast();
@@ -227,8 +230,9 @@ namespace QOrm {
                         return this->lr(crud->lr());
                     __return<<crud->lr().resultVariant();
                 }
+                break;
             }
-            else {
+            default:
                 for(auto&crudSource:crudList){
                     auto crudMaked=makeItem(crud, crudSource);
                     if(!crud->crudBody(crudMaked).crudify())
@@ -239,7 +243,6 @@ namespace QOrm {
                     __return<<crud->lr().resultVariant();
                 }
             }
-
         }
         ___hash[qsl("crud")]=__return;
         return this->lr(___hash);

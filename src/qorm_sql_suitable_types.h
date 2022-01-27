@@ -194,7 +194,7 @@ enum KeywordOperator{
     ,koAny          = kgcAny
 };
 
-static const auto KeywordOperators=QVector<int>()<<koEqual<<koNotEqual<<koEqualMinor<<koEqualBigger<<koBigger<<koMinor<<koIn<<koInOut<<koLike<<koNotNull<<koBetween<<koNotBetween<<koIsNull<<koIsNotNull<<koAny;
+static const auto KeywordOperators=QVector<int>{koEqual, koNotEqual, koEqualMinor, koEqualBigger, koBigger, koMinor, koIn, koInOut, koLike, koNotNull, koBetween, koNotBetween, koIsNull, koIsNotNull, koAny};
 
 enum KeywordGrouping{
      kgNone     = -1
@@ -237,7 +237,7 @@ public:
     //! \brief keywordGroupingTypes
     //! \return
     //!
-    static const QList<int> keywordGroupingTypes();
+    static const QList<int> &keywordGroupingTypes();
 
 };
 
