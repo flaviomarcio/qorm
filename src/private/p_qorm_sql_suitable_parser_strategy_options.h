@@ -749,7 +749,7 @@ public:
                 keywordOperator=checkOperator();//CheckOperatorIn
 
                 //fix values for parameter In/OutIn
-                if(keywordOperator == KeywordOperator::koIn && keywordOperator == KeywordOperator::koInOut){
+                if(keywordOperator == KeywordOperator::koIn || keywordOperator == KeywordOperator::koInOut){
                     if(QStmTypesVariantList.contains(valueAvalTypeId) && !QStmTypesVariantList.contains(valueBvalTypeId)){
                         QORM_VARIABLE_INVERTER(valueA, valueB)
                         QORM_VARIABLE_INVERTER(valueATypeId, valueBTypeId)

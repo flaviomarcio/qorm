@@ -96,23 +96,26 @@ namespace QOrm{
         QOrm::SqlSuitableKeyWord*parser=nullptr;
 
         QString fileLog;
-
         bool internalNext=false;
-        explicit QueryPvt(Query *parent, const QSqlDatabase&db) : QObject(parent), sqlBuilder(parent){
+        explicit QueryPvt(Query *parent, const QSqlDatabase&db) : QObject(parent), sqlBuilder(parent)
+        {
             this->query=parent;
             auto currentName=QThread::currentThread()->objectName().trimmed();
             if(currentName.isEmpty())
                 currentName=QString::number(qlonglong(QThread::currentThreadId()),16);
             this->fileLog=qsl("%1/%2.sql").arg(static_log_dir, QString::number(qlonglong(QThread::currentThreadId()),16));
             this->connectionName=db.isOpen()?db.connectionName():QString();
+            this->sqlQuery=QSqlQuery(db);
         }
 
-        bool clearCache(){
+        bool clearCache()
+        {
             this->preperedQuery.clear();
             return true;
         }
 
-        bool prepare(){
+        bool prepare()
+        {
             this->close();
             {//recuperando conexao
                 QSqlDatabase connection;
@@ -128,6 +131,8 @@ namespace QOrm{
 #endif
                     return false;
                 }
+                this->sqlQuery.finish();
+                this->sqlQuery.clear();
                 this->sqlQuery=QSqlQuery(connection);
             }
 
@@ -142,13 +147,15 @@ namespace QOrm{
             return true;
         }
 
-        bool prepareExec(){
+        bool prepareExec()
+        {
             this->clearCache();
             this->prepareExecCache();
             return true;
         }
 
-        bool prepareExecCache(){
+        bool prepareExecCache()
+        {
             if(!this->prepare()){
                 this->writeLog(this->sqlQuery.executedQuery(), this->sqlQuery.lastError());
 #if Q_ORM_LOG
@@ -163,7 +170,8 @@ namespace QOrm{
             return true;
         }
 
-        bool exec(const QVariant&command){
+        bool exec(const QVariant&command)
+        {
             auto scriptCommand=command.toString().trimmed();
             if(!scriptCommand.isEmpty()){
                 if(!this->sqlQuery.prepare(scriptCommand)){
@@ -175,10 +183,8 @@ namespace QOrm{
                     this->sqlError=this->sqlQuery.lastError();
                     return false;
                 }
-                else{
-                    this->preperedQuery.clear();
-                    this->preperedQuery<<scriptCommand;
-                }
+                this->preperedQuery.clear();
+                this->preperedQuery<<scriptCommand;
             }
 
             if(!this->sqlQuery.exec()){
@@ -197,13 +203,15 @@ namespace QOrm{
 
 
 
-        bool initNext(){
+        bool initNext()
+        {
             if(!this->internalNext)
                 return this->next();
             return this->internalNext;
         }
 
-        bool next(){
+        bool next()
+        {
             auto r=this->sqlQuery.next();
             this->internalNext=true;
             if(r)
@@ -211,13 +219,15 @@ namespace QOrm{
             return r;
         }
 
-        void close(){
+        void close()
+        {
             this->sqlRecord=QSqlRecord();
             this->sqlError=QSqlError();
             this->internalNext=false;
         }
 
-        void clear(){
+        void clear()
+        {
             this->sqlBuilder.clear();
             this->sqlRecord=QSqlRecord();
             this->sqlError=QSqlError();
@@ -227,14 +237,16 @@ namespace QOrm{
             this->internalNext=false;
         }
 
-        void makeSqlRecord(QSqlRecord&sqlRecord){
+        void makeSqlRecord(QSqlRecord&sqlRecord)
+        {
             this->sqlRecord=sqlRecord;
             this->sqlQueryFields.clear();
             for (int col = 0; col < this->sqlRecord.count(); ++col)
                 this->sqlQueryFields<<this->sqlRecord.fieldName(col).toLower().trimmed();
         }
 
-        bool makeModelMetaObject(QMetaObject&metaObject){
+        bool makeModelMetaObject(QMetaObject&metaObject)
+        {
             if(&this->modelMetaObject == &metaObject)
                 return true;
 
@@ -245,7 +257,8 @@ namespace QOrm{
             return true;
         }
 
-        void writeLog(const QString&scriptSQL, const QSqlError&error){
+        void writeLog(const QString&scriptSQL, const QSqlError&error)
+        {
             if(!static_log_register)
                 return;
 #ifdef QT_DEBUG
@@ -260,37 +273,42 @@ namespace QOrm{
             if(!file.exists()){
                 auto connection=QSqlDatabase::database(this->connectionName);
                 connectionLine = qsl("driver=%1, hostname=%2, port=%3, userName=%4, connectOptions=%5").arg(connection.driverName(), connection.hostName(), QString::number(connection.port()), connection.userName(), connection.connectOptions());
+                return;
             }
 
-            if (file.open(QIODevice::Append | QIODevice::WriteOnly | QIODevice::Text)){
-                QTextStream outText(&file);
-                if(!connectionLine.isEmpty()){
-                    auto logSeparator = qsl("--").rightJustified(connectionLine.length(),'-');
-                    outText << logSeparator << qsl("\n");
-                    outText << qsl("|")+connectionLine << qsl("\n");
-                    outText << logSeparator << "\n";
-                }
-                outText << qsl("|")+QDateTime::currentDateTime().toString(qsl("hh:mm:ss.zzz"))+qsl("| query start\n");
-                outText << scriptSQL<<qsl("\n");
-                if(error.isValid())
-                    outText << error.text()<<qsl("\n");
-                file.flush();
-                file.close();
+            if (!file.open(QIODevice::Append | QIODevice::WriteOnly | QIODevice::Text))
+                return;
+
+            QTextStream outText(&file);
+            if(!connectionLine.isEmpty()){
+                auto logSeparator = qsl("--").rightJustified(connectionLine.length(),'-');
+                outText << logSeparator << qsl("\n");
+                outText << qsl("|")+connectionLine << qsl("\n");
+                outText << logSeparator << "\n";
             }
+            outText << qsl("|")+QDateTime::currentDateTime().toString(qsl("hh:mm:ss.zzz"))+qsl("| query start\n");
+            outText << scriptSQL<<qsl("\n");
+            if(error.isValid())
+                outText << error.text()<<qsl("\n");
+            file.flush();
+            file.close();
         }
 
-        void writeLogFinish(const QSqlError&error){
+        void writeLogFinish(const QSqlError&error)
+        {
             if(!static_log_register)
                 return;
+
             QFile file(this->fileLog);
-            if (file.open(QIODevice::Append | QIODevice::WriteOnly | QIODevice::Text)){
-                QTextStream outText(&file);
-                if(error.isValid())
-                    outText << error.text()<<qbl("\n");
-                outText << qbl("|")+QDateTime::currentDateTime().toString(qbl("hh:mm:ss.zzz"))+qbl("| query finish\n\n");
-                file.flush();
-                file.close();
-            }
+            if (!file.open(QIODevice::Append | QIODevice::WriteOnly | QIODevice::Text))
+                return;
+
+            QTextStream outText(&file);
+            if(error.isValid())
+                outText << error.text()<<qbl("\n");
+            outText << qbl("|")+QDateTime::currentDateTime().toString(qbl("hh:mm:ss.zzz"))+qbl("| query finish\n\n");
+            file.flush();
+            file.close();
         }
 
     };
