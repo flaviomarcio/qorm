@@ -3,7 +3,7 @@
 #include "./p_qorm_model_dto_link_base.h"
 
 namespace QOrm {
-
+//TODO CREATE DOCUMENTATION
 template <class T>
 class ModelDtoLinkItem : public PrivateQOrm::ModelDtoLinkItem{
 public:

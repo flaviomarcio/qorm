@@ -6,6 +6,9 @@
 
 namespace QOrm {
 
+//!
+//! \brief The SqlSuitableKeyWordPSql class
+//!
 class Q_ORM_EXPORT SqlSuitableKeyWordPSql : public SqlSuitableKeyWord{
 public:
     explicit SqlSuitableKeyWordPSql(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::PostgreSQL, parent)

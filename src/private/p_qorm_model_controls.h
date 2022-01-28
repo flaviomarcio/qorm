@@ -10,6 +10,7 @@
 
 namespace QOrm {
 
+//TODO CREATE DOCUMENTATION
 class Q_ORM_EXPORT ModelDtoControls : public QStm::Object
 {
     Q_OBJECT

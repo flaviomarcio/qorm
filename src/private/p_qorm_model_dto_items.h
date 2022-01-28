@@ -3,7 +3,7 @@
 #include "./p_qorm_model_dto_types.h"
 
 namespace QOrm {
-
+//TODO CREATE DOCUMENTATION
 template <class T>
 class ModelDtoItems:public QStm::Object
 {

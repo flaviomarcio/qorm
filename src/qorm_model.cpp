@@ -675,7 +675,14 @@ QVariantHash Model::toMapPKValues() const
 
         switch (qTypeId(property)) {
         case QMetaType_QUuid:{
-            auto v=value.toUuid();
+            auto v=value.toUuid().toString();//no remove the .toString()
+            if(v.isNull())
+                return {};
+            value=v;
+            break;
+        }
+        case QMetaType_QUrl:{
+            auto v=value.toUrl().toString();//no remove the .toString()
             if(v.isNull())
                 return {};
             value=v;
@@ -705,7 +712,7 @@ QVariantHash Model::toMapPKValues() const
             break;
         }
 
-        value=property.read(this);
+        //value=property.read(this);
         const auto k=SqlParserItem::createObject(fieldName);
         const auto v=SqlParserItem::createValue(value);
         qVVM.insert(k,v);

@@ -4,6 +4,7 @@
 #include <QVariantHash>
 #include "../qorm_global.h"
 
+//TODO CREATE DOCUMENTATION
 class Q_ORM_EXPORT ReportBody:public QVariantHash
 {
 public:

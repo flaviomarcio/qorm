@@ -607,6 +607,7 @@ public:
 
 };
 
+//TODO CREATE DOCUMENTATION
 class SqlParserValues:public SqlParserCommand{
 public:
     explicit SqlParserValues(const QVariant&v=QVariant()):SqlParserCommand(v)
@@ -953,11 +954,43 @@ public:
     }
     auto&equal(const QVariant&valueA, const QVariant&valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
     {
-        return this->addCondition(new SqlParserCondition(__func__, valueA, valueB, KeywordOperator::koEqual, keywordLogical));
+        KeywordOperator keywordOperator;
+        switch (qTypeId(valueA)) {
+        case QMetaType_QVariantList:
+        case QMetaType_QStringList:
+            keywordOperator=KeywordOperator::koIn;
+            break;
+        default:
+            switch (qTypeId(valueB)) {
+            case QMetaType_QVariantList:
+            case QMetaType_QStringList:
+                keywordOperator=KeywordOperator::koIn;
+                break;
+            default:
+                keywordOperator=KeywordOperator::koEqual;
+            }
+        }
+        return this->addCondition(new SqlParserCondition(__func__, valueA, valueB, keywordOperator, keywordLogical));
     }
     auto&notEqual(const QVariant&valueA, const QVariant&valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
     {
-        return this->addCondition(new SqlParserCondition(__func__, valueA, valueB, KeywordOperator::koNotEqual, keywordLogical));
+        KeywordOperator keywordOperator;
+        switch (qTypeId(valueA)) {
+        case QMetaType_QVariantList:
+        case QMetaType_QStringList:
+            keywordOperator=KeywordOperator::koInOut;
+            break;
+        default:
+            switch (qTypeId(valueB)) {
+            case QMetaType_QVariantList:
+            case QMetaType_QStringList:
+                keywordOperator=KeywordOperator::koInOut;
+                break;
+            default:
+                keywordOperator=KeywordOperator::koNotEqual;
+            }
+        }
+        return this->addCondition(new SqlParserCondition(__func__, valueA, valueB, keywordOperator, keywordLogical));
     }
     auto&equalBigger(const QVariant&valueA, const QVariant&valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
     {

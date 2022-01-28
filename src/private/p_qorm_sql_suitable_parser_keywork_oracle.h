@@ -4,6 +4,9 @@
 
 namespace QOrm {
 
+//!
+//! \brief The SqlSuitableKeyWordOracle class
+//!
 class Q_ORM_EXPORT SqlSuitableKeyWordOracle : public SqlSuitableKeyWord{
 public:
     explicit SqlSuitableKeyWordOracle(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::Oracle, parent)

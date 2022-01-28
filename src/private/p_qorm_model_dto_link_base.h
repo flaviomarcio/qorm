@@ -3,7 +3,7 @@
 #include "./p_qorm_model_dto_types.h"
 
 namespace PrivateQOrm {
-
+//TODO CREATE DOCUMENTATION
 class ModelDtoLinkItem : public QStm::Object{
     Q_OBJECT
 public:

@@ -24,6 +24,15 @@ public:
     explicit TaskSlotPvt(TaskSlot*parent):QObject(parent)
     {
         this->parent=parent;
+    }
+
+    virtual ~TaskSlotPvt()
+    {
+        this->signalDisconnect();
+    }
+
+    void signalConnect()
+    {
         QObject::connect(this->parent, &TaskSlot::taskSend      , this          , &TaskSlotPvt::onTaskSend  );
         QObject::connect(this->parent, &TaskSlot::taskRequest   , this->pool    , &TaskPool::taskRequest    );
         QObject::connect(this->parent, &TaskSlot::taskSuccess   , this->pool    , &TaskPool::taskResponse   );
@@ -34,7 +43,7 @@ public:
         QObject::connect(this->parent, &TaskSlot::taskError     , this->runner  , &TaskRunner::taskError    );
     }
 
-    virtual ~TaskSlotPvt()
+    void signalDisconnect()
     {
         QObject::disconnect(this->parent, &TaskSlot::taskSend      , this          , &TaskSlotPvt::onTaskSend  );
         QObject::disconnect(this->parent, &TaskSlot::taskRequest   , this->pool    , &TaskPool::taskRequest    );
@@ -114,7 +123,7 @@ TaskSlot::TaskSlot(TaskPool *pool, const QVariantHash &connectionSetting, TaskRu
     p.methodSuccess=methodSuccess;
     p.methodFailed=methodFailed;
     p.cnnPool.setting()=p.connectionSetting;
-
+    p.signalConnect();
 }
 
 TaskSlot::~TaskSlot()

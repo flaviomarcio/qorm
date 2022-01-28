@@ -4,6 +4,7 @@
 
 namespace QOrm {
 
+//TODO CREATE DOCUMENTATION
 template <class T>
 class ModelDtoFilter : public QStm::Object{
 public:

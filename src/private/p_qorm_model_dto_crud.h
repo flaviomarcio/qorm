@@ -4,6 +4,7 @@
 
 namespace QOrm {
 
+//TODO CREATE DOCUMENTATION
 template <class T>
 class ModelDtoCrudItem : public QStm::Object{
 public:

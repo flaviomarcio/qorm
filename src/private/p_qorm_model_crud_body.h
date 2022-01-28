@@ -5,6 +5,8 @@
 #include "../qorm_model_crud_types.h"
 
 //!
+//! \brief The CRUDBody class
+//!
 class Q_ORM_EXPORT CRUDBody:public QVariantHash
 {
 public:

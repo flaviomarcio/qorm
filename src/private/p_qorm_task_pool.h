@@ -18,6 +18,7 @@ static TaskRunnerMethod __methodExecute=[](QSqlDatabase&db, const QVariant&task)
 static TaskRunnerMethod __methodSuccess=[](QSqlDatabase&db, const QVariant&task){Q_UNUSED(task) Q_UNUSED(db) return task;};
 static TaskRunnerMethod __methodFailed=[](QSqlDatabase&db, const QVariant&task){Q_UNUSED(task) Q_UNUSED(db) return task;};
 
+//TODO CREATE DOCUMENTATION
 class Q_ORM_EXPORT TaskPool : public QThread
 {
     Q_OBJECT
@@ -56,19 +57,23 @@ public:
         this->taskQueueResponse.clear();
         this->taskQueueStarted.clear();
         this->connectionSetting=QOrm::ConnectionSetting(connection, nullptr).toHash();
-        if(this->isRunning())
+
+        if(this->isRunning()){
             this->threadInit();
-        else{
-            QThread::start();
-            while(this->eventDispatcher()==nullptr)
-                this->msleep(1);
+            return true;
         }
+
+        QThread::start();
+        while(this->eventDispatcher()==nullptr)
+            this->msleep(1);
         return true;
     }
 
     void run() override
     {
-        QTimer::singleShot(10, this, [this](){this->threadInit();});
+        QTimer::singleShot(10, this, [this](){
+            this->threadInit();
+        });
         this->exec();
         if(running.tryLock(100))
             running.unlock();

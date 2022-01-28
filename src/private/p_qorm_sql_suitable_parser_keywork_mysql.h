@@ -4,6 +4,9 @@
 
 namespace QOrm {
 
+//!
+//! \brief The SqlSuitableKeyWordMySql class
+//!
 class Q_ORM_EXPORT SqlSuitableKeyWordMySql : public SqlSuitableKeyWord{
 public:
     explicit SqlSuitableKeyWordMySql(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::MySqlServer, parent)

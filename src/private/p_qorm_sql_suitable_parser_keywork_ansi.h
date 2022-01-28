@@ -4,6 +4,9 @@
 
 namespace QOrm {
 
+//!
+//! \brief The SqlSuitableKeyWordAnsi class
+//!
 class Q_ORM_EXPORT SqlSuitableKeyWordAnsi : public SqlSuitableKeyWord{
 public:
     explicit SqlSuitableKeyWordAnsi(QObject *parent = nullptr):SqlSuitableKeyWord(QList<QSqlDriver::DbmsType>()<<QSqlDriver::Sybase<<QSqlDriver::Interbase<<QSqlDriver::DB2, parent)

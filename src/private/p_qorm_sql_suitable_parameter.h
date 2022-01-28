@@ -6,6 +6,7 @@
 #include "../qorm_global.h"
 #include "../qorm_sql_suitable_types.h"
 
+//TODO CREATE DOCUMENTATION
 class Q_ORM_EXPORT SearchParam:public QVariantHash
 {
 public:

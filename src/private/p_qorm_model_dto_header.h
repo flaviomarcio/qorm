@@ -5,7 +5,7 @@
 namespace QOrm {
 
 class ModelDto;
-
+//TODO CREATE DOCUMENTATION
 template <class T>
 class ModelDtoHeader : public QStm::Object{
 

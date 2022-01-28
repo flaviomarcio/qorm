@@ -436,6 +436,8 @@ public:
         auto vHash=model.toMapPKValues();
         if(vHash.isEmpty())
             vHash=model.toMapFKValues();
+        if(vHash.isEmpty())
+            return this->lr()=false;
         return this->remove(vHash);
     }
 
@@ -495,6 +497,8 @@ public:
         auto vHash=model.toMapPKValues();
         if(vHash.isEmpty())
             vHash=model.toMapFKValues();
+        if(vHash.isEmpty())
+            return this->lr()=false;
         return this->reload(model, vHash);
     }
 

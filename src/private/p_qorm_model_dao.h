@@ -8,6 +8,9 @@
 
 namespace PrivateQOrm{
 
+//!
+//! \brief The ModelDao class
+//!
 class Q_ORM_EXPORT ModelDao : public QOrm::ObjectDb
 {
     Q_OBJECT

@@ -17,6 +17,10 @@ namespace QOrm {
 typedef std::function<QVariant(QSqlDatabase&db, const QVariant&task)> TaskRunnerMethod;
 class TaskPool;
 class TaskRunner;
+
+//!
+//! \brief The TaskSlot class
+//!
 class Q_ORM_EXPORT TaskSlot : public QThread
 {
     Q_OBJECT
