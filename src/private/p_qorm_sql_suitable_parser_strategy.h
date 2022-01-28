@@ -4,6 +4,9 @@
 
 namespace QOrm {
 
+//!
+//! \brief The SqlParserSelect class
+//!
 class Q_ORM_EXPORT SqlParserSelect:public SqlParserFrom<SqlParserSelect>{
 public:
 
@@ -195,8 +198,8 @@ public:
 
         QStringList parser_groupby;
 
-        static auto local_list=qvsl{qsl("from"), qsl("join"), qsl("where")};
-        auto parser_combination=appendMapStartsWith(local_list , mapObject);
+        static auto local_keys=qvsl{qsl("from"), qsl("join"), qsl("where")};
+        auto parser_combination=appendMapStartsWith(local_keys , mapObject);
 
 
         QStringList output;
@@ -499,7 +502,8 @@ public:
     virtual QStringList toScript(SqlSuitableKeyWord&parser)
     {
         auto mapObject=this->toMap();
-        static auto parser_combination=appendMapStartsWith(qvsl{qsl("from"), qsl("join"), qsl("where"), qsl("using")}, mapObject);
+        static auto local_keys=qvsl{qsl("from"), qsl("join"), qsl("where"), qsl("using")};
+        auto parser_combination=appendMapStartsWith(local_keys, mapObject);
         QStringList output;
         if(!parser_combination.isEmpty()){
             output<<parser.parserCommand(kgcDelete);
