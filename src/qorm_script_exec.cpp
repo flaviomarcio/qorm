@@ -33,7 +33,6 @@ public:
 
     void scriptAppend(const QVariant&v)
     {
-        this->scriptedClear();
         this->scriptValues<<v;
     }
 
@@ -45,12 +44,11 @@ public:
         case QMetaType_QUrl:
         {
             QStringList __return;
-            auto url=qTypeId(v)==QMetaType_QUrl?v.toUrl():QUrl::fromLocalFile(v.toString());
-            if(url.isLocalFile())
-                return {};
-            QFile file(url.toLocalFile());
+            QFile file(v.toString());
+
             if(!file.exists())
                 return {};
+
             if(!file.open(file.ReadOnly))
                 return {};
 
@@ -64,8 +62,19 @@ public:
                 auto vLines=v.split(qsl(";"));
                 for(auto line:vLines){
                     line=line.trimmed();
+
                     if(line.isEmpty())
                         continue;
+
+                    if(line.startsWith(qsl("--")))
+                        continue;
+
+                    if(line.startsWith(qsl("//")))
+                        continue;
+
+                    if(line.startsWith(qsl("##")))
+                        continue;
+
                     __return<<line.trimmed();
                 }
             }
@@ -143,6 +152,7 @@ ScriptExec &ScriptExec::operator=(const QVariant &v)
 ScriptExec &ScriptExec::operator=(const QFileInfoList &entryInfoList)
 {
     dPvt();
+    p.scriptedClear();
     p.scriptValues.clear();
     for(auto&f:entryInfoList){
         p.scriptAppend(QUrl::fromLocalFile(f.filePath()));
@@ -161,7 +171,13 @@ ScriptExec &ScriptExec::operator<<(const QFileInfoList &entryInfoList)
 {
     dPvt();
     for(auto&f:entryInfoList){
-        p.scriptAppend(QUrl::fromLocalFile(f.filePath()));
+        auto fileName=f.filePath();
+        if(!QFile::exists(fileName)){
+            sWarning()<<tr("Invalid filename: %1").arg(fileName);
+            continue;
+        }
+
+        p.scriptAppend(fileName);
     }
     return*this;
 }
