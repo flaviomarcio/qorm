@@ -36,14 +36,8 @@ static void initDtoSettingsCache()
         auto vDoc=QJsonDocument::fromJson(bytes).toVariant();
         switch (qTypeId(vDoc)) {
         case QMetaType_QVariantHash:
-            vList<<vDoc;
-            break;
         case QMetaType_QVariantMap:
-            vList<<vDoc;
-            break;
         case QMetaType_QVariantList:
-            vList<<vDoc;
-            break;
         case QMetaType_QStringList:
             vList<<vDoc;
             break;
