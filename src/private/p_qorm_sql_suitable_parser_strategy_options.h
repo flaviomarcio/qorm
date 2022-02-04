@@ -253,6 +253,9 @@ private:
     }
 };
 
+//!
+//! \brief The SqlParserItem class
+//!
 class Q_ORM_EXPORT SqlParserItem: public SqlParserCommand{
 public:
     friend class SqlParserValue;
@@ -349,25 +352,28 @@ public:
         auto vValue=vu.toVariant(v);
         auto rMap=r.toMap();
         auto typeId=qTypeId(vValue);
-        if(QStmTypesVariantDictionary.contains(typeId)){
-            auto map=vValue.toMap();
-            typeId=map.value(qsl("typeId")).toInt();
-            auto&value=map[qsl("value")];
-            map.insert(qsl("uuid"), rMap.value(qsl("uuid")));
+        switch (typeId) {
+        case QMetaType_QVariantHash:
+        case QMetaType_QVariantMap:
+        {
+            auto vMap=vValue.toMap();
+            typeId=vMap.value(qsl("typeId")).toInt();
+            auto&value=vMap[qsl("value")];
+            vMap.insert(qsl("uuid"), rMap.value(qsl("uuid")));
             value=vu.convertTo(value, typeId);
-            r.setValue(map);
+            r.setValue(vMap);
             return r;
         }
-
-        vValue=vu.convertTo(vValue, typeId);
-        QVariantMap map;
-        map.insert(qsl("uuid"), rMap.value(qsl("uuid")));
-        map.insert(qsl("info"), KeywordObjectInfo::koiValue);
-        map.insert(qsl("value"), vValue);
-        map.insert(qsl("typeId"), typeId);
-        r.setValue(map);
-        return r;
-
+        default:
+            vValue=vu.convertTo(vValue, typeId);
+            QVariantHash vHash;
+            vHash.insert(qsl("uuid"), rMap.value(qsl("uuid")));
+            vHash.insert(qsl("info"), KeywordObjectInfo::koiValue);
+            vHash.insert(qsl("value"), vValue);
+            vHash.insert(qsl("typeId"), typeId);
+            r.setValue(vHash);
+            return r;
+        }
     }
 
     static auto createObject(const QVariant&v)
@@ -376,25 +382,28 @@ public:
         Q_DECLARE_VU;
         auto vValue=vu.toVariant(v);
         auto rMap=r.toHash();
-        QVariantHash map;
 
         auto typeId=qTypeId(vValue);
-        if(QStmTypesVariantDictionary.contains(typeId))
+        switch (typeId) {
+        case QMetaType_QVariantHash:
+        case QMetaType_QVariantMap:
         {
-            auto map=vValue.toHash();
-            if(!map.contains(qsl("uuid"))){
-                map.insert(qsl("uuid"),rMap.value(qsl("uuid")));
+            auto vHash=vValue.toHash();
+            if(!vHash.contains(qsl("uuid"))){
+                vHash.insert(qsl("uuid"),rMap.value(qsl("uuid")));
             }
-            map.insert(qsl("info"),KeywordObjectInfo::koiObject);
+            vHash.insert(qsl("info"),KeywordObjectInfo::koiObject);
             return r;
         }
-
-        map.insert(qsl("uuid"), rMap.value(qsl("uuid")));
-        map.insert(qsl("info"), KeywordObjectInfo::koiObject);
-        map.insert(qsl("value"), vValue);
-        map.insert(qsl("typeId"), qTypeId(vValue));
-        r.setValue(map);
-        return r;
+        default:
+            QVariantHash vHash;
+            vHash.insert(qsl("uuid"), rMap.value(qsl("uuid")));
+            vHash.insert(qsl("info"), KeywordObjectInfo::koiObject);
+            vHash.insert(qsl("value"), vValue);
+            vHash.insert(qsl("typeId"), qTypeId(vValue));
+            r.setValue(vHash);
+            return r;
+        }
     }
 
     static auto createValue(const QVariant&v)
@@ -403,19 +412,19 @@ public:
         Q_DECLARE_VU;
         auto vValue=vu.toVariant(v);
         auto rMap=r.toHash();
-        QVariantMap map;
-        map.insert(qsl("uuid"),rMap.value(qsl("uuid")));
-        map.insert(qsl("info"),KeywordObjectInfo::koiValue);
-        map.insert(qsl("value"),vValue);
-        map.insert(qsl("typeId"),qTypeId(vValue));
-        r.setValue(map);
+        QVariantHash vHash;
+        vHash.insert(qsl("uuid"),rMap.value(qsl("uuid")));
+        vHash.insert(qsl("info"),KeywordObjectInfo::koiValue);
+        vHash.insert(qsl("value"),vValue);
+        vHash.insert(qsl("typeId"),qTypeId(vValue));
+        r.setValue(vHash);
         return r;
     }
 
-    /**
-     * @brief operator =
-     * @param value
-     */
+    //!
+    //! \brief operator =
+    //! \param value
+    //!
     void operator=(const QVariant&value)
     {
         QVariant::setValue(value);
