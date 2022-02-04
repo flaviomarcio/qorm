@@ -133,7 +133,7 @@ bool ConnectionSetting::isValid()const
         auto vGet = property.read(this);
         if(!vGet.isValid())
             continue;
-
+        //TODO switch () {}
         auto t=qTypeId(vGet);
         if((t==QMetaType_QString || t==QMetaType_QByteArray) && vGet.toString().trimmed().isEmpty())
             continue;
