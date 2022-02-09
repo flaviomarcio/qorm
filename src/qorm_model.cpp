@@ -501,27 +501,6 @@ public:
                 auto&k=modelInfo.tablePrefix()+i.key();
                 auto&s=i.value();
                 auto v=record.value(k);
-                if(!v.isValid()){
-                    auto&k=i.key();
-                    auto v=record.value(k);
-                    switch (qTypeId(v)){
-                    case QMetaType_QUuid:
-                        rHash.insert(s,v.toUuid().toString());
-                        break;
-                    case QMetaType_QUrl:
-                        rHash.insert(s,v.toUrl().toString());
-                        break;
-                    case QMetaType_User:
-                        rHash.insert(s,v.toInt());
-                        break;
-                    case QMetaType_CustomType:
-                        rHash.insert(s,v.toInt());
-                        break;
-                    default:
-                        rHash.insert(s,v);
-                    }
-                    continue;
-                }
                 switch (qTypeId(v)){
                 case QMetaType_QUuid:
                     rHash.insert(s,v.toUuid().toString());
