@@ -4,22 +4,30 @@
 
 namespace QOrm {
 
-//TODO CREATE DOCUMENTATION
+
+//!
+//! \brief The ModelDtoFilter class
+//!
 template <class T>
 class ModelDtoFilter : public QStm::Object{
 public:
 
-    Q_PROPERTY(QVariant type READ type WRITE setType )
-    Q_PROPERTY(QVariant value READ value WRITE setValue )
-    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue )
-    Q_PROPERTY(QVariant comboValue READ comboValue WRITE setComboValue )
-    Q_PROPERTY(QVariant text READ text WRITE setText )
-    Q_PROPERTY(Alignment align READ align WRITE setAlign )
-    Q_PROPERTY(QVariant width READ width WRITE setWidth )
-    Q_PROPERTY(bool sortable READ sortable WRITE setSortable )
-    Q_PROPERTY(bool filtrable READ filtrable WRITE setFiltrable )
-    Q_PROPERTY(QVariant filterStyle READ filterStyle WRITE setFilterStyle )
+    Q_PROPERTY(QVariant type READ type WRITE setType NOTIFY filteChanged)
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY widthChanged)
+    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY textChanged)
+    Q_PROPERTY(QVariant comboValue READ comboValue WRITE setComboValue NOTIFY combChanged)
+    Q_PROPERTY(QVariant text READ text WRITE setText NOTIFY defaulChanged)
+    Q_PROPERTY(QVariant width READ width WRITE setWidth NOTIFY valueChanged)
+    Q_PROPERTY(QVariant filterStyle READ filterStyle WRITE setFilterStyle NOTIFY typeChanged)
+    Q_PROPERTY(Alignment align READ align WRITE setAlign NOTIFY alignChanged)
+    Q_PROPERTY(bool sortable READ sortable WRITE setSortable NOTIFY sortableChanged)
+    Q_PROPERTY(bool filtrable READ filtrable WRITE setFiltrable NOTIFY filtrableChanged)
 
+    //!
+    //! \brief ModelDtoFilter
+    //! \param dto
+    //! \param parent
+    //!
     Q_INVOKABLE explicit ModelDtoFilter(T*dto, QObject*parent=nullptr):QStm::Object(parent)
     {
         this->___d=dto;
@@ -195,13 +203,25 @@ public:
         return*this;
     }
 
-    virtual QVariant toVariant()const{
+    virtual QVariant toVariant()const
+    {
         return this->v;
     };
 
 private:
     QVariantHash v;
     T*___d=nullptr;
+signals:
+    void filteChanged();
+    void widthChanged();
+    void textChanged();
+    void combChanged();
+    void defaulChanged();
+    void valueChanged();
+    void typeChanged();
+    void alignChanged();
+    void sortableChanged();
+    void filtrableChanged();
 };
 
 template <class T>
@@ -209,29 +229,35 @@ class ModelDtoFilters:public QStm::Object
 {
 public:
 
-    explicit ModelDtoFilters(T*dto, QObject*parent=nullptr):QStm::Object(parent){
+    explicit ModelDtoFilters(T*dto, QObject*parent=nullptr):QStm::Object(parent)
+    {
         this->___d=dto;
     }
 
-    virtual ~ModelDtoFilters(){
+    virtual ~ModelDtoFilters()
+    {
     }
 
-    virtual QVariant toVar()const{
+    virtual QVariant toVar()const
+    {
         QVariantList vList;
         for(const auto&v:this->___objectList)
             vList<<v->toVariant();
         return vList;
     };
 
-    virtual T&d(){
+    virtual T&d()
+    {
         return*this->___d;
     }
 
-    virtual ModelDtoFilter<T>&value(const QString&v){
+    virtual ModelDtoFilter<T>&value(const QString&v)
+    {
         return this->value(QVariantHash{{vpType,v}});
     }
 
-    virtual ModelDtoFilter<T>&value(const QVariantHash&v){
+    virtual ModelDtoFilter<T>&value(const QVariantHash&v)
+    {
         auto object=new ModelDtoFilter<T>(this->___d, this);
         object->setType(v.value(vpType));
         object->setValue(v.value(vpValue));
@@ -246,12 +272,14 @@ public:
         return*object;
     }
 
-    virtual ModelDtoFilters<T>&clear(){
+    virtual ModelDtoFilters<T>&clear()
+    {
         this->___objectList.clear();
         return*this;
     }
 
-    virtual QList<ModelDtoFilter<T>*>&list(){
+    virtual QList<ModelDtoFilter<T>*>&list()
+    {
         return this->___objectList;
     }
 

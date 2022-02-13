@@ -9,11 +9,11 @@ namespace PrivateQOrm {
 class ModelDtoLinkItem : public QStm::Object{
     Q_OBJECT
 public:
-    Q_PROPERTY(QVariantHash header READ header WRITE setHeader)
-    Q_PROPERTY(QVariant method READ method WRITE setMethod)
-    Q_PROPERTY(QVariant ref READ ref WRITE setRef)
-    Q_PROPERTY(QVariant hRef READ hRef WRITE setHRef)
-    Q_PROPERTY(QVariant parameters READ parameters WRITE setParameters)
+    Q_PROPERTY(QVariantHash header READ header WRITE setHeader NOTIFY headerChanged)
+    Q_PROPERTY(QVariant method READ method WRITE setMethod NOTIFY methodChanged)
+    Q_PROPERTY(QVariant ref READ ref WRITE setRef NOTIFY refChanged)
+    Q_PROPERTY(QVariant hRef READ hRef WRITE setHRef NOTIFY hRefChanged)
+    Q_PROPERTY(QVariant parameters READ parameters WRITE setParameters NOTIFY parametersChanged)
 
     //!
     //! \brief ModelDtoLinkItem
@@ -120,7 +120,12 @@ public:
     //! \return
     //!
     QVariant toVariant() const;
-
+signals:
+    void headerChanged();
+    void methodChanged();
+    void refChanged();
+    void hRefChanged();
+    void parametersChanged();
 private:
     void*p=nullptr;
 };

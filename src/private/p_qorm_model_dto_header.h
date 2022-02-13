@@ -20,36 +20,39 @@ public:
 
     Q_ENUM(FilterStyle)
 
-    Q_PROPERTY(QVariant order READ order WRITE setOrder )
-    Q_PROPERTY(QVariant type READ type WRITE setType )
-    Q_PROPERTY(QVariant value READ value WRITE setValue )
-    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue )
-    Q_PROPERTY(QVariant text READ text WRITE setText )
-    Q_PROPERTY(QVariant length READ length WRITE setLength )
-    Q_PROPERTY(Alignment align READ align WRITE setAlign )
-    Q_PROPERTY(QVariant width READ width WRITE setWidth )
-    Q_PROPERTY(bool visible READ visible WRITE setVisible )
-    Q_PROPERTY(bool editable READ editable WRITE setEditable )
-    Q_PROPERTY(bool sortable READ sortable WRITE setSortable )
-    Q_PROPERTY(bool filtrable READ filtrable WRITE setFiltrable )
-    Q_PROPERTY(QVariant filterStyle READ filterStyle WRITE setFilterStyle )
-    Q_PROPERTY(QVariant filtrableStrategy READ filtrableStrategy WRITE setFiltrableStrategy )
-    Q_PROPERTY(QVariant readOnly READ readOnly WRITE setReadOnly )
-    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue )
-    Q_PROPERTY(QVariant defaultSelect READ defaultSelect WRITE setDefaultSelect )
-    Q_PROPERTY(QVariant inputType READ inputType WRITE setInputType )
-    Q_PROPERTY(QVariant inputMask READ inputMask WRITE setInputMask )
-    Q_PROPERTY(QVariant inputLinks READ inputLinks WRITE setInputLinks )
+    Q_PROPERTY(QVariant order READ order WRITE setOrder NOTIFY widthChanged)
+    Q_PROPERTY(QVariant type READ type WRITE setType NOTIFY lengthChanged)
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY textChanged)
+    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaulChanged)
+    Q_PROPERTY(QVariant text READ text WRITE setText NOTIFY valueChanged)
+    Q_PROPERTY(QVariant length READ length WRITE setLength NOTIFY typeChanged)
+    Q_PROPERTY(QVariant width READ width WRITE setWidth NOTIFY orderChanged)
+    Q_PROPERTY(Alignment align READ align WRITE setAlign NOTIFY filtrableChanged)
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY sortableChanged)
+    Q_PROPERTY(bool editable READ editable WRITE setEditable NOTIFY editableChanged)
+    Q_PROPERTY(bool sortable READ sortable WRITE setSortable NOTIFY visibleChanged)
+    Q_PROPERTY(bool filtrable READ filtrable WRITE setFiltrable NOTIFY alignChanged)
+    Q_PROPERTY(QVariant filterStyle READ filterStyle WRITE setFilterStyle NOTIFY filterStyleChanged)
+    Q_PROPERTY(QVariant filtrableStrategy READ filtrableStrategy WRITE setFiltrableStrategy NOTIFY filtrableStrategyChanged)
+    Q_PROPERTY(QVariant readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
+    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaultValueChanged)
+    Q_PROPERTY(QVariant defaultSelect READ defaultSelect WRITE setDefaultSelect NOTIFY defaultSelectChanged)
+    Q_PROPERTY(QVariant inputType READ inputType WRITE setInputType NOTIFY inputTypeChanged)
+    Q_PROPERTY(QVariant inputMask READ inputMask WRITE setInputMask NOTIFY inputMaskChanged)
+    Q_PROPERTY(QVariant inputLinks READ inputLinks WRITE setInputLinks NOTIFY inputLinksChanged)
 
-    Q_INVOKABLE explicit ModelDtoHeader(T*dto, QObject*parent=nullptr):QStm::Object(parent){
+    Q_INVOKABLE explicit ModelDtoHeader(T*dto, QObject*parent=nullptr):QStm::Object(parent)
+    {
         this->___d=dto;
     }
 
-    ~ModelDtoHeader(){
+    ~ModelDtoHeader()
+    {
 
     }
 
-    T&d(){
+    T&d()
+    {
         return*this->___d;
     }
 
@@ -324,15 +327,18 @@ public:
         return*this;
     }
 
-    virtual QVariant toVar()const{
+    virtual QVariant toVar()const
+    {
         return this->v;
     };
 
-    virtual const QVariantHash&toHash(){
+    virtual const QVariantHash&toHash()
+    {
         return this->v;
     };
 
-    virtual QVariantMap toMap()const {
+    virtual QVariantMap toMap()const
+    {
         return QVariant(this->v).toMap();
     };
 
@@ -354,47 +360,56 @@ public:
     Q_ENUM(FilterStyle)
 
 
-    explicit ModelDtoHeaders(T*dto, QObject*parent=nullptr):QStm::Object(parent){
+    explicit ModelDtoHeaders(T*dto, QObject*parent=nullptr):QStm::Object(parent)
+    {
         this->___d=dto;
     }
 
-    explicit ModelDtoHeaders(T*dto, const QVariantHash&v, QObject*parent=nullptr):QStm::Object(parent){
+    explicit ModelDtoHeaders(T*dto, const QVariantHash&v, QObject*parent=nullptr):QStm::Object(parent)
+    {
         Q_UNUSED(v)
         this->___d=dto;
     }
 
-    virtual ~ModelDtoHeaders(){
+    virtual ~ModelDtoHeaders()
+    {
     }
 
-    virtual ModelDtoHeaders<T>&clear(){
+    virtual ModelDtoHeaders<T>&clear()
+    {
         this->___objectMap.clear();
         this->___objectList.clear();
         return*this;
     }
 
-    virtual QVariant toVar()const{
+    virtual QVariant toVar()const
+    {
         QVariantList vList;
         for(const auto&v:this->___objectList)
             vList<<v->toVar();
         return vList;
     };
 
-    virtual QVariant toList()const{
+    virtual QVariant toList()const
+    {
         QVariantList vList;
         for(const auto&v:this->___objectList)
             vList<<v->toVar();
         return vList;
     };
 
-    virtual T&d(){
+    virtual T&d()
+    {
         return*this->___d;
     }
 
-    virtual ModelDtoHeader<T>* get(const QString&v){
+    virtual ModelDtoHeader<T>* get(const QString&v)
+    {
         return this->___objectMap.value(v);
     }
 
-    virtual ModelDtoHeaders&remove(const QString&v){
+    virtual ModelDtoHeaders&remove(const QString&v)
+    {
         if(this->___objectMap.contains(v)){
             auto object=this->___objectMap.take(v);
             this->___objectList.removeOne(object);
@@ -403,11 +418,13 @@ public:
         return*this;
     }
 
-    virtual ModelDtoHeader<T>&value(const QString&v){
+    virtual ModelDtoHeader<T>&value(const QString&v)
+    {
         return this->value(QVariantHash{{vpValue,v}});
     }
 
-    virtual ModelDtoHeader<T>&value(const QVariantHash&v){
+    virtual ModelDtoHeader<T>&value(const QVariantHash&v)
+    {
         auto value=v.value(vpValue).toString();
         auto object=this->___objectMap.value(value);
         if(object==nullptr){
@@ -437,21 +454,25 @@ public:
         return*object;
     }
 
-    virtual ModelDtoHeader<T>&makeDefault(){
-        static auto vAction=QVariantHash( { { vpValue, vpActions}, { vpText, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }});
+    virtual ModelDtoHeader<T>&makeDefault()
+    {
+        static auto vAction=QVariantHash{ { vpValue, vpActions}, { vpText, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }};
         return this->value(vAction);
     }
 
-    virtual ModelDtoHeaders&unMakeDefault(){
+    virtual ModelDtoHeaders&unMakeDefault()
+    {
         return this->remove(vpActions);
     }
 
-    virtual QList<ModelDtoHeader<T>*>&list(){
+    virtual QList<ModelDtoHeader<T>*>&list()
+    {
         this->reOrder();
         return this->___objectList;
     }
 
-    virtual void reOrder(){
+    virtual void reOrder()
+    {
         auto i=0;
         for(auto&v:this->___objectList)
             v->setOrder(i++);
@@ -461,6 +482,27 @@ protected:
     QMap<QString, ModelDtoHeader<T>*> ___objectMap;
     QList<ModelDtoHeader<T>*> ___objectList;
     T*___d=nullptr;
+signals:
+    void orderChanged();
+    void typeChanged();
+    void valueChanged();
+    void defaulChanged();
+    void textChanged();
+    void lengthChanged();
+    void widthChanged();
+    void alignChanged();
+    void visibleChanged();
+    void editableChanged();
+    void sortableChanged();
+    void filtrableChanged();
+    void filterStyleChanged();
+    void filtrableStrategyChanged();
+    void readOnlyChanged();
+    void defaultValueChanged();
+    void defaultSelectChanged();
+    void inputTypeChanged();
+    void inputMaskChanged();
+    void inputLinksChanged();
 };
 
 
