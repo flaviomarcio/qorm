@@ -99,6 +99,12 @@ SOURCES += \
     $$PWD/src/private/p_qorm_sql_suitable_parser_field.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parser_item.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_ansi.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_mysql.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_oracle.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_psq.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_sqlite.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_tsql.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parser_object.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parser_strategy.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parameter.cpp \

@@ -9,18 +9,11 @@ namespace QOrm {
 //!
 class Q_ORM_EXPORT SqlSuitableKeyWordAnsi : public SqlSuitableKeyWord{
 public:
-    explicit SqlSuitableKeyWordAnsi(QObject *parent = nullptr):SqlSuitableKeyWord(QList<QSqlDriver::DbmsType>()<<QSqlDriver::Sybase<<QSqlDriver::Interbase<<QSqlDriver::DB2, parent)
-    {
+    explicit SqlSuitableKeyWordAnsi(QObject *parent = nullptr);
 
-    }
+    ~SqlSuitableKeyWordAnsi();
 
-    ~SqlSuitableKeyWordAnsi(){
-    }
-
-    virtual void init()
-    {
-        this->commands()[kgcSelectTop]=qbl_null;
-    }
+    virtual void init();
 };
 
 }

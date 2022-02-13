@@ -9,18 +9,9 @@ namespace QOrm {
 //!
 class Q_ORM_EXPORT SqlSuitableKeyWordMySql : public SqlSuitableKeyWord{
 public:
-    explicit SqlSuitableKeyWordMySql(QObject *parent = nullptr):SqlSuitableKeyWord(QSqlDriver::MySqlServer, parent)
-    {
-        this->commands()[kgcSelectTop]=qbl_null;
-        this->commands()[kgcUpsertSet]=qbl_null;
-    }
-    ~SqlSuitableKeyWordMySql()
-    {
-    }
-    virtual void init()
-    {
-        this->commands()[kgcSelectTop]=qbl_null;
-    }
+    explicit SqlSuitableKeyWordMySql(QObject *parent = nullptr);
+    ~SqlSuitableKeyWordMySql();
+    virtual void init();
 };
 
 }
