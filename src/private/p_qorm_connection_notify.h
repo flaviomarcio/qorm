@@ -15,65 +15,24 @@ class Q_ORM_EXPORT ConnectionNotifyPvt:public QObject{
 public:
     ConnectionNotifySubscribe*notifySubscribe=nullptr;
     QStringList subscribeToNotification;
-    ConnectionNotify*notify(){
-        return dynamic_cast<ConnectionNotify*>(this->parent());
-    }
+    ConnectionNotify*notify();
 
     QMutex mutexLock;
 
-    Q_INVOKABLE explicit ConnectionNotifyPvt(QObject*parent=nullptr):QObject(parent){
-    }
+    Q_INVOKABLE explicit ConnectionNotifyPvt(QObject*parent=nullptr);
 
-    ~ConnectionNotifyPvt(){
-        this->queueStop();
-    }
+    ~ConnectionNotifyPvt();
 
-    bool queueStop(){
-        QMutexLocker locker(&this->mutexLock);
-        if(this->notifySubscribe!=nullptr){
-            QObject::disconnect(this->notifySubscribe, &ConnectionNotifySubscribe::threadFinish, this, &ConnectionNotifyPvt::threadFinish);
-            QObject::disconnect(this, &ConnectionNotifyPvt::notification_send, this->notifySubscribe, &ConnectionNotifySubscribe::notification_send);
-            QObject::disconnect(this->notify(), &ConnectionNotify::notification, this->notifySubscribe, &ConnectionNotifySubscribe::notification);
-            this->notifySubscribe->quit();
-            if(this->notifySubscribe->wait(1000))
-                delete this->notifySubscribe;
-            else
-                this->notifySubscribe->deleteLater();
-            this->notifySubscribe=nullptr;
-        }
-        return (this->notifySubscribe==nullptr);
-    }
+    bool queueStop();
 
-    bool queueStart(){
-//        QMutexLocker locker(&this->mutexLock);
-//        if(this->notifySubscribe==nullptr){
-//            auto notify=this->notify();
-//            this->notifySubscribe=new ConnectionNotifySubscribe(notify);
-//            QObject::connect(this->notifySubscribe, &ConnectionNotifySubscribe::threadFinish, this, &ConnectionNotifyPvt::threadFinish);
-//            QObject::connect(this, &ConnectionNotifyPvt::notification_send, this->notifySubscribe, &ConnectionNotifySubscribe::notification_send);
-//            QObject::connect(this->notify(), &ConnectionNotify::notification, this->notifySubscribe, &ConnectionNotifySubscribe::notification);
-//            ObjectDb objectdb(this);
-//            this->notifySubscribe->start(objectdb.connection());
-//        }
-        return (this->notifySubscribe!=nullptr);
-    }
+    bool queueStart();
 
-    bool queueStarted(){
-        return (this->notifySubscribe!=nullptr);
-    }
+    bool queueStarted();
 
-    bool queueSend(const QString &channel, const QVariant &payload){
-        if(this->notifySubscribe!=nullptr){
-            emit notification_send(channel, payload);
-        }
-        return true;
-    }
+    bool queueSend(const QString &channel, const QVariant &payload);
 
 private slots:
-    void threadFinish(QOrm::ConnectionNotifySubscribe*v){
-        Q_UNUSED(v)
-        this->queueStop();
-    }
+    void threadFinish(QOrm::ConnectionNotifySubscribe*v);
 signals:
     void notification_send(const QString &channel, const QVariant &payload);
 };

@@ -117,7 +117,7 @@ TaskSlot::TaskSlot(TaskPool *pool, const QVariantHash &connectionSetting, TaskRu
     this->moveToThread(this);
     dPvt();
     p.pool=pool;
-    p.runner=pool->runner;
+    p.runner=pool->runner();
     p.connectionSetting=connectionSetting;
     p.methodExecute=methodExecute;
     p.methodSuccess=methodSuccess;

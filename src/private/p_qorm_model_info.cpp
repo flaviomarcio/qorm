@@ -428,7 +428,7 @@ public:
             if(!property.isValid())
                 continue;
 
-            if(__propertyIgnoredList.contains(propertyName.toLower()))
+            if(__propertyIgnoredList->contains(propertyName.toLower()))
                 continue;
 
             pvt.propertyHash[property.name()]=property;
@@ -753,7 +753,7 @@ QMetaObject&ModelInfo::staticMetaObject() const
 
 const QStringList &ModelInfo::propertyIgnoredList()
 {
-    return __propertyIgnoredList;
+    return *__propertyIgnoredList;
 }
 
 QList<QMetaProperty> &ModelInfo::property() const

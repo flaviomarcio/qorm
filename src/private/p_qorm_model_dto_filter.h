@@ -9,16 +9,16 @@ template <class T>
 class ModelDtoFilter : public QStm::Object{
 public:
 
-    Q_PROPERTY(QVariant     type            READ type           WRITE setType            )
-    Q_PROPERTY(QVariant     value           READ value          WRITE setValue           )
-    Q_PROPERTY(QVariant     defaultValue    READ defaultValue   WRITE setDefaultValue    )
-    Q_PROPERTY(QVariant     comboValue      READ comboValue     WRITE setComboValue      )
-    Q_PROPERTY(QVariant     text            READ text           WRITE setText            )
-    Q_PROPERTY(Alignment    align           READ align          WRITE setAlign           )
-    Q_PROPERTY(QVariant     width           READ width          WRITE setWidth           )
-    Q_PROPERTY(bool         sortable        READ sortable       WRITE setSortable        )
-    Q_PROPERTY(bool         filtrable       READ filtrable      WRITE setFiltrable       )
-    Q_PROPERTY(QVariant     filterStyle     READ filterStyle    WRITE setFilterStyle     )
+    Q_PROPERTY(QVariant type READ type WRITE setType )
+    Q_PROPERTY(QVariant value READ value WRITE setValue )
+    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue )
+    Q_PROPERTY(QVariant comboValue READ comboValue WRITE setComboValue )
+    Q_PROPERTY(QVariant text READ text WRITE setText )
+    Q_PROPERTY(Alignment align READ align WRITE setAlign )
+    Q_PROPERTY(QVariant width READ width WRITE setWidth )
+    Q_PROPERTY(bool sortable READ sortable WRITE setSortable )
+    Q_PROPERTY(bool filtrable READ filtrable WRITE setFiltrable )
+    Q_PROPERTY(QVariant filterStyle READ filterStyle WRITE setFilterStyle )
 
     Q_INVOKABLE explicit ModelDtoFilter(T*dto, QObject*parent=nullptr):QStm::Object(parent)
     {

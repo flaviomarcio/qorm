@@ -41,15 +41,15 @@ TaskRunner::~TaskRunner()
 TaskRunner &TaskRunner::print()
 {
     dPvt();
-    sInfo()<<"slotCount: "<<p.pool.slotCount;
-    sInfo()<<"taskQueueValue.size: "<<p.pool.taskQueueValue.size();
+    sInfo()<<"slotCount: "<<p.pool.slotCount();
+    sInfo()<<"taskQueueValue.size: "<<p.pool.taskQueueValue().size();
     return*this;
 }
 
 TaskRunner &TaskRunner::v(const QVariant &v)
 {
     dPvt();
-    p.pool.taskQueueValue<<v;
+    p.pool.taskQueueValue()<<v;
     return*this;
 }
 
@@ -75,18 +75,18 @@ TaskRunner &TaskRunner::vs(const QVariant &values)
         vList<<values;
     }
     for(auto&v:vList)
-        p.pool.taskQueueValue<<v;
+        p.pool.taskQueueValue()<<v;
     return*this;
 }
 
 TaskRunner &TaskRunner::vs(const QVariantList &values)
 {
     dPvt();
-    if(p.pool.taskQueueValue.isEmpty())
-        p.pool.taskQueueValue=values;
+    if(p.pool.taskQueueValue().isEmpty())
+        p.pool.taskQueueValue()=values;
     else{
         for(auto&v:values)
-            p.pool.taskQueueValue<<v;
+            p.pool.taskQueueValue()<<v;
     }
     return *this;
 }
@@ -119,21 +119,21 @@ TaskRunner &TaskRunner::values(ResultValue &values)
 TaskRunner &TaskRunner::onExecute(TaskRunnerMethod method)
 {
     dPvt();
-    p.pool.methodExecute=method;
+    p.pool.setMethodExecute(method);
     return*this;
 }
 
 TaskRunner &TaskRunner::onSuccess(TaskRunnerMethod method)
 {
     dPvt();
-    p.pool.methodSuccess=method;
+    p.pool.setMethodSuccess(method);
     return*this;
 }
 
 TaskRunner &TaskRunner::onFailed(TaskRunnerMethod method)
 {
     dPvt();
-    p.pool.methodFailed=method;
+    p.pool.setMethodFailed(method);
     return*this;
 }
 
@@ -150,14 +150,14 @@ ResultValue &TaskRunner::start()
         name=QThread::currentThread()->objectName().trimmed();
     p.pool.setObjectName(qsl("TaskPool")+name);
     p.pool.start(p.connection());
-    QMutexLocker locker(&p.pool.running);
-    return this->lr().setResult(p.pool.resultList)=p.pool.resultBool;
+    QMutexLocker locker(&p.pool.running());
+    return this->lr().setResult(p.pool.resultList())=p.pool.resultBool();
 }
 
 void TaskRunner::stop()
 {
     dPvt();
-    p.pool.resultBool=false;
+    p.pool.setResultBool(false);
     p.pool.quit();
 }
 
@@ -173,9 +173,9 @@ QUuid TaskRunner::taskAppend(const QVariant &taskValue)
     auto uuid=QUuid::createUuid();
     QVariantHash vTask;
     vTask.insert(qsl("uuid") , uuid.toString());
-    vTask.insert(qsl("order"), p.pool.taskQueueValue.size()+1);
+    vTask.insert(qsl("order"), p.pool.taskQueueValue().size()+1);
     vTask.insert(qsl("value"), taskValue);
-    p.pool.taskQueueValue<<vTask;
+    p.pool.taskQueueValue()<<vTask;
     return uuid;
 }
 
@@ -188,7 +188,7 @@ TaskRunner&TaskRunner::operator<<(const QVariant &taskValue)
 int TaskRunner::slotCount() const
 {
     dPvt();
-    auto __return=p.pool.slotCount>0?p.pool.slotCount:QThread::idealThreadCount();
+    auto __return=p.pool.slotCount();
     return __return;
 }
 
@@ -200,7 +200,7 @@ TaskRunner&TaskRunner::slotCount(int value)
 TaskRunner&TaskRunner::setSlotCount(int value)
 {
     dPvt();
-    p.pool.slotCount = value;
+    p.pool.setSlotCount(value);
     return*this;
 }
 

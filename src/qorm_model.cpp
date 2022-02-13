@@ -54,7 +54,7 @@ public:
         QVariantHash vBody;
         for(int col = 0; col < metaObject.propertyCount(); ++col) {
             auto property = metaObject.property(col);
-            if(__propertyIgnoredList.contains(property.name()))
+            if(__propertyIgnoredList->contains(property.name()))
                 continue;
 
             if(list.contains(property.name()))
@@ -68,7 +68,7 @@ public:
         auto metaObject=this->model->metaObject();
         for(int col = 0; col < metaObject->propertyCount(); ++col) {
             auto property = metaObject->property(col);
-            if(__propertyIgnoredList.contains(property.name()))
+            if(__propertyIgnoredList->contains(property.name()))
                 continue;
 
             switch (qTypeId(property)) {
@@ -446,7 +446,7 @@ public:
 
         for(int col = 0; col < metaObject->propertyCount(); ++col) {
             auto property = metaObject->property(col);
-            if(__propertyIgnoredList.contains(property.name()))
+            if(__propertyIgnoredList->contains(property.name()))
                 continue;
 
             //auto value=record.value(property.name());

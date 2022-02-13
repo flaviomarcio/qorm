@@ -31,6 +31,9 @@ HEADERS += \
     $$PWD/src/private/p_qorm_query.h \
     #$$PWD/src/private/p_qorm_report_runner.h \
     $$PWD/src/private/p_qorm_sql_suitable_builder.h \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_command.h \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_field.h \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_item.h \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork.h \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_ansi.h \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_mysql.h \
@@ -38,9 +41,11 @@ HEADERS += \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_psq.h \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_sqlite.h \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork_tsql.h \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_object.h \
     $$PWD/src/private/p_qorm_sql_suitable_parser_strategy.h \
     $$PWD/src/private/p_qorm_sql_suitable_parser_strategy_options.h \
     $$PWD/src/private/p_qorm_sql_suitable_parameter.h \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_value.h \
     $$PWD/src/private/p_qorm_task_pool.h \
     $$PWD/src/private/p_qorm_task_slot.h \
     $$PWD/src/qorm_macro.h \
@@ -76,6 +81,9 @@ HEADERS += \
     $$PWD/src/qorm_wrapper.h \
 
 SOURCES += \
+    $$PWD/src/private/p_qorm_connection_manager.cpp \
+    $$PWD/src/private/p_qorm_connection_notify.cpp \
+    $$PWD/src/private/p_qorm_connection_notify_subscribe.cpp \
     $$PWD/src/private/p_qorm_model_action_method.cpp \
     $$PWD/src/private/p_qorm_model_controls.cpp \
     $$PWD/src/private/p_qorm_model_crud_body.cpp \
@@ -85,9 +93,17 @@ SOURCES += \
     $$PWD/src/private/p_qorm_model_crud.cpp \
     $$PWD/src/private/p_qorm_model_report.cpp \
     $$PWD/src/private/p_qorm_model_info.cpp \
+    $$PWD/src/private/p_qorm_query.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_builder.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_command.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_field.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_item.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parser_keywork.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_object.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parser_strategy.cpp \
     $$PWD/src/private/p_qorm_sql_suitable_parameter.cpp \
+    $$PWD/src/private/p_qorm_sql_suitable_parser_value.cpp \
+    $$PWD/src/private/p_qorm_task_pool.cpp \
     $$PWD/src/private/p_qorm_task_slot.cpp \
     $$PWD/src/qorm_connection_manager.cpp \
     $$PWD/src/qorm_connection_notify.cpp \

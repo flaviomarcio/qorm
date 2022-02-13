@@ -6,7 +6,9 @@
 #include "../qorm_global.h"
 #include "../qorm_sql_suitable_types.h"
 
-//TODO CREATE DOCUMENTATION
+//!
+//! \brief The SearchParam class
+//!
 class Q_ORM_EXPORT SearchParam:public QVariantHash
 {
 public:
@@ -32,67 +34,62 @@ public:
     explicit SearchParameters(const QVariant &other=QVariant());
     virtual ~SearchParameters();
 
-
-
-    /**
-     * @brief canRead
-     * @param v
-     * @return
-     */
+    //!
+    //! \brief canRead
+    //! \param v
+    //! \return
+    //!
     virtual bool canRead(const QVariant&v);
 
-    /**
-     * @brief isEmpty
-     * @return
-     */
+    //!
+    //! \brief isEmpty
+    //! \return
+    //!
     virtual bool isEmpty() const;
 
-    /**
-     * @brief operator =s
-     * @param v
-     * @return
-     */
+    //!
+    //! \brief operator =
+    //! \param v
+    //! \return
+    //!
     SearchParameters&operator=(const QVariant &v);
 
-    /**
-     * @brief operator +=
-     * @param v
-     * @return
-     */
+    //!
+    //! \brief operator +=
+    //! \param v
+    //! \return
+    //!
     SearchParameters&operator+=(const QVariant &v);
 
-    /**
-     * @brief from
-     * @param v
-     * @return
-     */
+    //!
+    //! \brief from
+    //! \param v
+    //! \return
+    //!
     static SearchParameters from(const QVariantHash &v);
     static SearchParameters from(const QVariantMap &v);
 
-    /**
-     * @brief insert
-     * @param valueA
-     * @param valueB
-     * @param valueC
-     * @param keywordOperator
-     * @param keywordLogical
-     * @return
-     */
+    //!
+    //! \brief insert
+    //! \param valueA
+    //! \param valueB
+    //! \return
+    //!
     virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB);
     virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB, const QVariant &keywordOperator);
     virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB, const QVariant &keywordOperator, const QVariant &keywordLogical);
     virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB, const QVariant&valueC, const QVariant &keywordOperator, const QVariant &keywordLogical);
 
-    /**
-     * @brief buildList
-     * @return
-     */
+    //!
+    //! \brief build
+    //! \return
+    //!
     virtual QList<SearchParam> build() const;
 
-    /**
-     * @brief buildVariant
-     * @return
-     */
+    //!
+    //! \brief buildVariant
+    //! \return
+    //!
     virtual QVariant buildVariant() const;
 
 private:

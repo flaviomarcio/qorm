@@ -26,144 +26,171 @@ public:
          */
     Q_INVOKABLE explicit ModelReportBase(QObject *parent = nullptr);
 
-    /**
-         * @brief ModelReportBase
-         * @param vCrud
-         * @param parent
-         */
+    //!
+    //! \brief ModelReportBase
+    //! \param reportBody
+    //! \param parent
+    //!
     explicit ModelReportBase(const QVariant &reportBody, QObject *parent = nullptr);
 
 
-    /**
-         * @brief ~ModelReportBase
-         */
+    //!
+    //!
     ~ModelReportBase();
 
-    /**
-         * @brief options
-         * @return
-         */
+    //!
+    //! \brief options
+    //! \return
+    //!
     QOrm::ModelDtoOptions&options();
 
-    /**
-         * @brief options
-         * @return
-         */
+    //!
+    //! \brief setOptions
+    //! \param options
+    //! \return
+    //!
     ModelReportBase &setOptions(const QOrm::ModelDtoOptions &options);
 
-    /**
-         * @brief makeDefault
-         * @return
-         */
+    //!
+    //! \brief makeDefault
+    //! \return
+    //!
     virtual ModelReportBase&makeDefault();
 
-    /**
-         * @brief unMakeDefault
-         * @return
-         */
+    //!
+    //! \brief unMakeDefault
+    //! \return
+    //!
     virtual ModelReportBase&unMakeDefault();
 
-
-    /**
-         * @brief type
-         * @return
-         */
+    //!
+    //! \brief type
+    //! \return
+    //!
     virtual QVariant type()const;
     virtual ModelReportBase&type(const QVariant &value);
-    //        Q_INVOKABLE virtual QVariant defaultType()const;
 
-    /**
-         * @brief type
-         * @return
-         */
+    //!
+    //! \brief layout
+    //! \return
+    //!
     virtual QVariant layout()const;
     virtual ModelReportBase&layout(const QVariant &value);
-    //        Q_INVOKABLE virtual QVariant defaultLayout()const;
 
-    /**
-         * @brief reportName
-         * @return
-         */
+    //!
+    //! \brief reportName
+    //! \return
+    //!
     virtual QByteArray reportName()const;
     virtual ModelReportBase&reportName(const QVariant &value);
 
-    /**
-         * @brief reportDescription
-         * @return
-         */
+    //!
+    //! \brief reportDescription
+    //! \return
+    //!
     virtual QByteArray reportDescription()const;
     virtual ModelReportBase&reportDescription(const QVariant &value);
 
-    /**
-         * @brief dto
-         * @return
-         */
+    //!
+    //! \brief dto
+    //! \return
+    //!
     virtual QOrm::ModelDto&dto();
 
-    /**
-         * @brief modelInfo
-         * @return
-         */
+    //!
+    //! \brief modelInfo
+    //! \return
+    //!
     virtual const QOrm::ModelInfo &modelInfo();
 
-    /**
-         * @brief reportBody
-         * @return
-         */
+    //!
+    //! \brief reportBody
+    //! \param v
+    //! \return
+    //!
     virtual ModelReportBase &reportBody(const QVariant &v);
 
-    /**
-         * @brief strategy
-         * @return
-         */
+    //!
+    //! \brief strategy
+    //! \return
+    //!
     virtual QVariant strategy()const;
     virtual ModelReportBase&strategy(const QVariant&strategy);
 
-    /**
-         * @brief source
-         * @param value
-         * @return
-         */
+    //!
+    //! \brief source
+    //! \return
+    //!
     virtual QVariant source()const;
     virtual ModelReportBase&source(const QVariant&value);
 
-    /**
-         * @brief reportfy
-         * @return
-         */
+    //!
+    //! \brief reportfy
+    //! \return
+    //!
     virtual ResultValue &reportfy();
 
-    /**
-         * @brief actionSearch
-         * @param action
-         * @return
-         */
+    //!
+    //! \brief actionSearch
+    //! \param action
+    //! \return
+    //!
     virtual ModelReportBase&actionSearch(QOrm::ModelAction&action);
 
 protected:
 
-    /**
-         * @brief search
-         * @return
-         */
+    //!
+    //! \brief search
+    //! \return
+    //!
     virtual ResultValue &search();
     virtual ResultValue &search(const QVariant&value);
 
-    /**
-         * @brief onBefore
-         * @param method
-         * @return
-         */
+    //!
+    //! \brief onBefore
+    //! \param method
+    //! \return
+    //!
     ModelReportBase&onBefore(QOrm::ModelActionMethod method);
+
+    //!
+    //! \brief onSuccess
+    //! \param method
+    //! \return
+    //!
     ModelReportBase&onSuccess(QOrm::ModelActionMethod method);
+
+    //!
+    //! \brief onFailed
+    //! \param method
+    //! \return
+    //!
     ModelReportBase&onFailed(QOrm::ModelActionMethod method);
 
-
+    //!
+    //! \brief canActionSearch
+    //! \return
+    //!
     virtual ResultValue &canActionSearch();
 
 protected:
+
+    //!
+    //! \brief doBofore
+    //! \return
+    //!
     virtual ResultValue&doBofore();
+
+    //!
+    //! \brief doSuccess
+    //! \return
+    //!
     virtual ResultValue&doSuccess();
+
+    //!
+    //! \brief doFailed
+    //! \return
+    //!
     virtual ResultValue&doFailed();
 private:
     void*p=nullptr;
