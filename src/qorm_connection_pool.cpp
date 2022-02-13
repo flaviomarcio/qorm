@@ -17,21 +17,16 @@ namespace QOrm {
     auto&p = *reinterpret_cast<ConnectionPoolPvt*>(this->p)
 
 static qlonglong connectionCount=0;
+Q_GLOBAL_STATIC(QStringList, static_dbcDrivers)
 
-static const QStringList&initOdbc(){
-    static QStringList odbcDrivers;
-    static bool ___initOdbc=false;
-    if(!___initOdbc){
-        static QMutex ___mutexOdbc;
-        QMutexLocker locker(&___mutexOdbc);
-        if(!___initOdbc){
-            ___initOdbc=true;
-            QSettings setting(qsl("/etc/odbcinst.ini"), QSettings::IniFormat);
-            odbcDrivers=setting.childGroups();
-        }
-    }
-    return odbcDrivers;
+static void init()
+{
+    QSettings setting(qsl("/etc/odbcinst.ini"), QSettings::IniFormat);
+    for(auto&line:setting.childGroups())
+        static_dbcDrivers->append(line);
 }
+
+Q_COREAPP_STARTUP_FUNCTION(init)
 
 class ConnectionPoolPvt{
 public:
@@ -40,56 +35,61 @@ public:
     ConnectionSetting connectionSetting;
     QStringList connectionList;
     QObject*parent=nullptr;
-    QStringList odbcDrivers;
+
     QSqlError lastError;
     explicit ConnectionPoolPvt(QObject*parent, const ConnectionSetting&cnnSetting) : connectionSetting(cnnSetting, parent)
     {
-        this->odbcDrivers=initOdbc();
         this->parent=parent;
-        this->baseName=(this->parent!=nullptr)?this->parent->objectName().trimmed():"";
+        this->baseName=((this->parent!=nullptr)?this->parent->objectName().trimmed():qsl_null).left(50);
         if(!this->baseName.isEmpty())
             return;
         auto thread=QThread::currentThread();
         if(thread==nullptr)
             return;
 
-        this->baseName=thread->objectName().trimmed();
+        this->baseName=thread->objectName().trimmed().left(50);
         if(!this->baseName.isEmpty())
             return;
         auto threadId=QString::number(qlonglong(QThread::currentThreadId()), 16);
-        this->baseName=qsl("pool%1").arg(threadId);
+        this->baseName=qsl("pool%1").arg(threadId).left(50);
 
     }
-    virtual ~ConnectionPoolPvt(){
+    virtual ~ConnectionPoolPvt()
+    {
     }
 
     bool finish(QSqlDatabase&connection)
     {
         auto&p=*this;
-        if(connection.isValid()){
-            QMutexLocker locker(&p.locker);
-            auto connectionName=connection.connectionName();
-            p.connectionList.removeAll(connectionName);
-            connection.close();
-            connection=QSqlDatabase();
-            QSqlDatabase::removeDatabase(connectionName);
-        }
+        if(!connection.isValid())
+            return true;
+
+        QMutexLocker locker(&p.locker);
+        auto connectionName=connection.connectionName();
+        p.connectionList.removeAll(connectionName);
+        connection.close();
+        connection=QSqlDatabase();
+        QSqlDatabase::removeDatabase(connectionName);
         return !connection.isValid();
     }
 
-    virtual bool from(ConnectionPool&pool){
+    virtual bool from(ConnectionPool&pool)
+    {
         return connectionSetting.fromSetting(pool.setting()).isValid();
     }
 
-    virtual bool from(const ConnectionSetting &setting){
+    virtual bool from(const ConnectionSetting &setting)
+    {
         return connectionSetting.fromSetting(setting).isValid();
     }
 
-    virtual bool from(const QVariant &setting){
+    virtual bool from(const QVariant &setting)
+    {
         return connectionSetting.fromMap(setting.toHash()).isValid();
     }
 
-    virtual bool from(const QSqlDatabase &db){
+    virtual bool from(const QSqlDatabase &db)
+    {
         return connectionSetting.fromConnection(db).isValid();
     }
 
@@ -102,13 +102,14 @@ public:
         auto driver=p.connectionSetting.driver().trimmed();
 
 #if Q_ORM_LOG_VERBOSE
-            sWarning()<<"avaliable drivers "<<QSqlDatabase::drivers().join(qsl(","));
+        sWarning()<<qsl("avaliable drivers %1").arg(QSqlDatabase::drivers().join(qsl(",")));
 #endif
 
         if(driver.isEmpty()){
 #if Q_ORM_LOG
-            auto msg=qsl("driver is empty, avaliable drivers, ")+QSqlDatabase::drivers().join(qsl(","));
-            this->lastError=QSqlError(qsl("NoDriver"),msg);
+            static const auto drivers=QSqlDatabase::drivers();
+            auto msg=qsl("driver is empty, avaliable drivers, %1").arg(drivers.join(qsl(",")));
+            this->lastError=QSqlError(qsl("NoDriver"), msg);
             sWarning()<<msg;
 #endif
             return false;
@@ -155,14 +156,15 @@ public:
 
         if(__connection.driverName()==qsl("QODBC")){
             QString odbcDriver;
-            if(p.odbcDrivers.isEmpty())
+            const auto&odbcDriverList=*static_dbcDrivers;
+            if(odbcDriverList.isEmpty())
                 odbcDriver.clear();
-            else if(p.odbcDrivers.contains(qsl("freetds")))
+            else if(odbcDriverList.contains(qsl("freetds")))
                 odbcDriver=qsl("freetds");
-            else if(p.odbcDrivers.contains(qsl("ODBC Driver 17 for SQL Server")))
+            else if(odbcDriverList.contains(qsl("ODBC Driver 17 for SQL Server")))
                 odbcDriver=qsl("ODBC Driver 17 for SQL Server");
             else
-                odbcDriver=p.odbcDrivers.first();
+                odbcDriver=odbcDriverList.first();
 
             if(odbcDriver.isEmpty()){
                 auto name=__connection.connectionName();
@@ -208,7 +210,8 @@ public:
             this->finish(__connection);
             return false;
         }
-        else if(!__connection.open()){
+
+        if(!__connection.open()){
 #if Q_ORM_LOG
             this->lastError=__connection.lastError();
             sWarning()<<__connection.lastError().text();
