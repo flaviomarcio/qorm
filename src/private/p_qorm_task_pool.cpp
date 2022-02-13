@@ -45,6 +45,8 @@ TaskPool::TaskPool(TaskRunner *parent):QThread(nullptr)
 TaskPool::~TaskPool()
 {
     this->threadDinit();
+    dPvt();
+    delete&p;
 }
 
 bool TaskPool::start(const QSqlDatabase &connection)
