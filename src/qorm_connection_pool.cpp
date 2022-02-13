@@ -123,8 +123,8 @@ public:
             return false;
         }
 
-        auto connectionName=qsl("%1_%2").arg(p.baseName).arg(++connectionCount);
-        auto __connection=QSqlDatabase::addDatabase(driver, connectionName.left(60));
+        auto connectionName=qsl("%1_%2").arg(p.baseName.left(55)).arg(++connectionCount);
+        auto __connection=QSqlDatabase::addDatabase(driver, connectionName);
         if(!__connection.isValid()){
 #if Q_ORM_LOG
             auto msg=qsl("invalid QSqlDatabase connection settings");

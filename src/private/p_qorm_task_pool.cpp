@@ -24,9 +24,8 @@ public:
     QVariantList resultList;
     bool resultBool=false;
     QVariantHash connectionSetting;
-    explicit TaskPoolPvt(QObject*object)
+    explicit TaskPoolPvt(QObject*)
     {
-        Q_UNUSED(object)
     }
     virtual ~TaskPoolPvt()
     {
@@ -35,6 +34,7 @@ public:
 
 TaskPool::TaskPool(TaskRunner *parent):QThread(nullptr)
 {
+    this->p=new TaskPoolPvt(this);
     this->moveToThread(this);
     dPvt();
     p.runner=parent;
