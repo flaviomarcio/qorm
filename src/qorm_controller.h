@@ -26,7 +26,7 @@ public:
     //! \param connection
     //! \param parent
     //!
-    explicit Controller(const QSqlDatabase&connection, QObject *parent = nullptr);
+    Q_INVOKABLE explicit Controller(const QSqlDatabase&connection, QObject *parent = nullptr);
 
     ~Controller();
 
