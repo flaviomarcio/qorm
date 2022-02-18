@@ -99,7 +99,7 @@ public:
 
     void init()
     {
-        QMutexLocker locker(&staticSqlSuitableKeyWordLocker);
+        QMutexLOCKER locker(&staticSqlSuitableKeyWordLocker);
         auto vList=this->parent->drivers();
         for(auto&driver : vList){
             if(staticSqlSuitableKeyWordList.contains(this->parent))

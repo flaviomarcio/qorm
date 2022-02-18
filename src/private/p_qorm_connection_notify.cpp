@@ -18,7 +18,7 @@ ConnectionNotifyPvt::~ConnectionNotifyPvt()
 
 bool ConnectionNotifyPvt::queueStop()
 {
-    QMutexLocker locker(&this->mutexLock);
+    QMutexLOCKER locker(&this->mutexLock);
     if(this->notifySubscribe!=nullptr){
         QObject::disconnect(this->notifySubscribe, &ConnectionNotifySubscribe::threadFinish, this, &ConnectionNotifyPvt::threadFinish);
         QObject::disconnect(this, &ConnectionNotifyPvt::notification_send, this->notifySubscribe, &ConnectionNotifySubscribe::onNotificationSend);

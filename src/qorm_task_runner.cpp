@@ -150,7 +150,7 @@ ResultValue &TaskRunner::start()
         name=QThread::currentThread()->objectName().trimmed();
     p.pool.setObjectName(qsl("TaskPool")+name);
     p.pool.start(p.connection());
-    QMutexLocker locker(&p.pool.running());
+    QMutexLOCKER locker(&p.pool.running());
     return this->lr().setResult(p.pool.resultList())=p.pool.resultBool();
 }
 

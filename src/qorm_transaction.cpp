@@ -25,7 +25,8 @@ public:
         this->parent=parent;
     }
 
-    ~TransactionPvt(){
+    ~TransactionPvt()
+    {
     }
 
     Transaction*objReg()
@@ -40,7 +41,7 @@ public:
         else if(obj!=nullptr)
             this->failTryException(tr("Double transaction in connection on the other object"));
         else {
-            QMutexLocker locker(&___mutex_cache);
+            QMutexLOCKER locker(&___mutex_cache);
             ___connections.insert(this->parent, cnn);
             this->objTran=this->parent;
         }
@@ -49,7 +50,7 @@ public:
 
     void objUnreg()
     {
-        QMutexLocker locker(&___mutex_cache);
+        QMutexLOCKER locker(&___mutex_cache);
         auto cnn=this->parent->connection().connectionName();
         auto obj=___connections.key(cnn);
         if(obj==this->parent){
@@ -75,12 +76,13 @@ public:
 
     Transaction*objectTransaction()
     {
-        if(this->objTran==nullptr){
-            QMutexLocker locker(&___mutex_cache);
-            auto cnn=this->parent->connectionId();
-            if(!cnn.isEmpty()){
-                this->objTran=___connections.key(cnn);
-            }
+        if(this->objTran!=nullptr)
+            return this->objTran;
+
+        QMutexLOCKER locker(&___mutex_cache);
+        auto cnn=this->parent->connectionId();
+        if(!cnn.isEmpty()){
+            this->objTran=___connections.key(cnn);
         }
         return this->objTran;
     }

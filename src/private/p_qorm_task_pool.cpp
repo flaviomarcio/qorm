@@ -87,7 +87,7 @@ void TaskPool::run()
 void TaskPool::clear()
 {
     dPvt();
-    QMutexLocker locker(&p.running);
+    QMutexLOCKER locker(&p.running);
     p.methodExecute=__methodExecute;
     p.methodSuccess=__methodSuccess;
     p.methodFailed=__methodFailed;

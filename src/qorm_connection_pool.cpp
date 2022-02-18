@@ -64,7 +64,7 @@ public:
         if(!connection.isValid())
             return true;
 
-        QMutexLocker locker(&p.locker);
+        QMutexLOCKER locker(&p.locker);
         auto connectionName=connection.connectionName();
         p.connectionList.removeAll(connectionName);
         connection.close();
@@ -388,7 +388,7 @@ bool ConnectionPool::finish(QSqlDatabase&connection)
 {
     if(connection.isValid()){
         dPvt();
-        QMutexLocker locker(&p.locker);
+        QMutexLOCKER locker(&p.locker);
         auto connectionName=connection.connectionName();
         p.connectionList.removeAll(connectionName);
         connection.close();
