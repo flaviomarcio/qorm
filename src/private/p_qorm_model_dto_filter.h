@@ -33,176 +33,199 @@ public:
         this->___d=dto;
     }
 
-    ~ModelDtoFilter()
-    {
-
-    }
-
+    //!
+    //! \brief d
+    //! \return
+    //!
     virtual T&d()
     {
         return*this->___d;
     }
 
+    //!
+    //! \brief type
+    //! \return
+    //!
     virtual QVariant type() const
     {
         return this->v.value(qsl("type"));
     }
-
     virtual ModelDtoFilter&type(const QVariant &type)
     {
         return this->setType(type);
     }
-
     virtual ModelDtoFilter&setType(const QVariant &type)
     {
         this->v.insert(qsl("type"),type);
         return*this;
     }
 
+    //!
+    //! \brief value
+    //! \return
+    //!
     virtual QByteArray value() const
     {
         return this->v.value(qsl("value")).toByteArray();
     }
-
     virtual ModelDtoFilter&value(const QVariant &value)
     {
         return this->setValue(value);
     }
-
     virtual ModelDtoFilter&setValue(const QVariant &value)
     {
         this->v.insert(qsl("value"), value);
         return*this;
     }
 
+    //!
+    //! \brief defaultValue
+    //! \return
+    //!
     virtual QString defaultValue() const
     {
         return this->v.value(qsl("defaultValue")).toByteArray();
     }
-
     virtual ModelDtoFilter&defaultValue(const QVariant &value)
     {
         return this->setDefaultValue(value);
     }
-
     virtual ModelDtoFilter&setDefaultValue(const QVariant &value)
     {
         this->v.insert(qsl("defaultValue"), value.toByteArray());
         return*this;
     }
 
+    //!
+    //! \brief comboValue
+    //! \return
+    //!
     virtual QString comboValue() const
     {
         return this->v.value(qsl("comboValue")).toByteArray();
     }
-
     virtual ModelDtoFilter&comboValue(const QVariant &value)
     {
         return this->setComboValue(value);
     }
-
     virtual ModelDtoFilter&setComboValue(const QVariant &value)
     {
         this->v.insert(qsl("comboValue"), value.toByteArray());
         return*this;
     }
 
+    //!
+    //! \brief text
+    //! \return
+    //!
     virtual QString text() const
     {
         return this->v.value(qsl("text")).toByteArray();
     }
-
     virtual ModelDtoFilter&text(const QVariant &value)
     {
         return this->setText(value);
     }
-
     virtual ModelDtoFilter&setText(const QVariant &value)
     {
         this->v.insert(qsl("text"), value.toByteArray());
         return*this;
     }
 
+    //!
+    //! \brief align
+    //! \return
+    //!
     virtual QVariant align() const
     {
         return this->v.value(qsl("align"));
     }
-
     virtual ModelDtoFilter&align(const QVariant& value)
     {
         return this->setAlign(value);
     }
-
     virtual ModelDtoFilter&setAlign(const QVariant& value)
     {
         this->v.insert(qsl("align"), value);
         return*this;
     }
 
+    //!
+    //! \brief width
+    //! \return
+    //!
     virtual QVariant width() const
     {
         return this->v.value(qsl("width")).toBool();
     }
-
     virtual ModelDtoFilter&width(const QVariant& value)
     {
         return this->setWidth(value);
     }
-
     virtual ModelDtoFilter&setWidth(const QVariant& value)
     {
         this->v.insert(qsl("width"), value);
         return*this;
     }
 
+    //!
+    //! \brief sortable
+    //! \return
+    //!
     virtual bool sortable() const
     {
         return this->v.value(qsl("sortable")).toBool();
     }
-
     virtual ModelDtoFilter&sortable(const QVariant &value)
     {
         return this->setSortable(value);
     }
-
     virtual ModelDtoFilter&setSortable(const QVariant &value)
     {
         this->v.insert(qsl("sortable"), value);
         return*this;
     }
 
+    //!
+    //! \brief filtrable
+    //! \return
+    //!
     virtual bool filtrable() const
     {
         return this->v.value(qsl("filtrable")).toBool();
     }
-
     virtual ModelDtoFilter&filtrable(const QVariant &value)
     {
         return this->setFiltrable(value);
     }
-
     virtual ModelDtoFilter&setFiltrable(const QVariant &value)
     {
         this->v.insert(qsl("filtrable"), value);
         return*this;
     }
 
+    //!
+    //! \brief filterStyle
+    //! \return
+    //!
     virtual DtoFilterStyle filterStyle() const
     {
         return DtoFilterStyle(this->v.value(qsl("filterStyle")).toInt());
     }
-
     virtual ModelDtoFilter&filterStyle(const DtoFilterStyle &value)
     {
         return this->setFilterStyle(value);
     }
-
     virtual ModelDtoFilter&setFilterStyle(const QVariant &value)
     {
         this->v.insert(qsl("filterStyle"), value);
         return*this;
     }
 
+    //!
+    //! \brief toVariant
+    //! \return
+    //!
     virtual QVariant toVariant()const
     {
         return this->v;

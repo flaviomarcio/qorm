@@ -15,7 +15,8 @@ public:
     //! \brief ModelReport
     //! \param parent
     //!
-    Q_INVOKABLE explicit ModelReport(QObject *parent = nullptr) : PrivateQOrm::ModelReportBase(parent), p_dao(this), p_model(this){
+    Q_INVOKABLE explicit ModelReport(QObject *parent = nullptr) : PrivateQOrm::ModelReportBase(parent), p_dao(this), p_model(this)
+    {
         this->init();
     }
 
@@ -37,7 +38,8 @@ public:
     //! \brief reportfy
     //! \return
     //!
-    virtual ResultValue &reportfy(){
+    virtual ResultValue &reportfy()
+    {
         this->p_dto.type(this->type());
         this->p_dto.layout(this->layout());
         return PrivateQOrm::ModelReportBase::reportfy();
@@ -51,7 +53,8 @@ private:
     //!
     //! \brief init
     //!
-    void init(){
+    void init()
+    {
         this->dto().initDescriptors(&p_model);
         const auto&modelInfo=p_dao.modelRef;
         this->reportName(modelInfo.modelName()).reportDescription(modelInfo.modelDescription());
@@ -61,7 +64,8 @@ protected:
     //! \brief modelInfo
     //! \return
     //!
-    virtual const QOrm::ModelInfo&modelInfo(){
+    virtual const QOrm::ModelInfo&modelInfo()
+    {
         const auto&modelInfo=this->p_model.modelInfo();
         return modelInfo;
     }
@@ -71,7 +75,8 @@ protected:
     //! \param model
     //! \return
     //!
-    virtual ResultValue &search(const T&model){
+    virtual ResultValue &search(const T&model)
+    {
         auto value=model.toMapPKValues();
         VariantUtil util;
         if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
@@ -90,7 +95,8 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &search(const QVariant&value){
+    virtual ResultValue &search(const QVariant&value)
+    {
         VariantUtil util;
         if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
             return this->lr();
@@ -107,7 +113,8 @@ protected:
     //! \brief search
     //! \return
     //!
-    virtual ResultValue &search(){
+    virtual ResultValue &search()
+    {
         T model(this->source());
         auto mapSource=this->source().toHash();
         SearchParameters map;
@@ -145,7 +152,8 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onBefore(QOrm::ModelActionMethod method){
+    auto&onBefore(QOrm::ModelActionMethod method)
+    {
         auto obj=PrivateQOrm::ModelReportBase::onBefore(method);
         return*(dynamic_cast<ModelReport<T>*>(obj));
     }
@@ -155,7 +163,8 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onSuccess(QOrm::ModelActionMethod method){
+    auto&onSuccess(QOrm::ModelActionMethod method)
+    {
         auto obj=PrivateQOrm::ModelReportBase::onSuccess(method);
         return*(dynamic_cast<ModelReport<T>*>(obj));
     }
@@ -165,7 +174,8 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onFailed(QOrm::ModelActionMethod method){
+    auto&onFailed(QOrm::ModelActionMethod method)
+    {
         auto obj=PrivateQOrm::ModelReportBase::onFailed(method);
         return*(dynamic_cast<ModelReport<T>*>(obj));
     }

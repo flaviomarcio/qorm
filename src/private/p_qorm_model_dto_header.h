@@ -5,7 +5,9 @@
 namespace QOrm {
 
 class ModelDto;
-//TODO CREATE DOCUMENTATION
+//!
+//! \brief The ModelDtoHeader class
+//!
 template <class T>
 class ModelDtoHeader : public QStm::Object{
 
@@ -41,193 +43,225 @@ public:
     Q_PROPERTY(QVariant inputMask READ inputMask WRITE setInputMask NOTIFY inputMaskChanged)
     Q_PROPERTY(QVariant inputLinks READ inputLinks WRITE setInputLinks NOTIFY inputLinksChanged)
 
+    //!
+    //! \brief ModelDtoHeader
+    //! \param dto
+    //! \param parent
+    //!
     Q_INVOKABLE explicit ModelDtoHeader(T*dto, QObject*parent=nullptr):QStm::Object(parent)
     {
         this->___d=dto;
     }
 
-    ~ModelDtoHeader()
-    {
-
-    }
-
+    //!
+    //! \brief d
+    //! \return
+    //!
     T&d()
     {
         return*this->___d;
     }
 
+    //!
+    //! \brief order
+    //! \return
+    //!
     virtual QVariant order() const
     {
         return QVariant(this->v.value(vpOrder).toInt());
     }
-
     virtual ModelDtoHeader&order(const QVariant &order)
     {
         return this->setOrder(order);
     }
-
     virtual ModelDtoHeader&setOrder(const QVariant &order)
     {
         this->v.insert(vpOrder,order.toInt());
         return*this;
     }
 
+    //!
+    //! \brief type
+    //! \param type
+    //! \return
+    //!
     virtual ModelDtoHeader&type(const QVariant &type)
     {
         return this->setType(type);
     }
-
     virtual ModelDtoHeader&setType(const QVariant &type)
     {
         this->v.insert(vpType,type);
         return*this;
     }
 
+    //!
+    //! \brief value
+    //! \return
+    //!
     virtual QString value() const
     {
         return this->v.value(vpValue).toByteArray();
     }
-
     virtual ModelDtoHeader&value(const QVariant &value)
     {
         return this->setValue(value);
     }
-
     virtual ModelDtoHeader&setValue(const QVariant &value)
     {
         this->v.insert(vpValue, value.toByteArray());
         return*this;
     }
 
+    //!
+    //! \brief defaultValue
+    //! \return
+    //!
     virtual QString defaultValue() const
     {
         return this->v.value(vpDefaultValue).toByteArray();
     }
-
     virtual ModelDtoHeader&defaultValue(const QVariant &value)
     {
         return this->setDefaultValue(value);
     }
-
     virtual ModelDtoHeader&setDefaultValue(const QVariant &value)
     {
         this->v.insert(vpDefaultValue, value.toByteArray());
         return*this;
     }
-
     virtual QVariant defaultSelect() const
     {
         return this->v.value(vpDefaultSelect);
     }
-
     virtual ModelDtoHeader&defaultSelect(const QVariant &value)
     {
         this->v.insert(vpDefaultSelect, value);
         return*this;
     }
 
+    //!
+    //! \brief text
+    //! \return
+    //!
     virtual QString text() const
     {
         return this->v.value(vpText).toByteArray();
     }
-
     virtual ModelDtoHeader&text(const QVariant &value)
     {
         return this->setText(value);
     }
-
     virtual ModelDtoHeader&setText(const QVariant &value)
     {
         this->v.insert(vpText, value.toByteArray());
         return*this;
     }
 
+    //!
+    //! \brief align
+    //! \return
+    //!
     virtual QVariant align() const
     {
         return this->v.value(vpAlign);
     }
-
     virtual ModelDtoHeader&align(const QVariant& value)
     {
         return this->setAlign(value);
     }
-
     virtual ModelDtoHeader&setAlign(const QVariant& value)
     {
         this->v.insert(vpAlign, value);
         return*this;
     }
 
+    //!
+    //! \brief width
+    //! \return
+    //!
     virtual QVariant width() const
     {
         return this->v.value(vpWidth).toBool();
     }
-
     virtual ModelDtoHeader&width(const QVariant& value)
     {
         return this->setWidth(value);
     }
-
     virtual ModelDtoHeader&setWidth(const QVariant& value)
     {
         this->v.insert(vpWidth, value);
         return*this;
     }
 
+    //!
+    //! \brief inputType
+    //! \return
+    //!
     virtual QVariant inputType() const
     {
         return this->v.value(vpInputType);
     }
-
     virtual ModelDtoHeader&inputType(const QVariant &value)
     {
         this->v.insert(vpInputType, value);
         return*this;
     }
 
+    //!
+    //! \brief inputMask
+    //! \return
+    //!
     virtual QVariant inputMask() const
     {
         return this->v.value(vpInputType);
     }
-
     virtual ModelDtoHeader&inputMask(const QVariant &value)
     {
         this->v.insert(vpInputMask, value);
         return*this;
     }
 
+    //!
+    //! \brief inputLinks
+    //! \return
+    //!
     virtual QVariant inputLinks() const
     {
         return this->v.value(vtInputLinks);
     }
-
     virtual ModelDtoHeader&inputLinks(const QVariant &value)
     {
         this->v.insert(vtInputLinks, value);
         return*this;
     }
 
+    //!
+    //! \brief length
+    //! \return
+    //!
     virtual QVariant length() const
     {
         return this->v.value(vpLength);
     }
-
     virtual ModelDtoHeader&length(const QVariant &value)
     {
         this->v.insert(vpLength, value.toInt());
         return*this;
     }
 
+    //!
+    //! \brief visible
+    //! \return
+    //!
     virtual bool visible() const
     {
         return this->v.value(vpVisible).toBool();
     }
-
     virtual ModelDtoHeader&visible(const QVariant&value)
     {
         return this->setVisible(value);
     }
-
     virtual ModelDtoHeader&setVisible(const QVariant&value)
     {
         auto v=(value.isNull() || !value.isValid())?true:value.toBool();
@@ -235,11 +269,14 @@ public:
         return*this;
     }
 
+    //!
+    //! \brief readOnly
+    //! \return
+    //!
     virtual bool readOnly() const
     {
         return this->v.value(vpReadOnly).toBool();
     }
-
     virtual ModelDtoHeader&readOnly(const QVariant&value)
     {
         auto v=(value.isNull() || !value.isValid())?true:value.toBool();
@@ -247,100 +284,122 @@ public:
         return*this;
     }
 
+    //!
+    //! \brief editable
+    //! \return
+    //!
     virtual bool editable() const
     {
         return this->v.value(vpEditable).toBool();
     }
-
     virtual ModelDtoHeader&editable(const QVariant&value)
     {
         return this->setEditable(value);
     }
-
     virtual ModelDtoHeader&setEditable(const QVariant&value)
     {
         this->v.insert(vpEditable, value.toBool());
         return*this;
     }
 
+    //!
+    //! \brief sortable
+    //! \return
+    //!
     virtual bool sortable() const
     {
         return this->v.value(vpSortable).toBool();
     }
-
     virtual ModelDtoHeader&sortable(const QVariant&value)
     {
         return this->setSortable(value);
     }
-
     virtual ModelDtoHeader&setSortable(const QVariant&value)
     {
         this->v.insert(vpSortable, value.toBool());
         return*this;
     }
 
+    //!
+    //! \brief filtrable
+    //! \return
+    //!
     virtual bool filtrable() const
     {
         return this->v.value(vpFiltrable).toBool();
     }
-
     virtual ModelDtoHeader&filtrable(const QVariant&value)
     {
         return this->setFiltrable(value);
     }
-
     virtual ModelDtoHeader&setFiltrable(const QVariant&value)
     {
         this->v.insert(vpFiltrable, value.toBool());
         return*this;
     }
 
+    //!
+    //! \brief filtrableStrategy
+    //! \return
+    //!
     virtual QVariantHash filtrableStrategy() const
     {
         return this->v.value(vpFiltrableStrategy).toHash();
     }
-
     virtual ModelDtoHeader&filtrableStrategy(const QVariant&value)
     {
         return this->setFiltrableStrategy(value);
     }
-
     virtual ModelDtoHeader&setFiltrableStrategy(const QVariant&value)
     {
         this->v.insert(vpFiltrableStrategy, value);
         return*this;
     }
 
+    //!
+    //! \brief filterStyle
+    //! \return
+    //!
     virtual DtoFilterStyle filterStyle() const
     {
         return DtoFilterStyle(this->v.value(vpFilterStyle).toInt());
     }
-
     virtual ModelDtoHeader&filterStyle(const QVariant &value)
     {
         return this->setFilterStyle(value);
     }
-
     virtual ModelDtoHeader&setFilterStyle(const QVariant &value)
     {
         this->v.insert(vpFilterStyle, value.toInt());
         return*this;
     }
 
+    //!
+    //! \brief toVar
+    //! \return
+    //!
     virtual QVariant toVar()const
     {
         return this->v;
-    };
+    }
 
+    //!
+    //! \brief toHash
+    //! \return
+    //!
     virtual const QVariantHash&toHash()
     {
         return this->v;
-    };
+    }
 
+    //!
+    //! \brief toMap
+    //! \return
+    //!
     virtual QVariantMap toMap()const
     {
         return QVariant(this->v).toMap();
-    };
+    }
 
 private:
     QVariantHash v;
@@ -348,33 +407,48 @@ private:
 };
 
 
+//!
+//! \brief The ModelDtoHeaders class
+//!
 template <class T>
 class  ModelDtoHeaders:public QStm::Object
 {
 public:
 
+    //!
+    //! \brief The FilterStyle enum
+    //!
     enum FilterStyle{
         dsAutoDectect=DtoFilterStyle::dsAutoDectect
     };
-
     Q_ENUM(FilterStyle)
 
-
+    //!
+    //! \brief ModelDtoHeaders
+    //! \param dto
+    //! \param parent
+    //!
     explicit ModelDtoHeaders(T*dto, QObject*parent=nullptr):QStm::Object(parent)
     {
         this->___d=dto;
     }
 
+    //!
+    //! \brief ModelDtoHeaders
+    //! \param dto
+    //! \param v
+    //! \param parent
+    //!
     explicit ModelDtoHeaders(T*dto, const QVariantHash&v, QObject*parent=nullptr):QStm::Object(parent)
     {
         Q_UNUSED(v)
         this->___d=dto;
     }
 
-    virtual ~ModelDtoHeaders()
-    {
-    }
-
+    //!
+    //! \brief clear
+    //! \return
+    //!
     virtual ModelDtoHeaders<T>&clear()
     {
         this->___objectMap.clear();
@@ -382,6 +456,10 @@ public:
         return*this;
     }
 
+    //!
+    //! \brief toVar
+    //! \return
+    //!
     virtual QVariant toVar()const
     {
         QVariantList vList;
@@ -390,6 +468,10 @@ public:
         return vList;
     };
 
+    //!
+    //! \brief toList
+    //! \return
+    //!
     virtual QVariant toList()const
     {
         QVariantList vList;
@@ -398,16 +480,30 @@ public:
         return vList;
     };
 
+    //!
+    //! \brief d
+    //! \return
+    //!
     virtual T&d()
     {
         return*this->___d;
     }
 
+    //!
+    //! \brief get
+    //! \param v
+    //! \return
+    //!
     virtual ModelDtoHeader<T>* get(const QString&v)
     {
         return this->___objectMap.value(v);
     }
 
+    //!
+    //! \brief remove
+    //! \param v
+    //! \return
+    //!
     virtual ModelDtoHeaders&remove(const QString&v)
     {
         if(this->___objectMap.contains(v)){
@@ -418,11 +514,21 @@ public:
         return*this;
     }
 
+    //!
+    //! \brief value
+    //! \param v
+    //! \return
+    //!
     virtual ModelDtoHeader<T>&value(const QString&v)
     {
         return this->value(QVariantHash{{vpValue,v}});
     }
 
+    //!
+    //! \brief value
+    //! \param v
+    //! \return
+    //!
     virtual ModelDtoHeader<T>&value(const QVariantHash&v)
     {
         auto value=v.value(vpValue).toString();
@@ -454,23 +560,38 @@ public:
         return*object;
     }
 
+    //!
+    //! \brief makeDefault
+    //! \return
+    //!
     virtual ModelDtoHeader<T>&makeDefault()
     {
         static auto vAction=QVariantHash{ { vpValue, vpActions}, { vpText, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }};
         return this->value(vAction);
     }
 
+    //!
+    //! \brief unMakeDefault
+    //! \return
+    //!
     virtual ModelDtoHeaders&unMakeDefault()
     {
         return this->remove(vpActions);
     }
 
+    //!
+    //! \brief list
+    //! \return
+    //!
     virtual QList<ModelDtoHeader<T>*>&list()
     {
         this->reOrder();
         return this->___objectList;
     }
 
+    //!
+    //! \brief reOrder
+    //!
     virtual void reOrder()
     {
         auto i=0;
