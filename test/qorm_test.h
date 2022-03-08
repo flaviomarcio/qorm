@@ -31,60 +31,67 @@ if(request.response().isOk())\
 
 namespace QOrm {
 
-    class SDKGoogleTest : public testing::Test{
-    public:
+class SDKGoogleTest : public testing::Test{
+public:
 
-        explicit SDKGoogleTest()
-        {
-            this->clear();
-            QLocale::setDefault(QLocale(QLocale::Portuguese, QLocale::Brazil));
-        }
+    explicit SDKGoogleTest();
 
-        virtual bool clear()
-        {
-            return true;
-        }
+    //!
+    //! \brief SetUpTestCase
+    //!
+    static void SetUpTestCase()
+    {
+    }
 
-        virtual QStringList arguments()
-        {
-            return qApp->arguments();
-        }
+    //!
+    //! \brief SetUp
+    //!
+    virtual void SetUp()
+    {
+    }
 
-        static QByteArray toMd5(const QVariant&v)
-        {
-            QByteArray bytes;
-            if(QStmTypesObjectMetaData.contains(qTypeId(v)))
-                bytes=QJsonDocument::fromVariant(v).toJson(QJsonDocument::Compact);
-            else
-                bytes=v.toByteArray();
-            return QCryptographicHash::hash(bytes, QCryptographicHash::Md5).toHex();
-        }
+    //!
+    //! \brief TearDown
+    //!
+    virtual void TearDown()
+    {
+    }
 
-        static QVariant toVar(const QVariant&v)
-        {
-            if(QStmTypesListString.contains(qTypeId(v)))
-                return QJsonDocument::fromJson(v.toByteArray()).toVariant();
-            return v;
-        }
+    //!
+    //! \brief TearDownTestCase
+    //!
+    static void TearDownTestCase()
+    {
+    }
 
-        static void SetUpTestCase()
-        {
-        }
+    //!
+    //! \brief clear
+    //! \return
+    //!
+    virtual bool clear();
 
-        virtual void SetUp()
-        {
-        }
+    //!
+    //! \brief arguments
+    //! \return
+    //!
+    virtual QStringList arguments()const;
 
-        virtual void TearDown()
-        {
-        }
+    //!
+    //! \brief toMd5
+    //! \param v
+    //! \return
+    //!
+    static const QByteArray toMd5(const QVariant&v);
 
-        static void TearDownTestCase()
-        {
-        }
+    //!
+    //! \brief toVar
+    //! \param v
+    //! \return
+    //!
+    static const QVariant toVar(const QVariant&v);
 
-    public:
+public:
 
-    };
 
+};
 }

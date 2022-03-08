@@ -203,7 +203,7 @@ bool SqlParserCommand::makeObject()
         if(v!=this)
             v->makeObject();
         auto typeId=qTypeId(*v);
-        if(QStmTypesVariantDictionary.contains(typeId)){
+        if(QMetaTypeUtilVariantDictionary.contains(typeId)){
             auto map=v->toHash();
             vThis.insert(key, map);
             __return=true;

@@ -128,10 +128,10 @@ ConnectionManager &ConnectionManagerPrv::insert(const QVariantHash &value)
 bool ConnectionManagerPrv::v_load(const QVariant &v)
 {
     auto typeId=qTypeId(v);
-    if(QStmTypesVariantList.contains(typeId))
+    if(QMetaTypeUtilVariantList.contains(typeId))
         return this->load(v.toStringList());
 
-    if(QStmTypesVariantDictionary.contains(typeId))
+    if(QMetaTypeUtilVariantDictionary.contains(typeId))
         return this->load(v.toHash());
 
     return this->load(v.toString());

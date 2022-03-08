@@ -103,7 +103,7 @@ namespace QOrm {
         }
 
         QVariant vFy=strategy;
-        if(QStmTypesListString.contains(qTypeId(vFy))){
+        if(QMetaTypeUtilString.contains(qTypeId(vFy))){
             vFy=vFy.toString().toLower();
             vFy=__stringToStrategy.value(vFy.toString());
         }

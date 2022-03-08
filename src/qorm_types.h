@@ -17,6 +17,7 @@
 #include <QtSql/QSqlRecord>
 #include <QtSql/QSqlError>
 #include "../../qstm/src/qstm_types.h"
+#include "../../qstm/src/qstm_meta_types.h"
 #include "../../qstm/src/qstm_currency.h"
 #include "../../qstm/src/qstm_vvm.h"
 #include "../../qstm/src/qstm_svm.h"

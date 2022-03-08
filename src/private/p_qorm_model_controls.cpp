@@ -1,5 +1,6 @@
 #include "./p_qorm_model_controls.h"
 #include "../qorm_model_dto.h"
+
 #include <QVariantHash>
 
 namespace QOrm {

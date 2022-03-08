@@ -28,7 +28,7 @@ SqlParserField::~SqlParserField()
 QString SqlParserField::toFormat(SqlSuitableKeyWord &parser) const
 {
     auto typeId=qTypeId(qTypeId(*this));
-    if(QStmTypesVariantDictionary.contains(typeId))
+    if(QMetaTypeUtilVariantDictionary.contains(typeId))
         return qsl_null;
     return SqlParserItem::toFormat(parser);
 }

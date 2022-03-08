@@ -1,4 +1,5 @@
 #include "./p_qorm_model_dto_link_base.h"
+#include "../../qstm/src/qstm_meta_types.h"
 #include <QUuid>
 
 namespace PrivateQOrm {
@@ -151,7 +152,7 @@ ModelDtoLinkItem &ModelDtoLinkItem::setParameters(const QVariant &value)
 {
     dPvtI();
     auto typeId=qTypeId(value);
-    if(QStmTypesListString.contains(typeId)){
+    if(QMetaTypeUtilString.contains(typeId)){
         auto name=value.toString().trimmed();
         if(name.isEmpty())
             p.parameters=QVariantHash{{name, qsl("${%1}").arg(name)}};

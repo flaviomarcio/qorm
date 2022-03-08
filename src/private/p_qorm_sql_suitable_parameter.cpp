@@ -189,7 +189,7 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant()
                 if(!vA.value().isValid() && !vB.value().isValid())
                     continue;
 
-                if(vA.isValue() && QStmTypesListString.contains(qTypeId(vA.value()))){
+                if(vA.isValue() && QMetaTypeUtilString.contains(qTypeId(vA.value()))){
                     auto s=vA.value().toString();
                     if(!s.contains(qsl("%")))
                         s+=qsl("%");
@@ -197,7 +197,7 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant()
                     vB.setValue(s);
                 }
 
-                if(vB.isValue() && QStmTypesListString.contains(qTypeId(vB.value()))){
+                if(vB.isValue() && QMetaTypeUtilString.contains(qTypeId(vB.value()))){
                     auto s=vB.value().toString();
                     if(!s.contains(qsl("%")))
                         s+=qsl("%");

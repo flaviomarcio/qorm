@@ -106,7 +106,7 @@ void ConnectionManager::setParamaters(const QVariantHash &value)
     qDeleteAll(lst);
     p.settings.clear();
     for(auto&v:value){
-        if(!QStmTypesVariantDictionary.contains(qTypeId(v)))
+        if(!QMetaTypeUtilVariantDictionary.contains(qTypeId(v)))
             continue;
         this->insert(v.toHash());
     }

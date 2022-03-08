@@ -29,13 +29,13 @@ SqlParserValues &SqlParserValues::value(const QVariant &v)
     }
 
     auto typeId=qTypeId(v);
-    if(QStmTypesVariantList.contains(typeId)){
+    if(QMetaTypeUtilVariantList.contains(typeId)){
         for(auto&i:v.toList())
             this->value(i);
         return*this;
     }
 
-    if(QStmTypesVariantDictionary.contains(typeId)){
+    if(QMetaTypeUtilVariantDictionary.contains(typeId)){
         QHashIterator<QString, QVariant> i(v.toHash());
         while (i.hasNext()) {
             i.next();

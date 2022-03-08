@@ -1,5 +1,6 @@
 #include "./qorm_wrapper.h"
 #include "../../qstm/src/qstm_types.h"
+#include "../../qstm/src/qstm_meta_types.h"
 
 namespace QOrm {
 

@@ -1,5 +1,6 @@
 #include "./qorm_connection_setting.h"
 #include "./qorm_macro.h"
+
 #include <QFile>
 #include <QSettings>
 #include <QStringList>

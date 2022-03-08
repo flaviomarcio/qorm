@@ -89,7 +89,7 @@ public:
             return;
         }
         QVariant vFy=strategy;
-        if(QStmTypesListString.contains(qTypeId(vFy))){
+        if(QMetaTypeUtilString.contains(qTypeId(vFy))){
             vFy=vFy.toString().toLower();
             vFy=QOrm::__stringToStrategy.value(vFy.toString());
         }

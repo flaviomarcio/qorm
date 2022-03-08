@@ -17,6 +17,7 @@ HEADERS += \
     $$PWD/qorm_test_unit.h
 
 SOURCES += \
+    $$PWD/qorm_test.cpp \
     $$PWD/qorm_unit_test_object.cpp \
     $$PWD/qorm_unit_test_model.cpp \
     $$PWD/qorm_unit_test_dto.cpp \

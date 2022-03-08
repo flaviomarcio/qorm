@@ -542,7 +542,7 @@ public:
                 if(tableFiltrableField_.contains(propertyName))
                     pvt.propertyFiltrable[propertyName]=property;
 
-                if(!QStmTypesVariantDictionary.contains(qTypeId(property)))//property info
+                if(!QMetaTypeUtilVariantDictionary.contains(qTypeId(property)))//property info
                     continue;
                 auto split=propertyName.split(qsl("qorm__info__"));
                 if(split.size()!=2)
