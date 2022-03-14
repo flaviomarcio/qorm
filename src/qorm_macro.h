@@ -4,9 +4,6 @@
 #include <QMutex>
 #include "../../qstm/src/qstm_macro.h"
 
-//ignore NODE: Note: No relevant classes found. No output generated.
-class QRPCSimpleClass { explicit QRPCSimpleClass(){}};
-
 #define ORM_STRINGFY(name)\
 QT_STRINGIFY2(#name)
 
