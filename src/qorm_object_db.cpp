@@ -3,14 +3,7 @@
 #include <QMetaMethod>
 #include <QMetaObject>
 
-namespace PrivateOrm {
-Q_GLOBAL_STATIC_WITH_ARGS(QByteArray,connectionIdMethod,("connectionid"))
-}
-
-
 namespace QOrm {
-
-static const auto&connectionIdMethod=*PrivateOrm::connectionIdMethod;
 
 #define dPvt()\
     auto&p = *reinterpret_cast<ObjectDbPvt*>(this->p)\
@@ -22,16 +15,18 @@ public:
     DoubleUtil dbUtil;
     QObject*parent=nullptr;
     QByteArray ___connectionId;
-    explicit ObjectDbPvt(QObject*parent):QObject(parent)
+    explicit ObjectDbPvt(QObject*parent):QObject{parent}
     {
         this->parent=parent;
     }
 
-    static QSqlDatabase invokeMethodConnection(QObject*objectCheck)
+    bool invokeMethodConnection(QObject*objectCheck, QSqlDatabase &outConnection)
     {
+        static QByteArray connectionIdMethod(qbl("connectionid"));
         auto metaObject=objectCheck->metaObject();
-        for(int mi = 0; mi < metaObject->methodCount(); ++mi) {
-            auto method = metaObject->method(mi);
+        for(int i = 0; i < metaObject->methodCount(); ++i) {
+            auto method = metaObject->method(i);
+
             if(method.parameterCount()>0)
                 continue;
 
@@ -42,35 +37,55 @@ public:
             QString _textStr;
             QGenericReturnArgument invokeReturn;
 
-            if(method.returnType()==QMetaType_QString)
+            switch (method.returnType()) {
+            case QMetaType_QString:
                 invokeReturn=Q_RETURN_ARG(QString, _textStr);
-            else
+                break;
+            default:
                 invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
+            }
 
             if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)){
 #ifdef Q_ORM_LOG_SUPER_VERBOSE
                 sWarning()<<qbl("Invalid invoke ")<<method.name()<<qbl(" to object:")<<objectCheck->metaObject()->className();
 #endif
-                return QSqlDatabase();
+                return {};
             }
 
-            auto connectionId = ((method.returnType()==QMetaType_QString)?_textStr.toUtf8():_textBytes).trimmed();
-            auto connection=connectionId.isEmpty()?QSqlDatabase():QSqlDatabase::database(connectionId);
+            QByteArray connectionId;
+            switch (method.returnType()){
+            case QMetaType_QString:
+                connectionId=_textStr.toUtf8().trimmed();
+                break;
+            default:
+                connectionId=_textBytes.trimmed();
+            }
+
+            if(connectionId.isEmpty())
+                return {};
+
+            auto connection=QSqlDatabase::database(connectionId);
             if(!connection.isValid() || !connection.isOpen())
-                return QSqlDatabase();
-            return connection;
+                return {};
+
+            outConnection=connection;
+            return true;
         }
-        return QSqlDatabase();
+        return {};
     };
 
     QSqlDatabase connectionGet()
     {
-        if(!this->___connectionId.isEmpty())
-            return QSqlDatabase::database(this->___connectionId);
+        if(!this->___connectionId.isEmpty()){
+            auto connection=QSqlDatabase::database(this->___connectionId);
+            if(connection.isOpen())
+                return connection;
+        }
+
         QSqlDatabase connection;
         auto parentConnection = this->parent;
         if(parentConnection==nullptr)
-            return connection;
+            return {};
 
         QVector<QObject*> parentVector;
         auto loopObject = parentConnection;
@@ -79,12 +94,13 @@ public:
             loopObject=loopObject->parent();
         }
         for(auto&invokeObject:parentVector){
-            connection=this->invokeMethodConnection(invokeObject);
-            if(!connection.isOpen())
+
+            if(!this->invokeMethodConnection(invokeObject, connection))
                 continue;
+
             return connection;
         }
-        return QSqlDatabase();
+        return {};
     }
 
     QByteArray connectionId()const

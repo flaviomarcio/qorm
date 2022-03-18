@@ -60,7 +60,7 @@ public:
     //! \param pool
     //! \return
     //!
-    virtual bool from(ConnectionPool&pool);
+    virtual bool from(ConnectionPool &pool);
 
     //!
     //! \brief from
@@ -112,7 +112,7 @@ public:
     //!
     //! \brief finish
     //!
-    void finish();
+    ConnectionPool &finish();
 
     //!
     //! \brief finish

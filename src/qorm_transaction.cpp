@@ -13,39 +13,45 @@ static auto&___connections=*___connections__;
 #define dPvt()\
     auto&p =*reinterpret_cast<TransactionPvt*>(this->p)
 
-class TransactionPvt:public QObject{
+class TransactionPvt{
 public:
     Transaction*objTran=nullptr;
 
     bool rollbackOnError=true;
     bool exceptionOnFail=true;
     Transaction*parent=nullptr;
-    explicit TransactionPvt(Transaction*parent):QObject(parent)
+    explicit TransactionPvt(Transaction*parent)
     {
         this->parent=parent;
     }
 
-    ~TransactionPvt()
+    virtual ~TransactionPvt()
     {
     }
 
-    Transaction*objReg()
+    void objReg()
     {
         auto cnn=this->parent->connection().connectionName();
         auto obj=___connections.key(cnn);
 
-        if(cnn.isEmpty())
-            this->failTryException(tr("Fail:Invalid connection on transaction"));
-        else if(obj==this->parent)
-            this->failTryException(tr("Double transaction on the same object"));
-        else if(obj!=nullptr)
-            this->failTryException(tr("Double transaction in connection on the other object"));
-        else {
-            QMutexLOCKER locker(&___mutex_cache);
-            ___connections.insert(this->parent, cnn);
-            this->objTran=this->parent;
+        if(cnn.isEmpty()){
+            this->failTryException(qsl("Fail:Invalid connection on transaction"));
+            return;
         }
-        return this->objTran;
+
+        if(obj==this->parent){
+            this->failTryException(qsl("Double transaction on the same object"));
+            return;
+        }
+
+        if(obj!=nullptr){
+            this->failTryException(qsl("Double transaction in connection on the other object"));
+            return;
+        }
+
+        QMutexLOCKER locker(&___mutex_cache);
+        ___connections.insert(this->parent, cnn);
+        this->objTran=this->parent;
     }
 
     void objUnreg()
@@ -65,13 +71,14 @@ public:
         return (objectTransaction==nullptr);
     }
 
-    void failTryException(const QString&v)
+    ResultValue &failTryException(const QString&v)
     {
         this->parent->lr().setCritical(v);
         if(!this->exceptionOnFail)
-            sWarning()<<tr("dangerous failure detected and ignored during try-rollback, try-transaction or try-commit");
+            sWarning()<<qsl("dangerous failure detected and ignored during try-rollback, try-transaction or try-commit");
         else
             qFatal("dangerous failure detected and ignored during try-rollback, try-transaction or try-commit");
+        return this->parent->lr();
     }
 
     Transaction*objectTransaction()
@@ -105,19 +112,24 @@ ResultValue &Transaction::transaction()
     auto objectTransaction=p.objectTransaction();
     auto db=this->connection();
     if(objectTransaction==this)
-        p.failTryException(tr("Double transaction on the same object"));
-    else if(objectTransaction==nullptr){
-        if(!db.isValid())
-            this->lr().setCritical(tr("Invalid connection on transaction"));
-        else if(!db.isOpen())
-            this->lr().setCritical(tr("Connection is not opened"));
-        else if(!this->lr())
-            p.failTryException(this->lr().toString());
-        else if(!db.transaction())
-            p.failTryException(db.lastError().text());
-        else
-            p.objReg();
-    }
+        return p.failTryException(tr("Double transaction on the same object"));
+
+    if(objectTransaction!=nullptr)
+        return this->lr();
+
+    if(!db.isValid())
+        return this->lr().setCritical(tr("Invalid connection on transaction"));
+
+    if(!db.isOpen())
+        return this->lr().setCritical(tr("Connection is not opened"));
+
+    if(!this->lr())
+        return p.failTryException(this->lr().toString());
+
+    if(!db.transaction())
+        return p.failTryException(db.lastError().text());
+
+    p.objReg();
     return this->lr();
 }
 

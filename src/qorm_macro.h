@@ -413,11 +413,11 @@ public:\
     Q_INVOKABLE virtual QSqlDatabase connection()const{\
         return QSqlDatabase::database(____connectionId);\
     }\
-    Q_INVOKABLE virtual bool setConnection(QSqlDatabase connection){\
+    Q_INVOKABLE virtual bool setConnection(const QSqlDatabase &connection){\
         ____connectionId=connection.connectionName().toUtf8();\
         return this->connection().isValid() && this->connection().isOpen();\
     }\
-    Q_INVOKABLE virtual bool setConnection(QString connectionId){\
+    Q_INVOKABLE virtual bool setConnection(const QString &connectionId){\
         ____connectionId=connectionId.toUtf8();\
         return this->connection().isValid() && this->connection().isOpen();\
     }\
@@ -458,10 +458,10 @@ public:\
         }\
         return*____connectionManager;\
     }\
-    Q_INVOKABLE virtual QOrm::ConnectionPool&pool(){\
+    Q_INVOKABLE virtual QOrm::ConnectionPool &pool(){\
         return this->connectionManager().pool();\
     }\
-    Q_INVOKABLE virtual QOrm::ConnectionPool&pool(const QByteArray &value){\
+    Q_INVOKABLE virtual QOrm::ConnectionPool &pool(const QByteArray &value){\
         return this->connectionManager().pool(value);\
     }
 

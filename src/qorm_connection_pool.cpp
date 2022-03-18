@@ -30,7 +30,6 @@ Q_COREAPP_STARTUP_FUNCTION(init)
 
 class ConnectionPoolPvt{
 public:
-    QMutex locker;
     QString baseName;
     ConnectionSetting connectionSetting;
     QStringList connectionList;
@@ -64,16 +63,15 @@ public:
         if(!connection.isValid())
             return true;
 
-        QMutexLOCKER locker(&p.locker);
         auto connectionName=connection.connectionName();
         p.connectionList.removeAll(connectionName);
         connection.close();
-        connection=QSqlDatabase();
+        connection={};
         QSqlDatabase::removeDatabase(connectionName);
         return !connection.isValid();
     }
 
-    virtual bool from(ConnectionPool&pool)
+    virtual bool from(ConnectionPool &pool)
     {
         return connectionSetting.fromSetting(pool.setting()).isValid();
     }
@@ -112,7 +110,7 @@ public:
             this->lastError=QSqlError(qsl("NoDriver"), msg);
             sWarning()<<msg;
 #endif
-            return false;
+            return {};
         }
 
         if(!QSqlDatabase::isDriverAvailable(driver)){
@@ -121,7 +119,7 @@ public:
             this->lastError=QSqlError(qsl("NoDriver"), msg);
             sWarning()<<msg;
 #endif
-            return false;
+            return {};
         }
 
         auto connectionName=qsl("%1_%2").arg(p.baseName.left(55)).arg(++connectionCount);
@@ -133,7 +131,7 @@ public:
             sWarning()<<msg;
 #endif
             this->finish(__connection);
-            return false;
+            return {};
         }
 
         if(!__connection.lastError().text().isEmpty()){
@@ -143,7 +141,7 @@ public:
             sWarning()<<msg;
 #endif
             this->finish(__connection);
-            return false;
+            return {};
         }
 
         QString hostName=p.connectionSetting.hostName().trimmed();
@@ -168,7 +166,7 @@ public:
 
             if(odbcDriver.isEmpty()){
                 auto name=__connection.connectionName();
-                __connection=QSqlDatabase();
+                __connection={};
                 QSqlDatabase::removeDatabase(name);
             }
             else{
@@ -208,7 +206,7 @@ public:
             sWarning()<<__connection.lastError().text();
 #endif
             this->finish(__connection);
-            return false;
+            return {};
         }
 
         if(!__connection.open()){
@@ -223,7 +221,7 @@ public:
             }
 #endif
             this->finish(__connection);
-            return false;
+            return {};
         }
 
 #if Q_ORM_LOG_VERBOSE
@@ -231,7 +229,7 @@ public:
 #endif
         auto&keyWord=SqlSuitableKeyWord::parser(__connection);
         if(!keyWord.isValid())
-            return false;
+            return {};
 
         QStringList listCmd;
         QString cmd;
@@ -267,12 +265,8 @@ public:
             query.finish();
         }
 
-
         connection=__connection;
-        locker.lock();
         p.connectionList<<__connection.connectionName();
-        locker.unlock();
-
         return connection.isValid() && connection.isOpen();
     }
 
@@ -349,7 +343,7 @@ QSqlDatabase ConnectionPool::get()
     QSqlDatabase connection;
     if(p.get(connection, false))
         return connection;
-    return QSqlDatabase();
+    return {};
 }
 
 bool ConnectionPool::get(QSqlDatabase &connection)
@@ -357,7 +351,7 @@ bool ConnectionPool::get(QSqlDatabase &connection)
     dPvt();
     if(p.get(connection, false))
         return connection.isValid() && connection.isOpen();
-    return false;
+    return {};
 }
 
 QSqlDatabase ConnectionPool::getReadOnly()
@@ -366,7 +360,7 @@ QSqlDatabase ConnectionPool::getReadOnly()
     QSqlDatabase connection;
     if(p.get(connection, true))
         return connection;
-    return QSqlDatabase();
+    return {};
 }
 
 bool ConnectionPool::getReadOnly(QSqlDatabase &connection)
@@ -374,36 +368,37 @@ bool ConnectionPool::getReadOnly(QSqlDatabase &connection)
     dPvt();
     if(p.get(connection, true))
         return connection.isValid() && connection.isOpen();
-    return false;
+    return {};
 }
 
-void ConnectionPool::finish()
+ConnectionPool &ConnectionPool::finish()
 {
     dPvt();
     for(auto&connection:p.connectionList)
         this->finish(connection);
+    return *this;
 }
 
 bool ConnectionPool::finish(QSqlDatabase&connection)
 {
-    if(connection.isValid()){
-        dPvt();
-        QMutexLOCKER locker(&p.locker);
-        auto connectionName=connection.connectionName();
-        p.connectionList.removeAll(connectionName);
-        connection.close();
-        connection=QSqlDatabase();
-        if(!connectionName.isEmpty())
-            QSqlDatabase::removeDatabase(connectionName);
-    }
+    if(!connection.isValid())
+        return true;
+
+    dPvt();
+    connection.close();
+    auto connectionName=connection.connectionName();
+    p.connectionList.removeAll(connectionName);
+    connection={};
+    if(!connectionName.isEmpty())
+        QSqlDatabase::removeDatabase(connectionName);
+
     return !connection.isValid();
 }
 
 bool ConnectionPool::finish(QString connection)
 {
-    auto _connection=QSqlDatabase::database(connection);
-    return this->finish(_connection);
-
+    auto connectionName=QSqlDatabase::database(connection);
+    return this->finish(connectionName);
 }
 
 QSqlError &ConnectionPool::lastError()
@@ -412,5 +407,5 @@ QSqlError &ConnectionPool::lastError()
     return p.lastError;
 
 }
-//set default_transaction_read_only = on;
+
 }

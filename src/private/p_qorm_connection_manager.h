@@ -53,7 +53,7 @@ public:
     //! \param value
     //! \return
     //!
-    ConnectionPool&pool(const QByteArray &value);
+    ConnectionPool &pool(const QByteArray &value);
 
     //!
     //! \brief isLoaded

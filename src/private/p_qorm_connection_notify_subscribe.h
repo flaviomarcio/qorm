@@ -48,7 +48,7 @@ public:
     //! \param pool
     //! \return
     //!
-    virtual bool start(const ConnectionPool&pool);
+    virtual bool start(const ConnectionPool &pool);
 
     //!
     //! \brief start

@@ -115,14 +115,14 @@ public:
     //! \brief pool
     //! \return
     //!
-    virtual ConnectionPool&pool();
+    virtual ConnectionPool &pool();
 
     //!
     //! \brief pool
     //! \param value
     //! \return
     //!
-    virtual ConnectionPool&pool(const QByteArray &value);
+    virtual ConnectionPool &pool(const QByteArray &value);
 
     //!
     //! \brief toMap
