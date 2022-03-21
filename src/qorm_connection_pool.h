@@ -47,7 +47,7 @@ public:
     //! \brief setting
     //! \return
     //!
-    virtual ConnectionSetting&setting() const;
+    virtual ConnectionSetting &setting() const;
 
     //!
     //! \brief isValid
@@ -94,7 +94,7 @@ public:
     //! \param connection
     //! \return
     //!
-    bool get(QSqlDatabase&connection);
+    bool get(QSqlDatabase &connection);
 
     //!
     //! \brief getReadOnly
@@ -107,7 +107,7 @@ public:
     //! \param connection
     //! \return
     //!
-    bool getReadOnly(QSqlDatabase&connection);
+    bool getReadOnly(QSqlDatabase &connection);
 
     //!
     //! \brief finish
@@ -132,10 +132,10 @@ public:
     //! \brief lastError
     //! \return
     //!
-    QSqlError&lastError();
+    QSqlError &lastError();
 
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

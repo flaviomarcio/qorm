@@ -38,7 +38,7 @@ public:
 
 ModelAction::ModelAction(QObject *parent) : QOrm::ObjectDb(parent)
 {
-    this->p = new ModelActionPvt(this);
+    this->p = new ModelActionPvt{this};
 }
 
 ModelAction::~ModelAction(){

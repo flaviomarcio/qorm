@@ -1,36 +1,33 @@
 #include "./qorm_object_db.h"
-#include <QMetaProperty>
 #include <QMetaMethod>
 #include <QMetaObject>
+#include <QMetaProperty>
 
 namespace QOrm {
 
-#define dPvt()\
-    auto&p = *reinterpret_cast<ObjectDbPvt*>(this->p)\
+#define dPvt() auto &p = *reinterpret_cast<ObjectDbPvt *>(this->p)
 
-class ObjectDbPvt:public QObject{
+class ObjectDbPvt : public QObject
+{
 public:
     VariantUtil vUtil;
     DateUtil dtUtil;
     DoubleUtil dbUtil;
-    QObject*parent=nullptr;
+    QObject *parent = nullptr;
     QByteArray ___connectionId;
-    explicit ObjectDbPvt(QObject*parent):QObject{parent}
-    {
-        this->parent=parent;
-    }
+    explicit ObjectDbPvt(QObject *parent) : QObject{parent} { this->parent = parent; }
 
-    bool invokeMethodConnection(QObject*objectCheck, QSqlDatabase &outConnection)
+    bool invokeMethodConnection(QObject *objectCheck, QSqlDatabase &outConnection)
     {
         static QByteArray connectionIdMethod(qbl("connectionid"));
-        auto metaObject=objectCheck->metaObject();
-        for(int i = 0; i < metaObject->methodCount(); ++i) {
+        auto metaObject = objectCheck->metaObject();
+        for (int i = 0; i < metaObject->methodCount(); ++i) {
             auto method = metaObject->method(i);
 
-            if(method.parameterCount()>0)
+            if (method.parameterCount() > 0)
                 continue;
 
-            if(method.name().toLower() != connectionIdMethod)
+            if (method.name().toLower() != connectionIdMethod)
                 continue;
 
             QByteArray _textBytes;
@@ -39,36 +36,37 @@ public:
 
             switch (method.returnType()) {
             case QMetaType_QString:
-                invokeReturn=Q_RETURN_ARG(QString, _textStr);
+                invokeReturn = Q_RETURN_ARG(QString, _textStr);
                 break;
             default:
-                invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
+                invokeReturn = Q_RETURN_ARG(QByteArray, _textBytes);
             }
 
-            if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)){
+            if (!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)) {
 #ifdef Q_ORM_LOG_SUPER_VERBOSE
-                sWarning()<<qbl("Invalid invoke ")<<method.name()<<qbl(" to object:")<<objectCheck->metaObject()->className();
+                sWarning() << qbl("Invalid invoke ") << method.name() << qbl(" to object:")
+                           << objectCheck->metaObject()->className();
 #endif
                 return {};
             }
 
             QByteArray connectionId;
-            switch (method.returnType()){
+            switch (method.returnType()) {
             case QMetaType_QString:
-                connectionId=_textStr.toUtf8().trimmed();
+                connectionId = _textStr.toUtf8().trimmed();
                 break;
             default:
-                connectionId=_textBytes.trimmed();
+                connectionId = _textBytes.trimmed();
             }
 
-            if(connectionId.isEmpty())
+            if (connectionId.isEmpty())
                 return {};
 
-            auto connection=QSqlDatabase::database(connectionId);
-            if(!connection.isValid() || !connection.isOpen())
+            auto connection = QSqlDatabase::database(connectionId);
+            if (!connection.isValid() || !connection.isOpen())
                 return {};
 
-            outConnection=connection;
+            outConnection = connection;
             return true;
         }
         return {};
@@ -76,26 +74,25 @@ public:
 
     QSqlDatabase connectionGet()
     {
-        if(!this->___connectionId.isEmpty()){
-            auto connection=QSqlDatabase::database(this->___connectionId);
-            if(connection.isOpen())
+        if (!this->___connectionId.isEmpty()) {
+            auto connection = QSqlDatabase::database(this->___connectionId);
+            if (connection.isOpen())
                 return connection;
         }
 
         QSqlDatabase connection;
         auto parentConnection = this->parent;
-        if(parentConnection==nullptr)
+        if (parentConnection == nullptr)
             return {};
 
-        QVector<QObject*> parentVector;
+        QVector<QObject *> parentVector;
         auto loopObject = parentConnection;
-        while(loopObject!=nullptr){
-            parentVector<<loopObject;
-            loopObject=loopObject->parent();
+        while (loopObject != nullptr) {
+            parentVector << loopObject;
+            loopObject = loopObject->parent();
         }
-        for(auto&invokeObject:parentVector){
-
-            if(!this->invokeMethodConnection(invokeObject, connection))
+        for (auto &invokeObject : parentVector) {
+            if (!this->invokeMethodConnection(invokeObject, connection))
                 continue;
 
             return connection;
@@ -103,29 +100,22 @@ public:
         return {};
     }
 
-    QByteArray connectionId()const
-    {
-        return this->___connectionId;
-    }
-
-
+    QByteArray connectionId() const { return this->___connectionId; }
 };
 
-ObjectDb::ObjectDb(QObject *parent):QStm::Object(parent)
+ObjectDb::ObjectDb(QObject *parent) : QStm::Object{parent}
 {
-    this->p = new ObjectDbPvt(this);
+    this->p = new ObjectDbPvt{this};
 }
 
-ObjectDb::ObjectDb(const QSqlDatabase &connection, QObject *parent):QStm::Object(parent)
+ObjectDb::ObjectDb(const QSqlDatabase &connection, QObject *parent) : QStm::Object{parent}
 {
-    this->p = new ObjectDbPvt(this);
+    this->p = new ObjectDbPvt{this};
     dPvt();
-    p.___connectionId=connection.connectionName().toUtf8();
+    p.___connectionId = connection.connectionName().toUtf8();
 }
 
-ObjectDb::~ObjectDb()
-{
-}
+ObjectDb::~ObjectDb() {}
 
 QSqlDatabase ObjectDb::connection() const
 {
@@ -133,20 +123,20 @@ QSqlDatabase ObjectDb::connection() const
     return p.connectionGet();
 }
 
-bool ObjectDb::setConnection(const QSqlDatabase&connection)
+bool ObjectDb::setConnection(const QSqlDatabase &connection)
 {
     dPvt();
-    if(connection.isValid() && connection.isOpen())
-        p.___connectionId=connection.connectionName().toUtf8();
+    if (connection.isValid() && connection.isOpen())
+        p.___connectionId = connection.connectionName().toUtf8();
     else
         p.___connectionId.clear();
 
     return !p.___connectionId.isEmpty();
 }
 
-bool ObjectDb::setConnection(const QString&connectionName)
+bool ObjectDb::setConnection(const QString &connectionName)
 {
-    auto connection=QSqlDatabase::database(connectionName);
+    auto connection = QSqlDatabase::database(connectionName);
     return this->setConnection(connection);
 }
 
@@ -166,7 +156,7 @@ VariantUtil &ObjectDb::vu()
 VariantUtil &ObjectDb::vu(const QVariant &v)
 {
     dPvt();
-    if(v.isValid())
+    if (v.isValid())
         p.vUtil.setValue(v);
     else
         p.vUtil.clear();
@@ -180,10 +170,10 @@ VariantUtil &ObjectDb::vUtil()
     return p.vUtil;
 }
 
-VariantUtil &ObjectDb::vUtil(const QVariant&v)
+VariantUtil &ObjectDb::vUtil(const QVariant &v)
 {
     dPvt();
-    if(v.isValid())
+    if (v.isValid())
         p.vUtil.setValue(v);
     else
         p.vUtil.clear();
@@ -200,7 +190,7 @@ DateUtil &ObjectDb::dtUtil()
 DateUtil &ObjectDb::dtUtil(const QVariant &v)
 {
     dPvt();
-    if(v.isValid())
+    if (v.isValid())
         p.vUtil.setValue(v);
     else
         p.vUtil.clear();
@@ -217,7 +207,7 @@ DateUtil &ObjectDb::dtu()
 DateUtil &ObjectDb::dtu(const QVariant &v)
 {
     dPvt();
-    if(v.isValid())
+    if (v.isValid())
         p.vUtil.setValue(v);
     else
         p.vUtil.clear();
@@ -234,7 +224,7 @@ DoubleUtil &ObjectDb::dbUtil()
 DoubleUtil &ObjectDb::dbUtil(const QVariant &v)
 {
     dPvt();
-    if(v.isValid())
+    if (v.isValid())
         p.dbUtil.setValue(v);
     else
         p.dbUtil.clear();
@@ -251,11 +241,11 @@ DoubleUtil &ObjectDb::dbu()
 DoubleUtil &ObjectDb::dbu(const QVariant &v)
 {
     dPvt();
-    if(v.isValid())
+    if (v.isValid())
         p.dbUtil.setValue(v);
     else
         p.dbUtil.clear();
     return p.dbUtil;
 }
 
-}
+} // namespace QOrm

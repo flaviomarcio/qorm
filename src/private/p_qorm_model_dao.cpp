@@ -10,7 +10,7 @@ namespace PrivateQOrm {
 class ModelDaoPvt : public QObject{
 public:
     QOrm::SqlSuitableValue suitableValue;
-    explicit ModelDaoPvt(QObject*parent):QObject(parent)
+    explicit ModelDaoPvt(QObject*parent):QObject{parent}
     {
     }
     ~ModelDaoPvt()
@@ -20,7 +20,7 @@ public:
 
 ModelDao::ModelDao(QObject *parent) : QOrm::ObjectDb(parent)
 {
-    this->p = new ModelDaoPvt(this);
+    this->p = new ModelDaoPvt{this};
 }
 
 ModelDao::~ModelDao()

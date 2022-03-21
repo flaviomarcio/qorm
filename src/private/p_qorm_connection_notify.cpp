@@ -7,7 +7,7 @@ ConnectionNotify *ConnectionNotifyPvt::notify()
     return dynamic_cast<ConnectionNotify*>(this->parent());
 }
 
-ConnectionNotifyPvt::ConnectionNotifyPvt(QObject *parent):QObject(parent)
+ConnectionNotifyPvt::ConnectionNotifyPvt(QObject *parent):QObject{parent}
 {
 }
 

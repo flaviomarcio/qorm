@@ -10,11 +10,11 @@ namespace QOrm {
 class SqlSuitableValue
 {
 public:
-
     //!
     //! \brief The Format struct
     //!
-    struct Format{
+    struct Format
+    {
     public:
         //!
         //! \brief timesTamp
@@ -68,133 +68,133 @@ public:
     //! \param v
     //! \return
     //!
-    QString toUuid(const QVariant&v);
+    QString toUuid(const QVariant &v);
 
     //!
     //! \brief toUuid
     //! \param v
     //! \return
     //!
-    QString toUuid(const QUuid&v);
+    QString toUuid(const QUuid &v);
 
     //!
     //! \brief toUrl
     //! \param v
     //! \return
     //!
-    QString toUrl(const QUrl&v);
+    QString toUrl(const QUrl &v);
 
     //!
     //! \brief toInt
     //! \param v
     //! \return
     //!
-    QString toInt(const qlonglong&v);
+    QString toInt(const qlonglong &v);
 
     //!
     //! \brief toLng
     //! \param v
     //! \return
     //!
-    QString toLng(const qlonglong&v);
+    QString toLng(const qlonglong &v);
 
     //!
     //! \brief toDbl
     //! \param v
     //! \return
     //!
-    QString toDbl(const double&v);
+    QString toDbl(const double &v);
 
     //!
     //! \brief toCur
     //! \param v
     //! \return
     //!
-    QString toCur(const double&v);
+    QString toCur(const double &v);
 
     //!
     //! \brief toStr
     //! \param v
     //! \return
     //!
-    QString toStr(const QString&v);
+    QString toStr(const QString &v);
 
     //!
     //! \brief toStr
     //! \param v
     //! \return
     //!
-    QString toStr(const QByteArray&v);
+    QString toStr(const QByteArray &v);
 
     //!
     //! \brief toStrPure
     //! \param v
     //! \return
     //!
-    QString toStrPure(const QString&v);
+    QString toStrPure(const QString &v);
 
     //!
     //! \brief toDatMin
     //! \param v
     //! \return
     //!
-    QString toDatMin(const QDateTime&v);
+    QString toDatMin(const QDateTime &v);
 
     //!
     //! \brief toDatMax
     //! \param v
     //! \return
     //!
-    QString toDatMax(const QDateTime&v);
+    QString toDatMax(const QDateTime &v);
 
     //!
     //! \brief toDat
     //! \param v
     //! \return
     //!
-    QString toDat(const QVariant&v);
+    QString toDat(const QVariant &v);
 
     //!
     //! \brief toDat
     //! \param v
     //! \return
     //!
-    QString toDat(const QDate&v);
+    QString toDat(const QDate &v);
 
     //!
     //! \brief toDat
     //! \param v
     //! \return
     //!
-    QString toDat(const QDateTime&v);
+    QString toDat(const QDateTime &v);
 
     //!
     //! \brief toTim
     //! \param v
     //! \return
     //!
-    QString toTim(const QTime&v);
+    QString toTim(const QTime &v);
 
     //!
     //! \brief toTim
     //! \param v
     //! \return
     //!
-    QString toTim(const QDateTime&v);
+    QString toTim(const QDateTime &v);
 
     //!
     //! \brief toBoo
     //! \param v
     //! \return
     //!
-    QString toBoo(const bool&v);
+    QString toBoo(const bool &v);
 
     //!
     //! \brief toVar
     //! \param v
     //! \return
     //!
-    QString toVar(const QVariant&v);
+    QString toVar(const QVariant &v);
 
     //!
     //! \brief toVar
@@ -236,16 +236,16 @@ public:
     //! \param db
     //! \return
     //!
-    SqlSuitableValue&setConnection(const QSqlDatabase&db);
+    SqlSuitableValue &setConnection(const QSqlDatabase &db);
 
     //!
     //! \brief format
     //! \return
     //!
-    static Format&format();
+    static Format &format();
 
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

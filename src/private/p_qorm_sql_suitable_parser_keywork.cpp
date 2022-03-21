@@ -240,7 +240,7 @@ public:
 SqlSuitableKeyWord::SqlSuitableKeyWord(QObject *parent)//:QObject(parent)
 {
     Q_UNUSED(parent)
-    this->p = new SqlSuitableKeyWordPvt(this);
+    this->p = new SqlSuitableKeyWordPvt{this};
 }
 
 SqlSuitableKeyWord::SqlSuitableKeyWord(QSqlDriver::DbmsType driver, QObject *parent)//:QObject(parent)

@@ -17,7 +17,7 @@ public:
     QVariant parameters;
     QObject*parent=nullptr;
     QObject*___d=nullptr;
-    explicit ModelDtoLinkItemPvt(QObject*parent):QObject(parent)
+    explicit ModelDtoLinkItemPvt(QObject*parent):QObject{parent}
     {
     }
     ~ModelDtoLinkItemPvt()
@@ -33,7 +33,7 @@ public:
     QObject*parent=nullptr;
     QObject*___d=nullptr;
     QHash<QString, ModelDtoLinkItem*> ___objectList;
-    explicit ModelDtoLinkBaseCollectionPvt(QObject*parent):QObject(parent)
+    explicit ModelDtoLinkBaseCollectionPvt(QObject*parent):QObject{parent}
     {
     }
     ~ModelDtoLinkBaseCollectionPvt()
@@ -41,9 +41,9 @@ public:
     }
 };
 
-ModelDtoLinkItem::ModelDtoLinkItem(QObject *dtpParent, QObject *parent):QStm::Object(parent)
+ModelDtoLinkItem::ModelDtoLinkItem(QObject *dtpParent, QObject *parent):QStm::Object{parent}
 {
-    this->p=new ModelDtoLinkItemPvt(this);
+    this->p=new ModelDtoLinkItemPvt{this};
     dPvtI();
     p.___d=dtpParent;
 }
@@ -167,9 +167,9 @@ QVariant ModelDtoLinkItem::toVariant() const
     return v;
 }
 
-ModelDtoLinkCollection::ModelDtoLinkCollection(QObject *dtoParent, QObject *parent):QStm::Object(parent)
+ModelDtoLinkCollection::ModelDtoLinkCollection(QObject *dtoParent, QObject *parent):QStm::Object{parent}
 {
-    this->p = new ModelDtoLinkBaseCollectionPvt(this);
+    this->p = new ModelDtoLinkBaseCollectionPvt{this};
     dPvtA();
     p.___d=dtoParent;
 }

@@ -2,15 +2,15 @@
 
 #include "./qorm_global.h"
 #include "./qorm_object_db.h"
-#include <QFileInfoList>
 #include <QFileInfo>
+#include <QFileInfoList>
 
 namespace QOrm {
 
 //!
 //! \brief The ScriptExec class
 //!class for execute script on database
-class Q_ORM_EXPORT ScriptExec: public QOrm::ObjectDb
+class Q_ORM_EXPORT ScriptExec : public QOrm::ObjectDb
 {
     Q_OBJECT
 public:
@@ -28,34 +28,34 @@ public:
     //! \param v
     //! \return
     //!replace all values
-    ScriptExec&operator=(const QVariant &v);
+    ScriptExec &operator=(const QVariant &v);
 
     //!
     //! \brief operator =
     //! \param entryInfoList
     //! \return
     //!
-    ScriptExec&operator=(const QFileInfoList &entryInfoList);
+    ScriptExec &operator=(const QFileInfoList &entryInfoList);
 
     //!
     //! \brief operator <<
     //! \param v
     //! \return
     //!
-    ScriptExec&operator<<(const QVariant &v);
+    ScriptExec &operator<<(const QVariant &v);
 
     //!
     //! \brief operator <<
     //! \param entryInfoList
     //! \return
     //!
-    ScriptExec&operator<<(const QFileInfoList &entryInfoList);
+    ScriptExec &operator<<(const QFileInfoList &entryInfoList);
 
     //!
     //! \brief scriptValues
     //! \return
     //!list of added values
-    QVariantList scriptValues()const;
+    QVariantList scriptValues() const;
 
     //!
     //! \brief scriptedValues
@@ -67,10 +67,10 @@ public:
     //! \brief exec
     //! \return
     //!execute values on database
-    ResultValue&exec();
+    ResultValue &exec();
 
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

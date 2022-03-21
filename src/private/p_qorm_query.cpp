@@ -69,7 +69,7 @@ static void static_log_init_dir()
 
 Q_COREAPP_STARTUP_FUNCTION(static_log_init_dir)
 
-QueryPvt::QueryPvt(Query *parent, const QSqlDatabase &db) : QObject(parent), sqlBuilder(parent)
+QueryPvt::QueryPvt(Query *parent, const QSqlDatabase &db) : QObject{parent}, sqlBuilder(parent)
 {
     this->query=parent;
     auto currentName=QThread::currentThread()->objectName().trimmed();

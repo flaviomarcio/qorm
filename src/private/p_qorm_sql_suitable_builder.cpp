@@ -2,7 +2,7 @@
 
 namespace QOrm{
 
-SqlSuitableBuilderPvt::SqlSuitableBuilderPvt(QObject *parent):QObject(parent)
+SqlSuitableBuilderPvt::SqlSuitableBuilderPvt(QObject *parent):QObject{parent}
 {
     this->query=(dynamic_cast<Query*>(parent));
     this->combineSelect.q=this->query;

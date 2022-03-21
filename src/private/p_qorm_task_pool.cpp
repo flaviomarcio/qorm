@@ -32,9 +32,9 @@ public:
     }
 };
 
-TaskPool::TaskPool(TaskRunner *parent):QThread(nullptr)
+TaskPool::TaskPool(TaskRunner *parent):QThread{nullptr}
 {
-    this->p=new TaskPoolPvt(this);
+    this->p=new TaskPoolPvt{this};
     this->moveToThread(this);
     dPvt();
     p.runner=parent;

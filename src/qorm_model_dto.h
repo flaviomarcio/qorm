@@ -2,16 +2,9 @@
 
 #include "./private/p_qorm_model_controls.h"
 
-enum DTOFormType{
-    dftNormalForm=0,
-    dftAddressForm=1,
-    dftReportForm=1
-};
+enum DTOFormType { dftNormalForm = 0, dftAddressForm = 1, dftReportForm = 1 };
 
-enum DTOFormLayout{
-    dflVerticalControls=0,
-    dflHorizontalControls=0
-};
+enum DTOFormLayout { dflVerticalControls = 0, dflHorizontalControls = 0 };
 
 namespace QOrm {
 
@@ -22,7 +15,6 @@ class Q_ORM_EXPORT ModelDto : public QStm::Object
 {
     Q_OBJECT
 public:
-
     QORM_DECLARE_DTO_TYPE(dftReportForm)
     QORM_DECLARE_DTO_LAYOUT(dflVerticalControls)
 
@@ -37,7 +29,7 @@ public:
     //! \param rows
     //! \param parent
     //!
-    Q_INVOKABLE explicit ModelDto(const ResultValue&rows, QObject *parent = nullptr);
+    Q_INVOKABLE explicit ModelDto(const ResultValue &rows, QObject *parent = nullptr);
 
     //!
     //! \brief ~ModelDto
@@ -55,14 +47,14 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDto&id(const QVariant &v);
+    virtual ModelDto &id(const QVariant &v);
 
     //!
     //! \brief setId
     //! \param v
     //! \return
     //!
-    virtual ModelDto&setId(const QVariant &v);
+    virtual ModelDto &setId(const QVariant &v);
 
     //!
     //! \brief type
@@ -75,14 +67,14 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDto&type(const QVariant &v);
+    virtual ModelDto &type(const QVariant &v);
 
     //!
     //! \brief setType
     //! \param v
     //! \return
     //!
-    virtual ModelDto&setType(const QVariant &v);
+    virtual ModelDto &setType(const QVariant &v);
 
     //!
     //! \brief layout
@@ -95,14 +87,14 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDto&layout(const QVariant &v);
+    virtual ModelDto &layout(const QVariant &v);
 
     //!
     //! \brief setLayout
     //! \param v
     //! \return
     //!
-    virtual ModelDto&setLayout(const QVariant &v);
+    virtual ModelDto &setLayout(const QVariant &v);
 
     //!
     //! \brief text
@@ -115,14 +107,14 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDto&text(const QVariant &v);
+    virtual ModelDto &text(const QVariant &v);
 
     //!
     //! \brief setText
     //! \param v
     //! \return
     //!
-    virtual ModelDto&setText(const QVariant &v);
+    virtual ModelDto &setText(const QVariant &v);
 
     //!
     //! \brief sort
@@ -135,45 +127,45 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDto&sort(const QVariant &v);
+    virtual ModelDto &sort(const QVariant &v);
 
     //!
     //! \brief setSort
     //! \param v
     //! \return
     //!
-    virtual ModelDto&setSort(const QVariant &v);
+    virtual ModelDto &setSort(const QVariant &v);
 
     //!
     //! \brief settings
     //! \param setting
     //! \return
     //!
-    virtual ModelDto&settings(const QVariant&setting);
+    virtual ModelDto &settings(const QVariant &setting);
 
     //!
     //! \brief controls
     //! \return
     //!
-    virtual ModelDtoControls&controls();
+    virtual ModelDtoControls &controls();
 
     //!
     //! \brief headers
     //! \return
     //!
-    virtual ModelDtoHeaders<ModelDtoControls>&headers();
+    virtual ModelDtoHeaders<ModelDtoControls> &headers();
 
     //!
     //! \brief filters
     //! \return
     //!
-    virtual ModelDtoFilters<ModelDtoControls>&filters();
+    virtual ModelDtoFilters<ModelDtoControls> &filters();
 
     //!
     //! \brief links
     //! \return
     //!
-    virtual ModelDtoLinks<ModelDtoControls>&links();
+    virtual ModelDtoLinks<ModelDtoControls> &links();
 
     //!
     //! \brief items
@@ -186,14 +178,14 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoControls &items(const QVariant&v);
+    virtual ModelDtoControls &items(const QVariant &v);
 
     //!
     //! \brief items
     //! \param lr
     //! \return
     //!
-    virtual ModelDtoControls &items(const ResultValue&lr);
+    virtual ModelDtoControls &items(const ResultValue &lr);
 
     //!
     //! \brief resultInfo
@@ -206,56 +198,56 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoControls &resultInfo(const QVariant&v);
+    virtual ModelDtoControls &resultInfo(const QVariant &v);
 
     //!
     //! \brief setResultInfo
     //! \param resultInfo
     //! \return
     //!
-    virtual ModelDtoControls &setResultInfo(const QStm::ResultInfo&resultInfo);
+    virtual ModelDtoControls &setResultInfo(const QStm::ResultInfo &resultInfo);
 
     //!
     //! \brief setValue
     //! \param v
     //! \return
     //!
-    virtual ModelDto &setValue(const QVariant&v);
+    virtual ModelDto &setValue(const QVariant &v);
 
     //!
     //! \brief setValue
     //! \param lr
     //! \return
     //!
-    virtual ModelDto &setValue(const ResultValue&lr);
+    virtual ModelDto &setValue(const ResultValue &lr);
 
     //!
     //! \brief clear
     //! \return
     //!
-    virtual ModelDto&clear();
+    virtual ModelDto &clear();
 
     //!
     //! \brief o
     //! \return
     //!
-    virtual ResultValue&o();
+    virtual ResultValue &o();
 
     //!
     //! \brief toOutput
     //! \return
     //!
-    virtual ResultValue&toOutput();
+    virtual ResultValue &toOutput();
 
     //!
     //! \brief initDescriptors
     //! \param object
     //! \return
     //!
-    virtual ModelDto&initDescriptors(QObject *object);
+    virtual ModelDto &initDescriptors(QObject *object);
 
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

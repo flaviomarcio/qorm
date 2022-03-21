@@ -671,9 +671,9 @@ public:
     }
 };
 
-ModelInfo::ModelInfo():QVariant()
+ModelInfo::ModelInfo():QVariant{}
 {
-    this->p=new ModelInfoPvt(this);
+    this->p=new ModelInfoPvt{this};
 }
 
 ModelInfo::~ModelInfo()

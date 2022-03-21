@@ -1,8 +1,8 @@
 #pragma once
 
+#include "./private/p_qorm_sql_suitable_parser_strategy.h"
 #include "./qorm_object_db.h"
 #include "./qorm_sql_suitable_types.h"
-#include "./private/p_qorm_sql_suitable_parser_strategy.h"
 
 namespace QOrm {
 class Query;
@@ -17,7 +17,7 @@ public:
     //! \brief SqlSuitableBuilder
     //! \param parent
     //!
-    explicit SqlSuitableBuilder(Query *parent=nullptr);
+    explicit SqlSuitableBuilder(Query *parent = nullptr);
 
     //!
     //! \brief ~SqlSuitableBuilder
@@ -88,15 +88,15 @@ public:
     //! \brief preparedQuery
     //! \return
     //!
-    QStringList&preparedQuery() const;
+    QStringList &preparedQuery() const;
 
     //!
     //! \brief clear
     //!
     virtual void clear();
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
-
+} // namespace QOrm

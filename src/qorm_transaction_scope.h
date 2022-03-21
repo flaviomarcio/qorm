@@ -7,7 +7,8 @@ namespace QOrm {
 //!
 //! \brief The TransactionScope class
 //!
-class Q_ORM_EXPORT TransactionScope : public ObjectDb{
+class Q_ORM_EXPORT TransactionScope : public ObjectDb
+{
     Q_OBJECT
 public:
     //!
@@ -26,8 +27,9 @@ public:
     //! \return
     //!execute rollback transaction
     Q_INVOKABLE virtual bool rollback();
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

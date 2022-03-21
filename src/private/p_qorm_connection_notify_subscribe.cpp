@@ -2,7 +2,7 @@
 
 namespace QOrm {
 
-ConnectionNotifySubscribe::ConnectionNotifySubscribe(ConnectionNotify *parent):QThread(nullptr), notify(parent), subscribeToNotification(parent->subscribeToNotification())
+ConnectionNotifySubscribe::ConnectionNotifySubscribe(ConnectionNotify *parent):QThread{nullptr}, notify(parent), subscribeToNotification(parent->subscribeToNotification())
 {
     this->moveToThread(this);
 }

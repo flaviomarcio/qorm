@@ -12,7 +12,6 @@ class Model;
 class Q_ORM_EXPORT Query : public ObjectDb
 {
 public:
-
     //!
     //! \brief Query
     //! \param parent
@@ -24,7 +23,7 @@ public:
     //! \param db
     //! \param parent
     //!
-    explicit Query(const QSqlDatabase &db, QObject *parent=nullptr);
+    explicit Query(const QSqlDatabase &db, QObject *parent = nullptr);
     ~Query();
 
     //!
@@ -54,19 +53,19 @@ public:
     //! \param metaObject
     //! \return
     //!
-    virtual bool setModel(QMetaObject&metaObject);
+    virtual bool setModel(QMetaObject &metaObject);
 
     //!
     //! \brief builder
     //! \return
     //!
-    virtual SqlSuitableBuilder&builder();
+    virtual SqlSuitableBuilder &builder();
 
     //!
     //! \brief b
     //! \return
     //!
-    virtual SqlSuitableBuilder&b();
+    virtual SqlSuitableBuilder &b();
 
     //!
     //! \brief sqlRecord
@@ -85,14 +84,14 @@ public:
     //! \param metaObject
     //! \return
     //!
-    virtual QVariantList makeRecordList(const QMetaObject&metaObject);
+    virtual QVariantList makeRecordList(const QMetaObject &metaObject);
 
     //!
     //! \brief makeRecordList
     //! \param modelInfo
     //! \return
     //!
-    virtual QVariantList makeRecordList(const QOrm::ModelInfo&modelInfo);
+    virtual QVariantList makeRecordList(const QOrm::ModelInfo &modelInfo);
 
     //!
     //! \brief makeRecord
@@ -105,14 +104,14 @@ public:
     //! \param metaObject
     //! \return
     //!
-    virtual QVariantHash makeRecord(const QMetaObject&metaObject) const;
+    virtual QVariantHash makeRecord(const QMetaObject &metaObject) const;
 
     //!
     //! \brief makeRecord
     //! \param modelInfo
     //! \return
     //!
-    virtual QVariantHash makeRecord(const QOrm::ModelInfo&modelInfo) const;
+    virtual QVariantHash makeRecord(const QOrm::ModelInfo &modelInfo) const;
 
     //!
     //! \brief modelRead
@@ -127,14 +126,15 @@ public:
     //! \return
     //!
     template<class T>
-    bool modelRead(T&model){
+    bool modelRead(T &model)
+    {
         return this->modelRead(&model);
     }
 
     //!
     //! \brief close
     //!
-    virtual Query&close();
+    virtual Query &close();
 
     //!
     //! \brief next
@@ -165,7 +165,7 @@ public:
     //! \param command
     //! \return
     //!
-    virtual bool exec(const QVariant&command);
+    virtual bool exec(const QVariant &command);
 
     //!
     //! \brief execBatch
@@ -186,7 +186,9 @@ public:
     //! \param val
     //! \param type
     //!
-    virtual void bindValue(const QString& placeholder, const QVariant& val, QSql::ParamType type = QSql::In);
+    virtual void bindValue(const QString &placeholder,
+                           const QVariant &val,
+                           QSql::ParamType type = QSql::In);
 
     //!
     //! \brief bindValue
@@ -194,14 +196,14 @@ public:
     //! \param val
     //! \param type
     //!
-    virtual void bindValue(int pos, const QVariant& val, QSql::ParamType type = QSql::In);
+    virtual void bindValue(int pos, const QVariant &val, QSql::ParamType type = QSql::In);
 
     //!
     //! \brief addBindValue
     //! \param val
     //! \param type
     //!
-    virtual void addBindValue(const QVariant& val, QSql::ParamType type = QSql::In);
+    virtual void addBindValue(const QVariant &val, QSql::ParamType type = QSql::In);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     //!
     //! \brief boundValues
@@ -227,7 +229,7 @@ public:
     //! \param column
     //! \return
     //!
-    virtual QVariant value(const int&column) const;
+    virtual QVariant value(const int &column) const;
 
     //!
     //! \brief value
@@ -246,11 +248,10 @@ public:
     //! \brief parser
     //! \return
     //!
-    virtual QOrm::SqlSuitableKeyWord&parser();
+    virtual QOrm::SqlSuitableKeyWord &parser();
 
 public:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
-
+} // namespace QOrm

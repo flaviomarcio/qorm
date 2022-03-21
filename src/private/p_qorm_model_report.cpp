@@ -89,14 +89,14 @@ public:
 
 ModelReportBase::ModelReportBase(QObject *parent) : QOrm::ObjectDb(parent)
 {
-    this->p = new ModelReportBasePvt(this);
+    this->p = new ModelReportBasePvt{this};
     dPvt();
     p.set_report(ReportBody());
 }
 
 ModelReportBase::ModelReportBase(const QVariant &reportBody, QObject *parent):QOrm::ObjectDb(parent)
 {
-    this->p = new ModelReportBasePvt(this);
+    this->p = new ModelReportBasePvt{this};
     dPvt();
     p.set_report(reportBody);
 }

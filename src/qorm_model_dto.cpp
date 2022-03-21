@@ -8,45 +8,45 @@
 #include <QJsonObject>
 
 namespace PrivateOrm {
-    Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
+Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
 }
 
 namespace QOrm {
 
-#define dPvt()\
-    auto&p = *reinterpret_cast<ModelDtoPvt*>(this->p)
+#define dPvt() auto &p = *reinterpret_cast<ModelDtoPvt *>(this->p)
 
-static auto&dtoSettings=*PrivateOrm::dtoSettings;
+static auto &dtoSettings = *PrivateOrm::dtoSettings;
 
 static void initDtoSettingsCache()
 {
     QVariantHash __dtoSettings;
     QDir dir(qsl(":"));
     dir.setNameFilters(QStringList{qsl("settings.qorm.dto.json")});
-    for(auto&info:dir.entryInfoList()){
+    for (auto &info : dir.entryInfoList()) {
         QFile fileSrc(info.filePath());
-        if(!fileSrc.open(fileSrc.ReadOnly))
+        if (!fileSrc.open(fileSrc.ReadOnly))
 #if Q_ORM_LOG
-            sWarning()<<qsl("No open file:")<<fileSrc.fileName()<<qsl(", error: ")<<fileSrc.errorString();
+            sWarning() << qsl("No open file:") << fileSrc.fileName() << qsl(", error: ")
+                       << fileSrc.errorString();
 #endif
         continue;
 
-        auto bytes=fileSrc.readAll();
+        auto bytes = fileSrc.readAll();
         fileSrc.close();
         QVariantList vList;
-        auto vDoc=QJsonDocument::fromJson(bytes).toVariant();
+        auto vDoc = QJsonDocument::fromJson(bytes).toVariant();
         switch (qTypeId(vDoc)) {
         case QMetaType_QVariantHash:
         case QMetaType_QVariantMap:
         case QMetaType_QVariantList:
         case QMetaType_QStringList:
-            vList<<vDoc;
+            vList << vDoc;
             break;
         default:
             break;
         }
-        for(auto&v:vList){
-            auto vDoc=v.toHash();
+        for (auto &v : vList) {
+            auto vDoc = v.toHash();
             QHashIterator<QString, QVariant> i(vDoc);
             while (i.hasNext()) {
                 i.next();
@@ -54,64 +54,60 @@ static void initDtoSettingsCache()
             }
         }
     }
-    dtoSettings=__dtoSettings;
+    dtoSettings = __dtoSettings;
 }
 
 Q_COREAPP_STARTUP_FUNCTION(initDtoSettingsCache)
 
-
-class ModelDtoPvt{
+class ModelDtoPvt
+{
 public:
     ModelDtoControls dtoControls;
 
-    QObject*dto=nullptr;
+    QObject *dto = nullptr;
 
-    explicit ModelDtoPvt(ModelDto*parent)
+    explicit ModelDtoPvt(ModelDto *parent)
     {
-        this->dto=parent;
-        auto pParent=parent->parent();
-        if(pParent!=nullptr)
+        this->dto = parent;
+        auto pParent = parent->parent();
+        if (pParent != nullptr)
             this->initDescriptors(pParent);
     }
 
-    virtual ~ModelDtoPvt()
-    {
-    }
+    virtual ~ModelDtoPvt() {}
 
     void initObjects()
     {
-        const auto className=QString::fromUtf8(this->dto->parent()->metaObject()->className()).toLower().trimmed();
-        auto settings=dtoSettings.value(className).toHash();
+        const auto className
+            = QString::fromUtf8(this->dto->parent()->metaObject()->className()).toLower().trimmed();
+        auto settings = dtoSettings.value(className).toHash();
         this->dtoControls.settings(settings);
     }
 
-    void clear()
-    {
-        this->dtoControls.clear();
-    }
+    void clear() { this->dtoControls.clear(); }
 
-    void initDescriptors(QObject*object)
+    void initDescriptors(QObject *object)
     {
-        auto model=dynamic_cast<QOrm::Model*>(object);
-        if(model==nullptr)
+        auto model = dynamic_cast<QOrm::Model *>(object);
+        if (model == nullptr)
             return;
-        const auto&modelInfo=ModelInfo::modelInfo(model->metaObject()->className());
-        const auto&descriptors=modelInfo.propertyDescriptors();
+        const auto &modelInfo = ModelInfo::modelInfo(model->metaObject()->className());
+        const auto &descriptors = modelInfo.propertyDescriptors();
         this->dtoControls.headers().clear().makeDefault();
-        for(auto&v:descriptors){
+        for (auto &v : descriptors) {
             this->dtoControls.headers().value(v.toHash());
         }
     }
 };
 
-ModelDto::ModelDto(QObject *parent) : QStm::Object(parent)
+ModelDto::ModelDto(QObject *parent) : QStm::Object{parent}
 {
-    this->p = new ModelDtoPvt(this);
+    this->p = new ModelDtoPvt{this};
 }
 
-ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object(parent)
+ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object{parent}
 {
-    this->p = new ModelDtoPvt(this);
+    this->p = new ModelDtoPvt{this};
     dPvt();
     p.dtoControls.setValue(rows.resultVariant());
 }
@@ -119,7 +115,7 @@ ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object(pare
 ModelDto::~ModelDto()
 {
     dPvt();
-    delete&p;
+    delete &p;
 }
 
 QString ModelDto::id() const
@@ -132,22 +128,22 @@ ModelDto &ModelDto::id(const QVariant &v)
 {
     dPvt();
     p.dtoControls.id(v);
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::setId(const QVariant &value)
 {
     dPvt();
     p.dtoControls.id(value);
-    return*this;
+    return *this;
 }
 
 QVariant ModelDto::type() const
 {
     dPvt();
-    auto value=p.dtoControls.type();
-    if(value.isNull() && !value.isValid()){
-        value=this->defaultType();
+    auto value = p.dtoControls.type();
+    if (value.isNull() && !value.isValid()) {
+        value = this->defaultType();
     }
     return value;
 }
@@ -156,21 +152,21 @@ ModelDto &ModelDto::type(const QVariant &v)
 {
     dPvt();
     p.dtoControls.type(v);
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::setType(const QVariant &v)
 {
     dPvt();
     p.dtoControls.type(v);
-    return*this;
+    return *this;
 }
 
 QVariant ModelDto::layout() const
 {
     dPvt();
-    auto value=p.dtoControls.layout();
-    if(value.isNull() && !value.isValid())
+    auto value = p.dtoControls.layout();
+    if (value.isNull() && !value.isValid())
         return this->defaultLayout();
     return value;
 }
@@ -179,21 +175,21 @@ ModelDto &ModelDto::layout(const QVariant &v)
 {
     dPvt();
     p.dtoControls.layout(v);
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::setLayout(const QVariant &v)
 {
     dPvt();
     p.dtoControls.layout(v);
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::settings(const QVariant &setting)
 {
     dPvt();
     p.dtoControls.settings(setting.toHash());
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDto::controls()
@@ -262,7 +258,7 @@ ModelDto &ModelDto::setValue(const QVariant &v)
 {
     dPvt();
     p.dtoControls.items(v);
-    return*this;
+    return *this;
 }
 
 QString ModelDto::text() const
@@ -275,14 +271,14 @@ ModelDto &ModelDto::text(const QVariant &v)
 {
     dPvt();
     p.dtoControls.text(v);
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::setText(const QVariant &v)
 {
     dPvt();
     p.dtoControls.text(v);
-    return*this;
+    return *this;
 }
 
 QVariantHash ModelDto::sort() const
@@ -295,28 +291,28 @@ ModelDto &ModelDto::sort(const QVariant &v)
 {
     dPvt();
     p.dtoControls.sort(v);
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::setSort(const QVariant &v)
 {
     dPvt();
     p.dtoControls.setSort(v);
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::setValue(const ResultValue &lr)
 {
     dPvt();
     p.dtoControls.setValue(lr.resultVariant());
-    return*this;
+    return *this;
 }
 
 ModelDto &ModelDto::clear()
 {
     dPvt();
     p.clear();
-    return*this;
+    return *this;
 }
 
 ResultValue &ModelDto::o()
@@ -335,7 +331,7 @@ ModelDto &ModelDto::initDescriptors(QObject *object)
 {
     dPvt();
     p.initDescriptors(object);
-    return*this;
+    return *this;
 }
 
-}
+} // namespace QOrm

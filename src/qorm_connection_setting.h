@@ -8,41 +8,47 @@ namespace QOrm {
 //!
 //! \brief The ConnectionSetting class
 //!
-class Q_ORM_EXPORT ConnectionSetting:public QObject{
+class Q_ORM_EXPORT ConnectionSetting : public QObject
+{
     Q_OBJECT
 public:
-    Q_PROPERTY(QVariantHash variables         READ variables            WRITE setVariables           )
-    Q_PROPERTY(QByteArray   driver            READ driver               WRITE setDriver              )
-    Q_PROPERTY(QByteArray   name              READ name                 WRITE setName                )
-    Q_PROPERTY(QByteArray   hostName          READ hostName             WRITE setHostName            )
-    Q_PROPERTY(QByteArray   userName          READ userName             WRITE setUserName            )
-    Q_PROPERTY(QByteArray   password          READ password             WRITE setPassword            )
-    Q_PROPERTY(int          port              READ port                 WRITE setPort                )
-    Q_PROPERTY(QByteArray   dataBaseName      READ dataBaseName         WRITE setDataBaseName        )
-    Q_PROPERTY(QStringList  schemaNames       READ schemaNames          WRITE setSchemaNames         )
-    Q_PROPERTY(QByteArray   connectOptions    READ connectOptions       WRITE setConnectOptions      )
-    Q_PROPERTY(QStringList  commandBeforeOpen READ commandBeforeOpen    WRITE setCommandBeforeOpen   )
-    Q_PROPERTY(QStringList  commandAfterClose READ commandAfterClose    WRITE setCommandAfterClose   )
+    Q_PROPERTY(QVariantHash variables READ variables WRITE setVariables NOTIFY variablesChanged)
+    Q_PROPERTY(QByteArray driver READ driver WRITE setDriver NOTIFY driverChanged)
+    Q_PROPERTY(QByteArray name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QByteArray hostName READ hostName WRITE setHostName NOTIFY hostNameChanged)
+    Q_PROPERTY(QByteArray userName READ userName WRITE setUserName NOTIFY userNameChanged)
+    Q_PROPERTY(QByteArray password READ password WRITE setPassword NOTIFY passwordChanged)
+    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
+    Q_PROPERTY(
+        QByteArray dataBaseName READ dataBaseName WRITE setDataBaseName NOTIFY dataBaseNameChanged)
+    Q_PROPERTY(
+        QStringList schemaNames READ schemaNames WRITE setSchemaNames NOTIFY schemaNamesChanged)
+    Q_PROPERTY(QByteArray connectOptions READ connectOptions WRITE setConnectOptions NOTIFY
+                   connectOptionsChanged)
+    Q_PROPERTY(QStringList commandBeforeOpen READ commandBeforeOpen WRITE setCommandBeforeOpen
+                   NOTIFY commandBeforeOpenChanged)
+    Q_PROPERTY(QStringList commandAfterClose READ commandAfterClose WRITE setCommandAfterClose
+                   NOTIFY commandAfterCloseChanged)
 public:
     //!
     //! \brief ConnectionSetting
     //! \param parent
     //!
-    Q_INVOKABLE explicit ConnectionSetting(QObject*parent=nullptr);
+    Q_INVOKABLE explicit ConnectionSetting(QObject *parent = nullptr);
 
     //!
     //! \brief ConnectionSetting
     //! \param detail
     //! \param parent
     //!
-    explicit ConnectionSetting(const QSqlDatabase &detail, QObject*parent);
+    explicit ConnectionSetting(const QSqlDatabase &detail, QObject *parent);
 
     //!
     //! \brief ConnectionSetting
     //! \param detail
     //! \param parent
     //!
-    explicit ConnectionSetting(const ConnectionSetting &detail, QObject*parent);
+    explicit ConnectionSetting(const ConnectionSetting &detail, QObject *parent);
 
     //!
     //! \brief ConnectionSetting
@@ -50,7 +56,9 @@ public:
     //! \param detailMap
     //! \param parent
     //!
-    explicit ConnectionSetting(const QByteArray &name, const QVariantHash &detailMap, QObject*parent);
+    explicit ConnectionSetting(const QByteArray &name,
+                               const QVariantHash &detailMap,
+                               QObject *parent);
 
     //!
     //! \brief ~ConnectionSetting
@@ -60,13 +68,13 @@ public:
     //!
     //! \brief printLog
     //!
-    Q_INVOKABLE void printLog();
+    ConnectionSetting &printLog();
 
     //!
     //! \brief isValid
     //! \return
     //!
-    Q_INVOKABLE bool isValid() const;
+    bool isValid() const;
 
     //!
     //! \brief fromSetting
@@ -79,13 +87,13 @@ public:
     //! \brief toMap
     //! \return
     //!
-    Q_INVOKABLE QVariantMap toMap() const;
+    QVariantMap toMap() const;
 
     //!
     //! \brief toHash
     //! \return
     //!
-    Q_INVOKABLE QVariantHash toHash() const;
+    QVariantHash toHash() const;
 
     //!
     //! \brief fromMap
@@ -102,159 +110,172 @@ public:
     ConnectionSetting &fromConnection(const QSqlDatabase &connection);
 
 public:
-
     //!
     //! \brief operator =
     //! \param value
     //! \return
     //!
-    ConnectionSetting&operator=(const QVariant&value);
+    ConnectionSetting &operator=(const QVariant &value);
 
     //!
     //! \brief variables
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantHash variables() const;
+    virtual QVariantHash variables() const;
 
     //!
     //! \brief setVariables
     //! \param value
     //!
-    Q_INVOKABLE virtual void setVariables(const QVariantHash &value);
+    virtual void setVariables(const QVariantHash &value);
 
     //!
     //! \brief driver
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray driver() const;
+    virtual QByteArray driver() const;
 
     //!
     //! \brief setDriver
     //! \param value
     //!
-    Q_INVOKABLE virtual void setDriver(const QByteArray &value);
+    virtual void setDriver(const QByteArray &value);
 
     //!
     //! \brief name
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray name() const;
+    virtual QByteArray name() const;
 
     //!
     //! \brief setName
     //! \param value
     //!
-    Q_INVOKABLE virtual void setName(const QByteArray &value);
+    virtual void setName(const QByteArray &value);
 
     //!
     //! \brief hostName
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray hostName() const;
+    virtual QByteArray hostName() const;
 
     //!
     //! \brief setHostName
     //! \param value
     //!
-    Q_INVOKABLE virtual void setHostName(const QByteArray &value);
+    virtual void setHostName(const QByteArray &value);
 
     //!
     //! \brief userName
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray userName() const;
+    virtual QByteArray userName() const;
 
     //!
     //! \brief setUserName
     //! \param value
     //!
-    Q_INVOKABLE virtual void setUserName(const QByteArray &value);
+    virtual void setUserName(const QByteArray &value);
 
     //!
     //! \brief password
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray password() const;
+    virtual QByteArray password() const;
 
     //!
     //! \brief setPassword
     //! \param value
     //!
-    Q_INVOKABLE virtual void setPassword(const QByteArray &value);
+    virtual void setPassword(const QByteArray &value);
 
     //!
     //! \brief port
     //! \return
     //!
-    Q_INVOKABLE virtual int port() const;
+    virtual int port() const;
 
     //!
     //! \brief setPort
     //! \param value
     //!
-    Q_INVOKABLE virtual void setPort(int value);
+    virtual void setPort(int value);
 
     //!
     //! \brief dataBaseName
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray dataBaseName() const;
+    virtual QByteArray dataBaseName() const;
 
     //!
     //! \brief setDataBaseName
     //! \param value
     //!
-    Q_INVOKABLE virtual void setDataBaseName(const QByteArray &value);
+    virtual void setDataBaseName(const QByteArray &value);
 
     //!
     //! \brief schemaNames
     //! \return
     //!
-    Q_INVOKABLE virtual QStringList schemaNames() const;
+    virtual QStringList schemaNames() const;
 
     //!
     //! \brief setSchemaNames
     //! \param value
     //!
-    Q_INVOKABLE virtual void setSchemaNames(const QStringList &value);
+    virtual void setSchemaNames(const QStringList &value);
 
     //!
     //! \brief connectOptions
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray connectOptions() const;
+    virtual QByteArray connectOptions() const;
 
     //!
     //! \brief setConnectOptions
     //! \param value
     //!
-    Q_INVOKABLE virtual void setConnectOptions(const QByteArray &value);
+    virtual void setConnectOptions(const QByteArray &value);
 
     //!
     //! \brief commandBeforeOpen
     //! \return
     //!
-    Q_INVOKABLE virtual QStringList commandBeforeOpen() const;
+    virtual QStringList commandBeforeOpen() const;
 
     //!
     //! \brief setCommandBeforeOpen
     //! \param value
     //!
-    Q_INVOKABLE virtual void setCommandBeforeOpen(const QStringList &value);
+    virtual void setCommandBeforeOpen(const QStringList &value);
 
     //!
     //! \brief commandAfterClose
     //! \return
     //!
-    Q_INVOKABLE virtual QStringList commandAfterClose() const;
+    virtual QStringList commandAfterClose() const;
 
     //!
     //! \brief setCommandAfterClose
     //! \param value
     //!
-    Q_INVOKABLE virtual void setCommandAfterClose(const QStringList &value);
+    virtual void setCommandAfterClose(const QStringList &value);
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
+signals:
+    void variablesChanged();
+    void driverChanged();
+    void nameChanged();
+    void hostNameChanged();
+    void userNameChanged();
+    void passwordChanged();
+    void portChanged();
+    void dataBaseNameChanged();
+    void schemaNamesChanged();
+    void connectOptionsChanged();
+    void commandBeforeOpenChanged();
+    void commandAfterCloseChanged();
 };
 
-}
+} // namespace QOrm

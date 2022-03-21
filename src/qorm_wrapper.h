@@ -14,7 +14,7 @@ public:
     //! \brief Wrapper
     //! \param v
     //!
-    explicit Wrapper(const QVariant&v);
+    explicit Wrapper(const QVariant &v);
 
     //!
     //! \brief Wrapper
@@ -33,28 +33,29 @@ public:
     //! \param propertyDestine
     //! \return
     //!
-    Wrapper&w(const QString &propertySrc, const QString &propertyDestine);
+    Wrapper &w(const QString &propertySrc, const QString &propertyDestine);
 
     //!
     //! \brief w
     //! \param propertySrc
     //! \return
     //!
-    Wrapper&w(const QString &propertySrc);
+    Wrapper &w(const QString &propertySrc);
 
     //!
     //! \brief clear
     //! \return
     //!
-    virtual Wrapper&clear();
+    virtual Wrapper &clear();
 
     //!
     //! \brief v
     //! \return
     //!
     virtual QVariant &v() const;
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

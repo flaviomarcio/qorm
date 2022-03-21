@@ -1,78 +1,73 @@
 #include "./qorm_wrapper.h"
-#include "../../qstm/src/qstm_types.h"
 #include "../../qstm/src/qstm_meta_types.h"
+#include "../../qstm/src/qstm_types.h"
 
 namespace QOrm {
 
-#define dPvt()\
-    auto&p = *reinterpret_cast<WrapperPvt*>(this->p)
+#define dPvt() auto &p = *reinterpret_cast<WrapperPvt *>(this->p)
 
-
-class WrapperPvt{
+class WrapperPvt
+{
 public:
-    QHash<QString,QString> wrapperNames;
+    QHash<QString, QString> wrapperNames;
     QVariant v;
-    explicit WrapperPvt()
-    {
-    }
+    explicit WrapperPvt() {}
 
-    virtual ~WrapperPvt()
-    {
-    }
+    virtual ~WrapperPvt() {}
 
-    QVariant&wrapper()
+    QVariant &wrapper()
     {
         QVariantList list;
         switch (qTypeId(v)) {
         case QMetaType_QVariantHash:
         case QMetaType_QVariantMap:
-            list<<this->v;
+            list << this->v;
             break;
         case QMetaType_QVariantList:
         case QMetaType_QStringList:
-            list=v.toList();
+            list = v.toList();
             break;
         default:
             break;
         }
 
-        for(auto&v:list){
+        for (auto &v : list) {
             switch (qTypeId(v)) {
             case QMetaType_QVariantHash:
             case QMetaType_QVariantMap:
                 break;
             default:
-                continue;//next
+                continue; //next
             }
 
-            auto vHash=v.toHash();
-            if(vHash.isEmpty())
+            auto vHash = v.toHash();
+            if (vHash.isEmpty())
                 continue;
 
             QVariantHash wrapperHash;
             QHashIterator<QString, QString> i(this->wrapperNames);
             while (i.hasNext()) {
                 i.next();
-                auto src=i.key();
-                auto dst=i.value();
+                auto src = i.key();
+                auto dst = i.value();
 
-                auto value=vHash[src];
-                if(!value.isValid())
+                auto value = vHash[src];
+                if (!value.isValid())
                     continue;
 
-                wrapperHash[dst]=value;
+                wrapperHash[dst] = value;
             }
-            v=QVariant(wrapperHash);
+            v = QVariant(wrapperHash);
         }
 
         switch (qTypeId(v)) {
         case QMetaType_QVariantHash:
         case QMetaType_QVariantMap:
-            this->v=list.first();
+            this->v = list.first();
             break;
         case QMetaType_QVariantList:
         case QMetaType_QStringList:
-            this->v=list;
+            this->v = list;
             break;
         default:
             break;
@@ -81,7 +76,6 @@ public:
         return this->v;
     }
 };
-
 
 Wrapper::Wrapper(const QVariant &v)
 {
@@ -100,14 +94,14 @@ Wrapper::Wrapper(ResultValue &v)
 Wrapper::~Wrapper()
 {
     dPvt();
-    delete&p;
+    delete &p;
 }
 
 Wrapper &Wrapper::w(const QString &propertySrc, const QString &propertyDestine)
 {
     dPvt();
-    p.wrapperNames[propertySrc]=propertyDestine;
-    return*this;
+    p.wrapperNames[propertySrc] = propertyDestine;
+    return *this;
 }
 
 Wrapper &Wrapper::w(const QString &propertySrc)
@@ -119,13 +113,13 @@ Wrapper &Wrapper::clear()
 {
     dPvt();
     p.wrapperNames.clear();
-    return*this;
+    return *this;
 }
 
-QVariant&Wrapper::v() const
+QVariant &Wrapper::v() const
 {
     dPvt();
     return p.wrapper();
 }
 
-}
+} // namespace QOrm

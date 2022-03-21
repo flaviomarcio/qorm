@@ -547,9 +547,9 @@ public:
     }
 };
 
-Model::Model(QObject *parent):QStm::Object(parent)
+Model::Model(QObject *parent):QStm::Object{parent}
 {
-    this->p=new ModelPvt(this);
+    this->p=new ModelPvt{this};
 }
 
 Model::~Model()

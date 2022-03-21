@@ -21,6 +21,7 @@ public:
     //! \brief ~ConnectionNotify
     //!
     ~ConnectionNotify();
+
 public:
     //!
     //! \brief notify_send
@@ -74,8 +75,9 @@ signals:
     //! \param payload
     //!
     void notification(const QString &channel, const QVariant &payload);
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

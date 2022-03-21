@@ -6,10 +6,10 @@ namespace QOrm {
 ConnectionManager::ConnectionManager(QObject *parent) : QStm::Object(nullptr)
 {
     this->p = new ConnectionManagerPrv(this);
-    if(parent==nullptr)
+    if (parent == nullptr)
         return;
-    if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
-        sWarning()<<"Invalid parent";
+    if (parent->thread() != this->thread() || parent->thread() != QThread::currentThread())
+        sWarning() << "Invalid parent";
     else
         this->setParent(parent);
     dPvt();
@@ -17,14 +17,15 @@ ConnectionManager::ConnectionManager(QObject *parent) : QStm::Object(nullptr)
     p.load(p.parentParent);
 }
 
-ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent):QStm::Object(nullptr)
+ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent)
+    : QStm::Object(nullptr)
 {
     this->p = new ConnectionManagerPrv(this);
-    if(parent==nullptr)
+    if (parent == nullptr)
         return;
 
-    if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
-        sWarning()<<"Invalid parent";
+    if (parent->thread() != this->thread() || parent->thread() != QThread::currentThread())
+        sWarning() << "Invalid parent";
     else
         this->setParent(parent);
     dPvt();
@@ -32,13 +33,14 @@ ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent
     p.load(manager.toHash());
 }
 
-ConnectionManager::ConnectionManager(const QVariant&setting, QObject *parent):QStm::Object(nullptr)
+ConnectionManager::ConnectionManager(const QVariant &setting, QObject *parent)
+    : QStm::Object(nullptr)
 {
     this->p = new ConnectionManagerPrv(this);
-    if(parent==nullptr)
+    if (parent == nullptr)
         return;
-    if(parent->thread()!=this->thread() || parent->thread()!=QThread::currentThread())
-        sWarning()<<"Invalid parent";
+    if (parent->thread() != this->thread() || parent->thread() != QThread::currentThread())
+        sWarning() << "Invalid parent";
     else
         this->setParent(parent);
     dPvt();
@@ -48,7 +50,8 @@ ConnectionManager::ConnectionManager(const QVariant&setting, QObject *parent):QS
 
 ConnectionManager::~ConnectionManager()
 {
-    dPvt();delete&p;
+    dPvt();
+    delete &p;
 }
 
 void ConnectionManager::clear()
@@ -85,15 +88,15 @@ QVariantHash ConnectionManager::paramaters() const
 {
     dPvt();
     QVariantHash paramaters;
-    QHashIterator<QString, ConnectionSetting*> i(p.settings);
+    QHashIterator<QString, ConnectionSetting *> i(p.settings);
     while (i.hasNext()) {
         i.next();
-        const auto k=i.key().trimmed().toLower();
-        const auto&v=i.value();
-        if(k.trimmed().isEmpty())
+        const auto k = i.key().trimmed().toLower();
+        const auto &v = i.value();
+        if (k.trimmed().isEmpty())
             continue;
 
-        if(v->isValid())
+        if (v->isValid())
             paramaters.insert(k, v->toMap());
     }
     return paramaters;
@@ -102,11 +105,11 @@ QVariantHash ConnectionManager::paramaters() const
 void ConnectionManager::setParamaters(const QVariantHash &value)
 {
     dPvt();
-    auto lst=p.settings.values();
+    auto lst = p.settings.values();
     qDeleteAll(lst);
     p.settings.clear();
-    for(auto&v:value){
-        if(!QMetaTypeUtilVariantDictionary.contains(qTypeId(v)))
+    for (auto &v : value) {
+        if (!QMetaTypeUtilVariantDictionary.contains(qTypeId(v)))
             continue;
         this->insert(v.toHash());
     }
@@ -124,16 +127,16 @@ ConnectionManager &ConnectionManager::insert(const QVariantHash &value)
     return p.insert(value);
 }
 
-ConnectionSetting&ConnectionManager::detail()
+ConnectionSetting &ConnectionManager::detail()
 {
     dPvt();
     return this->detail(p.enviroment);
 }
 
-ConnectionSetting&ConnectionManager::detail(const QByteArray&value)
+ConnectionSetting &ConnectionManager::detail(const QByteArray &value)
 {
     dPvt();
-    auto name=value;
+    auto name = value;
     return p.detailGetCheck(name);
 }
 
@@ -151,18 +154,18 @@ ConnectionPool &ConnectionManager::pool(const QByteArray &value)
 
 QVariantMap ConnectionManager::toMap() const
 {
-    if(this->isEmpty() || !this->isLoaded())
+    if (this->isEmpty() || !this->isLoaded())
         return {};
 
     QVariantMap RETURN;
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
-        auto property=this->metaObject()->property(row);
-        if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
+        auto property = this->metaObject()->property(row);
+        if (QByteArray(property.name()) == QT_STRINGIFY2(objectName))
             continue;
 
-        const auto key=property.name();
+        const auto key = property.name();
         const auto value = property.read(this);
-        if(!value.isNull())
+        if (!value.isNull())
             RETURN.insert(key, value);
     }
     return RETURN;
@@ -170,18 +173,18 @@ QVariantMap ConnectionManager::toMap() const
 
 QVariantHash ConnectionManager::toHash() const
 {
-    if(this->isEmpty() || !this->isLoaded())
+    if (this->isEmpty() || !this->isLoaded())
         return {};
 
     QVariantHash RETURN;
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
-        auto property=this->metaObject()->property(row);
-        if(QByteArray(property.name())==QT_STRINGIFY2(objectName))
+        auto property = this->metaObject()->property(row);
+        if (QByteArray(property.name()) == QT_STRINGIFY2(objectName))
             continue;
 
-        const auto key=property.name();
+        const auto key = property.name();
         const auto value = property.read(this);
-        if(!value.isNull())
+        if (!value.isNull())
             RETURN.insert(key, value);
     }
     return RETURN;
@@ -245,4 +248,4 @@ ConnectionManager &ConnectionManager::operator<<(const QVariantHash &value)
     return this->insert(value);
 }
 
-}
+} // namespace QOrm

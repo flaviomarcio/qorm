@@ -1,20 +1,20 @@
 #pragma once
 
-#include <QTimer>
+#include "../qorm_connection_pool.h"
+#include "../qorm_global.h"
+#include <QDateTime>
 #include <QObject>
 #include <QString>
-#include <QVariant>
-#include <QDateTime>
+#include <QThread>
+#include <QTimer>
 #include <QUrl>
 #include <QUuid>
-#include <QThread>
+#include <QVariant>
 #include <QtSql/QSqlDatabase>
-#include "../qorm_global.h"
-#include "../qorm_connection_pool.h"
 
 namespace QOrm {
 
-typedef std::function<QVariant(QSqlDatabase&db, const QVariant&task)> TaskRunnerMethod;
+typedef std::function<QVariant(QSqlDatabase &db, const QVariant &task)> TaskRunnerMethod;
 class TaskPool;
 class TaskRunner;
 
@@ -33,7 +33,11 @@ public:
     //! \param methodSuccess
     //! \param methodFailed
     //!
-    explicit TaskSlot(TaskPool*pool, const QVariantHash&connectionSetting, TaskRunnerMethod methodExecute, TaskRunnerMethod methodSuccess, TaskRunnerMethod methodFailed);
+    explicit TaskSlot(TaskPool *pool,
+                      const QVariantHash &connectionSetting,
+                      TaskRunnerMethod methodExecute,
+                      TaskRunnerMethod methodSuccess,
+                      TaskRunnerMethod methodFailed);
     ~TaskSlot();
 
     //!
@@ -56,39 +60,40 @@ signals:
     //! \brief taskSend
     //! \param task
     //!
-    void taskSend(const QVariant&task);
+    void taskSend(const QVariant &task);
 
     //!
     //! \brief taskRequest
     //! \param slot
     //!
-    void taskRequest(QOrm::TaskSlot*slot);
+    void taskRequest(QOrm::TaskSlot *slot);
 
     //!
     //! \brief taskStart
     //! \param task
     //!
-    void taskStart(const QVariantHash&task);
+    void taskStart(const QVariantHash &task);
 
     //!
     //! \brief taskState
     //! \param task
     //!
-    void taskState(const QVariantHash&task);
+    void taskState(const QVariantHash &task);
 
     //!
     //! \brief taskError
     //! \param task
     //!
-    void taskError(const QVariantHash&task);
+    void taskError(const QVariantHash &task);
 
     //!
     //! \brief taskSuccess
     //! \param task
     //!
-    void taskSuccess(const QVariantHash&task);
+    void taskSuccess(const QVariantHash &task);
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

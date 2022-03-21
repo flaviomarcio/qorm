@@ -189,9 +189,9 @@ public:
     }
 };
 
-ModelDtoControls::ModelDtoControls(QObject *parent) : QStm::Object(parent)
+ModelDtoControls::ModelDtoControls(QObject *parent) : QStm::Object{parent}
 {
-    this->p = new ModelDtoControlsPvt(this);
+    this->p = new ModelDtoControlsPvt{this};
 }
 
 ModelDtoControls::~ModelDtoControls()

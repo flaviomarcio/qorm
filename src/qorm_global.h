@@ -3,6 +3,7 @@
 #include <QObject>
 #include "./qorm_const.h"
 #include "./qorm_macro.h"
+#include "../../qstm/src/qstm_macro.h"
 
 #ifndef QT_STATIC
 #  if defined(QT_BUILD_SQL_LIB)

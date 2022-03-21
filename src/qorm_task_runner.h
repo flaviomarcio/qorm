@@ -4,7 +4,7 @@
 
 namespace QOrm {
 
-typedef std::function<QVariant(QSqlDatabase&db, const QVariant&task)> TaskRunnerMethod;
+typedef std::function<QVariant(QSqlDatabase &db, const QVariant &task)> TaskRunnerMethod;
 
 //!
 //! \brief The TaskRunner class
@@ -91,7 +91,7 @@ public:
     //! \param values
     //! \return
     //!
-    virtual TaskRunner &values(ResultValue&values);
+    virtual TaskRunner &values(ResultValue &values);
 
     //!
     //! \brief onExecute
@@ -118,7 +118,7 @@ public:
     //! \brief start
     //! \return
     //!
-    virtual ResultValue&start();
+    virtual ResultValue &start();
 
     /**
      * @brief stop
@@ -135,14 +135,14 @@ public:
     //! \param taskValue
     //! \return
     //!
-    virtual QUuid taskAppend(const QVariant&taskValue);
+    virtual QUuid taskAppend(const QVariant &taskValue);
 
     //!
     //! \brief operator <<
     //! \param taskValue
     //! \return
     //!
-    TaskRunner &operator <<(const QVariant&taskValue);
+    TaskRunner &operator<<(const QVariant &taskValue);
 
     //!
     //! \brief slotCount
@@ -195,25 +195,25 @@ signals:
     //! \brief taskStart
     //! \param task
     //!
-    void taskStart(const QVariantHash&task);
+    void taskStart(const QVariantHash &task);
 
     //!
     //! \brief taskState
     //! \param task
     //!
-    void taskState(const QVariantHash&task);
+    void taskState(const QVariantHash &task);
 
     //!
     //! \brief taskError
     //! \param task
     //!
-    void taskError(const QVariantHash&task);
+    void taskError(const QVariantHash &task);
 
     //!
     //! \brief taskSuccess
     //! \param task
     //!
-    void taskSuccess(const QVariantHash&task);
+    void taskSuccess(const QVariantHash &task);
 
     //!
     //! \brief taskProgress
@@ -223,9 +223,9 @@ signals:
     //! \param progress
     //!
     void taskProgress(qlonglong maximum, qlonglong minimum, qlonglong value, qlonglong progress);
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
-
+} // namespace QOrm

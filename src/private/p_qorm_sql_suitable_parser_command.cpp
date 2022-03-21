@@ -12,11 +12,11 @@ static void init()
 
 Q_COREAPP_STARTUP_FUNCTION(init)
 
-SqlParserCommand::SqlParserCommand(const QVariant &v):QVariant(v)
+SqlParserCommand::SqlParserCommand(const QVariant &v):QVariant{v}
 {
 }
 
-SqlParserCommand::SqlParserCommand():QVariant()
+SqlParserCommand::SqlParserCommand():QVariant{}
 {
 }
 

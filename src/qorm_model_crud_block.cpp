@@ -27,12 +27,12 @@ namespace QOrm {
 
     CRUDBlock::CRUDBlock(QObject *parent):QOrm::ObjectDb(parent)
     {
-        this->p = new CRUDBlockPvt(this);
+        this->p = new CRUDBlockPvt{this};
     }
 
     CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb(parent)
     {
-        this->p = new CRUDBlockPvt(this);
+        this->p = new CRUDBlockPvt{this};
         dPvt();
         p.crudBody=crudBody;
     }

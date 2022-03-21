@@ -2,21 +2,18 @@
 
 namespace QOrm {
 
-#define dPvt()\
-    auto&p = *reinterpret_cast<ControllerPvt*>(this->p)
+#define dPvt() auto &p = *reinterpret_cast<ControllerPvt *>(this->p)
 
-class ControllerPvt{
+class ControllerPvt
+{
 public:
-    QHash<QString, ConnectionPool*>localConnection;
-    explicit ControllerPvt(QObject*object)
-    {
-        Q_UNUSED(object)
-    }
+    QHash<QString, ConnectionPool *> localConnection;
+    explicit ControllerPvt(QObject *object) { Q_UNUSED(object) }
     virtual ~ControllerPvt()
     {
-        auto vHash=this->localConnection;
+        auto vHash = this->localConnection;
         this->localConnection.clear();
-        QHashIterator<QString, ConnectionPool*> i(vHash);
+        QHashIterator<QString, ConnectionPool *> i(vHash);
         while (i.hasNext()) {
             i.next();
             i.value()->finish(i.key());
@@ -26,45 +23,47 @@ public:
 
 Controller::Controller(QObject *parent) : ObjectDb(parent)
 {
-    this->p=new ControllerPvt(this);
+    this->p = new ControllerPvt{this};
 }
 
-Controller::Controller(const QSqlDatabase &connection, QObject *parent) : ObjectDb(connection, parent)
+Controller::Controller(const QSqlDatabase &connection, QObject *parent)
+    : ObjectDb(connection, parent)
 {
-    this->p=new ControllerPvt(this);
+    this->p = new ControllerPvt{this};
 }
 
 Controller::~Controller()
 {
-    dPvt();delete&p;
+    dPvt();
+    delete &p;
 }
 
 bool Controller::dbConnect(QObject *objectConnection)
 {
-    auto connectionPool=dynamic_cast<ConnectionPool*>(objectConnection);
-    if(connectionPool!=nullptr)
+    auto connectionPool = dynamic_cast<ConnectionPool *>(objectConnection);
+    if (connectionPool != nullptr)
         return this->dbConnect(*connectionPool);
 
-    auto connectionManager=dynamic_cast<ConnectionManager*>(objectConnection);
-    if(connectionManager==nullptr)
+    auto connectionManager = dynamic_cast<ConnectionManager *>(objectConnection);
+    if (connectionManager == nullptr)
         return false;
 
-    connectionPool=&connectionManager->pool();
-    if(connectionPool==nullptr)
+    connectionPool = &connectionManager->pool();
+    if (connectionPool == nullptr)
         return false;
     return this->dbConnect(*connectionPool);
 }
 
 bool Controller::dbConnect(ConnectionManager &connectionManager)
 {
-    auto&pool=connectionManager.pool();
+    auto &pool = connectionManager.pool();
     return this->dbConnect(pool);
 }
 
 bool Controller::dbConnect(ConnectionPool &connectionPool)
 {
     QSqlDatabase db;
-    if(!connectionPool.get(db))
+    if (!connectionPool.get(db))
         return false;
 
     dPvt();
@@ -79,8 +78,8 @@ bool Controller::dbConnect(const QSqlDatabase &db)
 
 bool Controller::dbConnect(const QString &connectionName)
 {
-    auto db=QSqlDatabase::database(connectionName);
+    auto db = QSqlDatabase::database(connectionName);
     return this->dbConnect(db);
 }
 
-}
+} // namespace QOrm

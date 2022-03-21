@@ -1,7 +1,7 @@
 #pragma once
 
-#include "./qorm_connection_pool.h"
 #include "./qorm_connection_notify.h"
+#include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
 #include <QSettings>
 
@@ -25,23 +25,23 @@ public:
     //! \param manager
     //! \param parent
     //!
-    explicit ConnectionManager(ConnectionManager &manager, QObject *parent=nullptr);
+    explicit ConnectionManager(ConnectionManager &manager, QObject *parent = nullptr);
 
     //!
     //! \brief ConnectionManager
     //! \param setting
     //! \param parent
     //!
-    Q_INVOKABLE explicit ConnectionManager(const QVariant&setting, QObject *parent = nullptr);
+    Q_INVOKABLE explicit ConnectionManager(const QVariant &setting, QObject *parent = nullptr);
 
     //!
     //! \brief ~ConnectionManager
     //!
     ~ConnectionManager();
 
-    Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment )
-    Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey )
-    Q_PROPERTY(QVariantHash paramaters READ paramaters WRITE setParamaters )
+    Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment)
+    Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey)
+    Q_PROPERTY(QVariantHash paramaters READ paramaters WRITE setParamaters)
 
     //!
     //! \brief clear
@@ -89,14 +89,14 @@ public:
     //! \param value
     //! \return
     //!
-    virtual ConnectionManager&insert(ConnectionSetting &value);
+    virtual ConnectionManager &insert(ConnectionSetting &value);
 
     //!
     //! \brief insert
     //! \param value
     //! \return
     //!
-    virtual ConnectionManager&insert(const QVariantHash &value);
+    virtual ConnectionManager &insert(const QVariantHash &value);
 
     //!
     //! \brief detail
@@ -167,7 +167,7 @@ public:
     //! \param manager
     //! \return
     //!
-    virtual bool load(const ConnectionManager&manager);
+    virtual bool load(const ConnectionManager &manager);
 
     //!
     //! \brief settingsFileName
@@ -180,30 +180,30 @@ public:
     //! \param fileName
     //! \return
     //!
-    virtual bool setSettingsFileName(const QString&fileName);
+    virtual bool setSettingsFileName(const QString &fileName);
 
     //!
     //! \brief notify
     //! \return
     //!
-    ConnectionNotify&notify();
+    ConnectionNotify &notify();
 
     //!
     //! \brief operator <<
     //! \param value
     //! \return
     //!
-    ConnectionManager&operator<<(ConnectionSetting&value);
+    ConnectionManager &operator<<(ConnectionSetting &value);
 
     //!
     //! \brief operator <<
     //! \param value
     //! \return
     //!
-    ConnectionManager&operator<<(const QVariantHash&value);
+    ConnectionManager &operator<<(const QVariantHash &value);
 
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

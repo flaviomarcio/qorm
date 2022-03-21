@@ -1,10 +1,10 @@
 #pragma once
 
-#include "./qorm_object_db.h"
 #include "./qorm_connection_manager.h"
-#include "./qorm_wrapper.h"
+#include "./qorm_object_db.h"
 #include "./qorm_transaction.h"
 #include "./qorm_transaction_scope.h"
+#include "./qorm_wrapper.h"
 
 namespace QOrm {
 
@@ -26,7 +26,7 @@ public:
     //! \param connection
     //! \param parent
     //!
-    Q_INVOKABLE explicit Controller(const QSqlDatabase&connection, QObject *parent = nullptr);
+    Q_INVOKABLE explicit Controller(const QSqlDatabase &connection, QObject *parent = nullptr);
 
     ~Controller();
 
@@ -56,16 +56,17 @@ public:
     //! \param connection
     //! \return
     //!
-    bool dbConnect(const QSqlDatabase&connection);
+    bool dbConnect(const QSqlDatabase &connection);
 
     //!
     //! \brief dbConnect
     //! \param connectionId
     //! \return
     //!
-    bool dbConnect(const QString&connectionId);
+    bool dbConnect(const QString &connectionId);
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

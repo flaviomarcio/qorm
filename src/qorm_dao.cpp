@@ -2,19 +2,14 @@
 
 namespace QOrm {
 
-#define dPvt()\
-    auto&p = *reinterpret_cast<DaoPrv*>(this->p)
+#define dPvt() auto &p = *reinterpret_cast<DaoPrv *>(this->p)
 
-class DaoPrv{
+class DaoPrv
+{
 public:
     QOrm::SqlSuitableValue suitableValue;
-    explicit DaoPrv(QObject*object)
-    {
-        Q_UNUSED(object)
-    }
-    virtual ~DaoPrv()
-    {
-    }
+    explicit DaoPrv(QObject *object) { Q_UNUSED(object) }
+    virtual ~DaoPrv() {}
 };
 
 Dao::Dao(QObject *parent) : ObjectDb(parent)
@@ -30,7 +25,7 @@ Dao::Dao(const QSqlDatabase &connection, QObject *parent) : ObjectDb(connection,
 Dao::~Dao()
 {
     dPvt();
-    delete&p;
+    delete &p;
 }
 
 QOrm::SqlSuitableValue &Dao::format()
@@ -39,4 +34,4 @@ QOrm::SqlSuitableValue &Dao::format()
     return p.suitableValue;
 }
 
-}
+} // namespace QOrm

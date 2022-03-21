@@ -23,7 +23,7 @@ public:
     //! \param connection
     //! \param parent
     //!
-    explicit Dao(const QSqlDatabase&connection, QObject *parent = nullptr);
+    explicit Dao(const QSqlDatabase &connection, QObject *parent = nullptr);
 
     //!
     //!
@@ -33,14 +33,15 @@ public:
     //! \brief format
     //! \return
     //!
-    QOrm::SqlSuitableValue&format();
+    QOrm::SqlSuitableValue &format();
 
     //!
     //! \brief f
     //!
-    QOrm::SqlSuitableValue&f=format();
+    QOrm::SqlSuitableValue &f = format();
+
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm

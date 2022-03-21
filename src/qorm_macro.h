@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QThread>
-#include <QMutex>
-#include "../../qstm/src/qstm_macro.h"
+//#include <QThread>
+//#include <QMutex>
+//#include "../../qstm/src/qstm_macro.h"
 
 #define ORM_STRINGFY(name)\
 QT_STRINGIFY2(#name)
@@ -16,7 +16,7 @@ QT_STRINGIFY2(#name)
 
 #define QORM_DECLARE_INSTANCE(instanceClassName)\
 public:\
-    static instanceClassName&instance(){\
+    static instanceClassName &instance(){\
         static instanceClassName*____instance=nullptr;\
         if(____instance==nullptr){\
             ____instance=new instanceClassName(nullptr);\
@@ -27,7 +27,7 @@ public:\
 #define QORM_DECLARE_MODEL_CONST(ModelName, ModelAlias)\
 namespace QOrm {\
     static QMetaObject ModelAlias = ModelName::staticMetaObject;\
-    static const QOrm::ModelInfo&ModelAlias##Detail = QOrm::Model::modelInfo(ModelAlias);\
+    static const QOrm::ModelInfo &ModelAlias##Detail = QOrm::Model::modelInfo(ModelAlias);\
 }
 
 #define QORM_OBJECT_CONSTRUCTOR(ObjectName)\
@@ -140,9 +140,9 @@ Q_INVOKABLE virtual QVariantHash seq_##name()const{ \
 #define QORM_DECLARE_TABLE_PRIMARY_KEY(propertyPk)\
 public:\
 Q_INVOKABLE virtual QByteArray tablePk()const{const auto ___return=QByteArrayLiteral(#propertyPk); return ___return;}\
-Q_INVOKABLE virtual QByteArray tablePk(const QByteArray&alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+QByteArrayLiteral("."))+QByteArrayLiteral(#propertyPk);}\
+Q_INVOKABLE virtual QByteArray tablePk(const QByteArray &alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+QByteArrayLiteral("."))+QByteArrayLiteral(#propertyPk);}\
 Q_INVOKABLE virtual QByteArray tablePrimaryKey()const{static const auto ___return=QByteArrayLiteral(#propertyPk); return ___return;}\
-Q_INVOKABLE virtual QByteArray tablePrimaryKey(const QByteArray&alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+QByteArrayLiteral("."))+QByteArrayLiteral(#propertyPk);}
+Q_INVOKABLE virtual QByteArray tablePrimaryKey(const QByteArray &alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+QByteArrayLiteral("."))+QByteArrayLiteral(#propertyPk);}
 
 
 
@@ -182,11 +182,11 @@ Q_INVOKABLE QOrm::SqlParserItem&propertyName##_field(QByteArray alias="")const{ 
     static QOrm::SqlParserItem ____pn(fieldName, fieldTitle, QOrm::koiObject);\
     return ____pn;\
 }\
-Q_INVOKABLE QByteArray&propertyName##_property()const{ \
+Q_INVOKABLE QByteArray &propertyName##_property()const{ \
     static QByteArray __return = #propertyName;\
     return __return;\
 }\
-Q_INVOKABLE QByteArray&propertyName##_fieldName(const QByteArray&vAlias="")const{ \
+Q_INVOKABLE QByteArray &propertyName##_fieldName(const QByteArray &vAlias="")const{ \
     auto alias=vAlias.toLower().trimmed();\
     alias=(alias=="")?"":(alias+QByteArrayLiteral("."));\
     static QByteArray ___return = alias+tablePrefix() + tablePrefixSeparator()+QByteArrayLiteral(#propertyName);\
@@ -246,7 +246,7 @@ Q_PROPERTY(QString propertyName READ propertyName WRITE set_##propertyName NOTIF
 Q_INVOKABLE virtual QString propertyName(){\
     return z____##propertyName.mid(0, propertySize);\
 }\
-Q_INVOKABLE virtual void set_##propertyName(const QString&value){\
+Q_INVOKABLE virtual void set_##propertyName(const QString &value){\
     z____##propertyName=value.mid(0, propertySize);\
 }\
 private:\
@@ -259,7 +259,7 @@ Q_PROPERTY(QByteArray propertyName READ propertyName WRITE set_##propertyName NO
 Q_INVOKABLE virtual QByteArray propertyName(){\
     return z____##propertyName.mid(0, propertySize);\
 }\
-Q_INVOKABLE virtual void set_##propertyName(const QByteArray&value){\
+Q_INVOKABLE virtual void set_##propertyName(const QByteArray &value){\
     z____##propertyName=value.mid(0, propertySize);\
 }\
 private:\

@@ -17,7 +17,7 @@ public:
     //! \param dtoParent
     //! \param parent
     //!
-    Q_INVOKABLE explicit ModelDtoCrudItem(QObject*dtoParent, QObject*parent=nullptr):QStm::Object(parent), item(dtoParent, parent)
+    Q_INVOKABLE explicit ModelDtoCrudItem(QObject*dtoParent, QObject*parent=nullptr):QStm::Object{parent}, item(dtoParent, parent)
     {
     }
 

@@ -83,7 +83,7 @@ public:
     Q_INVOKABLE virtual void setExceptionOnFail(bool value);
 
 private:
-    void*p=nullptr;
+    void *p = nullptr;
 };
 
-}
+} // namespace QOrm
