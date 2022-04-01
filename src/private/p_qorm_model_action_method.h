@@ -11,7 +11,7 @@ namespace QOrm {
 class Q_ORM_EXPORT ModelAction : public QOrm::ObjectDb
 {
 public:
-    Q_PROPERTY(QVariant Strategy READ strategy WRITE strategy )
+    Q_PROPERTY(QVariant Strategy READ strategy WRITE strategy NOTIFY strategyChanged )
 
     //!
     //! \brief ModelAction
@@ -54,6 +54,8 @@ public:
 
 private:
     void*p=nullptr;
+signals:
+    void strategyChanged();
 };
 
 }
