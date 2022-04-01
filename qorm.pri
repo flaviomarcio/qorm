@@ -54,6 +54,7 @@ HEADERS += \
     $$PWD/src/qorm_connection_pool.h \
     $$PWD/src/qorm_connection_setting.h \
     $$PWD/src/qorm_model_dto_options.h \
+    $$PWD/src/qorm.h \
     $$PWD/src/qorm_const.h \
     $$PWD/src/qorm_controller.h \
     $$PWD/src/qorm_dao.h \
