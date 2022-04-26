@@ -893,7 +893,7 @@ ResultValue &Model::readWrapper(const QString &wrapper, const QVariant &vMap)
 ResultValue &Model::readWrapper(ResultValue &resultValue)
 {
     dPvt();
-    return p.fromWrapper(qsl_null, resultValue.resultMap());
+    return p.fromWrapper(qsl_null, resultValue.resultHash());
 }
 
 ResultValue &Model::readWrapper(const QVariant &vMap)
@@ -905,7 +905,7 @@ ResultValue &Model::readWrapper(const QVariant &vMap)
 ResultValue &Model::readWrapper(const QString &wrapper, ResultValue &resultValue)
 {
     dPvt();
-    return p.fromWrapper(wrapper, resultValue.resultMap());
+    return p.fromWrapper(wrapper, resultValue.resultHash());
 }
 
 ResultValue &Model::mergeFrom(const QByteArray &record)
