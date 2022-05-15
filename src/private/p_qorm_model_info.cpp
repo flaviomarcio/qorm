@@ -371,10 +371,9 @@ public:
 
     void clear()
     {
-#define ____clear(var)\
-        this->var.clear()
+#define ____clear(var)this->var.clear()
 
-            ____clear(tablePkAutoGenerate    );
+        ____clear(tablePkAutoGenerate    );
         ____clear(property               );
         ____clear(propertyHash           );
         ____clear(propertyByFieldName    );
@@ -414,7 +413,6 @@ public:
         pvt.clear();
 
         pvt.staticMetaObject=staticMetaObject;
-        //auto object=staticMetaObject.newInstance();
         QScopedPointer<QObject> scopePointer(staticMetaObject.newInstance(Q_ARG(QObject*, nullptr )));
         auto object=scopePointer.data();
 
@@ -1057,8 +1055,6 @@ QVariantMap ModelInfo::toMap(const QObject *object)const
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
-            value=property.read(object).toInt();
-            break;
         case QMetaType_CustomType:
             value=property.read(object).toInt();
             break;
@@ -1081,8 +1077,6 @@ QVariantHash ModelInfo::toHash(const QObject *object) const
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
-            value=property.read(object).toInt();
-            break;
         case QMetaType_CustomType:
             value=property.read(object).toInt();
             break;
