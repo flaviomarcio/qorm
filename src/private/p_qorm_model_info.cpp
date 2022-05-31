@@ -613,28 +613,38 @@ public:
             }
 
             //TODO FLAVIO REMOVER
-            auto model=dynamic_cast<QOrm::Model*>(object);
-            if(model!=nullptr){
-                auto metaObject=model->descriptor();
-                if(metaObject.inherits(&ModelDescriptor::staticMetaObject)){//SE HERDAR de QOrm::ModelDescriptor
-                    QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
-                    if(scopePointer.data()!=nullptr){
-                        auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
-                        if(objectDescriptor==nullptr){
-                            pvt.propertyDescriptors.clear();
-                        }
-                        else{
-                            objectDescriptor->descriptorsInit();
-                            if(!objectDescriptor->description().isEmpty())
-                                pvt.modelDescription=objectDescriptor->description();
-                            pvt.propertyDescriptors=objectDescriptor->descriptors();
-                            pvt.propertySort=objectDescriptor->sort();
-                        }
-                    }
-                }
-            }
 
-            if(tablePkCompuser.isValid() && !tablePkCompuser.isNull()){
+
+            auto makeDescritor=[&pvt, &object](){
+                auto model=dynamic_cast<QOrm::Model*>(object);
+                if(!model)
+                    return;
+
+                auto metaObject=model->descriptor();
+                if(!metaObject.inherits(&ModelDescriptor::staticMetaObject))//SE HERDAR de QOrm::ModelDescriptor
+                    return;
+
+                QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
+                if(!scopePointer.data())
+                    return;
+
+                auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
+                if(!objectDescriptor){
+                    pvt.propertyDescriptors.clear();
+                    return;
+                }
+
+                objectDescriptor->descriptorsInit();
+                if(!objectDescriptor->description().isEmpty())
+                    pvt.modelDescription=objectDescriptor->description();
+                pvt.propertyDescriptors=objectDescriptor->descriptors();
+                pvt.propertySort=objectDescriptor->sort();
+            };
+            makeDescritor();
+
+            auto makeTablePkCompuser=[&tablePkCompuser, &pvt](){
+                if(!tablePkCompuser.isValid() || tablePkCompuser.isNull())
+                    return;
                 auto typeId=qTypeId(tablePkCompuser);
                 switch (typeId) {
                 case QMetaType_QVariantList:
@@ -664,7 +674,8 @@ public:
                 default:
                     break;
                 }
-            }
+            };
+            makeTablePkCompuser();
         }
     }
 };

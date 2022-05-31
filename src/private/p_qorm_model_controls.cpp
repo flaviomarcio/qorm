@@ -90,7 +90,7 @@ public:
                 QVariantMap vRecord;
                 for(const auto&header:vHeaderList){
                     auto headerName=header->value();
-                    vRecord[headerName]=QVariant();
+                    vRecord[headerName]={};
                 }
                 vList<<vRecord;
             }
@@ -123,7 +123,7 @@ public:
 
 
 
-            auto vHeader=QVariantList();
+            auto vHeader=QVariantList{};
             for(const auto&header:vHeaderList){
                 auto headerName=header->value();
                 auto var=header->toVar();
