@@ -1,6 +1,7 @@
 #include "./qorm_model_descriptor.h"
 #include "./private/p_qorm_const.h"
 #include <QMetaProperty>
+#include <QRect>
 
 namespace QOrm {
 
@@ -17,6 +18,7 @@ public:
     QVariantHash flags;
     QVariantHash options;
     QVariantHash sort;
+    QRect design={0,0,800,600};
     explicit ModelDescriptorPvt() {}
     virtual ~ModelDescriptorPvt() {}
 };
@@ -126,7 +128,7 @@ void ModelDescriptor::setDescriptor(const QString &name, const QVariantHash &v)
     auto d = v;
     if (!p.descriptorsOrder.contains(name))
         p.descriptorsOrder.append(name);
-    d[vpValue] = name;
+    d[vpField] = name;
     p.descriptors[name] = d;
 }
 
@@ -142,7 +144,7 @@ void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
         d[i.key()] = i.value();
     }
 
-    d[vpValue] = name;
+    d[vpField] = name;
     p.descriptors[name] = d;
 }
 
@@ -288,6 +290,18 @@ void ModelDescriptor::setSort(const QVariantHash &value)
 {
     dPvt();
     p.sort = value;
+}
+
+QRect &ModelDescriptor::design()
+{
+    dPvt();
+    return p.design;
+}
+
+void ModelDescriptor::setDesign(QRect &value)
+{
+    dPvt();
+    p.design=value;
 }
 
 } // namespace QOrm

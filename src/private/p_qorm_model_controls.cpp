@@ -136,7 +136,7 @@ public:
             }
 
             vHash[vpId]=this->id;
-            vHash[vpText]=this->text;
+            vHash[vpTitle]=this->text;
             vHash[vpType]=this->type;
             vHash[vpLayout]=this->layout;
             vHash[vpHeaders]=vHeader;
