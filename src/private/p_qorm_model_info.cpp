@@ -612,9 +612,6 @@ public:
                 pvt.tableDeactivateField.insert(vField, vValue);
             }
 
-            //TODO FLAVIO REMOVER
-
-
             auto makeDescritor=[&pvt, &object](){
                 auto model=dynamic_cast<QOrm::Model*>(object);
                 if(!model)
