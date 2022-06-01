@@ -43,18 +43,18 @@ public:
     //! \brief type
     //! \return
     //!
-    virtual QVariant type() const;
-    virtual ModelDtoControls&type(const QVariant &v);
-    virtual ModelDtoControls&setType(const QVariant &v);
+    virtual FormType type() const;
+    virtual ModelDtoControls&type(const FormType &v);
+    virtual ModelDtoControls&setType(const FormType &v);
 
 
     //!
     //! \brief layout
     //! \return
     //!
-    virtual QVariant layout() const;
-    virtual ModelDtoControls&layout(const QVariant &v);
-    virtual ModelDtoControls&setLayout(const QVariant &v);
+    virtual FormLayout &layout() const;
+    virtual ModelDtoControls&layout(const FormLayout &v);
+    virtual ModelDtoControls&setLayout(const FormLayout &v);
 
     //!
     //! \brief sort
@@ -89,14 +89,14 @@ public:
     //! \param value
     //! \return
     //!
-    virtual ModelDtoControls &outPutStyle(const QOrm::DtoOutPutStyle &value);
+    virtual ModelDtoControls &outPutStyle(const DtoOutPutStyle &value);
 
     /**
      * @brief setOutPutStyle
      * @param value
      * @return
      */
-    virtual ModelDtoControls &setOutPutStyle(const QOrm::DtoOutPutStyle &value);
+    virtual ModelDtoControls &setOutPutStyle(const DtoOutPutStyle &value);
 
     //!
     //! \brief headers

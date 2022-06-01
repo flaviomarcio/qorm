@@ -1,42 +1,17 @@
 #include "./p_qorm_model_controls.h"
 #include "../qorm_model_dto.h"
-
 #include <QVariantHash>
+#include <QCoreApplication>
+
+
 
 namespace QOrm {
-
-static const QVariantHash __makeDTOFormType()
-{
-    QVariantHash ___return=
-        {
-            {QString::number(dftNormalForm), QString(QT_STRINGIFY2(NormalForm)).toLower()},
-            {QString::number(dftAddressForm), QString(QT_STRINGIFY2(AddressForm)).toLower()},
-            {QString(QT_STRINGIFY2(dftNormalForm)).toLower(), QString::number(dftNormalForm)},
-            {QString(QT_STRINGIFY2(dftAddressForm)).toLower(), QString::number(dftAddressForm)},
-            {QString(QT_STRINGIFY2(dftReportForm)).toLower(), QString::number(dftReportForm)},
-            {QString(QT_STRINGIFY2(NormalForm)).toLower(), QString::number(dftNormalForm)},
-            {QString(QT_STRINGIFY2(AddressForm)).toLower(), QString::number(dftAddressForm)},
-            {QString(QT_STRINGIFY2(ReportForm)).toLower(), QString::number(dftReportForm)}
-        };
-    return ___return;
+void init(){
+    qDebug()<<QVariant::fromValue<FormType>(FormType::RegisterForm);
+    qDebug()<<QVariant::fromValue<FormType>(FormType::RegisterForm).toString();
 }
 
-static const QVariantHash __makeDTOFormLayout()
-{
-    QVariantHash ___return=
-        {
-            {QString::number(dflVerticalControls), QString(QT_STRINGIFY2(VerticalControls)).toLower()},
-            {QString::number(dflHorizontalControls), QString(QT_STRINGIFY2(HorizontalControls)).toLower()},
-            {QString(QT_STRINGIFY2(cfVerticalControls)).toLower(), QString::number(dflVerticalControls)},
-            {QString(QT_STRINGIFY2(cfHorizontalControls)).toLower(), QString::number(dflHorizontalControls)},
-            {QString(QT_STRINGIFY2(VerticalControls)).toLower(), QString::number(dflVerticalControls)},
-            {QString(QT_STRINGIFY2(HorizontalControls)).toLower(), QString::number(dflHorizontalControls)}
-        };
-    return ___return;
-}
-
-static const auto __DTOFormTypeHash = __makeDTOFormType();
-static const auto __DTOFormLayoutHash = __makeDTOFormLayout();
+Q_COREAPP_STARTUP_FUNCTION(init);
 
 #define dPvt()\
     auto&p = *reinterpret_cast<ModelDtoControlsPvt*>(this->p)
@@ -45,8 +20,8 @@ class ModelDtoControlsPvt{
 public:
     QString id;
     QString text;
-    QVariant type=__DTOFormTypeHash.key(dftReportForm);
-    QVariant layout=__DTOFormLayoutHash.key(dflVerticalControls);
+    FormType type=FormType::NormalForm;
+    FormLayout layout=FormLayout::Vertical;
     QVariantHash sort;
     QString settingName;
     QOrm::DtoOutPutStyle outPutStyle=QOrm::doRowObject;
@@ -137,8 +112,8 @@ public:
 
             vHash[vpId]=this->id;
             vHash[vpText]=this->text;
-            vHash[vpType]=this->type;
-            vHash[vpLayout]=this->layout;
+            vHash[vpType]=QVariant::fromValue<FormType>(this->type);
+            vHash[vpLayout]=QVariant::fromValue<FormLayout>(this->layout);
             vHash[vpHeaders]=vHeader;
             vHash[vpFilters]=vFilter;
             vHash[vpItems]=vItems;
@@ -226,57 +201,43 @@ ModelDtoControls &ModelDtoControls::id(const QVariant&v)
     return*this;
 }
 
-QVariant ModelDtoControls::type() const
+FormType ModelDtoControls::type() const
 {
     dPvt();
-    const auto&map=__DTOFormTypeHash;
-    auto value=p.type;
-    switch (qTypeId(value)) {
-    case QMetaType_LongLong:
-        return map[QString::number(value.toLongLong())];
-    default:
-        return map.value(value.toString().toLower());
-    }
+    return p.type;
 }
 
-ModelDtoControls &ModelDtoControls::type(const QVariant &v)
+ModelDtoControls &ModelDtoControls::type(const FormType &v)
 {
     dPvt();
-    p.type=v.toString();
+    p.type=v;
     return*this;
 }
 
-ModelDtoControls &ModelDtoControls::setType(const QVariant &v)
+ModelDtoControls &ModelDtoControls::setType(const FormType &v)
 {
     dPvt();
-    p.type=v.toString();
+    p.type=v;
     return*this;
 }
 
-QVariant ModelDtoControls::layout() const
+FormLayout &ModelDtoControls::layout() const
 {
     dPvt();
-    const auto&map=__DTOFormLayoutHash;
-    auto value=p.layout;
-    switch (qTypeId(value)) {
-    case QMetaType_LongLong:
-        return map.value(QString::number(value.toLongLong()));
-    default:
-        return map.value(value.toString().toLower());
-    }
+    return p.layout;
 }
 
-ModelDtoControls &ModelDtoControls::layout(const QVariant &v)
+ModelDtoControls &ModelDtoControls::layout(const FormLayout &v)
 {
     dPvt();
-    p.layout=v.toString();
+    p.layout=v;
     return*this;
 }
 
-ModelDtoControls &ModelDtoControls::setLayout(const QVariant &v)
+ModelDtoControls &ModelDtoControls::setLayout(const FormLayout &v)
 {
     dPvt();
-    p.layout=v.toString();
+    p.layout=v;
     return*this;
 }
 

@@ -400,7 +400,7 @@ public:
     //! \brief isValid
     //! \return
     //!
-    virtual ResultValue&isValid();
+    virtual ResultValue &isValid();
 
     //!
     //! \brief isActive

@@ -8,14 +8,13 @@
 #include <QJsonObject>
 
 namespace PrivateOrm {
-Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
 }
 
 namespace QOrm {
 
 #define dPvt() auto &p = *reinterpret_cast<ModelDtoPvt *>(this->p)
 
-static auto &dtoSettings = *PrivateOrm::dtoSettings;
+Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
 
 static void initDtoSettingsCache()
 {
@@ -54,7 +53,7 @@ static void initDtoSettingsCache()
             }
         }
     }
-    dtoSettings = __dtoSettings;
+    *dtoSettings = __dtoSettings;
 }
 
 Q_COREAPP_STARTUP_FUNCTION(initDtoSettingsCache)
@@ -80,7 +79,7 @@ public:
     {
         const auto className
             = QString::fromUtf8(this->dto->parent()->metaObject()->className()).toLower().trimmed();
-        auto settings = dtoSettings.value(className).toHash();
+        auto settings = dtoSettings->value(className).toHash();
         this->dtoControls.settings(settings);
     }
 
@@ -138,47 +137,40 @@ ModelDto &ModelDto::setId(const QVariant &value)
     return *this;
 }
 
-QVariant ModelDto::type() const
+QOrm::FormType ModelDto::type() const
 {
     dPvt();
-    auto value = p.dtoControls.type();
-    if (value.isNull() && !value.isValid()) {
-        value = this->defaultType();
-    }
-    return value;
+    return p.dtoControls.type();
 }
 
-ModelDto &ModelDto::type(const QVariant &v)
+ModelDto &ModelDto::type(const FormType &v)
 {
     dPvt();
     p.dtoControls.type(v);
     return *this;
 }
 
-ModelDto &ModelDto::setType(const QVariant &v)
+ModelDto &ModelDto::setType(const FormType &v)
 {
     dPvt();
     p.dtoControls.type(v);
     return *this;
 }
 
-QVariant ModelDto::layout() const
+FormLayout ModelDto::layout() const
 {
     dPvt();
-    auto value = p.dtoControls.layout();
-    if (value.isNull() && !value.isValid())
-        return this->defaultLayout();
-    return value;
+    return p.dtoControls.layout();
 }
 
-ModelDto &ModelDto::layout(const QVariant &v)
+ModelDto &ModelDto::layout(const FormLayout &v)
 {
     dPvt();
     p.dtoControls.layout(v);
     return *this;
 }
 
-ModelDto &ModelDto::setLayout(const QVariant &v)
+ModelDto &ModelDto::setLayout(const FormLayout &v)
 {
     dPvt();
     p.dtoControls.layout(v);

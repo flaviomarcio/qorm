@@ -17,8 +17,8 @@ class Q_ORM_EXPORT ModelReportBase : public QOrm::ObjectDb
     Q_OBJECT
 public:
 
-    QORM_DECLARE_DTO_TYPE(dftNormalForm)
-    QORM_DECLARE_DTO_LAYOUT(dflVerticalControls)
+    QORM_DECLARE_DTO_TYPE(QOrm::FormType::NormalForm)
+    QORM_DECLARE_DTO_LAYOUT(QOrm::FormLayout::Vertical)
 
     /**
          * @brief ModelReportBase
@@ -67,15 +67,15 @@ public:
     //! \brief type
     //! \return
     //!
-    virtual QVariant type()const;
-    virtual ModelReportBase&type(const QVariant &value);
+    virtual QOrm::FormType type()const;
+    virtual ModelReportBase&type(const QOrm::FormType &value);
 
     //!
     //! \brief layout
     //! \return
     //!
-    virtual QVariant layout()const;
-    virtual ModelReportBase&layout(const QVariant &value);
+    virtual QOrm::FormLayout layout()const;
+    virtual ModelReportBase&layout(const QOrm::FormLayout &value);
 
     //!
     //! \brief reportName

@@ -23,8 +23,8 @@ class Q_ORM_EXPORT CRUDBase : public QOrm::ObjectDb
 {
     Q_OBJECT
 public:
-    QORM_DECLARE_DTO_TYPE(dftNormalForm)
-    QORM_DECLARE_DTO_LAYOUT(dflVerticalControls)
+    QORM_DECLARE_DTO_TYPE(QOrm::FormType::NormalForm)
+    QORM_DECLARE_DTO_LAYOUT(QOrm::FormLayout::Vertical)
 
     //!
     //! \brief CRUDBase
@@ -86,27 +86,27 @@ public:
     //! \brief type
     //! \return
     //!
-    virtual QVariant type()const;
+    virtual QOrm::FormType type()const;
 
     //!
     //! \brief type
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&type(const QVariant &value);
+    virtual CRUDBase&type(const QOrm::FormType &value);
 
     //!
     //! \brief layout
     //! \return
     //!
-    virtual QVariant layout()const;
+    virtual QOrm::FormLayout layout()const;
 
     //!
     //! \brief layout
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&layout(const QVariant &value);
+    virtual CRUDBase&layout(const QOrm::FormLayout &value);
 
     //!
     //! \brief crudName

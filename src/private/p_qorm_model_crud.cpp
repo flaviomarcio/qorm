@@ -24,8 +24,8 @@ public:
     explicit CRUDBasePvt(CRUDBase*parent):options(parent),dto(parent)
     {
         this->parent=parent;
-        dto.setType(dftNormalForm);
     }
+
     virtual ~CRUDBasePvt()
     {
     }
@@ -154,32 +154,26 @@ CRUDBase &CRUDBase::unMakeDefault()
     return *this;
 }
 
-QVariant CRUDBase::type() const
+QOrm::FormType CRUDBase::type() const
 {
     dPvt();
-    QVariant type=p.dto.type();
-    if(type.isNull() && !type.isValid())
-        type=this->defaultType();
-    return type;
+    return p.dto.type();
 }
 
-CRUDBase &CRUDBase::type(const QVariant &value)
+CRUDBase &CRUDBase::type(const QOrm::FormType &value)
 {
     dPvt();
     p.dto.setType(value);
     return*this;
 }
 
-QVariant CRUDBase::layout() const
+QOrm::FormLayout CRUDBase::layout() const
 {
     dPvt();
-    QVariant type=p.dto.layout();
-    if(type.isNull() && !type.isValid())
-        type=this->defaultLayout();
-    return type;
+    return p.dto.layout();
 }
 
-CRUDBase &CRUDBase::layout(const QVariant &value)
+CRUDBase &CRUDBase::layout(const QOrm::FormLayout &value)
 {
     dPvt();
     p.dto.setLayout(value);

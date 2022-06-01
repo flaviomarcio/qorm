@@ -2,10 +2,6 @@
 
 #include "./private/p_qorm_model_controls.h"
 
-enum DTOFormType { dftNormalForm = 0, dftAddressForm = 1, dftReportForm = 1 };
-
-enum DTOFormLayout { dflVerticalControls = 0, dflHorizontalControls = 0 };
-
 namespace QOrm {
 
 //!
@@ -15,8 +11,10 @@ class Q_ORM_EXPORT ModelDto : public QStm::Object
 {
     Q_OBJECT
 public:
-    QORM_DECLARE_DTO_TYPE(dftReportForm)
-    QORM_DECLARE_DTO_LAYOUT(dflVerticalControls)
+
+
+    QORM_DECLARE_DTO_TYPE(FormType::NormalForm)
+    QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
     //!
     //! \brief ModelDto
@@ -60,41 +58,41 @@ public:
     //! \brief type
     //! \return
     //!
-    virtual QVariant type() const;
+    virtual FormType type() const;
 
     //!
     //! \brief type
     //! \param v
     //! \return
     //!
-    virtual ModelDto &type(const QVariant &v);
+    virtual ModelDto &type(const QOrm::FormType &v);
 
     //!
     //! \brief setType
     //! \param v
     //! \return
     //!
-    virtual ModelDto &setType(const QVariant &v);
+    virtual ModelDto &setType(const QOrm::FormType &v);
 
     //!
     //! \brief layout
     //! \return
     //!
-    virtual QVariant layout() const;
+    virtual QOrm::FormLayout layout() const;
 
     //!
     //! \brief layout
     //! \param v
     //! \return
     //!
-    virtual ModelDto &layout(const QVariant &v);
+    virtual ModelDto &layout(const QOrm::FormLayout &v);
 
     //!
     //! \brief setLayout
     //! \param v
     //! \return
     //!
-    virtual ModelDto &setLayout(const QVariant &v);
+    virtual ModelDto &setLayout(const QOrm::FormLayout &v);
 
     //!
     //! \brief text
