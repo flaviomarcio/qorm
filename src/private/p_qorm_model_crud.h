@@ -25,7 +25,7 @@ class Q_ORM_EXPORT CRUDBase : public QOrm::ObjectDb
 public:
     QORM_DECLARE_FORM_ENUMS
 
-    QORM_DECLARE_DTO_TYPE(FormType::NormalForm)
+    QORM_DECLARE_DTO_TYPE(FormType::RegisterForm)
     QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
     //!

@@ -20,7 +20,7 @@ class ModelDtoControlsPvt{
 public:
     QString id;
     QString text;
-    ModelDtoControls::FormType type=ModelDtoControls::FormType::NormalForm;
+    ModelDtoControls::FormType type=ModelDtoControls::FormType::CustomForm;
     ModelDtoControls::FormLayout layout=ModelDtoControls::FormLayout::Vertical;
     QVariantHash sort;
     QString settingName;

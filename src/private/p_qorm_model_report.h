@@ -18,7 +18,7 @@ class Q_ORM_EXPORT ModelReportBase : public QOrm::ObjectDb
 public:
     QORM_DECLARE_FORM_ENUMS
 
-    QORM_DECLARE_DTO_TYPE(FormType::NormalForm)
+    QORM_DECLARE_DTO_TYPE(FormType::CustomForm)
     QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
     /**
