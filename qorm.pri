@@ -137,6 +137,7 @@ SOURCES += \
     $$PWD/src/qorm_task_runner.cpp \
     $$PWD/src/qorm_transaction.cpp \
     $$PWD/src/qorm_transaction_scope.cpp \
+    $$PWD/src/qorm_types.cpp \
     $$PWD/src/qorm_wrapper.cpp \
 
 INCLUDEPATH+=$$PWD

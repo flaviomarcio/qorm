@@ -1,5 +1,6 @@
 #include "./p_qorm_model_crud.h"
 #include "../qorm_query.h"
+#include "../qorm_model_dto.h"
 #include "../qorm_transaction_scope.h"
 #include <QJsonDocument>
 
@@ -154,29 +155,29 @@ CRUDBase &CRUDBase::unMakeDefault()
     return *this;
 }
 
-QOrm::FormType CRUDBase::type() const
+CRUDBase::FormType CRUDBase::type() const
 {
     dPvt();
-    return p.dto.type();
+    return FormType(p.dto.type());
 }
 
-CRUDBase &CRUDBase::type(const QOrm::FormType &value)
+CRUDBase &CRUDBase::type(const FormType &value)
 {
     dPvt();
-    p.dto.setType(value);
+    p.dto.setType(QOrm::ModelDto::FormType(value));
     return*this;
 }
 
-QOrm::FormLayout CRUDBase::layout() const
+CRUDBase::FormLayout CRUDBase::layout() const
 {
     dPvt();
-    return p.dto.layout();
+    return FormLayout(p.dto.layout());
 }
 
-CRUDBase &CRUDBase::layout(const QOrm::FormLayout &value)
+CRUDBase &CRUDBase::layout(const FormLayout &value)
 {
     dPvt();
-    p.dto.setLayout(value);
+    p.dto.setLayout(QOrm::ModelDto::FormLayout(value));
     return*this;
 }
 

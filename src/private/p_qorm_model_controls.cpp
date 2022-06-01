@@ -6,9 +6,9 @@
 
 
 namespace QOrm {
-void init(){
-    qDebug()<<QVariant::fromValue<FormType>(FormType::RegisterForm);
-    qDebug()<<QVariant::fromValue<FormType>(FormType::RegisterForm).toString();
+static void init(){
+    qDebug()<<QVariant::fromValue<ModelDtoControls::FormType>(ModelDtoControls::FormType::RegisterForm);
+    qDebug()<<QVariant::fromValue<ModelDtoControls::FormType>(ModelDtoControls::FormType::RegisterForm).toString();
 }
 
 Q_COREAPP_STARTUP_FUNCTION(init);
@@ -20,8 +20,8 @@ class ModelDtoControlsPvt{
 public:
     QString id;
     QString text;
-    FormType type=FormType::NormalForm;
-    FormLayout layout=FormLayout::Vertical;
+    ModelDtoControls::FormType type=ModelDtoControls::FormType::NormalForm;
+    ModelDtoControls::FormLayout layout=ModelDtoControls::FormLayout::Vertical;
     QVariantHash sort;
     QString settingName;
     QOrm::DtoOutPutStyle outPutStyle=QOrm::doRowObject;
@@ -31,9 +31,9 @@ public:
     ModelDtoCrud<ModelDtoControls> crud;
     ModelDtoItems<ModelDtoControls> items;
     QStm::ResultInfo resultInfo;
-    QObject*dto=nullptr;
+    QObject *dto=nullptr;
 
-    explicit ModelDtoControlsPvt(ModelDtoControls*parent)
+    explicit ModelDtoControlsPvt(ModelDtoControls *parent)
         :
         headers(parent, parent),
         filters(parent, parent),
@@ -112,8 +112,8 @@ public:
 
             vHash[vpId]=this->id;
             vHash[vpTitle]=this->text;
-            vHash[vpType]=QVariant::fromValue<FormType>(this->type);
-            vHash[vpLayout]=QVariant::fromValue<FormLayout>(this->layout);
+            vHash[vpType]=QVariant::fromValue<ModelDtoControls::FormType>(this->type);
+            vHash[vpLayout]=QVariant::fromValue<ModelDtoControls::FormLayout>(this->layout);
             vHash[vpHeaders]=vHeader;
             vHash[vpFilters]=vFilter;
             vHash[vpItems]=vItems;
@@ -201,7 +201,7 @@ ModelDtoControls &ModelDtoControls::id(const QVariant&v)
     return*this;
 }
 
-FormType ModelDtoControls::type() const
+ModelDtoControls::FormType ModelDtoControls::type() const
 {
     dPvt();
     return p.type;
@@ -221,7 +221,7 @@ ModelDtoControls &ModelDtoControls::setType(const FormType &v)
     return*this;
 }
 
-FormLayout &ModelDtoControls::layout() const
+ModelDtoControls::FormLayout ModelDtoControls::layout() const
 {
     dPvt();
     return p.layout;

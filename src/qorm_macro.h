@@ -12,7 +12,7 @@ QT_STRINGIFY2(#name)
 
 #define QORM_OBJECT(v)
 
-#define Q_ORM_CRUD_PROPERTY_LIST QVector<QString>({"type","id","resultInfo","layout","links","text","items","filters","headers"})
+#define Q_ORM_CRUD_PROPERTY_LIST QVector<QString>({"type","id","resultInfo","layout","links","title","items","filters","headers"})
 
 #define QORM_DECLARE_INSTANCE(instanceClassName)\
 public:\
@@ -363,14 +363,14 @@ private:\
     };\
 
 #define QORM_DECLARE_DTO_TYPE(_MACRO_VALUE_)\
-    Q_INVOKABLE virtual QOrm::FormType defaultType()const{\
-        static const QOrm::FormType ___return=_MACRO_VALUE_;\
+    Q_INVOKABLE virtual FormType defaultType()const{\
+        static const FormType ___return=_MACRO_VALUE_;\
         return ___return;\
     }
 
 #define QORM_DECLARE_DTO_LAYOUT(_MACRO_VALUE_)\
-    Q_INVOKABLE virtual QOrm::FormLayout defaultLayout()const{\
-        static const QOrm::FormLayout ___return=_MACRO_VALUE_;\
+    Q_INVOKABLE virtual FormLayout defaultLayout()const{\
+        static const FormLayout ___return=_MACRO_VALUE_;\
         return ___return;\
     }
 

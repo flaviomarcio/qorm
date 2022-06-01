@@ -30,9 +30,17 @@ class ObjectDb;
 typedef std::function<ResultValue &(QOrm::ObjectDb *controller, const QVariant &vBody)> ModelActionMethod;
 typedef std::function<ResultValue *(QOrm::ObjectDb *controller, const QVariant &vBody)>ModelActionMethodPointer;
 
-enum class FormType { NormalForm = 0, RegisterForm=2, AddressForm = 2, ReportForm = 3 };
+
+#define ____QORM_DECLARE_FORM_ENUMS \
+enum class FormType { NormalForm = 0, RegisterForm=2, AddressForm = 2, ReportForm = 3 };\
 enum class FormLayout { Vertical = 0, Horizontal = 1 };
 
+#define QORM_DECLARE_FORM_ENUMS \
+____QORM_DECLARE_FORM_ENUMS \
+Q_ENUM(FormType)\
+Q_ENUM(FormLayout)\
+
+//____QORM_DECLARE_FORM_ENUMS
 
 } // namespace QOrm
 

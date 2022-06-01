@@ -12,6 +12,7 @@ class Q_ORM_EXPORT ModelDto : public QStm::Object
     Q_OBJECT
 public:
 
+    QORM_DECLARE_FORM_ENUMS
 
     QORM_DECLARE_DTO_TYPE(FormType::NormalForm)
     QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
@@ -65,34 +66,34 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDto &type(const QOrm::FormType &v);
+    virtual ModelDto &type(const FormType &v);
 
     //!
     //! \brief setType
     //! \param v
     //! \return
     //!
-    virtual ModelDto &setType(const QOrm::FormType &v);
+    virtual ModelDto &setType(const FormType &v);
 
     //!
     //! \brief layout
     //! \return
     //!
-    virtual QOrm::FormLayout layout() const;
+    virtual FormLayout layout() const;
 
     //!
     //! \brief layout
     //! \param v
     //! \return
     //!
-    virtual ModelDto &layout(const QOrm::FormLayout &v);
+    virtual ModelDto &layout(const FormLayout &v);
 
     //!
     //! \brief setLayout
     //! \param v
     //! \return
     //!
-    virtual ModelDto &setLayout(const QOrm::FormLayout &v);
+    virtual ModelDto &setLayout(const FormLayout &v);
 
     //!
     //! \brief text

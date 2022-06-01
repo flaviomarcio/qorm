@@ -25,7 +25,6 @@ public:
     explicit ModelReportBasePvt(ModelReportBase*parent):options(parent),dto(parent)
     {
         this->parent=parent;
-        dto.setType(QOrm::FormType::NormalForm);
     }
     virtual ~ModelReportBasePvt(){
     }
@@ -131,29 +130,29 @@ ModelReportBase &ModelReportBase::unMakeDefault()
     return *this;
 }
 
-QOrm::FormType ModelReportBase::type() const
+ModelReportBase::FormType ModelReportBase::type() const
 {
     dPvt();
-    return p.dto.type();
+    return FormType(p.dto.type());
 }
 
-ModelReportBase &ModelReportBase::type(const QOrm::FormType &value)
+ModelReportBase &ModelReportBase::type(const FormType &value)
 {
     dPvt();
-    p.dto.setType(value);
+    p.dto.setType(QOrm::ModelDto::FormType(value));
     return*this;
 }
 
-QOrm::FormLayout ModelReportBase::layout() const
+QOrm::ModelDto::FormLayout ModelReportBase::layout() const
 {
     dPvt();
-    return p.dto.layout();
+    return QOrm::ModelDto::FormLayout(p.dto.layout());
 }
 
-ModelReportBase &ModelReportBase::layout(const QOrm::FormLayout &value)
+ModelReportBase &ModelReportBase::layout(const FormLayout &value)
 {
     dPvt();
-    p.dto.setLayout(value);
+    p.dto.setLayout(QOrm::ModelDto::FormLayout(value));
     return*this;
 }
 

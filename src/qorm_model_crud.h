@@ -40,8 +40,8 @@ public:
     //!
     virtual ResultValue &crudify()
     {
-        this->p_dto.type(this->type());
-        this->p_dto.layout(this->layout());
+        this->p_dto.type(ModelDto::FormType(this->type()));
+        this->p_dto.layout(ModelDto::FormLayout(this->layout()));
         return PrivateQOrm::CRUDBase::crudify();
     }
 

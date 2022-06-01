@@ -18,6 +18,8 @@ class Q_ORM_EXPORT ModelDtoControls : public QStm::Object
     Q_OBJECT
 public:
 
+    QORM_DECLARE_FORM_ENUMS
+
     //!
     //! \brief ModelDtoControls
     //! \param parent
@@ -52,7 +54,7 @@ public:
     //! \brief layout
     //! \return
     //!
-    virtual FormLayout &layout() const;
+    virtual FormLayout layout() const;
     virtual ModelDtoControls&layout(const FormLayout &v);
     virtual ModelDtoControls&setLayout(const FormLayout &v);
 

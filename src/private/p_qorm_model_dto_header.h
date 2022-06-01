@@ -387,7 +387,7 @@ public:
     //! \brief toHash
     //! \return
     //!
-    virtual const QVariantHash&toHash()
+    virtual const QVariantHash toHash()
     {
         return this->v;
     }

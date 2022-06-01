@@ -137,43 +137,43 @@ ModelDto &ModelDto::setId(const QVariant &value)
     return *this;
 }
 
-QOrm::FormType ModelDto::type() const
+ModelDto::FormType ModelDto::type() const
 {
     dPvt();
-    return p.dtoControls.type();
+    return FormType(p.dtoControls.type());
 }
 
 ModelDto &ModelDto::type(const FormType &v)
 {
     dPvt();
-    p.dtoControls.type(v);
+    p.dtoControls.type(ModelDtoControls::FormType(v));
     return *this;
 }
 
 ModelDto &ModelDto::setType(const FormType &v)
 {
     dPvt();
-    p.dtoControls.type(v);
+    p.dtoControls.type(ModelDtoControls::FormType(v));
     return *this;
 }
 
-FormLayout ModelDto::layout() const
+ModelDto::FormLayout ModelDto::layout() const
 {
     dPvt();
-    return p.dtoControls.layout();
+    return FormLayout(p.dtoControls.layout());
 }
 
 ModelDto &ModelDto::layout(const FormLayout &v)
 {
     dPvt();
-    p.dtoControls.layout(v);
+    p.dtoControls.layout(ModelDtoControls::FormLayout(v));
     return *this;
 }
 
 ModelDto &ModelDto::setLayout(const FormLayout &v)
 {
     dPvt();
-    p.dtoControls.layout(v);
+    p.dtoControls.layout(ModelDtoControls::FormLayout(v));
     return *this;
 }
 
