@@ -283,9 +283,9 @@ public:
     {
         auto object=new ModelDtoFilter<T>(this->___d, this);
         object->setType(v.value(vpType));
-        object->setValue(v.value(vpValue));
+        object->setValue(v.value(vpField));
         object->setDefaultValue(v.value(vpDefaultValue));
-        object->setText(v.value(vpText));
+        object->setText(v.value(vpTitle));
         object->setAlign(v.value(vpAlign));
         object->setWidth(v.value(vpWidth));
         object->setSortable(v.value(vpSortable));

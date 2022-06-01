@@ -101,7 +101,7 @@ public:
     //!
     virtual QString value() const
     {
-        return this->v.value(vpValue).toByteArray();
+        return this->v.value(vpField).toByteArray();
     }
     virtual ModelDtoHeader&value(const QVariant &value)
     {
@@ -109,7 +109,7 @@ public:
     }
     virtual ModelDtoHeader&setValue(const QVariant &value)
     {
-        this->v.insert(vpValue, value.toByteArray());
+        this->v.insert(vpField, value.toByteArray());
         return*this;
     }
 
@@ -146,7 +146,7 @@ public:
     //!
     virtual QString text() const
     {
-        return this->v.value(vpText).toByteArray();
+        return this->v.value(vpTitle).toByteArray();
     }
     virtual ModelDtoHeader&text(const QVariant &value)
     {
@@ -154,7 +154,7 @@ public:
     }
     virtual ModelDtoHeader&setText(const QVariant &value)
     {
-        this->v.insert(vpText, value.toByteArray());
+        this->v.insert(vpTitle, value.toByteArray());
         return*this;
     }
 
@@ -521,7 +521,7 @@ public:
     //!
     virtual ModelDtoHeader<T>&value(const QString&v)
     {
-        return this->value(QVariantHash{{vpValue,v}});
+        return this->value(QVariantHash{{vpField,v}});
     }
 
     //!
@@ -531,7 +531,7 @@ public:
     //!
     virtual ModelDtoHeader<T>&value(const QVariantHash&v)
     {
-        auto value=v.value(vpValue).toString();
+        auto value=v.value(vpField).toString();
         auto object=this->___objectMap.value(value);
         if(object==nullptr){
             object=new ModelDtoHeader<T>(this->___d, this);
@@ -540,10 +540,10 @@ public:
             this->___objectMap.insert(value, object);
         }
         object->type(v.value(vpType));
-        object->value(v.value(vpValue));
+        object->value(v.value(vpField));
         object->defaultValue(v.value(vpDefaultValue));
         object->defaultSelect(v.value(vpDefaultSelect));
-        object->text(v.value(vpText));
+        object->text(v.value(vpTitle));
         object->align(v.value(vpAlign));
         object->width(v.value(vpWidth));
         object->visible(v.value(vpVisible));
@@ -566,7 +566,7 @@ public:
     //!
     virtual ModelDtoHeader<T>&makeDefault()
     {
-        static auto vAction=QVariantHash{ { vpValue, vpActions}, { vpText, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }};
+        static auto vAction=QVariantHash{ { vpField, vpActions}, { vpTitle, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }};
         return this->value(vAction);
     }
 

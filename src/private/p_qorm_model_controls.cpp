@@ -65,7 +65,7 @@ public:
                 QVariantMap vRecord;
                 for(const auto&header:vHeaderList){
                     auto headerName=header->value();
-                    vRecord[headerName]=QVariant();
+                    vRecord[headerName]={};
                 }
                 vList<<vRecord;
             }
@@ -98,7 +98,7 @@ public:
 
 
 
-            auto vHeader=QVariantList();
+            auto vHeader=QVariantList{};
             for(const auto&header:vHeaderList){
                 auto headerName=header->value();
                 auto var=header->toVar();
@@ -111,7 +111,7 @@ public:
             }
 
             vHash[vpId]=this->id;
-            vHash[vpText]=this->text;
+            vHash[vpTitle]=this->text;
             vHash[vpType]=QVariant::fromValue<FormType>(this->type);
             vHash[vpLayout]=QVariant::fromValue<FormLayout>(this->layout);
             vHash[vpHeaders]=vHeader;

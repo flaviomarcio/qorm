@@ -6,6 +6,8 @@
 #include <QVariantHash>
 #include <QVariantMap>
 
+#define Q_ORM_MODEL_SET_DESIGN(W,H) this->setDesign(QRect(0,0,W,H));
+
 #define Q_ORM_MODEL_SET_SORT(value) this->setSort(value);
 
 #define Q_ORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value);
@@ -59,39 +61,39 @@ public:
     //! \brief isValid
     //! \return
     //!
-    Q_INVOKABLE virtual bool isValid() const;
+    virtual bool isValid() const;
 
     //!
     //! \brief descriptorsInit
     //!
-    Q_INVOKABLE virtual void descriptorsInit();
+    virtual void descriptorsInit();
 
     //!
     //! \brief descriptors
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantList descriptors() const;
+    virtual QVariantList descriptors() const;
 
     //!
     //! \brief descriptor
     //! \param name
     //! \return
     //!
-    Q_INVOKABLE virtual QVariant descriptor(const QString &name) const;
+    virtual QVariant descriptor(const QString &name) const;
 
     //!
     //! \brief setDescriptor
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void setDescriptor(const QString &name, const QVariantHash &v);
+    virtual void setDescriptor(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief addDescriptor
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void addDescriptor(const QString &name, const QVariantHash &v);
+    virtual void addDescriptor(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief description
@@ -103,127 +105,134 @@ public:
     //! \brief setDescription
     //! \param v
     //!
-    Q_INVOKABLE virtual void setDescription(const QString &v);
+    virtual void setDescription(const QString &v);
 
     //!
     //! \brief edit
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantHash &edit() const;
+    virtual QVariantHash &edit() const;
 
     //!
     //! \brief edit
     //! \param name
     //! \return
     //!
-    Q_INVOKABLE virtual QVariant edit(const QString &name) const;
+    virtual QVariant edit(const QString &name) const;
 
     //!
     //! \brief setEdit
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void setEdit(const QString &name, const QVariantHash &v);
+    virtual void setEdit(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief addEdit
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void addEdit(const QString &name, const QVariantHash &v);
+    virtual void addEdit(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief perfumerys
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantHash &perfumerys() const;
+    virtual QVariantHash &perfumerys() const;
 
     //!
     //! \brief perfumery
     //! \param name
     //! \return
     //!
-    Q_INVOKABLE virtual QVariant perfumery(const QString &name) const;
+    virtual QVariant perfumery(const QString &name) const;
 
     //!
     //! \brief setPerfumery
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void setPerfumery(const QString &name, const QVariantHash &v);
+    virtual void setPerfumery(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief addPerfumery
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void addPerfumery(const QString &name, const QVariantHash &v);
+    virtual void addPerfumery(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief flags
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantHash &flags() const;
+    virtual QVariantHash &flags() const;
 
     //!
     //! \brief flag
     //! \param name
     //! \return
     //!
-    Q_INVOKABLE virtual QVariant flag(const QString &name) const;
+    virtual QVariant flag(const QString &name) const;
 
     //!
     //! \brief setFlag
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void setFlag(const QString &name, const QVariantHash &v);
+    virtual void setFlag(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief addFlag
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void addFlag(const QString &name, const QVariantHash &v);
+    virtual void addFlag(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief options
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantHash &options() const;
+    virtual QVariantHash &options() const;
 
     //!
     //! \brief option
     //! \param name
     //! \return
     //!
-    Q_INVOKABLE virtual QVariant option(const QString &name) const;
+    virtual QVariant option(const QString &name) const;
 
     //!
     //! \brief setOption
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void setOption(const QString &name, const QVariantHash &v);
+    virtual void setOption(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief addOption
     //! \param name
     //! \param v
     //!
-    Q_INVOKABLE virtual void addOption(const QString &name, const QVariantHash &v);
+    virtual void addOption(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief sort
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantHash &sort() const;
+    virtual QVariantHash &sort() const;
 
     //!
     //! \brief setSort
     //! \param value
     //!
-    Q_INVOKABLE virtual void setSort(const QVariantHash &value);
+    virtual void setSort(const QVariantHash &value);
+
+    //!
+    //! \brief design
+    //! \return
+    //!
+    QRect &design();
+    void setDesign(QRect &value);
 
 private:
     void *p = nullptr;

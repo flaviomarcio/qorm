@@ -371,10 +371,9 @@ public:
 
     void clear()
     {
-#define ____clear(var)\
-        this->var.clear()
+#define ____clear(var)this->var.clear()
 
-            ____clear(tablePkAutoGenerate    );
+        ____clear(tablePkAutoGenerate    );
         ____clear(property               );
         ____clear(propertyHash           );
         ____clear(propertyByFieldName    );
@@ -414,7 +413,6 @@ public:
         pvt.clear();
 
         pvt.staticMetaObject=staticMetaObject;
-        //auto object=staticMetaObject.newInstance();
         QScopedPointer<QObject> scopePointer(staticMetaObject.newInstance(Q_ARG(QObject*, nullptr )));
         auto object=scopePointer.data();
 
@@ -614,29 +612,36 @@ public:
                 pvt.tableDeactivateField.insert(vField, vValue);
             }
 
-            //TODO FLAVIO REMOVER
-            auto model=dynamic_cast<QOrm::Model*>(object);
-            if(model!=nullptr){
-                auto metaObject=model->descriptor();
-                if(metaObject.inherits(&ModelDescriptor::staticMetaObject)){//SE HERDAR de QOrm::ModelDescriptor
-                    QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
-                    if(scopePointer.data()!=nullptr){
-                        auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
-                        if(objectDescriptor==nullptr){
-                            pvt.propertyDescriptors.clear();
-                        }
-                        else{
-                            objectDescriptor->descriptorsInit();
-                            if(!objectDescriptor->description().isEmpty())
-                                pvt.modelDescription=objectDescriptor->description();
-                            pvt.propertyDescriptors=objectDescriptor->descriptors();
-                            pvt.propertySort=objectDescriptor->sort();
-                        }
-                    }
-                }
-            }
+            auto makeDescritor=[&pvt, &object](){
+                auto model=dynamic_cast<QOrm::Model*>(object);
+                if(!model)
+                    return;
 
-            if(tablePkCompuser.isValid() && !tablePkCompuser.isNull()){
+                auto metaObject=model->descriptor();
+                if(!metaObject.inherits(&ModelDescriptor::staticMetaObject))//SE HERDAR de QOrm::ModelDescriptor
+                    return;
+
+                QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
+                if(!scopePointer.data())
+                    return;
+
+                auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
+                if(!objectDescriptor){
+                    pvt.propertyDescriptors.clear();
+                    return;
+                }
+
+                objectDescriptor->descriptorsInit();
+                if(!objectDescriptor->description().isEmpty())
+                    pvt.modelDescription=objectDescriptor->description();
+                pvt.propertyDescriptors=objectDescriptor->descriptors();
+                pvt.propertySort=objectDescriptor->sort();
+            };
+            makeDescritor();
+
+            auto makeTablePkCompuser=[&tablePkCompuser, &pvt](){
+                if(!tablePkCompuser.isValid() || tablePkCompuser.isNull())
+                    return;
                 auto typeId=qTypeId(tablePkCompuser);
                 switch (typeId) {
                 case QMetaType_QVariantList:
@@ -666,7 +671,8 @@ public:
                 default:
                     break;
                 }
-            }
+            };
+            makeTablePkCompuser();
         }
     }
 };
@@ -1057,8 +1063,6 @@ QVariantMap ModelInfo::toMap(const QObject *object)const
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
-            value=property.read(object).toInt();
-            break;
         case QMetaType_CustomType:
             value=property.read(object).toInt();
             break;
@@ -1081,8 +1085,6 @@ QVariantHash ModelInfo::toHash(const QObject *object) const
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
-            value=property.read(object).toInt();
-            break;
         case QMetaType_CustomType:
             value=property.read(object).toInt();
             break;

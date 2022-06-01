@@ -137,17 +137,17 @@ namespace QOrm {
             return this->lr().clear().setBadRequest(tr("crud block is empty"));
 
         QVariantList __return;
-        QVariantHash ___hash, crudHash;
+        QVariantHash ___hash, crudPages;
         CRUDBody crudBody(p.crudBody);
 
         {
             auto vCrudSource=crudBody.source().toHash();
-            if(vCrudSource.contains(qsl("crud"))){
-                auto vList=vCrudSource[qsl("crud")].toList();
+            if(vCrudSource.contains(qsl("pages"))){
+                auto vList=vCrudSource[qsl("pages")].toList();
                 for(auto&v:vList){
                     auto vHash=v.toHash();
                     auto crudName=vHash[qsl("id")].toString().toLower().trimmed();
-                    crudHash[crudName]=vHash;
+                    crudPages[crudName]=vHash;
                 }
             }
         }
@@ -161,11 +161,11 @@ namespace QOrm {
             QVariant crudSource;
             CRUDBody crudItem(crudBody);
 
-            if(!crudHash.isEmpty()){
-                crudSource=crudHash.value(crudName);
+            if(!crudPages.isEmpty()){
+                crudSource=crudPages.value(crudName);
             }
 
-            if(!crudHash.contains(crudName)){
+            if(!crudPages.contains(crudName)){
                 crudList<<crudBody;
             }
             else if(vu.vIsList(crudSource)){
