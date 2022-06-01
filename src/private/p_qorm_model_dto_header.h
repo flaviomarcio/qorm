@@ -387,7 +387,7 @@ public:
     //! \brief toHash
     //! \return
     //!
-    virtual const QVariantHash toHash()
+    virtual QVariantHash toHash()const
     {
         return this->v;
     }
@@ -566,7 +566,7 @@ public:
     //!
     virtual ModelDtoHeader<T>&makeDefault()
     {
-        static auto vAction=QVariantHash{ { vpField, vpActions}, { vpTitle, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }};
+        static QVariantHash vAction={ { vpField, vpActions}, { vpTitle, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }};
         return this->value(vAction);
     }
 
