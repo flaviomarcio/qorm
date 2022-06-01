@@ -39,9 +39,9 @@ public:
     //!
     ~ConnectionManager();
 
-    Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment)
-    Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey)
-    Q_PROPERTY(QVariantHash paramaters READ paramaters WRITE setParamaters)
+    Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment NOTIFY enviromentChanged)
+    Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey NOTIFY secreChanged)
+    Q_PROPERTY(QVariantHash paramaters READ paramaters WRITE setParamaters NOTIFY paramatersChanged)
 
     //!
     //! \brief clear
@@ -201,7 +201,10 @@ public:
     //! \return
     //!
     ConnectionManager &operator<<(const QVariantHash &value);
-
+signals:
+    void enviromentChanged();
+    void secreChanged();
+    void paramatersChanged();
 private:
     void *p = nullptr;
 };
