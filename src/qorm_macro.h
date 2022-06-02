@@ -363,13 +363,13 @@ private:\
     };\
 
 #define QORM_DECLARE_DTO_TYPE(_MACRO_VALUE_)\
-    Q_INVOKABLE virtual FormType defaultType()const{\
+    static FormType defaultType(){\
         static const FormType ___return=_MACRO_VALUE_;\
         return ___return;\
     }
 
 #define QORM_DECLARE_DTO_LAYOUT(_MACRO_VALUE_)\
-    Q_INVOKABLE virtual FormLayout defaultLayout()const{\
+    static FormLayout defaultLayout(){\
         static const FormLayout ___return=_MACRO_VALUE_;\
         return ___return;\
     }
