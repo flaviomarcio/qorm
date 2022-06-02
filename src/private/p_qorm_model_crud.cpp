@@ -25,8 +25,8 @@ public:
     explicit CRUDBasePvt(CRUDBase*parent):options(parent),dto(parent)
     {
         this->parent=parent;
-        dto.setType(QOrm::ModelDto::FormType(parent->type()));
-        dto.setLayout(QOrm::ModelDto::FormLayout(parent->layout()));
+        dto.setType(QOrm::ModelDto::FormType(CRUDBase::defaultType()));
+        dto.setLayout(QOrm::ModelDto::FormLayout(CRUDBase::defaultLayout()));
     }
 
     virtual ~CRUDBasePvt()

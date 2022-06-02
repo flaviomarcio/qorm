@@ -15,7 +15,7 @@ typedef QOrm::ModelAction CRUDAction;
 }
 
 namespace PrivateQOrm{
-
+class CRUDBasePvt;
 //!
 //! \brief The CRUDBase class
 //!
@@ -393,7 +393,7 @@ protected:
     virtual ResultValue&doFailed();
 
 private:
-    void*p=nullptr;
+    CRUDBasePvt*p=nullptr;
 };
 
 }

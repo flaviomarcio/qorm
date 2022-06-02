@@ -12,8 +12,6 @@ namespace PrivateOrm {
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<ModelDtoPvt *>(this->p)
-
 Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
 
 static void initDtoSettingsCache()
@@ -58,14 +56,14 @@ static void initDtoSettingsCache()
 
 Q_COREAPP_STARTUP_FUNCTION(initDtoSettingsCache)
 
-class ModelDtoPvt
+class ModelDtoPvt:public QObject
 {
 public:
     ModelDtoControls dtoControls;
 
     QObject *dto = nullptr;
 
-    explicit ModelDtoPvt(ModelDto *parent)
+    explicit ModelDtoPvt(ModelDto *parent):QObject{parent}
     {
         this->dto = parent;
         auto pParent = parent->parent();
@@ -107,222 +105,220 @@ ModelDto::ModelDto(QObject *parent) : QStm::Object{parent}
 ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object{parent}
 {
     this->p = new ModelDtoPvt{this};
-    dPvt();
-    p.dtoControls.setValue(rows.resultVariant());
+
+    p->dtoControls.setValue(rows.resultVariant());
 }
 
 ModelDto::~ModelDto()
 {
-    dPvt();
-    delete &p;
+
 }
 
 QString ModelDto::id() const
 {
-    dPvt();
-    return p.dtoControls.id();
+
+    return p->dtoControls.id();
 }
 
 ModelDto &ModelDto::id(const QVariant &v)
 {
-    dPvt();
-    p.dtoControls.id(v);
+    p->dtoControls.id(v);
     return *this;
 }
 
 ModelDto &ModelDto::setId(const QVariant &value)
 {
-    dPvt();
-    p.dtoControls.id(value);
+
+    p->dtoControls.id(value);
     return *this;
 }
 
 ModelDto::FormType ModelDto::type() const
 {
-    dPvt();
-    return FormType(p.dtoControls.type());
+
+    return FormType(p->dtoControls.type());
 }
 
 ModelDto &ModelDto::type(const FormType &v)
 {
-    dPvt();
-    p.dtoControls.type(ModelDtoControls::FormType(v));
+
+    p->dtoControls.type(ModelDtoControls::FormType(v));
     return *this;
 }
 
 ModelDto &ModelDto::setType(const FormType &v)
 {
-    dPvt();
-    p.dtoControls.type(ModelDtoControls::FormType(v));
+
+    p->dtoControls.type(ModelDtoControls::FormType(v));
     return *this;
 }
 
 ModelDto::FormLayout ModelDto::layout() const
 {
-    dPvt();
-    return FormLayout(p.dtoControls.layout());
+
+    return FormLayout(p->dtoControls.layout());
 }
 
 ModelDto &ModelDto::layout(const FormLayout &v)
 {
-    dPvt();
-    p.dtoControls.layout(ModelDtoControls::FormLayout(v));
+
+    p->dtoControls.layout(ModelDtoControls::FormLayout(v));
     return *this;
 }
 
 ModelDto &ModelDto::setLayout(const FormLayout &v)
 {
-    dPvt();
-    p.dtoControls.layout(ModelDtoControls::FormLayout(v));
+
+    p->dtoControls.layout(ModelDtoControls::FormLayout(v));
     return *this;
 }
 
 ModelDto &ModelDto::settings(const QVariant &setting)
 {
-    dPvt();
-    p.dtoControls.settings(setting.toHash());
+
+    p->dtoControls.settings(setting.toHash());
     return *this;
 }
 
 ModelDtoControls &ModelDto::controls()
 {
-    dPvt();
-    return p.dtoControls;
+
+    return p->dtoControls;
 }
 
 ModelDtoHeaders<ModelDtoControls> &ModelDto::headers()
 {
-    dPvt();
-    return p.dtoControls.headers();
+
+    return p->dtoControls.headers();
 }
 
 ModelDtoFilters<ModelDtoControls> &ModelDto::filters()
 {
-    dPvt();
-    return p.dtoControls.filters();
+
+    return p->dtoControls.filters();
 }
 
 ModelDtoLinks<ModelDtoControls> &ModelDto::links()
 {
-    dPvt();
-    return p.dtoControls.links();
+
+    return p->dtoControls.links();
 }
 
 ModelDtoItems<ModelDtoControls> &ModelDto::items()
 {
-    dPvt();
-    return p.dtoControls.items();
+
+    return p->dtoControls.items();
 }
 
 ModelDtoControls &ModelDto::items(const QVariant &v)
 {
-    dPvt();
-    return p.dtoControls.items(v);
+
+    return p->dtoControls.items(v);
 }
 
 ModelDtoControls &ModelDto::items(const ResultValue &lr)
 {
-    dPvt();
-    return p.dtoControls.items(lr.resultVariant());
+
+    return p->dtoControls.items(lr.resultVariant());
 }
 
 QStm::ResultInfo &ModelDto::resultInfo()
 {
-    dPvt();
-    return p.dtoControls.resultInfo();
+
+    return p->dtoControls.resultInfo();
 }
 
 ModelDtoControls &ModelDto::resultInfo(const QVariant &v)
 {
-    dPvt();
-    p.dtoControls.resultInfo().fromVar(v);
-    return p.dtoControls;
+
+    p->dtoControls.resultInfo().fromVar(v);
+    return p->dtoControls;
 }
 
 ModelDtoControls &ModelDto::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
-    dPvt();
-    p.dtoControls.resultInfo().fromHash(resultInfo.toHash());
-    return p.dtoControls;
+
+    p->dtoControls.resultInfo().fromHash(resultInfo.toHash());
+    return p->dtoControls;
 }
 
 ModelDto &ModelDto::setValue(const QVariant &v)
 {
-    dPvt();
-    p.dtoControls.items(v);
+
+    p->dtoControls.items(v);
     return *this;
 }
 
 QString ModelDto::text() const
 {
-    dPvt();
-    return p.dtoControls.text();
+
+    return p->dtoControls.text();
 }
 
 ModelDto &ModelDto::text(const QVariant &v)
 {
-    dPvt();
-    p.dtoControls.text(v);
+
+    p->dtoControls.text(v);
     return *this;
 }
 
 ModelDto &ModelDto::setText(const QVariant &v)
 {
-    dPvt();
-    p.dtoControls.text(v);
+
+    p->dtoControls.text(v);
     return *this;
 }
 
 QVariantHash ModelDto::sort() const
 {
-    dPvt();
-    return p.dtoControls.sort();
+
+    return p->dtoControls.sort();
 }
 
 ModelDto &ModelDto::sort(const QVariant &v)
 {
-    dPvt();
-    p.dtoControls.sort(v);
+
+    p->dtoControls.sort(v);
     return *this;
 }
 
 ModelDto &ModelDto::setSort(const QVariant &v)
 {
-    dPvt();
-    p.dtoControls.setSort(v);
+
+    p->dtoControls.setSort(v);
     return *this;
 }
 
 ModelDto &ModelDto::setValue(const ResultValue &lr)
 {
-    dPvt();
-    p.dtoControls.setValue(lr.resultVariant());
+
+    p->dtoControls.setValue(lr.resultVariant());
     return *this;
 }
 
 ModelDto &ModelDto::clear()
 {
-    dPvt();
-    p.clear();
+
+    p->clear();
     return *this;
 }
 
 ResultValue &ModelDto::o()
 {
-    dPvt();
-    return p.dtoControls.o();
+
+    return p->dtoControls.o();
 }
 
 ResultValue &ModelDto::toOutput()
 {
-    dPvt();
-    return p.dtoControls.o();
+
+    return p->dtoControls.o();
 }
 
 ModelDto &ModelDto::initDescriptors(QObject *object)
 {
-    dPvt();
-    p.initDescriptors(object);
+
+    p->initDescriptors(object);
     return *this;
 }
 

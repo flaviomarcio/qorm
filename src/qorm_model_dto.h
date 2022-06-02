@@ -3,7 +3,7 @@
 #include "./private/p_qorm_model_controls.h"
 
 namespace QOrm {
-
+class ModelDtoPvt;
 //!
 //! \brief The ModelDto class
 //!
@@ -246,7 +246,7 @@ public:
     virtual ModelDto &initDescriptors(QObject *object);
 
 private:
-    void *p = nullptr;
+    ModelDtoPvt *p = nullptr;
 };
 
 } // namespace QOrm

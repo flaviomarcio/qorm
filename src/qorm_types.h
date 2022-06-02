@@ -32,8 +32,8 @@ typedef std::function<ResultValue *(QOrm::ObjectDb *controller, const QVariant &
 
 
 #define ____QORM_DECLARE_FORM_ENUMS \
-enum class FormType { CustomForm = 0, RegisterForm=2, AddressForm = 2, ReportForm = 3 };\
-enum class FormLayout { Vertical = 0, Horizontal = 1 };
+enum FormType { CustomForm = 0, RegisterForm=2, AddressForm = 3, ReportForm = 4 };\
+enum FormLayout { Vertical = 0, Horizontal = 1 };
 
 #define QORM_DECLARE_FORM_ENUMS \
 ____QORM_DECLARE_FORM_ENUMS \
