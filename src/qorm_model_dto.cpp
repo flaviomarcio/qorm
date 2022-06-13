@@ -71,8 +71,6 @@ public:
             this->initDescriptors(pParent);
     }
 
-    virtual ~ModelDtoPvt() {}
-
     void initObjects()
     {
         const auto className
@@ -89,11 +87,8 @@ public:
         if (model == nullptr)
             return;
         const auto &modelInfo = ModelInfo::modelInfo(model->metaObject()->className());
-        const auto &descriptors = modelInfo.propertyDescriptors();
-        this->dtoControls.headers().clear().makeDefault();
-        for (auto &v : descriptors) {
-            this->dtoControls.headers().value(v.toHash());
-        }
+        auto descriptors = modelInfo.propertyDescriptors();
+        dtoControls.setDescriptors(descriptors);
     }
 };
 

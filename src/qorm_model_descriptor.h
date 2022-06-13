@@ -6,7 +6,7 @@
 #include <QVariantHash>
 #include <QVariantMap>
 
-#define Q_ORM_MODEL_SET_DESIGN(W,H) this->setDesign(QRect(0,0,W,H));
+#define Q_ORM_MODEL_SET_DESIGN(W,H,R) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
 
 #define Q_ORM_MODEL_SET_SORT(value) this->setSort(value);
 
@@ -36,7 +36,7 @@ public: \
     Q_INVOKABLE explicit ClassName(QObject *parent = nullptr) : QOrm::ModelDescriptor(parent){};
 
 namespace QOrm {
-
+class ModelDescriptorPvt;
 //!
 //! \brief The ModelDescriptor class
 //!
@@ -72,7 +72,7 @@ public:
     //! \brief descriptors
     //! \return
     //!
-    virtual QVariantList descriptors() const;
+    virtual QVariantMap descriptors() const;
 
     //!
     //! \brief descriptor
@@ -231,11 +231,14 @@ public:
     //! \brief design
     //! \return
     //!
-    QRect &design();
-    void setDesign(QRect &value);
+    virtual QVariantHash &design();
+    virtual void setDesign(const QVariantHash &value);
 
+
+signals:
+    void cellRowsChanged();
 private:
-    void *p = nullptr;
+    ModelDescriptorPvt *p = nullptr;
 };
 
 } // namespace QOrm

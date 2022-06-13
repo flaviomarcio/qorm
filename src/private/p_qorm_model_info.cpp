@@ -35,7 +35,7 @@ public:
     QHash<QString,QString> propertyTableVsShort;
     QHash<QString,QString> propertyShortVsTable;
     QHash<QString,QString> propertyShortFKVsShortPK;
-    QVariantList propertyDescriptors;
+    QVariantMap propertyDescriptors;
     QVariantHash propertySort;
     QStringList propertyList;
     QStringList propertyTableList;
@@ -858,7 +858,7 @@ QHash<QString, QMetaProperty> &ModelInfo::propertyFK() const
     return p.propertyFK;
 }
 
-QVariantList ModelInfo::propertyDescriptors() const
+QVariantMap ModelInfo::propertyDescriptors() const
 {
     dPvt();
     return p.propertyDescriptors;

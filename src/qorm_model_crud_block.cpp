@@ -197,8 +197,8 @@ namespace QOrm {
 
                 QVariantHash vHash;
                 auto record=lastCrud;
-                if(lastCrud.contains(qsl("crud"))){
-                    auto crud=lastCrud[qsl("crud")].toList();
+                if(lastCrud.contains(qsl("pages"))){
+                    auto crud=lastCrud[qsl("pages")].toList();
                     if(!crud.isEmpty()){
                         vHash = crud.first().toHash();
                         if(vHash.contains(qsl("items")))
@@ -244,7 +244,7 @@ namespace QOrm {
                 }
             }
         }
-        ___hash[qsl("crud")]=__return;
+        ___hash[qsl("pages")]=__return;
         return this->lr(___hash);
     }
 

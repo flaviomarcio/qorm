@@ -519,9 +519,9 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoHeader<T>&value(const QString&v)
+    virtual ModelDtoHeader<T> &value(const QString&v)
     {
-        return this->value(QVariantHash{{vpField,v}});
+        return this->value({{vpField,v}});
     }
 
     //!
@@ -529,7 +529,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoHeader<T>&value(const QVariantHash&v)
+    virtual ModelDtoHeader<T> &value(const QVariantHash&v)
     {
         auto value=v.value(vpField).toString();
         auto object=this->___objectMap.value(value);
@@ -558,16 +558,6 @@ public:
         object->inputMask(v.value(vpInputMask));
         object->inputLinks(v.value(vtInputLinks));
         return*object;
-    }
-
-    //!
-    //! \brief makeDefault
-    //! \return
-    //!
-    virtual ModelDtoHeader<T>&makeDefault()
-    {
-        static QVariantHash vAction={ { vpField, vpActions}, { vpTitle, qsl_null}, { vpSortable, false }, { vpVisible, true }, { vpWidth, qsl("0%") }};
-        return this->value(vAction);
     }
 
     //!

@@ -137,7 +137,7 @@ public:
     //! \brief propertyDescriptors
     //! \return
     //!
-    virtual QVariantList propertyDescriptors() const;
+    virtual QVariantMap propertyDescriptors() const;
 
     //!
     //! \brief propertySort

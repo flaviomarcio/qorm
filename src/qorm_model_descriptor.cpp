@@ -7,7 +7,7 @@ namespace QOrm {
 
 #define dPvt() auto &p = *reinterpret_cast<ModelDescriptorPvt *>(this->p)
 
-class ModelDescriptorPvt
+class ModelDescriptorPvt:public QObject
 {
 public:
     QStringList descriptorsOrder; //é importa ser QMap devido a ordem necessaria para exibicao
@@ -18,20 +18,20 @@ public:
     QVariantHash flags;
     QVariantHash options;
     QVariantHash sort;
-    QRect design={0,0,800,600};
-    explicit ModelDescriptorPvt() {}
+    QVariantHash design={{vpWidth,800}, {vpHeight,600}, {vpRows,2}};
+    ModelDescriptor *parent=nullptr;
+    explicit ModelDescriptorPvt(ModelDescriptor *parent):QObject{parent} {}
     virtual ~ModelDescriptorPvt() {}
 };
 
 ModelDescriptor::ModelDescriptor(QObject *parent) : QObject{parent}
 {
-    this->p = new ModelDescriptorPvt();
+    this->p = new ModelDescriptorPvt(this);
 }
 
 ModelDescriptor::~ModelDescriptor()
 {
-    dPvt();
-    delete &p;
+
 }
 
 bool ModelDescriptor::isValid() const
@@ -43,14 +43,12 @@ bool ModelDescriptor::isValid() const
     return true;
 }
 
-QVariantList ModelDescriptor::descriptors() const
+QVariantMap ModelDescriptor::descriptors() const
 {
-    dPvt();
-
-    QVariantMap descriptors = p.descriptors;
+    QVariantMap descriptors = p->descriptors;
 
     {
-        auto &mapCheck = p.edit;
+        auto &mapCheck = p->edit;
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
@@ -63,7 +61,7 @@ QVariantList ModelDescriptor::descriptors() const
     }
 
     {
-        auto &mapCheck = p.perfumery;
+        auto &mapCheck = p->perfumery;
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
@@ -76,7 +74,7 @@ QVariantList ModelDescriptor::descriptors() const
     }
 
     {
-        auto &mapCheck = p.flags;
+        auto &mapCheck = p->flags;
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
@@ -89,7 +87,7 @@ QVariantList ModelDescriptor::descriptors() const
     }
 
     {
-        auto &mapCheck = p.options;
+        auto &mapCheck = p->options;
         QMapIterator<QString, QVariant> i(descriptors);
         while (i.hasNext()) {
             i.next();
@@ -101,43 +99,45 @@ QVariantList ModelDescriptor::descriptors() const
         }
     }
 
-    QVariantList __return;
-    p.descriptors.clear();
-    for (auto &name : p.descriptorsOrder) {
-        __return << descriptors[name];
-    }
-    return __return;
+    QVariantList vList;
+    p->descriptors.clear();
+    for (auto &name : p->descriptorsOrder) {
+        vList << descriptors[name];
+    }    
+    descriptors.clear();
+    descriptors[vpHeaders]=vList;
+    descriptors[vpDesign]=p->design;
+    return descriptors;
 }
 
 void ModelDescriptor::descriptorsInit()
 {
-    dPvt();
-    p.descriptorsOrder.clear();
-    p.descriptors.clear();
+    p->descriptorsOrder.clear();
+    p->descriptors.clear();
 }
 
 QVariant ModelDescriptor::descriptor(const QString &name) const
 {
-    dPvt();
-    return p.descriptors.value(name);
+
+    return p->descriptors.value(name);
 }
 
 void ModelDescriptor::setDescriptor(const QString &name, const QVariantHash &v)
 {
-    dPvt();
+
     auto d = v;
-    if (!p.descriptorsOrder.contains(name))
-        p.descriptorsOrder.append(name);
+    if (!p->descriptorsOrder.contains(name))
+        p->descriptorsOrder.append(name);
     d[vpField] = name;
-    p.descriptors[name] = d;
+    p->descriptors[name] = d;
 }
 
 void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    if (!p.descriptorsOrder.contains(name))
-        p.descriptorsOrder.append(name);
-    auto d = p.descriptors.value(name).toHash();
+
+    if (!p->descriptorsOrder.contains(name))
+        p->descriptorsOrder.append(name);
+    auto d = p->descriptors.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
@@ -145,163 +145,163 @@ void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
     }
 
     d[vpField] = name;
-    p.descriptors[name] = d;
+    p->descriptors[name] = d;
 }
 
 QString ModelDescriptor::description()
 {
-    dPvt();
-    return p.description.trimmed();
+
+    return p->description.trimmed();
 }
 
 void ModelDescriptor::setDescription(const QString &v)
 {
-    dPvt();
-    p.description = v.trimmed();
+
+    p->description = v.trimmed();
 }
 
 QVariantHash &ModelDescriptor::edit() const
 {
-    dPvt();
-    return p.edit;
+
+    return p->edit;
 }
 
 QVariant ModelDescriptor::edit(const QString &name) const
 {
-    dPvt();
-    return p.edit.value(name);
+
+    return p->edit.value(name);
 }
 
 void ModelDescriptor::setEdit(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    p.edit[name] = v;
+
+    p->edit[name] = v;
 }
 
 void ModelDescriptor::addEdit(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    auto d = p.edit.value(name).toHash();
+
+    auto d = p->edit.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
         d[i.key()] = i.value();
     }
-    p.edit[name] = d;
+    p->edit[name] = d;
 }
 
 QVariantHash &ModelDescriptor::perfumerys() const
 {
-    dPvt();
-    return p.perfumery;
+
+    return p->perfumery;
 }
 
 QVariant ModelDescriptor::perfumery(const QString &name) const
 {
-    dPvt();
-    return p.perfumery.value(name);
+
+    return p->perfumery.value(name);
 }
 
 void ModelDescriptor::setPerfumery(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    p.perfumery[name] = v;
+
+    p->perfumery[name] = v;
 }
 
 void ModelDescriptor::addPerfumery(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    auto d = p.perfumery.value(name).toHash();
+
+    auto d = p->perfumery.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
         d[i.key()] = i.value();
     }
-    p.perfumery[name] = d;
+    p->perfumery[name] = d;
 }
 
 QVariantHash &ModelDescriptor::flags() const
 {
-    dPvt();
-    return p.flags;
+
+    return p->flags;
 }
 
 QVariant ModelDescriptor::flag(const QString &name) const
 {
-    dPvt();
-    return p.perfumery.value(name);
+
+    return p->perfumery.value(name);
 }
 
 void ModelDescriptor::setFlag(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    p.flags[name] = v;
+
+    p->flags[name] = v;
 }
 
 void ModelDescriptor::addFlag(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    auto d = p.flags.value(name).toHash();
+
+    auto d = p->flags.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
         d[i.key()] = i.value();
     }
-    p.flags[name] = d;
+    p->flags[name] = d;
 }
 
 QVariantHash &ModelDescriptor::options() const
 {
-    dPvt();
-    return p.options;
+
+    return p->options;
 }
 
 QVariant ModelDescriptor::option(const QString &name) const
 {
-    dPvt();
-    return p.options.value(name);
+
+    return p->options.value(name);
 }
 
 void ModelDescriptor::setOption(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    p.options[name] = v;
+
+    p->options[name] = v;
 }
 
 void ModelDescriptor::addOption(const QString &name, const QVariantHash &v)
 {
-    dPvt();
-    auto d = p.options.value(name).toHash();
+
+    auto d = p->options.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
         d[i.key()] = i.value();
     }
-    p.options[name] = d;
+    p->options[name] = d;
 }
 
 QVariantHash &ModelDescriptor::sort() const
 {
-    dPvt();
-    return p.sort;
+
+    return p->sort;
 }
 
 void ModelDescriptor::setSort(const QVariantHash &value)
 {
-    dPvt();
-    p.sort = value;
+
+    p->sort = value;
 }
 
-QRect &ModelDescriptor::design()
+QVariantHash &ModelDescriptor::design()
 {
-    dPvt();
-    return p.design;
+
+    return p->design;
 }
 
-void ModelDescriptor::setDesign(QRect &value)
+void ModelDescriptor::setDesign(const QVariantHash &value)
 {
-    dPvt();
-    p.design=value;
+
+    p->design=value;
 }
 
 } // namespace QOrm

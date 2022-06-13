@@ -145,12 +145,6 @@ CRUDBase &CRUDBase::setResultInfo(const QStm::ResultInfo &resultInfo)
     return*this;
 }
 
-CRUDBase &CRUDBase::makeDefault()
-{
-    this->dto().headers().makeDefault();
-    return *this;
-}
-
 CRUDBase &CRUDBase::unMakeDefault()
 {
     this->dto().headers().unMakeDefault();

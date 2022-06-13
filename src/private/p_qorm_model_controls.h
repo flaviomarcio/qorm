@@ -9,7 +9,7 @@
 #include "./p_qorm_model_dto_crud.h"
 
 namespace QOrm {
-
+class ModelDtoControlsPvt;
 //!
 //! \brief The ModelDtoControls class
 //!
@@ -31,23 +31,30 @@ public:
     //! \brief resultInfo
     //! \return
     //!
-    virtual QStm::ResultInfo&resultInfo();
-    virtual ModelDtoControls&setResultInfo(const QStm::ResultInfo&resultInfo);
+    virtual QStm::ResultInfo &resultInfo();
+    virtual ModelDtoControls &setResultInfo(const QStm::ResultInfo&resultInfo);
+
+    //!
+    //! \brief descriptors
+    //! \return
+    //!
+    virtual QVariantMap &descriptors();
+    virtual void setDescriptors(const QVariantMap &descriptors);
 
     //!
     //! \brief id
     //! \return
     //!
     virtual QString id()const;
-    virtual ModelDtoControls&id(const QVariant &v);
+    virtual ModelDtoControls &id(const QVariant &v);
 
     //!
     //! \brief type
     //! \return
     //!
     virtual FormType type() const;
-    virtual ModelDtoControls&type(const FormType &v);
-    virtual ModelDtoControls&setType(const FormType &v);
+    virtual ModelDtoControls &type(const FormType &v);
+    virtual ModelDtoControls &setType(const FormType &v);
 
 
     //!
@@ -55,30 +62,38 @@ public:
     //! \return
     //!
     virtual FormLayout layout() const;
-    virtual ModelDtoControls&layout(const FormLayout &v);
-    virtual ModelDtoControls&setLayout(const FormLayout &v);
+    virtual ModelDtoControls &layout(const FormLayout &v);
+    virtual ModelDtoControls &setLayout(const FormLayout &v);
+
+    //!
+    //! \brief design
+    //! \return
+    //!
+    virtual QVariantHash design()const;
+    virtual ModelDtoControls &design(const QVariant &v);
+    virtual ModelDtoControls &setDesign(const QVariant &v);
 
     //!
     //! \brief sort
     //! \return
     //!
     virtual QVariantHash sort() const;
-    virtual ModelDtoControls&sort(const QVariant &v);
-    virtual ModelDtoControls&setSort(const QVariant &v);
+    virtual ModelDtoControls &sort(const QVariant &v);
+    virtual ModelDtoControls &setSort(const QVariant &v);
 
     //!
     //! \brief text
     //! \return
     //!
     virtual QString text()const;
-    virtual ModelDtoControls&text(const QVariant &v);
+    virtual ModelDtoControls &text(const QVariant &v);
 
     //!
     //! \brief settings
     //! \param setting
     //! \return
     //!
-    virtual ModelDtoControls&settings(const QVariant&setting);
+    virtual ModelDtoControls &settings(const QVariant&setting);
 
     /**
      * @brief outPutStyle
@@ -104,25 +119,25 @@ public:
     //! \brief headers
     //! \return
     //!
-    virtual ModelDtoHeaders<ModelDtoControls>&headers();
+    virtual ModelDtoHeaders<ModelDtoControls> &headers();
 
     /**
      * @brief filters
      * @return
      */
-    virtual ModelDtoFilters<ModelDtoControls>&filters();
+    virtual ModelDtoFilters<ModelDtoControls> &filters();
 
     //!
     //! \brief links
     //! \return
     //!
-    virtual ModelDtoLinks<ModelDtoControls>&links();
+    virtual ModelDtoLinks<ModelDtoControls> &links();
 
     //!
     //! \brief crud
     //! \return
     //!
-    virtual ModelDtoCrud<ModelDtoControls>&crud();
+    virtual ModelDtoCrud<ModelDtoControls> &crud();
 
     //!
     //! \brief items
@@ -130,7 +145,7 @@ public:
     //!
     virtual ModelDtoItems<ModelDtoControls> &items();
     virtual ModelDtoControls &items(const QVariant&v);
-    virtual ModelDtoControls &items(const ResultValue&lr);
+    virtual ModelDtoControls &items(const ResultValue &lr);
 
     //!
     //! \brief setValue
@@ -138,28 +153,28 @@ public:
     //! \return
     //!
     virtual ModelDtoControls &setValue(const QVariant&v);
-    virtual ModelDtoControls &setValue(const ResultValue&lr);
+    virtual ModelDtoControls &setValue(const ResultValue &lr);
 
     //!
     //! \brief clear
     //! \return
     //!
-    virtual ModelDtoControls&clear();
+    virtual ModelDtoControls &clear();
 
     //!
     //! \brief o
     //! \return
     //!
-    virtual ResultValue&o();
+    virtual ResultValue &o();
 
     //!
     //! \brief toOutput
     //! \return
     //!
-    virtual ResultValue&toOutput();
+    virtual ResultValue &toOutput();
 
 private:
-    void*p=nullptr;
+    ModelDtoControlsPvt *p=nullptr;
 };
 
 }

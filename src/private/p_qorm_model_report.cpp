@@ -118,12 +118,6 @@ ModelReportBase &ModelReportBase::setOptions(const QOrm::ModelDtoOptions &option
     return*this;
 }
 
-ModelReportBase &ModelReportBase::makeDefault()
-{
-    this->dto().headers().makeDefault();
-    return *this;
-}
-
 ModelReportBase &ModelReportBase::unMakeDefault()
 {
     this->dto().headers().unMakeDefault();
