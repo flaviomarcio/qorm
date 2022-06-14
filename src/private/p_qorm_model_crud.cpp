@@ -145,12 +145,6 @@ CRUDBase &CRUDBase::setResultInfo(const QStm::ResultInfo &resultInfo)
     return*this;
 }
 
-CRUDBase &CRUDBase::unMakeDefault()
-{
-    this->dto().headers().unMakeDefault();
-    return *this;
-}
-
 CRUDBase::FormType CRUDBase::type() const
 {
     dPvt();

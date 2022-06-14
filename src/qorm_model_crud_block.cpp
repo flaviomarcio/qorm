@@ -156,7 +156,6 @@ namespace QOrm {
             const auto crudName=crud->crudName().toLower();
             crud->setOptions(p.options);
             crud->setResultInfo(p.resultInfo);
-            crud->unMakeDefault();
             QVariantList crudList;
             QVariant crudSource;
             CRUDBody crudItem(crudBody);

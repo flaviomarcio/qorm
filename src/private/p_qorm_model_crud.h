@@ -73,12 +73,6 @@ public:
     CRUDBase &setResultInfo(const QStm::ResultInfo&resultInfo);
 
     //!
-    //! \brief unMakeDefault
-    //! \return
-    //!
-    virtual CRUDBase&unMakeDefault();
-
-    //!
     //! \brief type
     //! \return
     //!

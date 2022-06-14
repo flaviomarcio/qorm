@@ -53,12 +53,6 @@ public:
     ModelReportBase &setOptions(const QOrm::ModelDtoOptions &options);
 
     //!
-    //! \brief unMakeDefault
-    //! \return
-    //!
-    virtual ModelReportBase&unMakeDefault();
-
-    //!
     //! \brief type
     //! \return
     //!

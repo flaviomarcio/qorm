@@ -118,12 +118,6 @@ ModelReportBase &ModelReportBase::setOptions(const QOrm::ModelDtoOptions &option
     return*this;
 }
 
-ModelReportBase &ModelReportBase::unMakeDefault()
-{
-    this->dto().headers().unMakeDefault();
-    return *this;
-}
-
 ModelReportBase::FormType ModelReportBase::type() const
 {
     dPvt();
