@@ -10,12 +10,14 @@ namespace QOrm {
 //Qt::AlignHCenter 0x0004 Centers horizontally in the available space.
 //Qt::AlignJustify 0x0008 Justifies the text in the available space.
 
-
+//!
+//! \brief The DtoAlign enum
+//!
 enum DtoAlign{
-      daStart = Qt::AlignLeft
-    , daCenter = Qt::AlignHCenter
-    , daEnd = Qt::AlignRight
-    , daJustify = Qt::AlignJustify
+    daStart = Qt::AlignLeft | Qt::AlignVCenter
+  , daCenter = Qt::AlignHCenter | Qt::AlignVCenter
+  , daEnd = Qt::AlignRight  | Qt::AlignVCenter
+  , daJustify = Qt::AlignJustify | Qt::AlignVCenter
 };
 
 
@@ -26,13 +28,16 @@ enum DtoCompatibleValues{
     , dcCSS =8/*Cascading Style Sheets*/
 };
 
-/**
- * @brief The DtoOutPutStyle enum
- */
+//!
+//! \brief The DtoOutPutStyle enum
+//!
 enum DtoOutPutStyle{
     doRowObject=1, doRowArray=2, doSimpleVariant=4
 };
 
+//!
+//! \brief The DtoFilterStyle enum
+//!
 enum DtoFilterStyle{
     dsAutoDectect=1
 };

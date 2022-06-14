@@ -23,13 +23,13 @@ public:
     Q_ENUM(FilterStyle)
 
     Q_PROPERTY(QVariant order READ order WRITE setOrder NOTIFY widthChanged)
-    Q_PROPERTY(QVariant type READ type WRITE setType NOTIFY lengthChanged)
+    Q_PROPERTY(QVariant dataType READ dataType WRITE setDataType NOTIFY dataTypeChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY textChanged)
     Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaulChanged)
     Q_PROPERTY(QVariant text READ text WRITE setText NOTIFY valueChanged)
     Q_PROPERTY(QVariant length READ length WRITE setLength NOTIFY typeChanged)
     Q_PROPERTY(QVariant width READ width WRITE setWidth NOTIFY orderChanged)
-    Q_PROPERTY(Alignment align READ align WRITE setAlign NOTIFY filtrableChanged)
+    Q_PROPERTY(QVariant align READ align WRITE setAlign NOTIFY filtrableChanged)
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY sortableChanged)
     Q_PROPERTY(bool editable READ editable WRITE setEditable NOTIFY editableChanged)
     Q_PROPERTY(bool sortable READ sortable WRITE setSortable NOTIFY visibleChanged)
@@ -85,13 +85,17 @@ public:
     //! \param type
     //! \return
     //!
-    virtual ModelDtoHeader &type(const QVariant &type)
+    virtual QVariant type() const
     {
-        return this->setType(type);
+        return this->v.value(vpOrder);
     }
-    virtual ModelDtoHeader &setType(const QVariant &type)
+    virtual ModelDtoHeader &dataType(const QVariant &type)
     {
-        this->v.insert(vpType,type);
+        return this->setDataType(type);
+    }
+    virtual ModelDtoHeader &setDataType(const QVariant &type)
+    {
+        this->v.insert(vpDataType,type);
         return*this;
     }
 
@@ -539,7 +543,7 @@ public:
             this->___objectList<<object;
             this->___objectMap.insert(value, object);
         }
-        object->type(v.value(vpType));
+        object->dataType(v.value(vpDataType));
         object->value(v.value(vpField));
         object->order(v.value(vpOrder));
         object->defaultValue(v.value(vpDefaultValue));
@@ -589,7 +593,7 @@ protected:
     T*___d=nullptr;
 signals:
     void orderChanged();
-    void typeChanged();
+    void dataTypeChanged();
     void valueChanged();
     void defaulChanged();
     void textChanged();
