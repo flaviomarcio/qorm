@@ -130,40 +130,48 @@ QOrm::KeywordLogical SearchParam::keywordLogical() const
 
 SearchParam SearchParam::from(const QVariant &value)
 {
+    QVariantHash vHash;
     switch (qTypeId(value)) {
-    case QMetaType_QVariantHash:
-    case QMetaType_QVariantMap:
-    {
-        auto vHash=value.toHash();
-        if(vHash.contains(qsl("valueA")) || vHash.contains(qsl("valueB"))){
-            SearchParam __return(vHash);
-            return __return;
-        }
-
-        if(vHash.size()==1){
-            Q_V_HASH_ITERATOR(vHash){
-                i.next();
-                SearchParam __return(i.key(), i.value(), QVariant(), QVariant());
-                return __return;
-            }
-        }
+    case QMetaType_QString:
+    case QMetaType_QByteArray:
+        vHash=QJsonDocument::fromJson(value.toByteArray()).toVariant().toHash();
         break;
-    }
     default:
-        break;
+        vHash=value.toHash();
     }
-    SearchParam __return;
-    return __return;
+
+    if(vHash.isEmpty())
+        return SearchParam{};
+
+    if(vHash.contains(qsl("valueA")) || vHash.contains(qsl("valueB")))
+        return SearchParam{vHash};
+
+    if(vHash.size()==1)
+        return SearchParam{vHash.begin().key(), vHash.begin().value(), {}, {}};
+
+    return SearchParam{};
 }
 
 SearchParameters::SearchParameters(const QVariant &other):QVariant{}
 {
     this->p = new SearchParametersPvt();
     dPvt();
+
+    QVariant vOther;
     switch (qTypeId(other)) {
+    case QMetaType_QString:
+    case QMetaType_QByteArray:
+        vOther=QJsonDocument::fromJson(other.toByteArray()).toVariant();
+        break;
+    default:
+        vOther=other;
+    }
+
+
+    switch (qTypeId(vOther)) {
     case QMetaType_QVariantList:
     {
-        for(auto&v:other.toList()){
+        for(auto&v:vOther.toList()){
             auto s=SearchParam::from(v);
             if(v.isValid())
                 p.insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
@@ -173,7 +181,7 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
     case QMetaType_QVariantHash:
     case QMetaType_QVariantMap:
     {
-        Q_V_HASH_ITERATOR (other.toHash()){
+        Q_V_HASH_ITERATOR (vOther.toHash()){
             i.next();
             auto s=SearchParam::from(i.value());
             if(!s.isValid()){
@@ -189,7 +197,7 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
                 if(!vA.value().isValid() && !vB.value().isValid())
                     continue;
 
-                if(vA.isValue() && QMetaTypeUtilString.contains(qTypeId(vA.value()))){
+                if(vA.isValue() && QMetaTypeUtilString.contains(vA.typeId())){
                     auto s=vA.value().toString();
                     if(!s.contains(qsl("%")))
                         s+=qsl("%");
@@ -197,13 +205,25 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
                     vB.setValue(s);
                 }
 
-                if(vB.isValue() && QMetaTypeUtilString.contains(qTypeId(vB.value()))){
-                    auto s=vB.value().toString();
-                    if(!s.contains(qsl("%")))
-                        s+=qsl("%");
-                    keywordOperator=QOrm::koLike;
-                    vB.setValue(s);
+                switch (vA.typeId()){
+                case QMetaType::QString:
+                case QMetaType::QByteArray:
+                case QMetaType::QChar:
+                case QMetaType::QBitArray:
+                {
+                    if(vB.isValue() && QMetaTypeUtilString.contains(vB.typeId())){
+                        auto s=vB.value().toString();
+                        if(!s.contains(qsl("%")))
+                            s+=qsl("%");
+                        keywordOperator=QOrm::koLike;
+                        vB.setValue(s);
+                    }
+                    break;
                 }
+                default:
+                    break;
+                }
+
 
                 s=SearchParam(vA, vB, keywordOperator, keywordLogical);
             }

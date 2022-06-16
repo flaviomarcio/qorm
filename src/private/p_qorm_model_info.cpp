@@ -599,9 +599,9 @@ public:
                     continue;
 
                 property=pvt.propertyByPropertyName.value(propertyName);
-                auto value=QVariant(rowSplited.last());
+                auto value=QVariant{rowSplited.last()};
                 if(!value.isValid() || value.isNull())
-                    value=QVariant();
+                    value={};
                 else
                     value=VariantUtil(value).toType(qTypeId(property));
 
@@ -632,7 +632,7 @@ public:
                 }
 
                 objectDescriptor->descriptorsInit();
-                if(!objectDescriptor->description().isEmpty())
+                if(pvt.modelDescription.isEmpty())
                     pvt.modelDescription=objectDescriptor->description();
                 pvt.propertyDescriptors=objectDescriptor->descriptors();
                 pvt.propertySort=objectDescriptor->sort();
@@ -647,9 +647,8 @@ public:
                 case QMetaType_QVariantList:
                 case QMetaType_QStringList:
                 {
-                    for(auto&property:pvt.propertyPK){
-                        pvt.tablePkCompuser.insert(QString(property.name()), tablePkCompuser);
-                    }
+                    for(auto&property:pvt.propertyPK)
+                        pvt.tablePkCompuser.insert(property.name(), tablePkCompuser);
                     break;
                 }
                 case QMetaType_QVariantHash:
@@ -663,7 +662,7 @@ public:
                             vHashOut.clear();
                             break;
                         }
-                        vHashOut.insert(QString(property.name()), tablePkCompuser);
+                        vHashOut.insert(property.name(), tablePkCompuser);
                     }
                     pvt.tablePkCompuser=vHashOut;
                     break;
@@ -901,7 +900,7 @@ QVariantHash ModelInfo::propertyParserToTable(const QVariant&v) const
 
         vvm.insert(ik, iv);
     }
-    return QVariantHash(vvm);
+    return QVariantHash{vvm};
 }
 
 QVariantHash ModelInfo::propertyParserToProperty(const QVariant&v) const
@@ -934,7 +933,7 @@ QVariantHash ModelInfo::propertyParserToProperty(const QVariant&v) const
         }
         vvm.insert(ik, iv);
     }
-    return QVariantHash(vvm);
+    return QVariantHash{vvm};
 }
 
 bool ModelInfo::propertyNameConvertMap(QVariantHash &propertyHash)
@@ -1098,8 +1097,7 @@ QVariantHash ModelInfo::toHash(const QObject *object) const
 
 QVariantMap ModelInfo::toMapModel(const QObject *object) const
 {
-    auto v=QVariant(this->toHashModel(object)).toMap();
-    return v;
+    return QVariant{this->toHashModel(object)}.toMap();
 }
 
 QVariantHash ModelInfo::toHashModel(const QObject *object)const

@@ -42,6 +42,7 @@ public:
     Q_PROPERTY(QVariant inputType READ inputType WRITE setInputType NOTIFY inputTypeChanged)
     Q_PROPERTY(QVariant inputMask READ inputMask WRITE setInputMask NOTIFY inputMaskChanged)
     Q_PROPERTY(QVariant inputLinks READ inputLinks WRITE setInputLinks NOTIFY inputLinksChanged)
+    Q_PROPERTY(bool obrigatory READ obrigatory WRITE setObrigatory NOTIFY obrigatoryChanged)
 
     //!
     //! \brief ModelDtoHeader
@@ -232,11 +233,25 @@ public:
     //!
     virtual QVariant inputLinks() const
     {
-        return this->v.value(vtInputLinks);
+        return this->v.value(vpInputLinks);
     }
     virtual ModelDtoHeader &inputLinks(const QVariant &value)
     {
-        this->v.insert(vtInputLinks, value);
+        this->v.insert(vpInputLinks, value);
+        return*this;
+    }
+
+    //!
+    //! \brief obrigatory
+    //! \return
+    //!
+    virtual bool obrigatory() const
+    {
+        return this->v.value(vpObrigatory).toBool();
+    }
+    virtual ModelDtoHeader &obrigatory(const QVariant &value)
+    {
+        this->v.insert(vpObrigatory, value.toBool());
         return*this;
     }
 
@@ -561,7 +576,8 @@ public:
         object->filterStyle(v.value(vpFilterStyle));
         object->inputType(v.value(vpInputType));
         object->inputMask(v.value(vpInputMask));
-        object->inputLinks(v.value(vtInputLinks));
+        object->inputLinks(v.value(vpInputLinks));
+        object->obrigatory(v.value(vpObrigatory));
         return*object;
     }
 

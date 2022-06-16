@@ -150,13 +150,11 @@ void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
 
 QString ModelDescriptor::description()
 {
-
     return p->description.trimmed();
 }
 
 void ModelDescriptor::setDescription(const QString &v)
 {
-
     p->description = v.trimmed();
 }
 
