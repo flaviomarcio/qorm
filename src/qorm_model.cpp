@@ -35,7 +35,7 @@ public:
     {
     }
 
-    const ModelInfo&modelInfo()
+    const ModelInfo &modelInfo()
     {
         const auto &className=this->model->metaObject()->className();
         return ModelInfo::modelInfo(className);
@@ -62,62 +62,13 @@ public:
         auto metaObject=this->model->metaObject();
         for(int col = 0; col < metaObject->propertyCount(); ++col) {
             auto property = metaObject->property(col);
+            if(!property.isWritable() || !property.isResettable())
+                continue;
+
             if(__propertyIgnoredList->contains(property.name()))
                 continue;
 
-            switch (qTypeId(property)) {
-                case QMetaType_User:
-                    this->write(property, 0);
-                    continue;
-                case QMetaType_QUuid:
-                    this->write(property, QUuid());
-                    continue;
-                case QMetaType_QUrl:
-                    this->write(property, QUrl());
-                    continue;
-                case QMetaType_QDate:
-                    this->write(property, QDate());
-                    continue;
-                case QMetaType_QTime:
-                    this->write(property, QTime());
-                    continue;
-                case QMetaType_QDateTime:
-                    this->write(property, QDateTime());
-                    continue;
-                case QMetaType_Double:
-                case QMetaType_Int:
-                case QMetaType_UInt:
-                case QMetaType_LongLong:
-                case QMetaType_ULongLong:
-                    this->write(property, 0);
-                    continue;
-                case QMetaType_QString:
-                    this->write(property, qsl_null);
-                    continue;
-                case QMetaType_QByteArray:
-                    this->write(property, qbl_null);
-                    continue;
-                case QMetaType_QChar:
-                    this->write(property, QChar());
-                    continue;
-                case QMetaType_QBitArray:
-                    this->write(property, QBitArray());
-                    continue;
-                case QMetaType_QVariantMap:
-                    this->write(property, QVariantMap());
-                    continue;
-                case QMetaType_QVariantHash:
-                    this->write(property, QVariantHash());
-                    continue;
-                case QMetaType_QVariantList:
-                    this->write(property, QVariantList());
-                    continue;
-                case QMetaType_QStringList:
-                    this->write(property, QStringList());
-                    continue;
-            default:
-                this->write(property, QVariant());
-            }
+            property.reset(this->model);
         }
     }
 
@@ -338,7 +289,7 @@ public:
         case QMetaType_QVariantList:
         {
             auto vList=vRecord.toList();
-            auto v=vList.isEmpty()?QVariant():vList.first();
+            auto v=vList.isEmpty()?QVariant{}:vList.first();
             //check object
             switch (qTypeId(v)) {
             case QMetaType_QVariantHash:
@@ -346,7 +297,7 @@ public:
                 record=v;
                 break;
             default:
-                record=QVariant();
+                record={};
             }
             break;
         }
@@ -367,7 +318,7 @@ public:
                 return this->model->lr()=false;
 
             for(auto &property:modelInfo.property()){
-                auto propertyName=QByteArray(property.name()).toLower().trimmed();
+                auto propertyName=QByteArray{property.name()}.toLower().trimmed();
                 Q_V_HASH_ITERATOR (recordHash){
                     i.next();
                     auto valueName=i.key().toLower().trimmed();
@@ -407,7 +358,7 @@ public:
         return this->model->lr();
     }
 
-    auto &read(const QByteArray&record)
+    auto &read(const QByteArray &record)
     {
         this->model->lr()=true;
         auto v=QJsonDocument::fromJson(record).object().toVariantHash();
@@ -423,7 +374,7 @@ public:
         return this->model->lr()=this->read(record);
     }
 
-    ResultValue&merge(QSqlQuery&cursorQuery)
+    ResultValue&merge(QSqlQuery &cursorQuery)
     {
         QVariantHash record;
         auto sqlRecord=cursorQuery.record();
@@ -432,7 +383,7 @@ public:
         return this->merge(record);
     }
 
-    ResultValue&merge(const QVariantHash&record)
+    ResultValue&merge(const QVariantHash &record)
     {
 
         auto metaObject = this->model->metaObject();
@@ -444,7 +395,7 @@ public:
                 continue;
 
             //auto value=record.value(property.name());
-            auto propertyName=QByteArray(property.name()).toLower().trimmed();
+            auto propertyName=QByteArray{property.name()}.toLower().trimmed();
             Q_V_HASH_ITERATOR (record){
                 i.next();
                 auto valueName=i.key().toLower().trimmed();
@@ -632,7 +583,7 @@ QVariantHash Model::toHashModel() const
 QVariantHash Model::toMapPKValues() const
 {
 
-    QVVM qVVM;
+    QVVM qvvm;
     auto &modelInfo=p->modelInfo();
     const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
     auto pList=modelInfo.propertyPK().values();
@@ -688,10 +639,10 @@ QVariantHash Model::toMapPKValues() const
         //value=property.read(this);
         const auto k=SqlParserItem::createObject(fieldName);
         const auto v=SqlParserItem::createValue(value);
-        qVVM.insert(k,v);
+        qvvm.insert(k,v);
 
     }
-    return QVariant(qVVM).toHash();
+    return QVariant{qvvm}.toHash();
 }
 
 QVariantHash Model::toMapFKValues() const
@@ -713,7 +664,7 @@ QVariantHash Model::toMapFKValues() const
         const auto v=SqlParserItem::createValue(property.read(this));
         qvvm.insert(k,v);
     }
-    return QVariant(qvvm).toHash();
+    return QVariant{qvvm}.toHash();
 }
 
 QVariantHash Model::toWrapper() const
@@ -729,7 +680,7 @@ QVariantHash Model::toWrapper(const QString &wrapperName) const
         return map;
 
     auto l=p->toWrapper(wrapperName, map);
-    return l.isEmpty()?QVariantHash():l.first().toHash();
+    return l.isEmpty()?QVariantHash{}:l.first().toHash();
 }
 
 QVariantList Model::toWrapper(const QString &wrapperName, const QVariantList &v) const
@@ -792,7 +743,7 @@ bool Model::writeToWrapper(QVariantHash &wrapper) const
 
 bool Model::appendToWrapper(QVariantHash &wrapper)const
 {
-    auto fromWrapper=QString();
+    QString fromWrapper;
     auto toWrapper=this->modelName();
     return this->appendToWrapper(wrapper, fromWrapper, toWrapper);
 }
