@@ -4,7 +4,7 @@
 #include "./qorm_types.h"
 
 namespace QOrm {
-
+class ConnectionSettingPvt;
 //!
 //! \brief The ConnectionSetting class
 //!
@@ -262,7 +262,7 @@ public:
     virtual void setCommandAfterClose(const QStringList &value);
 
 private:
-    void *p = nullptr;
+    ConnectionSettingPvt *p = nullptr;
 signals:
     void variablesChanged();
     void driverChanged();

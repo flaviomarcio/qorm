@@ -7,7 +7,7 @@ namespace QOrm {
 
 
 #define dPvt()\
-    auto&p = *reinterpret_cast<ModelActionPvt*>(this->p)\
+    auto &p = *reinterpret_cast<ModelActionPvt*>(this->p)\
 
 class ModelActionPvt{
 public:
@@ -27,7 +27,7 @@ public:
     {
     }
 
-    QVariantList makeBodyLoop(const QVariant&v)
+    QVariantList makeBodyLoop(const QVariant &v)
     {
         auto vHash=v.toHash();
         if(vHash.contains(qsl("id")) && vHash.contains(qsl("items")))
@@ -71,7 +71,7 @@ ResultValue &ModelAction::action(const QVariant &vSource)
 {
     dPvt();
     auto vList=p.makeBodyLoop(vSource);
-    for(auto&vSource:vList){
+    for(auto &vSource:vList){
         if(p.actionBefore!=nullptr){
             auto lr=p.actionBefore(p.parentDb, vSource);
             this->lr(*lr);

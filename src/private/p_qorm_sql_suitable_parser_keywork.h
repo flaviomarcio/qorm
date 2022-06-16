@@ -44,7 +44,7 @@ public:
     //! \return
     //!
     virtual QString parserCommand(int command);
-    virtual QStringList parserCommand(int command, const ModelInfo *modelInfo, const QVariant&value);
+    virtual QStringList parserCommand(int command, const ModelInfo *modelInfo, const QVariant &value);
 
     //!
     //! \brief commands
@@ -89,14 +89,14 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QString formatValue(const QVariant&v);
+    virtual QString formatValue(const QVariant &v);
 
     //!
     //! \brief formatParameter
     //! \param v
     //! \return
     //!
-    virtual QString formatParameter(const QVariant&v);
+    virtual QString formatParameter(const QVariant &v);
 
     //!
     //! \brief formatValues

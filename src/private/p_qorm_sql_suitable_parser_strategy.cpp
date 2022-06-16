@@ -3,7 +3,7 @@
 #include "../qorm_query.h"
 
 #define dQuery\
-    auto&q=*reinterpret_cast<Query*>(this->q)
+    auto &q=*reinterpret_cast<Query*>(this->q)
 
 namespace QOrm {
 

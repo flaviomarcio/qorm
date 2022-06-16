@@ -35,7 +35,7 @@ public:
 
 public:
     QSqlDatabase connection();
-    void setConnection(const QString&db);
+    void setConnection(const QString &db);
     void setConnection(const QSqlDatabase&db);
 
 public:

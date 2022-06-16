@@ -7,7 +7,7 @@ static QVariant __methodFailed(QSqlDatabase&db, const QVariant&task){Q_UNUSED(ta
 namespace QOrm {
 
 #define dPvt()\
-auto&p = *reinterpret_cast<TaskPoolPvt*>(this->p)
+auto &p = *reinterpret_cast<TaskPoolPvt*>(this->p)
 
 class TaskPoolPvt{
 public:
@@ -124,7 +124,7 @@ void TaskPool::threadInit()
         return;
     }
 
-    auto&lst=p.taskSlotList;
+    auto &lst=p.taskSlotList;
     for (int slot = 0; slot < idealSlotCount; ++slot) {
         auto taskSlot=lst.value(slot);
         if(taskSlot==nullptr){
@@ -142,11 +142,11 @@ void TaskPool::threadDinit()
     dPvt();
     auto aux=p.taskSlotList;
     p.taskSlotList.clear();
-    for (auto&slot:aux){
+    for (auto &slot:aux){
         slot->quit();
         slot->wait();
     }
-    for (auto&slot:aux){
+    for (auto &slot:aux){
         slot->wait();
         delete slot;
     }

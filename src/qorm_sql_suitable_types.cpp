@@ -12,7 +12,7 @@ TypeUtil::~TypeUtil()
 
 }
 
-QSqlDriver::DbmsType TypeUtil::strToDataType(const QString&driverName)
+QSqlDriver::DbmsType TypeUtil::strToDataType(const QString &driverName)
 {
     if(driverName == driver_QODBC)
         return QSqlDriver::MSSqlServer;

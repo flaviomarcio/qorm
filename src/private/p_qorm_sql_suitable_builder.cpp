@@ -48,7 +48,7 @@ QList<SqlParserCommand *> SqlSuitableBuilderPvt::strategyList()
 
 void SqlSuitableBuilderPvt::clear()
 {
-    for(auto&v:this->strategyList()){
+    for(auto &v:this->strategyList()){
         v->clear();
     }
 }
@@ -70,7 +70,7 @@ void SqlSuitableBuilderPvt::setConnection(const QSqlDatabase &db)
 
 bool SqlSuitableBuilderPvt::canBuild()
 {
-    for(auto&strategy:this->strategyList())
+    for(auto &strategy:this->strategyList())
         if(strategy->isChanged())
             return true;
     return false;
@@ -78,7 +78,7 @@ bool SqlSuitableBuilderPvt::canBuild()
 
 bool SqlSuitableBuilderPvt::build()
 {
-    for(auto&strategy:this->strategyList()){
+    for(auto &strategy:this->strategyList()){
         if(strategy==nullptr)
             continue;
 
@@ -96,7 +96,7 @@ bool SqlSuitableBuilderPvt::build()
         }
 
         auto lst=strategy->toScript(*parser);
-        for(auto&v:lst)
+        for(auto &v:lst)
             this->_build<<v;
 
         if(strategy->ignorePrepare())
@@ -104,7 +104,7 @@ bool SqlSuitableBuilderPvt::build()
 
         auto command=lst.join(' ') + qsl(";");
         {
-            auto&p=*static_cast<QueryPvt*>(query->p);
+            auto &p=*static_cast<QueryPvt*>(query->p);
             if(!p.sqlQuery.prepare(command))
                 return false;
         }

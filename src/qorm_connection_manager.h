@@ -6,7 +6,7 @@
 #include <QSettings>
 
 namespace QOrm {
-
+class ConnectionManagerPvt;
 //!
 //! \brief The ConnectionManager class
 //!
@@ -206,7 +206,7 @@ signals:
     void secreChanged();
     void paramatersChanged();
 private:
-    void *p = nullptr;
+    ConnectionManagerPvt *p = nullptr;
 };
 
 } // namespace QOrm

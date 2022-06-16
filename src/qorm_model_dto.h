@@ -36,24 +36,44 @@ public:
     ~ModelDto();
 
     //!
-    //! \brief id
+    //! \brief uuid
     //! \return
     //!
-    virtual QString id() const;
+    virtual QUuid uuid() const;
 
     //!
-    //! \brief id
+    //! \brief uuid
     //! \param v
     //! \return
     //!
-    virtual ModelDto &id(const QVariant &v);
+    virtual ModelDto &uuid(const QVariant &value);
 
     //!
     //! \brief setId
     //! \param v
     //! \return
     //!
-    virtual ModelDto &setId(const QVariant &v);
+    virtual ModelDto &setUuid(const QVariant &v);
+
+    //!
+    //! \brief name
+    //! \return
+    //!
+    virtual QString name() const;
+
+    //!
+    //! \brief name
+    //! \param value
+    //! \return
+    //!
+    virtual ModelDto &name(const QVariant &value);
+
+    //!
+    //! \brief setName
+    //! \param v
+    //! \return
+    //!
+    virtual ModelDto &setName(const QVariant &value);
 
     //!
     //! \brief type

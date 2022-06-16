@@ -33,7 +33,7 @@ public:
         return*this;
     }
 
-    virtual ModelDtoItems&fromList(const QVariant&v)
+    virtual ModelDtoItems&fromList(const QVariant &v)
     {
         this->___objectList=v.toList();
         return*this;

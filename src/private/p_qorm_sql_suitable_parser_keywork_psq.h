@@ -17,7 +17,7 @@ public:
 
     virtual QString parserCommand(int command);
 
-    virtual QStringList parserCommand(int command, const ModelInfo *modelInfo, const QVariant&value);
+    virtual QStringList parserCommand(int command, const ModelInfo *modelInfo, const QVariant &value);
 };
 
 }

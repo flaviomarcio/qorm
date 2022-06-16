@@ -14,9 +14,9 @@ public:
     friend class SqlParserField;
 public:
     explicit SqlParserItem();
-    explicit SqlParserItem(const QVariant&value);
+    explicit SqlParserItem(const QVariant &value);
 
-    explicit SqlParserItem(const QVariant&value, const QVariant&title, const KeywordObjectInfo&info);
+    explicit SqlParserItem(const QVariant &value, const QVariant&title, const KeywordObjectInfo&info);
 
     void init(QVariantHash&map);
 
@@ -30,17 +30,17 @@ public:
 
     virtual QString toFormat(SqlSuitableKeyWord &parser)const;
 
-    static const SqlParserItem from(const QVariant&v);
+    static const SqlParserItem from(const QVariant &v);
 
-    static SqlParserItem createObject(const QVariant&v);
+    static SqlParserItem createObject(const QVariant &v);
 
-    static SqlParserItem createValue(const QVariant&v);
+    static SqlParserItem createValue(const QVariant &v);
 
     //!
     //! \brief operator =
     //! \param value
     //!
-    void operator=(const QVariant&value);
+    void operator=(const QVariant &value);
 
     //!
     //! \brief info

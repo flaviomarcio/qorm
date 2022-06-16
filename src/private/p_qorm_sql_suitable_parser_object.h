@@ -7,7 +7,7 @@ namespace QOrm {
 class Q_ORM_EXPORT SqlParserObject: public SqlParserItem{
 public:
     explicit SqlParserObject();
-    explicit SqlParserObject(const QVariant&v);
+    explicit SqlParserObject(const QVariant &v);
 };
 
 }

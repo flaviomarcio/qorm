@@ -6,10 +6,6 @@
 #include <QVariant>
 
 namespace QOrm {
-
-#define dPvt()\
-    auto&p = *reinterpret_cast<ConnectionNotifyPvt*>(this->p)
-
 //!
 //! \brief The ConnectionNotifyPvt class
 //!

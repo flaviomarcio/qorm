@@ -8,7 +8,7 @@ namespace PrivateQOrm {
 
 
 #define dPvt()\
-    auto&p = *reinterpret_cast<CRUDBasePvt*>(this->p)
+    auto &p = *reinterpret_cast<CRUDBasePvt*>(this->p)
 
 class CRUDBasePvt{
 public:
@@ -33,7 +33,7 @@ public:
     {
     }
 
-    auto&doModelAction(const QString&methodName)
+    auto &doModelAction(const QString &methodName)
     {
         auto method=this->actionMethod.value(methodName.toUtf8());
         if(method==nullptr)
@@ -41,7 +41,7 @@ public:
         return this->parent->lr(method(this->parent, this->source));
     }
 
-    auto&actionNothing(QOrm::ObjectDb*crudController, const QVariant&vBody)
+    auto &actionNothing(QOrm::ObjectDb*crudController, const QVariant &vBody)
     {
         Q_UNUSED(crudController)
         Q_UNUSED(vBody)
@@ -215,7 +215,7 @@ const QOrm::ModelInfo &CRUDBase::modelInfo()
     return __return;
 }
 
-CRUDBase&CRUDBase::crudBody(const QVariant&v)
+CRUDBase&CRUDBase::crudBody(const QVariant &v)
 {
     dPvt();
     p.set_crud(v);
@@ -320,34 +320,41 @@ CRUDBase &CRUDBase::actionDeactivate(QOrm::ModelAction &action)
     return*this;
 }
 
-ResultValue &CRUDBase::search(){
+ResultValue &CRUDBase::search()
+{
     return this->lr().setNotImplemented();
 }
 
-ResultValue &CRUDBase::search(const QVariant &value){
+ResultValue &CRUDBase::search(const QVariant &value)
+{
     Q_UNUSED(value)
     return this->lr().setNotImplemented();
 }
 
-ResultValue &CRUDBase::insert(){
+ResultValue &CRUDBase::insert()
+{
     return this->lr().setNotImplemented();
 }
 
-ResultValue &CRUDBase::insert(const QVariant &value){
+ResultValue &CRUDBase::insert(const QVariant &value)
+{
     Q_UNUSED(value)
     return this->lr().setNotImplemented();
 }
 
-ResultValue &CRUDBase::update(){
+ResultValue &CRUDBase::update()
+{
     return this->lr().setNotImplemented();
 }
 
-ResultValue &CRUDBase::update(const QVariant &value){
+ResultValue &CRUDBase::update(const QVariant &value)
+{
     Q_UNUSED(value)
     return this->lr().setNotImplemented();
 }
 
-ResultValue &CRUDBase::upsert(){
+ResultValue &CRUDBase::upsert()
+{
     return this->lr().setNotImplemented();
 }
 
@@ -401,58 +408,62 @@ ResultValue &CRUDBase::canActionSearch()
 {
     Q_DECLARE_VU;
     dPvt();
-    static auto name=QByteArray(__func__).replace(qbl("canAction"), qbl("action"));
+    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
     QVariant v;
     if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(this->source())){
-        auto&act=p.actions[name];
-        auto&lr=(act==nullptr)?this->search():act->action(this->source());
+        auto &act=p.actions[name];
+        auto &lr=(act==nullptr)?this->search():act->action(this->source());
         v=lr.resultVariant();
     }
-    return this->lr(p.dto.id(this->crudName()).text(this->crudDescription()).items(v).o());
+    return this->lr(p.dto
+                    .uuid(this->crudName())
+                    .name(this->crudName())
+                    .text(this->crudDescription())
+                    .items(v).o());
 }
 
 ResultValue &CRUDBase::canActionInsert()
 {
     dPvt();
-    static auto name=QByteArray(__func__).replace(qbl("canAction"), qbl("action"));
-    auto&act=p.actions[name];
-    auto&lr=(act==nullptr)?this->insert():act->action(this->source());
+    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    auto &act=p.actions[name];
+    auto &lr=(act==nullptr)?this->insert():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionUpsert()
 {
     dPvt();
-    static auto name=QByteArray(__func__).replace(qbl("canAction"), qbl("action"));
-    auto&act=p.actions[name];
-    auto&lr=(act==nullptr)?this->upsert():act->action(this->source());
+    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    auto &act=p.actions[name];
+    auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionUpdate()
 {
     dPvt();
-    static auto name=QByteArray(__func__).replace(qbl("canAction"), qbl("action"));
-    auto&act=p.actions[name];
-    auto&lr=(act==nullptr)?this->update():act->action(this->source());
+    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    auto &act=p.actions[name];
+    auto &lr=(act==nullptr)?this->update():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionRemove()
 {
     dPvt();
-    static auto name=QByteArray(__func__).replace(qbl("canAction"), qbl("action"));
-    auto&act=p.actions[name];
-    auto&lr=(act==nullptr)?this->remove():act->action(this->source());
+    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    auto &act=p.actions[name];
+    auto &lr=(act==nullptr)?this->remove():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionDeactivate()
 {
     dPvt();
-    static auto name=QByteArray(__func__).replace(qbl("canAction"), qbl("action"));
-    auto&act=p.actions[name];
-    auto&lr=(act==nullptr)?this->deactivate():act->action(this->source());
+    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    auto &act=p.actions[name];
+    auto &lr=(act==nullptr)?this->deactivate():act->action(this->source());
     return this->lr(lr);
 }
 

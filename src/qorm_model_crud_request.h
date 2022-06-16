@@ -7,7 +7,6 @@
 #include "./qorm_model_crud_types.h"
 
 namespace QOrm {
-
 #define ___CRUDRequest__isStrategy(v) \
     bool is##v() { return isStrategy(v); };
 
@@ -86,10 +85,8 @@ public:
     //!
     virtual bool isStrategy(const CRUDStrategy v);
     ___CRUDRequest__isStrategy(Search) ___CRUDRequest__isStrategy(Insert)
-        ___CRUDRequest__isStrategy(Upsert) ___CRUDRequest__isStrategy(Update)
-            ___CRUDRequest__isStrategy(Remove) ___CRUDRequest__isStrategy(Deactivate)
-
-                private : void *p = nullptr;
+    ___CRUDRequest__isStrategy(Upsert) ___CRUDRequest__isStrategy(Update)
+    ___CRUDRequest__isStrategy(Remove) ___CRUDRequest__isStrategy(Deactivate)
 };
 
 } // namespace QOrm

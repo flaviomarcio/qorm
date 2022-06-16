@@ -11,45 +11,45 @@ ConnectionNotify::ConnectionNotify(QObject *parent) : QObject{parent}
 
 ConnectionNotify::~ConnectionNotify()
 {
-    dPvt();
-    p.deleteLater();
+
+    p->deleteLater();
 }
 
 bool ConnectionNotify::notify_send(const QVariant &payload)
 {
-    dPvt();
-    return p.queueSend(QString(), payload);
+
+    return p->queueSend(QString(), payload);
 }
 
 bool ConnectionNotify::notify_send(const QString &channel, const QVariant &payload)
 {
-    dPvt();
-    return p.queueSend(channel, payload);
+
+    return p->queueSend(channel, payload);
 }
 
 QStringList &ConnectionNotify::subscribeToNotification()
 {
-    dPvt();
-    return p.subscribeToNotification;
+
+    return p->subscribeToNotification;
 }
 
 bool ConnectionNotify::start()
 {
-    dPvt();
-    return p.queueStart();
+
+    return p->queueStart();
 }
 
 bool ConnectionNotify::stop()
 {
-    dPvt();
-    p.queueStop();
+
+    p->queueStop();
     return true;
 }
 
 bool ConnectionNotify::started()
 {
-    dPvt();
-    return p.queueStarted();
+
+    return p->queueStarted();
 }
 
 bool ConnectionNotify::setConnection(const QSqlDatabase &connection)

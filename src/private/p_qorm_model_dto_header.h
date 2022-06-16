@@ -482,7 +482,7 @@ public:
     virtual QVariant toVar()const
     {
         QVariantList vList;
-        for(const auto&v:this->___objectList)
+        for(const auto &v:this->___objectList)
             vList<<v->toVar();
         return vList;
     };
@@ -494,7 +494,7 @@ public:
     virtual QVariant toList()const
     {
         QVariantList vList;
-        for(const auto&v:this->___objectList)
+        for(const auto &v:this->___objectList)
             vList<<v->toVar();
         return vList;
     };
@@ -513,7 +513,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoHeader<T>* get(const QString&v)
+    virtual ModelDtoHeader<T>* get(const QString &v)
     {
         return this->___objectMap.value(v);
     }
@@ -523,7 +523,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoHeaders&remove(const QString&v)
+    virtual ModelDtoHeaders&remove(const QString &v)
     {
         if(this->___objectMap.contains(v)){
             auto object=this->___objectMap.take(v);
@@ -538,7 +538,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoHeader<T> &value(const QString&v)
+    virtual ModelDtoHeader<T> &value(const QString &v)
     {
         return this->value({{vpField,v}});
     }
@@ -597,7 +597,7 @@ public:
     virtual void reOrder()
     {
         auto i=0;
-        for(auto&v:this->___objectList){
+        for(auto &v:this->___objectList){
             if(v->order()<0)
                 v->setOrder(i++);
         }

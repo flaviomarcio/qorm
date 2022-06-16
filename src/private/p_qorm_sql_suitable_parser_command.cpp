@@ -43,8 +43,8 @@ QVariantMap SqlParserCommand::appendMapStartsWith(const QVariant &vKey, const QV
     while (i.hasNext()) {
         i.next();
         auto key=i.key().toLower();
-        auto&value=i.value();
-        for(auto&s:lKey){
+        auto &value=i.value();
+        for(auto &s:lKey){
             if(key.startsWith(s)){
                 mapDst.insert(key, value);
             }
@@ -63,8 +63,8 @@ QVariantMap SqlParserCommand::unionMapStartsWith(const QVariant &vKey, const QVa
         while (i.hasNext()) {
             i.next();
             auto key=i.key().toLower();
-            auto&value=i.value();
-            for(auto&s:lKey){
+            auto &value=i.value();
+            for(auto &s:lKey){
                 if(key.startsWith(s)){
                     mapUni.insert(key, value);
                 }
@@ -93,7 +93,7 @@ QVariant SqlParserCommand::getVariantStartsWith(const QVariant &vKey, const QVar
     while (i.hasNext()) {
         i.next();
         auto __key=i.key().trimmed();
-        for(auto&s:lKey){
+        for(auto &s:lKey){
             if(__key.startsWith(s)){
                 return i.value();
             }
@@ -221,7 +221,7 @@ bool SqlParserCommand::makeObject()
 void SqlParserCommand::___clear()
 {
     auto values=this->mapPointer.values();
-    for(auto&v:values){
+    for(auto &v:values){
         v->setValue(QVariant());
         delete v;
     }

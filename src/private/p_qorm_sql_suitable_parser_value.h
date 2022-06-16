@@ -7,16 +7,16 @@ namespace QOrm {
 class Q_ORM_EXPORT SqlParserValue: public SqlParserItem{
 public:
     explicit SqlParserValue();
-    explicit SqlParserValue(const QVariant&v);
+    explicit SqlParserValue(const QVariant &v);
 };
 
 class SqlParserValues:public SqlParserCommand{
 public:
-    explicit SqlParserValues(const QVariant&v=QVariant());
+    explicit SqlParserValues(const QVariant &v=QVariant());
 
-    SqlParserValues&value(const QVariant&v);
+    SqlParserValues&value(const QVariant &v);
 
-    SqlParserValues&v(const QVariant&v);
+    SqlParserValues&v(const QVariant &v);
 
     QStringList toScript(SqlSuitableKeyWord &parser);
 };

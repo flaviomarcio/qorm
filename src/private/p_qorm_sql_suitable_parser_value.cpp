@@ -30,7 +30,7 @@ SqlParserValues &SqlParserValues::value(const QVariant &v)
 
     auto typeId=qTypeId(v);
     if(QMetaTypeUtilVariantList.contains(typeId)){
-        for(auto&i:v.toList())
+        for(auto &i:v.toList())
             this->value(i);
         return*this;
     }

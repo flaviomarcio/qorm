@@ -5,6 +5,7 @@
 
 namespace QOrm {
 class Model;
+class QueryPvt;
 
 //!
 //! \brief The Query class
@@ -251,7 +252,7 @@ public:
     virtual QOrm::SqlSuitableKeyWord &parser();
 
 public:
-    void *p = nullptr;
+    QueryPvt *p = nullptr;
 };
 
 } // namespace QOrm

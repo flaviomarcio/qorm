@@ -52,7 +52,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual bool isStrategy(const QVariant&v) const;
+    virtual bool isStrategy(const QVariant &v) const;
 };
 
 Q_DECLARE_METATYPE(CRUDBody)

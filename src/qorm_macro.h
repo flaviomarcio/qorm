@@ -59,7 +59,7 @@ public:\
     }\
 public:\
     static modelClass&m(){ modelClass*__m=nullptr; if(__m==nullptr) __m = new modelClass(); return*__m;}\
-    auto&modelInfo()const{return QOrm::ModelInfo::modelInfo(modelClass::staticMetaObject);}\
+    auto &modelInfo()const{return QOrm::ModelInfo::modelInfo(modelClass::staticMetaObject);}\
     Q_PROPERTY(QByteArray tablePrefix READ tablePrefix)\
     Q_PROPERTY(QByteArray tablePrefixSeparator READ tablePrefixSeparator)\
     Q_PROPERTY(QByteArray tableName READ tableName)\
@@ -112,7 +112,7 @@ public:\
 Q_INVOKABLE virtual QVariantHash tableSequence()const{ \
     static QVariantHash vseq_##name; \
     static const auto static_name=QString(#name).trimmed();\
-    auto&v=vseq_##name;\
+    auto &v=vseq_##name;\
     if(v.isEmpty()){\
         QString schema=this->tableSchema();\
         schema+=schema.isEmpty()?"":QStringLiteral(".");\
@@ -127,7 +127,7 @@ public:\
 Q_INVOKABLE virtual QVariantHash seq_##name()const{ \
     static QVariantHash vseq_##name; \
     static const auto static_name=QString(#name).trimmed();\
-    auto&v=vseq_##name;\
+    auto &v=vseq_##name;\
     if(v.isEmpty()){\
         QString schema=this->tableSchema();\
         schema+=schema.isEmpty()?"":QStringLiteral(".");\
@@ -303,8 +303,8 @@ private:\
         ~ModelName##GDao(){\
         }\
     };\
-    static const auto&ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
-    static const auto&ModelName##M = ModelName::m();
+    static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
+    static const auto &ModelName##M = ModelName::m();
 
 #define QORM_DECLARE_CRUD(ModelName)\
     class ModelName##GDao : public QOrm::ModelDao<ModelName>{\
@@ -317,8 +317,8 @@ private:\
         ~ModelName##GDao(){\
         }\
     };\
-    static const auto&ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
-    static const auto&ModelName##M = ModelName::m();\
+    static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
+    static const auto &ModelName##M = ModelName::m();\
     class ModelName##CRUD : public QOrm::CRUD<ModelName>{\
         Q_OBJECT\
     public:\
@@ -345,8 +345,8 @@ private:\
         ~ModelName##GDao(){\
         }\
     };\
-    static const auto&ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
-    static const auto&ModelName##M = ModelName::m();\
+    static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
+    static const auto &ModelName##M = ModelName::m();\
     class ModelName##Report : public QOrm::ModelReport<ModelName>{\
         Q_OBJECT\
     public:\
@@ -383,7 +383,7 @@ private:\
 #define QORM_DECLARE_KEY_WORD(SSKClass)\
     static SqlSuitableKeyWord*SSKClass##Parser = nullptr;\
     {\
-        auto&keywork=SSKClass##Parser;\
+        auto &keywork=SSKClass##Parser;\
         if(keywork==nullptr)\
             keywork=SqlSuitableKeyWord::parserMaker(new SSKClass());\
     }

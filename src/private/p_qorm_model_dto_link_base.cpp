@@ -4,9 +4,6 @@
 
 namespace PrivateQOrm {
 
-#define dPvtI()\
-    auto&p = *reinterpret_cast<ModelDtoLinkItemPvt*>(this->p)\
-
 class ModelDtoLinkItemPvt : public QObject{
 public:
     QUuid uuid=QUuid::createUuid();
@@ -25,8 +22,6 @@ public:
     }
 };
 
-#define dPvtA()\
-    auto&p = *reinterpret_cast<ModelDtoLinkBaseCollectionPvt*>(this->p)\
 
 class ModelDtoLinkBaseCollectionPvt : public QObject{
 public:
@@ -44,120 +39,120 @@ public:
 ModelDtoLinkItem::ModelDtoLinkItem(QObject *dtpParent, QObject *parent):QStm::Object{parent}
 {
     this->p=new ModelDtoLinkItemPvt{this};
-    dPvtI();
-    p.___d=dtpParent;
+
+    p->___d=dtpParent;
 }
 
 ModelDtoLinkItem::~ModelDtoLinkItem()
 {
-//    dPvtI();
+//
 //    delete&p;
 }
 
 QUuid &ModelDtoLinkItem::uuid() const
 {
-    dPvtI();
-    return p.uuid;
+
+    return p->uuid;
 }
 
 QObject &ModelDtoLinkItem::d()
 {
-    dPvtI();
-    return*p.___d;
+
+    return*p->___d;
 }
 
 bool ModelDtoLinkItem::isMethodGet() const
 {
-    dPvtI();
-    return (p.method==qbl("get"));
+
+    return (p->method==qbl("get"));
 }
 
 bool ModelDtoLinkItem::isMethodPost() const
 {
-    dPvtI();
-    return (p.method==qbl("post"));
+
+    return (p->method==qbl("post"));
 }
 
 bool ModelDtoLinkItem::isMethodPut() const
 {
-    dPvtI();
-    return (p.method==qbl("put"));
+
+    return (p->method==qbl("put"));
 }
 
 bool ModelDtoLinkItem::isMethodDelete() const
 {
-    dPvtI();
-    return (p.method==qbl("delete"));
+
+    return (p->method==qbl("delete"));
 }
 
 QVariantHash &ModelDtoLinkItem::header() const
 {
-    dPvtI();
-    return p.header;
+
+    return p->header;
 }
 
 ModelDtoLinkItem &ModelDtoLinkItem::setHeader(const QVariant &value)
 {
-    dPvtI();
-    p.header=value.toHash();
+
+    p->header=value.toHash();
     return*this;
 }
 
 QVariant &ModelDtoLinkItem::method() const
 {
-    dPvtI();
-    return p.method;
+
+    return p->method;
 }
 
 ModelDtoLinkItem &ModelDtoLinkItem::setMethod(const QVariant &value)
 {
-    dPvtI();
-    p.method=value.toString().trimmed();
+
+    p->method=value.toString().trimmed();
     return*this;
 }
 
 QVariant &ModelDtoLinkItem::ref() const
 {
-    dPvtI();
-    return p.ref;
+
+    return p->ref;
 }
 
 ModelDtoLinkItem &ModelDtoLinkItem::setRef(const QVariant &value)
 {
-    dPvtI();
-    p.ref=value;
+
+    p->ref=value;
     return*this;
 }
 
 QVariant &ModelDtoLinkItem::hRef() const
 {
-    dPvtI();
-    return p.hRef;
+
+    return p->hRef;
 }
 
 ModelDtoLinkItem &ModelDtoLinkItem::setHRef(const QVariant &value)
 {
-    dPvtI();
-    p.hRef=value;
+
+    p->hRef=value;
     return*this;
 }
 
 QVariant &ModelDtoLinkItem::parameters() const
 {
-    dPvtI();
-    return p.parameters;
+
+    return p->parameters;
 }
 
 ModelDtoLinkItem &ModelDtoLinkItem::setParameters(const QVariant &value)
 {
-    dPvtI();
+
     auto typeId=qTypeId(value);
     if(QMetaTypeUtilString.contains(typeId)){
         auto name=value.toString().trimmed();
         if(name.isEmpty())
-            p.parameters=QVariantHash{{name, qsl("${%1}").arg(name)}};
+            p->parameters=QVariantHash{{name, qsl("${%1}").arg(name)}};
     }
-    p.parameters=value;
+    p->parameters=value;
     return*this;
 }
 
@@ -170,8 +165,8 @@ QVariant ModelDtoLinkItem::toVariant() const
 ModelDtoLinkCollection::ModelDtoLinkCollection(QObject *dtoParent, QObject *parent):QStm::Object{parent}
 {
     this->p = new ModelDtoLinkBaseCollectionPvt{this};
-    dPvtA();
-    p.___d=dtoParent;
+
+    p->___d=dtoParent;
 }
 
 ModelDtoLinkCollection::~ModelDtoLinkCollection(){
@@ -179,35 +174,35 @@ ModelDtoLinkCollection::~ModelDtoLinkCollection(){
 
 QVariant ModelDtoLinkCollection::toVar() const
 {
-    dPvtA();
+
     QVariantList vList;
-    for(auto&v:p.___objectList)
+    for(auto &v:p->___objectList)
         vList<<v->toVariant();
     return vList;
 }
 
 QObject &ModelDtoLinkCollection::d()
 {
-    dPvtA();
-    return*p.___d;
+
+    return*p->___d;
 }
 
 QObject &ModelDtoLinkCollection::ref(ModelDtoLinkItem *link)
 {
-    dPvtA();
+
     if(link==nullptr)
-        link=new ModelDtoLinkItem(p.___d, this);
+        link=new ModelDtoLinkItem(p->___d, this);
     else
         link->setParent(this);
-    p.___objectList.insert(link->uuid().toString(), link);
+    p->___objectList.insert(link->uuid().toString(), link);
     return*link;
 }
 
 ModelDtoLinkItem *ModelDtoLinkCollection::find(const QVariant &ref)
 {
-    dPvtA();
+
     auto _ref=ref.toString().toUtf8().toLower().trimmed();
-    QHashIterator<QString, ModelDtoLinkItem*> i(p.___objectList);
+    QHashIterator<QString, ModelDtoLinkItem*> i(p->___objectList);
     while (i.hasNext()) {
         i.next();
         auto iRef=i.value();
@@ -219,15 +214,15 @@ ModelDtoLinkItem *ModelDtoLinkCollection::find(const QVariant &ref)
 }
 
 ModelDtoLinkCollection &ModelDtoLinkCollection::clear(){
-    dPvtA();
-    p.___objectList.clear();
+
+    p->___objectList.clear();
     return*this;
 }
 
 QHash<QString, ModelDtoLinkItem *> &ModelDtoLinkCollection::list() const
 {
-    dPvtA();
-    return p.___objectList;
+
+    return p->___objectList;
 }
 
 }

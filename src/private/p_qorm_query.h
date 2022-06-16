@@ -55,7 +55,7 @@ public:
 
     bool makeModelMetaObject(QMetaObject&metaObject);
 
-    void writeLog(const QString&scriptSQL, const QSqlError&error);
+    void writeLog(const QString &scriptSQL, const QSqlError&error);
 
     void writeLogFinish(const QSqlError&error);
 

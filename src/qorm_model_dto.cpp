@@ -109,22 +109,37 @@ ModelDto::~ModelDto()
 
 }
 
-QString ModelDto::id() const
+QUuid ModelDto::uuid() const
 {
-
-    return p->dtoControls.id();
+    return p->dtoControls.uuid();
 }
 
-ModelDto &ModelDto::id(const QVariant &v)
+ModelDto &ModelDto::uuid(const QVariant &value)
 {
-    p->dtoControls.id(v);
+    p->dtoControls.uuid(value);
     return *this;
 }
 
-ModelDto &ModelDto::setId(const QVariant &value)
+ModelDto &ModelDto::setUuid(const QVariant &value)
 {
+    p->dtoControls.uuid(value);
+    return *this;
+}
 
-    p->dtoControls.id(value);
+QString ModelDto::name() const
+{
+    return p->dtoControls.name();
+}
+
+ModelDto &ModelDto::name(const QVariant &value)
+{
+    p->dtoControls.name(value);
+    return *this;
+}
+
+ModelDto &ModelDto::setName(const QVariant &value)
+{
+    p->dtoControls.setName(value);
     return *this;
 }
 
@@ -143,41 +158,35 @@ ModelDto &ModelDto::type(const FormType &v)
 
 ModelDto &ModelDto::setType(const FormType &v)
 {
-
     p->dtoControls.type(ModelDtoControls::FormType(v));
     return *this;
 }
 
 ModelDto::FormLayout ModelDto::layout() const
 {
-
     return FormLayout(p->dtoControls.layout());
 }
 
 ModelDto &ModelDto::layout(const FormLayout &v)
 {
-
     p->dtoControls.layout(ModelDtoControls::FormLayout(v));
     return *this;
 }
 
 ModelDto &ModelDto::setLayout(const FormLayout &v)
 {
-
     p->dtoControls.layout(ModelDtoControls::FormLayout(v));
     return *this;
 }
 
 ModelDto &ModelDto::settings(const QVariant &setting)
 {
-
     p->dtoControls.settings(setting.toHash());
     return *this;
 }
 
 ModelDtoControls &ModelDto::controls()
 {
-
     return p->dtoControls;
 }
 

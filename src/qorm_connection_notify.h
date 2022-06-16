@@ -3,7 +3,7 @@
 #include "./qorm_object_db.h"
 
 namespace QOrm {
-
+class ConnectionNotifyPvt;
 //!
 //! \brief The ConnectionNotify class
 //!
@@ -77,7 +77,7 @@ signals:
     void notification(const QString &channel, const QVariant &payload);
 
 private:
-    void *p = nullptr;
+    ConnectionNotifyPvt *p = nullptr;
 };
 
 } // namespace QOrm

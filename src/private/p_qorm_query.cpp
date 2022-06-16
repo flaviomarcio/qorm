@@ -8,7 +8,7 @@ static bool static_log_register=false;
 #endif
 static QString static_log_dir;
 
-static void static_log_dir_clear(const QString&ormLogDir)
+static void static_log_dir_clear(const QString &ormLogDir)
 {
     QStringList dir_found;
     QStringList dir_rm_file;
@@ -21,7 +21,7 @@ static void static_log_dir_clear(const QString&ormLogDir)
             continue;
 
         dir.setFilter(QDir::AllDirs);
-        for(auto&scanInDir:dir.entryList()){
+        for(auto &scanInDir:dir.entryList()){
             if(scanInDir==qsl(".") || scanInDir==qsl(".."))
                 continue;
 
@@ -32,13 +32,13 @@ static void static_log_dir_clear(const QString&ormLogDir)
     }
 
     auto ext=QStringList{qbl("*.*")};
-    for(auto&sdir:dir_rm_file){
+    for(auto &sdir:dir_rm_file){
         QDir scanDir(sdir);
         if(!scanDir.exists())
             continue;
         scanDir.setFilter(QDir::Drives | QDir::Files);
         scanDir.setNameFilters(ext);
-        for(auto&dirFile : scanDir.entryList()){
+        for(auto &dirFile : scanDir.entryList()){
             auto fileName=sdir+qbl("/")+dirFile;
             QFile::remove(fileName);
         }

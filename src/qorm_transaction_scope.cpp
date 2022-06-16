@@ -4,8 +4,6 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<TransactionScopePvt *>(this->p)
-
 class TransactionScopePvt : public QObject
 {
 public:
@@ -39,14 +37,12 @@ TransactionScope::TransactionScope(QObject *parent) : ObjectDb(parent)
 
 TransactionScope::~TransactionScope()
 {
-    dPvt();
-    delete &p;
 }
 
 bool TransactionScope::rollback()
 {
-    dPvt();
-    return p.transaction.rollback();
+
+    return p->transaction.rollback();
 }
 
 } // namespace QOrm

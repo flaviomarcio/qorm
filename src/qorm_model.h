@@ -11,7 +11,7 @@
 #include "./private/p_qorm_sql_suitable_parser_strategy_options.h"
 
 namespace QOrm {
-
+class ModelPvt;
 class Query;
 //!
 //! \brief The Model class
@@ -136,7 +136,7 @@ public:
     //! \param wrapperName
     //! \return
     //!
-    virtual QVariantHash toWrapper(const QString&wrapperName)const;
+    virtual QVariantHash toWrapper(const QString &wrapperName)const;
 
     //!
     //! \brief toWrapper
@@ -144,7 +144,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantList toWrapper(const QString&wrapperName, const QVariantList&v)const;
+    virtual QVariantList toWrapper(const QString &wrapperName, const QVariantList&v)const;
 
     //!
     //! \brief toWrapper
@@ -152,7 +152,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantList toWrapper(const QString&wrapperName, const QVariantHash&v)const;
+    virtual QVariantList toWrapper(const QString &wrapperName, const QVariantHash&v)const;
 
     //!
     //! \brief toWrapper
@@ -160,7 +160,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantList toWrapper(const QString&wrapperName, ResultValue &v)const;
+    virtual QVariantList toWrapper(const QString &wrapperName, ResultValue &v)const;
 
     //!
     //! \brief toWrapper
@@ -252,7 +252,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual bool propertyBeforeSet(const QByteArray&property, const QVariant&value) const;
+    virtual bool propertyBeforeSet(const QByteArray&property, const QVariant &value) const;
 
     //!
     //! \brief propertyAfterSet
@@ -260,7 +260,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual bool propertyAfterSet(const QByteArray&property, const QVariant&value) const;
+    virtual bool propertyAfterSet(const QByteArray&property, const QVariant &value) const;
 
     //!
     //! \brief readFrom
@@ -303,14 +303,14 @@ public:
     //! \param vMap
     //! \return
     //!
-    virtual ResultValue&readWrapper(const QString&wrapper, const QVariant&vMap);
+    virtual ResultValue&readWrapper(const QString &wrapper, const QVariant &vMap);
 
     //!
     //! \brief readWrapper
     //! \param vMap
     //! \return
     //!
-    virtual ResultValue&readWrapper(const QVariant&vMap);
+    virtual ResultValue&readWrapper(const QVariant &vMap);
 
     //!
     //! \brief readWrapper
@@ -318,7 +318,7 @@ public:
     //! \param resultValue
     //! \return
     //!
-    virtual ResultValue&readWrapper(const QString&wrapper, ResultValue&resultValue);
+    virtual ResultValue&readWrapper(const QString &wrapper, ResultValue&resultValue);
 
     //!
     //! \brief readWrapper
@@ -431,10 +431,10 @@ public:
     //! \param v
     //! \return
     //!
-    Model&operator=(const QVariant&v);
+    Model&operator=(const QVariant &v);
 
 private:
-    void*p=nullptr;
+    ModelPvt*p=nullptr;
 signals:
     void changeProperty();
 };

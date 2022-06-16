@@ -264,7 +264,7 @@ public:
     virtual QVariant toVar()const
     {
         QVariantList vList;
-        for(const auto&v:this->___objectList)
+        for(const auto &v:this->___objectList)
             vList<<v->toVariant();
         return vList;
     };
@@ -274,7 +274,7 @@ public:
         return*this->___d;
     }
 
-    virtual ModelDtoFilter<T>&value(const QString&v)
+    virtual ModelDtoFilter<T>&value(const QString &v)
     {
         return this->value(QVariantHash{{vpType,v}});
     }

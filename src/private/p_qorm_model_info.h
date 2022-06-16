@@ -9,7 +9,7 @@
 #include "../qorm_global.h"
 
 namespace QOrm {
-
+class ModelInfoPvt;
 class Model;
 class Q_ORM_EXPORT ModelInfo:public QVariant{
     friend class ModelInfoPvt;
@@ -29,7 +29,7 @@ public:
     //! \param v
     //! \return
     //!
-    const static ModelInfo &modelInfo(const QVariant&v);
+    const static ModelInfo &modelInfo(const QVariant &v);
     const static ModelInfo &modelInfo(const QMetaObject&metaObject);
     static ModelInfo&modelInfoInit(const QMetaObject&staticMetaObject);
 
@@ -298,11 +298,11 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantHash toForeign(const QVariant&vModel, const QVariant &v) const;
+    virtual QVariantHash toForeign(const QVariant &vModel, const QVariant &v) const;
 
 
 private:
-    void*p=nullptr;
+    ModelInfoPvt *p=nullptr;
 };
 
 }

@@ -42,11 +42,34 @@ public:
     virtual void setDescriptors(const QVariantMap &descriptors);
 
     //!
-    //! \brief id
+    //! \brief uuid
     //! \return
     //!
-    virtual QString id()const;
-    virtual ModelDtoControls &id(const QVariant &v);
+    virtual QUuid &uuid() const;
+    virtual ModelDtoControls &uuid(const QVariant &v);
+    virtual ModelDtoControls &setUuid(const QVariant &v);
+
+
+    //!
+    //! \brief name
+    //! \return
+    //!
+    virtual QString name() const;
+
+    //!
+    //! \brief name
+    //! \param value
+    //! \return
+    //!
+    virtual ModelDtoControls &name(const QVariant &value);
+
+    //!
+    //! \brief setName
+    //! \param v
+    //! \return
+    //!
+    virtual ModelDtoControls &setName(const QVariant &v);
+
 
     //!
     //! \brief type
@@ -144,7 +167,7 @@ public:
     //! \return
     //!
     virtual ModelDtoItems<ModelDtoControls> &items();
-    virtual ModelDtoControls &items(const QVariant&v);
+    virtual ModelDtoControls &items(const QVariant &v);
     virtual ModelDtoControls &items(const ResultValue &lr);
 
     //!
@@ -152,7 +175,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoControls &setValue(const QVariant&v);
+    virtual ModelDtoControls &setValue(const QVariant &v);
     virtual ModelDtoControls &setValue(const ResultValue &lr);
 
     //!

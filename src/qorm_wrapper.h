@@ -3,7 +3,7 @@
 #include "../../qstm/src/qstm_result.h"
 
 namespace QOrm {
-
+class WrapperPvt;
 //!
 //! \brief The Wrapper class
 //!
@@ -55,7 +55,7 @@ public:
     virtual QVariant &v() const;
 
 private:
-    void *p = nullptr;
+    WrapperPvt *p = nullptr;
 };
 
 } // namespace QOrm

@@ -25,7 +25,7 @@ class SqlSuitableKeyWord;
 class Q_ORM_EXPORT SqlParserCommand:public QVariant{
     friend class SqlParserItem;
 public:
-    explicit SqlParserCommand(const QVariant&v);
+    explicit SqlParserCommand(const QVariant &v);
 
     explicit SqlParserCommand();
 
@@ -35,13 +35,13 @@ public:
 
     virtual bool ignorePrepare();
 
-    QVariantMap appendMapStartsWith(const QVariant&vKey, const QVariantMap&mapSrc);
+    QVariantMap appendMapStartsWith(const QVariant &vKey, const QVariantMap&mapSrc);
 
-    QVariantMap unionMapStartsWith(const QVariant&vKey, const QVariantMap&mapSrc);
+    QVariantMap unionMapStartsWith(const QVariant &vKey, const QVariantMap&mapSrc);
 
-    QVariant getVariantStartsWith(const QVariant&vKey, const QVariantMap&mapSrc);
+    QVariant getVariantStartsWith(const QVariant &vKey, const QVariantMap&mapSrc);
 
-    QString suuid(const QString&delim=QString())const;
+    QString suuid(const QString &delim=QString())const;
 
     QVariant makeUuid();
 
@@ -51,13 +51,13 @@ public:
 
     virtual void clear();
 
-    virtual QVariant vMap(const QString&key)const;
+    virtual QVariant vMap(const QString &key)const;
 
-    void insert(const QString&key, const QVariant&v);
+    void insert(const QString &key, const QVariant &v);
 
 
     template<class TObject=QVariant>
-    TObject oPointer(const QString&name)
+    TObject oPointer(const QString &name)
     {
         auto r=static_cast<TObject>(mapPointer.value(name));
         return r;
@@ -65,13 +65,13 @@ public:
 
     virtual QMap<QString,SqlParserCommand*> mPointer()const;
 
-    virtual void setPointer(const QString&key, SqlParserCommand*p);
+    virtual void setPointer(const QString &key, SqlParserCommand*p);
 
     virtual bool isChanged()const;
 
     virtual void m();
 
-    virtual void m(const QVariant&v);
+    virtual void m(const QVariant &v);
 
     virtual void make();
 

@@ -45,7 +45,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual bool isStrategy(const QVariant&v);
+    virtual bool isStrategy(const QVariant &v);
 };
 
 Q_DECLARE_METATYPE(ReportBody)

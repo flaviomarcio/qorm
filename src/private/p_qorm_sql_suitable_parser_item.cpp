@@ -99,7 +99,7 @@ const SqlParserItem SqlParserItem::from(const QVariant &v)
     {
         auto vMap=vValue.toMap();
         typeId=vMap.value(qsl("typeId")).toInt();
-        auto&value=vMap[qsl("value")];
+        auto &value=vMap[qsl("value")];
         vMap.insert(qsl("uuid"), rMap.value(qsl("uuid")));
         value=vu.convertTo(value, typeId);
         r.setValue(vMap);

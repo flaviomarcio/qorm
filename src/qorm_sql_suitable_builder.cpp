@@ -4,7 +4,7 @@
 namespace QOrm {
 
 #define dPvt()\
-    auto&p = *reinterpret_cast<SqlSuitableBuilderPvt*>(this->p)
+    auto &p = *reinterpret_cast<SqlSuitableBuilderPvt*>(this->p)
 
 SqlSuitableBuilder::SqlSuitableBuilder(Query*parent):ObjectDb(parent){
     this->p = new SqlSuitableBuilderPvt(parent);

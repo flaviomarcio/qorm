@@ -3,6 +3,8 @@
 #include "./p_qorm_model_dto_types.h"
 
 namespace PrivateQOrm {
+class ModelDtoLinkItemPvt;
+class ModelDtoLinkBaseCollectionPvt;
 //!
 //! \brief The ModelDtoLinkItem class
 //!
@@ -73,7 +75,7 @@ public:
     //! \param value
     //! \return
     //!
-    ModelDtoLinkItem&setHeader(const QVariant&value);
+    ModelDtoLinkItem&setHeader(const QVariant &value);
 
     //!
     //! \brief method
@@ -86,7 +88,7 @@ public:
     //! \param value
     //! \return
     //!
-    ModelDtoLinkItem&setMethod(const QVariant&value);
+    ModelDtoLinkItem&setMethod(const QVariant &value);
 
     //!
     //! \brief ref
@@ -99,21 +101,21 @@ public:
     //! \param value
     //! \return
     //!
-    ModelDtoLinkItem&setRef(const QVariant&value);
+    ModelDtoLinkItem&setRef(const QVariant &value);
 
     //!
     //! \brief hRef
     //! \return
     //!
     QVariant&hRef() const;
-    ModelDtoLinkItem&setHRef(const QVariant&value);
+    ModelDtoLinkItem&setHRef(const QVariant &value);
 
     //!
     //! \brief parameters
     //! \return
     //!
     QVariant&parameters() const;
-    ModelDtoLinkItem&setParameters(const QVariant&value);
+    ModelDtoLinkItem&setParameters(const QVariant &value);
 
     //!
     //! \brief toVariant
@@ -127,7 +129,7 @@ signals:
     void hRefChanged();
     void parametersChanged();
 private:
-    void*p=nullptr;
+    ModelDtoLinkItemPvt*p=nullptr;
 };
 
 //!
@@ -187,7 +189,7 @@ public:
     //!
     QHash<QString, ModelDtoLinkItem *> &list()const;
 private:
-    void*p=nullptr;
+    ModelDtoLinkBaseCollectionPvt*p=nullptr;
 };
 
 }

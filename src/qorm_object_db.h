@@ -9,7 +9,7 @@
 #include "./qorm_types.h"
 
 namespace QOrm {
-
+class ObjectDbPvt;
 //!
 //! \brief The ObjectDb class
 //!
@@ -78,7 +78,7 @@ public:
     Q_INVOKABLE virtual DoubleUtil &dbu(const QVariant &v);
 
 private:
-    void *p = nullptr;
+    ObjectDbPvt *p = nullptr;
 };
 
 } // namespace QOrm

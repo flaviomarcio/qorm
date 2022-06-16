@@ -30,17 +30,17 @@ Q_GLOBAL_STATIC(DriverSuiteList, staticSqlSuitableKeyWordList)
 
 namespace QOrm {
 
-static const auto&format_date_time=*PrivateQOrm::format_date_time;
-static const auto&format_date=*PrivateQOrm::format_date;
-static const auto&format_time=*PrivateQOrm::format_time;
-static const auto&__d1900=*PrivateQOrm::__d1900;
-static const auto&__dt1900=*PrivateQOrm::__dt1900;
-static auto&staticSqlSuitableKeyWordLocker=*PrivateQOrm::staticSqlSuitableKeyWordLocker;
-static auto&staticSqlSuitableKeyWord=*PrivateQOrm::staticSqlSuitableKeyWord;
-static auto&staticSqlSuitableKeyWordList=*PrivateQOrm::staticSqlSuitableKeyWordList;
+static const auto &format_date_time=*PrivateQOrm::format_date_time;
+static const auto &format_date=*PrivateQOrm::format_date;
+static const auto &format_time=*PrivateQOrm::format_time;
+static const auto &__d1900=*PrivateQOrm::__d1900;
+static const auto &__dt1900=*PrivateQOrm::__dt1900;
+static auto &staticSqlSuitableKeyWordLocker=*PrivateQOrm::staticSqlSuitableKeyWordLocker;
+static auto &staticSqlSuitableKeyWord=*PrivateQOrm::staticSqlSuitableKeyWord;
+static auto &staticSqlSuitableKeyWordList=*PrivateQOrm::staticSqlSuitableKeyWordList;
 
 #define dPvt()\
-    auto&p = *reinterpret_cast<SqlSuitableKeyWordPvt*>(this->p)
+    auto &p = *reinterpret_cast<SqlSuitableKeyWordPvt*>(this->p)
 
 static void deinitKeyWork()
 {
@@ -101,7 +101,7 @@ public:
     {
         QMutexLOCKER locker(&staticSqlSuitableKeyWordLocker);
         auto vList=this->parent->drivers();
-        for(auto&driver : vList){
+        for(auto &driver : vList){
             if(staticSqlSuitableKeyWordList.contains(this->parent))
                 staticSqlSuitableKeyWordList<<this->parent;
 
@@ -267,7 +267,7 @@ SqlSuitableKeyWord &SqlSuitableKeyWord::operator =(const SqlSuitableKeyWord &o)
     if(keyWord==nullptr)
         return *this;
 
-    auto&pp=*static_cast<SqlSuitableKeyWordPvt*>(o.p);
+    auto &pp=*static_cast<SqlSuitableKeyWordPvt*>(o.p);
     p.drivers=pp.drivers;
     p.staticKeywordCache=p.staticKeywordCache;
     return*this;
@@ -305,7 +305,7 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
         }
 
         QVariantList listRecords;
-        for(auto&v:list){
+        for(auto &v:list){
             switch (qTypeId(value)) {
             case QMetaType_QVariantHash:
             case QMetaType_QVariantMap:
@@ -356,7 +356,7 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
             {
                 QStringList fields;
-                for(auto&v:propertyTableList){
+                for(auto &v:propertyTableList){
                     fields << qsl("%1=u.%1").arg(v);
                 }
                 tableFieldsSet=fields.join(qsl(","));
@@ -364,7 +364,7 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
             if(!modelInfo->tablePk().isEmpty()){
                 QStringList fieldsWhere;
-                for(auto&v:modelInfo->tablePk()){
+                for(auto &v:modelInfo->tablePk()){
                     fieldsWhere<<qsl("u.%1 = s.%1").arg(v);
                 }
                 tableWhere=qsl("where %1").arg(fieldsWhere.join(qsl("and")));
@@ -400,7 +400,7 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
             if(!modelInfo->tablePk().isEmpty()){
                 QStringList fieldsWhere;
-                for(auto&v:modelInfo->tablePk()){
+                for(auto &v:modelInfo->tablePk()){
                     fieldsWhere<<qsl("d.%1 = s.%1").arg(v);
                 }
                 tableWhere=qsl("where %1").arg(fieldsWhere.join(qsl("and")));
@@ -473,14 +473,14 @@ SqlSuitableKeyWord &SqlSuitableKeyWord::parser(const QSqlDriver *driver)
 
 SqlSuitableKeyWord &SqlSuitableKeyWord::parser(const QSqlDriver::DbmsType &driver)
 {
-    auto&_driver=staticSqlSuitableKeyWord[driver];
+    auto &_driver=staticSqlSuitableKeyWord[driver];
     return *_driver;
 }
 
 SqlSuitableKeyWord*SqlSuitableKeyWord::parserMaker(SqlSuitableKeyWord*parser)
 {
     if(parser!=nullptr){
-        auto&pp = *reinterpret_cast<SqlSuitableKeyWordPvt*>(parser->p);
+        auto &pp = *reinterpret_cast<SqlSuitableKeyWordPvt*>(parser->p);
         pp.init();
     }
     return parser;
@@ -562,7 +562,7 @@ QString SqlSuitableKeyWord::formatValue(const QVariant &v)
     case QMetaType_QStringList:
     {
         QStringList ls;
-        for(auto&vv : v.toList()){
+        for(auto &vv : v.toList()){
             if(vv.isNull() || !vv.isValid()){
                 continue;
             }
@@ -650,7 +650,7 @@ QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
     case QMetaType_QStringList:
     {
         QStringList ls;
-        for(auto&vv:v.toList()){
+        for(auto &vv:v.toList()){
             if(vv.isValid())
                 ls<<this->formatParameter(vv);
         }
@@ -689,10 +689,10 @@ QStringList SqlSuitableKeyWord::formatValues(const QStringList &field, const QVa
     QStringList RETURN;
 
     if(!fieldFormat.isEmpty()){
-        for(auto&i : vList){
+        for(auto &i : vList){
             auto map=i.toHash();
             QStringList row;
-            for(auto&f:fieldFormat){
+            for(auto &f:fieldFormat){
                 auto v=map.value(f);
                 auto s=this->formatValue(v);
                 row<<s;
@@ -723,7 +723,7 @@ QStringList SqlSuitableKeyWord::formatValues(const QVariant &value)
 
     QStringList RETURN;
 
-    for(auto&v:values){
+    for(auto &v:values){
         RETURN<<this->formatValue(v);
     }
 
@@ -749,9 +749,9 @@ QStringList SqlSuitableKeyWord::formatValuesSet(const QStringList &field, const 
         break;
     }
 
-    for(auto&v:values){
+    for(auto &v:values){
         auto vHash=v.toHash();
-        for(auto&f:field){
+        for(auto &f:field){
             auto v=vHash.value(f);
             auto s=this->formatValue(v);
             RETURN<<qsl("%1=%2").arg(f, s);
@@ -768,7 +768,7 @@ QStringList SqlSuitableKeyWord::parserCallProcedure(const QVariant &value)
     auto schema   = mapObject.value(qsl("schema")).toString().trimmed();
     auto object   = mapObject.value(qsl("object"));
     auto s_values = this->formatValues(mapObject.value("values")).join(qsl(","));
-    const auto&modelInfo=QOrm::ModelInfo::modelInfo(object);
+    const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
     if(object.isValid()){
         object=modelInfo.tableNameFull();
     }
@@ -799,7 +799,7 @@ QStringList SqlSuitableKeyWord::parserCallFunction(const QVariant &value)
     auto schema   = mapObject.value(qsl("schema")).toString().trimmed();
     auto object   = mapObject.value(qsl("object"));
     auto s_values = this->formatValues(mapObject.value("values")).join(qsl(","));
-    const auto&modelInfo=QOrm::ModelInfo::modelInfo(object);
+    const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
     if(object.isValid()){
         object=modelInfo.tableNameFull();
     }
@@ -820,7 +820,7 @@ QStringList SqlSuitableKeyWord::parserCallFunctionTable(const QVariant &value)
     auto schema   = mapObject.value(qsl("schema")).toString().trimmed();
     auto object   = mapObject.value(qsl("object"));
     auto s_values = this->formatValues(mapObject.value("values")).join(qsl(","));
-    const auto&modelInfo=QOrm::ModelInfo::modelInfo(object);
+    const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
     if(object.isValid()){
         object=modelInfo.tableNameFull();
     }

@@ -2,25 +2,25 @@
 
 namespace QOrm {
 
-ConnectionManagerPrv::ConnectionManagerPrv(ConnectionManager *parent):notify(parent),defaultPool(parent)
+ConnectionManagerPvt::ConnectionManagerPvt(ConnectionManager *parent):notify(parent),defaultPool(parent)
 {
     this->parent=parent;
     this->init();
 }
 
-ConnectionManagerPrv::~ConnectionManagerPrv()
+ConnectionManagerPvt::~ConnectionManagerPvt()
 {
     this->clear();
 }
 
-void ConnectionManagerPrv::init()
+void ConnectionManagerPvt::init()
 {
     this->detailGetCheck(this->enviroment);
 }
 
-ConnectionPool &ConnectionManagerPrv::pool(const QByteArray &value)
+ConnectionPool &ConnectionManagerPvt::pool(const QByteArray &value)
 {
-    auto&p=*this;
+    auto &p=*this;
     if(p.parentParent!=nullptr){
         if(!p.isLoaded())
             p.load(p.parentParent);
@@ -42,11 +42,11 @@ ConnectionPool &ConnectionManagerPrv::pool(const QByteArray &value)
     if(!p.pools.contains(value))
         p.pools.insert(value, new ConnectionPool(*detail));
     auto setting=p.settingNameAdjust(value);
-    auto&pool=*p.pools.value(setting);
+    auto &pool=*p.pools.value(setting);
     return pool;
 }
 
-bool ConnectionManagerPrv::isLoaded() const
+bool ConnectionManagerPvt::isLoaded() const
 {
     QHashIterator<QString, ConnectionSetting*> i(this->settings);
     while (i.hasNext()) {
@@ -54,26 +54,26 @@ bool ConnectionManagerPrv::isLoaded() const
         if(i.key().trimmed().isEmpty())
             continue;
 
-        auto&v=i.value();
+        auto &v=i.value();
         if(v->isValid())
             return true;
     }
     return false;
 }
 
-bool ConnectionManagerPrv::isEmpty() const
+bool ConnectionManagerPvt::isEmpty() const
 {
     QHashIterator<QString, ConnectionSetting*> i(this->settings);
     while (i.hasNext()) {
         i.next();
-        auto&v=i.value();
+        auto &v=i.value();
         if(v->isValid())
             return false;
     }
     return true;
 }
 
-void ConnectionManagerPrv::clear()
+void ConnectionManagerPvt::clear()
 {
     auto _detail=this->settings;
     qDeleteAll(_detail);
@@ -83,7 +83,7 @@ void ConnectionManagerPrv::clear()
     this->settings.clear();
 }
 
-QByteArray ConnectionManagerPrv::settingNameAdjust(QByteArray settingName)
+QByteArray ConnectionManagerPvt::settingNameAdjust(QByteArray settingName)
 {
     auto setting=settingName.trimmed().isEmpty()? this->enviroment : settingName.trimmed();
     if(!this->settings.contains(setting))
@@ -91,7 +91,7 @@ QByteArray ConnectionManagerPrv::settingNameAdjust(QByteArray settingName)
     return setting;
 }
 
-ConnectionSetting &ConnectionManagerPrv::detailGetCheck(QByteArray &settingName)
+ConnectionSetting &ConnectionManagerPvt::detailGetCheck(QByteArray &settingName)
 {
     auto RETURN=this->settingNameAdjust(settingName);
     if(!settings.contains(RETURN))
@@ -99,9 +99,9 @@ ConnectionSetting &ConnectionManagerPrv::detailGetCheck(QByteArray &settingName)
     return*settings.value(RETURN);
 }
 
-ConnectionManager &ConnectionManagerPrv::insert(const QVariantHash &value)
+ConnectionManager &ConnectionManagerPvt::insert(const QVariantHash &value)
 {
-    auto&p=*this;
+    auto &p=*this;
     if(!value.isEmpty()){
         auto name=value.value(qsl("name")).toByteArray().trimmed();
         if(!name.isEmpty()){
@@ -125,7 +125,7 @@ ConnectionManager &ConnectionManagerPrv::insert(const QVariantHash &value)
     return*this->parent;
 }
 
-bool ConnectionManagerPrv::v_load(const QVariant &v)
+bool ConnectionManagerPvt::v_load(const QVariant &v)
 {
     auto typeId=qTypeId(v);
     if(QMetaTypeUtilVariantList.contains(typeId))
@@ -137,9 +137,9 @@ bool ConnectionManagerPrv::v_load(const QVariant &v)
     return this->load(v.toString());
 }
 
-bool ConnectionManagerPrv::load(const QVariantHash &vSettings)
+bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
 {
-    auto&p=*this;
+    auto &p=*this;
     bool RETURN=false;
     auto settings=vSettings;
 
@@ -212,9 +212,9 @@ bool ConnectionManagerPrv::load(const QVariantHash &vSettings)
     return RETURN;
 }
 
-bool ConnectionManagerPrv::load(const QString &settingsFileName)
+bool ConnectionManagerPvt::load(const QString &settingsFileName)
 {
-    auto&p=*this;
+    auto &p=*this;
     QFile file(settingsFileName);
     if(settingsFileName.trimmed().isEmpty()){
         sWarning()<<qsl("not file settings");
@@ -256,11 +256,11 @@ bool ConnectionManagerPrv::load(const QString &settingsFileName)
     return true;
 }
 
-bool ConnectionManagerPrv::load(const QStringList &settingsFileName)
+bool ConnectionManagerPvt::load(const QStringList &settingsFileName)
 {
     QVariantList vList;
-    auto&p=*this;
-    for(auto&fileName:settingsFileName){
+    auto &p=*this;
+    for(auto &fileName:settingsFileName){
         QFile file(fileName);
         if(fileName.isEmpty())
             continue;
@@ -308,11 +308,11 @@ bool ConnectionManagerPrv::load(const QStringList &settingsFileName)
     return p.isLoaded();
 }
 
-bool ConnectionManagerPrv::load(QObject *settingsObject)
+bool ConnectionManagerPvt::load(QObject *settingsObject)
 {
     static auto ignoreMethods=QVector<QByteArray>{"destroyed","objectNameChanged","deleteLater","_q_reregisterTimers"};
     static auto staticNames=QVector<QByteArray>{qbl("settingsfilename"), qbl("settings_server"), qbl("settingsserver")};
-    auto&p=*this;
+    auto &p=*this;
     if(settingsObject==nullptr)
         return false;
     auto metaObject=settingsObject->metaObject();

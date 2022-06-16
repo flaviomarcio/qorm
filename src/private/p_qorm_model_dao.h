@@ -7,7 +7,7 @@
 #include <QVariant>
 
 namespace PrivateQOrm{
-
+class ModelDaoPvt;
 //!
 //! \brief The ModelDao class
 //!
@@ -32,7 +32,7 @@ public:
     //! \param value
     //! \return
     //!
-    QVariant variantToParameters(const QOrm::ModelInfo&modelRef, const QVariant&value)const;
+    QVariant variantToParameters(const QOrm::ModelInfo&modelRef, const QVariant &value)const;
 
     //!
     //! \brief suitableValue
@@ -40,7 +40,7 @@ public:
     //!
     QOrm::SqlSuitableValue&suitableValue();
 private:
-    void*p=nullptr;
+    ModelDaoPvt *p=nullptr;
 };
 
 }

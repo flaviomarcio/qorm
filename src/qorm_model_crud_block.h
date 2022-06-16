@@ -77,7 +77,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual CRUDBlock&crudBody(const QVariant&v);
+    virtual CRUDBlock&crudBody(const QVariant &v);
 
     //!
     //! \brief makeBlock

@@ -12,9 +12,9 @@
 class Q_ORM_EXPORT SearchParam:public QVariantHash
 {
 public:
-    explicit SearchParam(const QVariant&v=QVariant());
-    explicit SearchParam(const QVariant&valueA, const QVariant &valueB, const QVariant&keywordOperator, const QVariant&keywordLogical);
-    explicit SearchParam(const QVariant&valueA, const QVariant &valueB, const QVariant &valueC, const QVariant&keywordOperator, const QVariant&keywordLogical);
+    explicit SearchParam(const QVariant &v=QVariant());
+    explicit SearchParam(const QVariant &valueA, const QVariant &valueB, const QVariant&keywordOperator, const QVariant&keywordLogical);
+    explicit SearchParam(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant&keywordOperator, const QVariant&keywordLogical);
     virtual ~SearchParam();
     bool isValid();
     QString key()const;
@@ -24,7 +24,7 @@ public:
     QOrm::KeywordOperator keywordOperator()const;
     QOrm::KeywordLogical keywordLogical()const;
 
-    static SearchParam from(const QVariant&value);
+    static SearchParam from(const QVariant &value);
 
 };
 
@@ -39,7 +39,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual bool canRead(const QVariant&v);
+    virtual bool canRead(const QVariant &v);
 
     //!
     //! \brief isEmpty
@@ -75,10 +75,10 @@ public:
     //! \param valueB
     //! \return
     //!
-    virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB);
-    virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB, const QVariant &keywordOperator);
-    virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB, const QVariant &keywordOperator, const QVariant &keywordLogical);
-    virtual SearchParameters &insert(const QVariant&valueA, const QVariant&valueB, const QVariant&valueC, const QVariant &keywordOperator, const QVariant &keywordLogical);
+    virtual SearchParameters &insert(const QVariant &valueA, const QVariant &valueB);
+    virtual SearchParameters &insert(const QVariant &valueA, const QVariant &valueB, const QVariant &keywordOperator);
+    virtual SearchParameters &insert(const QVariant &valueA, const QVariant &valueB, const QVariant &keywordOperator, const QVariant &keywordLogical);
+    virtual SearchParameters &insert(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant &keywordOperator, const QVariant &keywordLogical);
 
     //!
     //! \brief build

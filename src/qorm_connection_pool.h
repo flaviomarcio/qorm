@@ -3,7 +3,7 @@
 #include "./qorm_object.h"
 
 namespace QOrm {
-
+class ConnectionPoolPvt;
 class ConnectionSetting;
 //!
 //! \brief The ConnectionPool class
@@ -135,7 +135,7 @@ public:
     QSqlError &lastError();
 
 private:
-    void *p = nullptr;
+    ConnectionPoolPvt *p = nullptr;
 };
 
 } // namespace QOrm

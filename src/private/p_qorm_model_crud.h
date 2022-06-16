@@ -10,7 +10,7 @@
 #include "../qorm_model_dto.h"
 
 namespace QOrm {
-typedef std::function<ResultValue&(QOrm::ObjectDb*controller, const QVariant&vBody)> CRUDBodyActionMethod;
+typedef std::function<ResultValue&(QOrm::ObjectDb*controller, const QVariant &vBody)> CRUDBodyActionMethod;
 typedef QOrm::ModelAction CRUDAction;
 }
 
@@ -167,7 +167,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&source(const QVariant&value);
+    virtual CRUDBase&source(const QVariant &value);
 
     //!
     //! \brief crudify
@@ -237,7 +237,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &search(const QVariant&value);
+    virtual ResultValue &search(const QVariant &value);
 
     //!
     //! \brief insert
@@ -250,7 +250,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &insert(const QVariant&value);
+    virtual ResultValue &insert(const QVariant &value);
 
     //!
     //! \brief update
@@ -263,7 +263,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &update(const QVariant&value);
+    virtual ResultValue &update(const QVariant &value);
 
     //!
     //! \brief upsert
@@ -276,7 +276,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &upsert(const QVariant&value);
+    virtual ResultValue &upsert(const QVariant &value);
 
     //!
     //! \brief remove
@@ -289,7 +289,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &remove(const QVariant&value);
+    virtual ResultValue &remove(const QVariant &value);
 
     //!
     //! \brief deactivate
@@ -302,7 +302,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &deactivate(const QVariant&value);
+    virtual ResultValue &deactivate(const QVariant &value);
 
     //!
     //! \brief onBefore

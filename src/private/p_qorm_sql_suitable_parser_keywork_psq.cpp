@@ -64,7 +64,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
 
             {
                 QStringList fields;
-                for(auto&v1:propertyTableList){
+                for(auto &v1:propertyTableList){
                     auto property=modelInfo->propertyByFieldName().value(v1);
                     auto vType=qTypeId(property);
                     auto v2=v1;
@@ -82,14 +82,14 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
             QString RETURNING;
             {
                 QStringList l;
-                for(auto&v:modelInfo->tablePk())
+                for(auto &v:modelInfo->tablePk())
                     l<<qsl("u.")+v;
                 RETURNING = qsl("RETURNING %1").arg(l.join(qsl(",")));
             }
 
             if(!modelInfo->tablePk().isEmpty()){
                 QStringList fieldsWhere;
-                for(auto&v1:modelInfo->tablePk()){
+                for(auto &v1:modelInfo->tablePk()){
 
                     auto property=modelInfo->propertyByFieldName().value(v1);
                     auto vType=qTypeId(property);
@@ -123,7 +123,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
             list<<value;
 
         QVariantList listRecords;
-        for(auto&v:list){
+        for(auto &v:list){
             if(qTypeId(v)==QMetaType_QVariantMap || qTypeId(v)==QMetaType_QVariantHash)
                 listRecords<<v;
             else
@@ -141,7 +141,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                 {
                     QStringList onA;
                     QStringList onB;
-                    for(auto&v:modelInfo->tablePk()){
+                    for(auto &v:modelInfo->tablePk()){
                         onA << qsl("m.%1").arg(v);
                         onB << qsl("u.%1").arg(v);
                     }
@@ -150,7 +150,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
 
                 {
                     QStringList fields;
-                    for(auto&v1:propertyTableList){
+                    for(auto &v1:propertyTableList){
                         auto property=modelInfo->propertyByFieldName().value(v1);
                         auto vType=qTypeId(property);
                         auto v2=v1;
@@ -168,14 +168,14 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
 
                 {
                     if(modelInfo->tablePkAutoGenerate() ){
-                        for(auto&v:modelInfo->tablePk())
+                        for(auto &v:modelInfo->tablePk())
                             propertyTableList.removeAll(v);
                     }
 
                     QStringList fields;
                     QStringList onA;
                     QStringList onB;
-                    for(auto&v:propertyTableList){
+                    for(auto &v:propertyTableList){
                         onA << qsl("%1").arg(v);
                         onB << qsl("m.%1").arg(v);
                     }

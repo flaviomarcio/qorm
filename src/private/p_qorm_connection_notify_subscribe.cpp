@@ -85,9 +85,9 @@ bool ConnectionNotifySubscribe::queueCheckConnection()
 
 bool ConnectionNotifySubscribe::queueStop()
 {
-    auto&sqlDriver=this->connectedDriver;
+    auto &sqlDriver=this->connectedDriver;
     if(sqlDriver!=nullptr){
-        QObject::disconnect(sqlDriver, QOverload<const QString&, QSqlDriver::NotificationSource, const QVariant &>::of(&QSqlDriver::notification), this, &ConnectionNotifySubscribe::onNotificationReceive);
+        QObject::disconnect(sqlDriver, QOverload<const QString &, QSqlDriver::NotificationSource, const QVariant &>::of(&QSqlDriver::notification), this, &ConnectionNotifySubscribe::onNotificationReceive);
         this->queueCloseConnection();
     }
     return (this->connectedDriver==nullptr);
@@ -102,7 +102,7 @@ bool ConnectionNotifySubscribe::queueStart()
     if(listDbmsType.contains(this->dbmsType()))
         return (this->connectedDriver!=nullptr);
 
-    for(auto&v:this->subscribeToNotification){
+    for(auto &v:this->subscribeToNotification){
         if(!this->connectedDriver->subscribeToNotification(v)){
             sWarning()<<tr("Invalid channel(%1) for subscribeToNotification").arg(v);
             continue;
@@ -134,7 +134,7 @@ bool ConnectionNotifySubscribe::queueSend(const QString &channel, const QVariant
 
     auto channelList=channel.trimmed().isEmpty()?this->subscribeToNotification:QStringList{channel.trimmed()};
 
-    auto&v=payload;
+    auto &v=payload;
     switch (qTypeId(v)) {
     case QMetaType_QVariantHash:
     case QMetaType_QVariantMap:
@@ -167,12 +167,12 @@ bool ConnectionNotifySubscribe::queueSend(const QString &channel, const QVariant
     QStringList commandList;
     const auto dbmsType = this->dbmsType();
     if(dbmsType==QSqlDriver::PostgreSQL){
-        for(auto&channel:channelList)
+        for(auto &channel:channelList)
             commandList<<qsl("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
     }
 
     auto __return=false;
-    for(auto&command:commandList){
+    for(auto &command:commandList){
         auto q=localConnection.exec(command);
         if(q.lastError().type()!=QSqlError::NoError){
             sWarning()<<tr("invalid execute %1").arg(q.lastError().text());

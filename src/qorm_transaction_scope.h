@@ -3,7 +3,7 @@
 #include "./qorm_object_db.h"
 
 namespace QOrm {
-
+class TransactionScopePvt;
 //!
 //! \brief The TransactionScope class
 //!
@@ -29,7 +29,7 @@ public:
     Q_INVOKABLE virtual bool rollback();
 
 private:
-    void *p = nullptr;
+    TransactionScopePvt *p = nullptr;
 };
 
 } // namespace QOrm

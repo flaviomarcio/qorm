@@ -11,10 +11,7 @@ namespace PrivateQOrm{
 
 namespace QOrm {
 
-static auto&__static_model_info=*PrivateQOrm::__static_model_info;
-
-#define dPvt()\
-    auto&p = *reinterpret_cast<ModelInfoPvt*>(this->p)
+static auto &__static_model_info=*PrivateQOrm::__static_model_info;
 
 class ModelInfoPvt{
 public:
@@ -71,7 +68,7 @@ public:
 
     }
 
-    static bool invoke(QObject*objectCheck, const QString&methodName)
+    static bool invoke(QObject*objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.trimmed().replace(qbl("\""), qbl_null).toLower();
         auto metaObject=objectCheck->metaObject();
@@ -97,7 +94,7 @@ public:
         return false;
     };
 
-    static QVariant invokeVar(QObject*objectCheck, const QString&methodName)
+    static QVariant invokeVar(QObject*objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.toUtf8().trimmed().replace(qbl("\""), qbl_null).toLower();
         auto metaObject=objectCheck->metaObject();
@@ -139,7 +136,7 @@ public:
         return {};
     }
 
-    static QVariantList invokeList(QObject*objectCheck, const QString&methodName)
+    static QVariantList invokeList(QObject*objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.toUtf8().trimmed().replace(qbl("\""), qbl_null).toLower();
         auto metaObject=objectCheck->metaObject();
@@ -188,7 +185,7 @@ public:
         return {};
     };
 
-    static QVariantHash invokeMap(QObject*objectCheck, const QString&methodName)
+    static QVariantHash invokeMap(QObject*objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.toUtf8().trimmed().replace(qbl("\""), qbl_null).toLower();
         auto metaObject=objectCheck->metaObject();
@@ -237,7 +234,7 @@ public:
         return {};
     };
 
-    static QString invokeText(QObject*objectCheck, const QString&methodName)
+    static QString invokeText(QObject*objectCheck, const QString &methodName)
     {
         QSqlDatabase RETURN;
 
@@ -285,7 +282,7 @@ public:
         return qsl_null;
     };
 
-    static bool invokeBool(QObject*objectCheck, const QString&methodName)
+    static bool invokeBool(QObject*objectCheck, const QString &methodName)
     {
         QSqlDatabase RETURN;
 
@@ -318,23 +315,21 @@ public:
 
     static ModelInfo&static_initMetaObject(const QMetaObject&staticMetaObject)
     {
-        const auto&className=staticMetaObject.className();
-        auto&modelInfo=__static_model_info[className];
+        const auto &className=staticMetaObject.className();
+        auto &modelInfo=__static_model_info[className];
         if(modelInfo==nullptr){
             modelInfo=new ModelInfo();
             modelInfo->setValue(QVariantHash{{qsl("classname"), className}});
-            auto&pvt=*static_cast<ModelInfoPvt*>(modelInfo->p);
+            auto &pvt=*static_cast<ModelInfoPvt*>(modelInfo->p);
             static_init_make(pvt, staticMetaObject);
         }
         return*modelInfo;
     }
 
-    void read(void*pp)
+    void read(ModelInfoPvt *p)
     {
-        auto&p=*static_cast<ModelInfoPvt*>(pp);
-
 #define ____copy(var)\
-        this->var=p.var;
+        this->var=p->var;
         ____copy(tablePkAutoGenerate    );
         ____copy(property               );
         ____copy(propertyHash           );
@@ -458,7 +453,7 @@ public:
 
         QVector<QString> tableFiltrableField_;
         if(!tableFiltrableField.isEmpty()){
-            for(auto&v : tableFiltrableField){
+            for(auto &v : tableFiltrableField){
                 auto s = v.toString().trimmed();
                 if(tableFiltrableField_.contains(s))
                     continue;
@@ -496,7 +491,7 @@ public:
         while(tableDeactivateField.contains(qbl("==")))
             tableDeactivateField = tableDeactivateField.replace(qbl("=="), qbl("=")).trimmed();
 
-        for(auto&propertyName:tablePk.split(qbl_space)){
+        for(auto &propertyName:tablePk.split(qbl_space)){
             if(propertyName.isEmpty())
                 continue;
             auto field=tablePrefix+tablePrefixSeparator+propertyName;
@@ -511,7 +506,7 @@ public:
 
         pvt.tablePkSingle=pvt.tablePk.isEmpty()?qsl_null:pvt.tablePk.join(qbl_space);
 
-        for(auto&propertyName:tableForeignPk.split(qbl_space)){
+        for(auto &propertyName:tableForeignPk.split(qbl_space)){
             if(propertyName.isEmpty())
                 continue;
             auto property=pvt.propertyHash.value(propertyName);
@@ -526,8 +521,8 @@ public:
         {
             Q_V_PROPERTY_ITERATOR(pvt.propertyHash){
                 i.next();
-                auto&propertyName=i.key();
-                auto&property=i.value();
+                auto &propertyName=i.key();
+                auto &property=i.value();
                 const auto propertyA=propertyName;
                 const auto propertyB=tablePrefix+qbl("_")+propertyName;
                 pvt.propertyList<<propertyName;
@@ -566,7 +561,7 @@ public:
                 }
             }
 
-            for(auto&propertyName:tableOrderBy.split(qbl_space)){
+            for(auto &propertyName:tableOrderBy.split(qbl_space)){
                 if(propertyName.isEmpty())
                     continue;
 
@@ -580,7 +575,7 @@ public:
                 pvt.tableOrderByField<<SqlParserItem::createObject(field);
             }
 
-            for(auto&row:tableDeactivateField.split(qbl_space)){
+            for(auto &row:tableDeactivateField.split(qbl_space)){
                 if(row.isEmpty())
                     continue;
 
@@ -647,7 +642,7 @@ public:
                 case QMetaType_QVariantList:
                 case QMetaType_QStringList:
                 {
-                    for(auto&property:pvt.propertyPK)
+                    for(auto &property:pvt.propertyPK)
                         pvt.tablePkCompuser.insert(property.name(), tablePkCompuser);
                     break;
                 }
@@ -656,7 +651,7 @@ public:
                 {
                     auto vHash=tablePkCompuser.toHash();
                     QVariantHash vHashOut;
-                    for(auto&property:pvt.propertyPK){
+                    for(auto &property:pvt.propertyPK){
                         auto v=vHash.value(property.name());
                         if(v.isNull() || !v.isValid()){
                             vHashOut.clear();
@@ -683,33 +678,33 @@ ModelInfo::ModelInfo():QVariant{}
 
 ModelInfo::~ModelInfo()
 {
-    dPvt();
+
     this->p=nullptr;
     delete&p;
 }
 
 QString &ModelInfo::modelName() const
 {
-    dPvt();
-    return p.modelName;
+
+    return p->modelName;
 }
 
 void ModelInfo::setModelName(const QString &value)
 {
-    dPvt();
-    p.modelName = value;
+
+    p->modelName = value;
 }
 
 QString &ModelInfo::modelDescription() const
 {
-    dPvt();
-    return p.modelDescription;
+
+    return p->modelDescription;
 }
 
 void ModelInfo::setModelDescription(const QString &value)
 {
-    dPvt();
-    p.modelDescription = value;
+
+    p->modelDescription = value;
 }
 
 const ModelInfo&ModelInfo::modelInfo(const QVariant &v)
@@ -726,7 +721,7 @@ const ModelInfo&ModelInfo::modelInfo(const QVariant &v)
     }
 
     if(__static_model_info.contains(className)){
-        const auto&info=*__static_model_info.value(className);
+        const auto &info=*__static_model_info.value(className);
         return info;
     }
 
@@ -746,14 +741,14 @@ ModelInfo &ModelInfo::modelInfoInit(const QMetaObject &staticMetaObject)
 
 QByteArray ModelInfo::className() const
 {
-    dPvt();
-    return p.staticMetaObject.className();
+
+    return p->staticMetaObject.className();
 }
 
 QMetaObject&ModelInfo::staticMetaObject() const
 {
-    dPvt();
-    return p.staticMetaObject;
+
+    return p->staticMetaObject;
 }
 
 const QStringList &ModelInfo::propertyIgnoredList()
@@ -763,21 +758,21 @@ const QStringList &ModelInfo::propertyIgnoredList()
 
 QList<QMetaProperty> &ModelInfo::property() const
 {
-    dPvt();
-    return p.property;
+
+    return p->property;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyByFieldName() const
 {
-    dPvt();
-    return p.propertyByFieldName;
+
+    return p->propertyByFieldName;
 }
 
 QMetaProperty ModelInfo::propertyByFieldName(const QString &fieldName) const
 {
-    dPvt();
+
     auto _fieldName=fieldName.trimmed().toLower();
-    Q_V_PROPERTY_ITERATOR(p.propertyByFieldName){
+    Q_V_PROPERTY_ITERATOR(p->propertyByFieldName){
         i.next();
         if(i.key().toLower()==_fieldName)
             return i.value();
@@ -788,25 +783,25 @@ QMetaProperty ModelInfo::propertyByFieldName(const QString &fieldName) const
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyFiltrable() const
 {
-    dPvt();
-    return p.propertyFiltrable;
+
+    return p->propertyFiltrable;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyByPropertyName() const
 {
-    dPvt();
-    return p.propertyByPropertyName;
+
+    return p->propertyByPropertyName;
 }
 
 QMetaProperty ModelInfo::propertyByPropertyName(const QString &propertyName) const
 {
-    dPvt();
-    auto property=p.propertyByPropertyName.value(propertyName);
+
+    auto property=p->propertyByPropertyName.value(propertyName);
     if(property.isValid())
         return property;
 
     const auto pName=propertyName.trimmed().toLower();
-    Q_V_PROPERTY_ITERATOR(p.propertyByPropertyName){
+    Q_V_PROPERTY_ITERATOR(p->propertyByPropertyName){
         i.next();
         if(i.key().toLower()==pName)
             return i.value();
@@ -817,63 +812,63 @@ QMetaProperty ModelInfo::propertyByPropertyName(const QString &propertyName) con
 
 QStringList &ModelInfo::propertyList() const
 {
-    dPvt();
-    return p.propertyList;
+
+    return p->propertyList;
 }
 
 QStringList &ModelInfo::propertyTableList() const
 {
-    dPvt();
-    return p.propertyTableList;
+
+    return p->propertyTableList;
 }
 
 QHash<QString, QString> &ModelInfo::propertyTableVsShort() const
 {
-    dPvt();
-    return p.propertyTableVsShort;
+
+    return p->propertyTableVsShort;
 }
 
 QHash<QString, QString> &ModelInfo::propertyShortVsTable() const
 {
-    dPvt();
-    return p.propertyShortVsTable;
+
+    return p->propertyShortVsTable;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyInfo() const
 {
-    dPvt();
-    return p.propertyInfo;
+
+    return p->propertyInfo;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyPK() const
 {
-    dPvt();
-    return p.propertyPK;
+
+    return p->propertyPK;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyFK() const
 {
-    dPvt();
-    return p.propertyFK;
+
+    return p->propertyFK;
 }
 
 QVariantMap ModelInfo::propertyDescriptors() const
 {
-    dPvt();
-    return p.propertyDescriptors;
+
+    return p->propertyDescriptors;
 }
 
 QVariantHash ModelInfo::propertySort() const
 {
-    dPvt();
-    return p.propertySort;
+
+    return p->propertySort;
 }
 
-QVariantHash ModelInfo::propertyParserToTable(const QVariant&v) const
+QVariantHash ModelInfo::propertyParserToTable(const QVariant &v) const
 {
-    dPvt();
+
     QVVM vvm;
-    auto&propertyList=p.propertyShortVsTable;
+    auto &propertyList=p->propertyShortVsTable;
     auto vHash=v.toHash();
     Q_V_HASH_ITERATOR(vHash){
         i.next();
@@ -903,11 +898,11 @@ QVariantHash ModelInfo::propertyParserToTable(const QVariant&v) const
     return QVariantHash{vvm};
 }
 
-QVariantHash ModelInfo::propertyParserToProperty(const QVariant&v) const
+QVariantHash ModelInfo::propertyParserToProperty(const QVariant &v) const
 {
-    dPvt();
+
     QVVM vvm;
-    auto&propertyList=p.propertyTableVsShort;
+    auto &propertyList=p->propertyTableVsShort;
     auto vHash=v.toHash();
     Q_V_HASH_ITERATOR(vHash){
         i.next();
@@ -938,12 +933,12 @@ QVariantHash ModelInfo::propertyParserToProperty(const QVariant&v) const
 
 bool ModelInfo::propertyNameConvertMap(QVariantHash &propertyHash)
 {
-    dPvt();
+
     auto vHash=propertyHash;
     propertyHash.clear();
     Q_V_HASH_ITERATOR(vHash){
         i.next();
-        const auto key=p.propertyShortVsTable.value(i.key()).toLower();
+        const auto key=p->propertyShortVsTable.value(i.key()).toLower();
         if(key.isEmpty()){
             propertyHash.clear();
             return false;
@@ -957,105 +952,105 @@ bool ModelInfo::propertyNameConvertMap(QVariantHash &propertyHash)
 
 QVariantHash ModelInfo::propertyDeactivateField() const
 {
-    dPvt();
-    return p.propertyDeactivateField;
+
+    return p->propertyDeactivateField;
 }
 
 QString &ModelInfo::tableSchema()const
 {
-    dPvt();
-    return p.tableSchema;
+
+    return p->tableSchema;
 }
 
 QString &ModelInfo::tablePrefix()const
 {
-    dPvt();
-    return p.tablePrefix;
+
+    return p->tablePrefix;
 }
 
 QString ModelInfo::tablePrefixSeparator() const
 {
-    dPvt();
-    return p.tablePrefixSeparator;
+
+    return p->tablePrefixSeparator;
 }
 
 QString ModelInfo::tableName()const
 {
-    dPvt();
-    return p.tableName;
+
+    return p->tableName;
 }
 
 QString ModelInfo::tableNameFull()const
 {
-    dPvt();
-    return p.tableNameFull;
+
+    return p->tableNameFull;
 }
 
 QVariantHash ModelInfo::tableSequence()const
 {
-    dPvt();
-    return p.tableSequence;
+
+    return p->tableSequence;
 }
 
 QStringList ModelInfo::tablePk()const
 {
-    dPvt();
-    return p.tablePk;
+
+    return p->tablePk;
 }
 
 QVariantList ModelInfo::tablePkField() const
 {
-    dPvt();
-    return p.tablePkField;
+
+    return p->tablePkField;
 }
 
 QVariantHash ModelInfo::tableForeignKey() const
 {
-    dPvt();
-    return p.tableForeignKey;
+
+    return p->tableForeignKey;
 }
 
 QVariantList ModelInfo::tableFiltrableField() const
 {
-    dPvt();
-    return p.tableFiltrableField;
+
+    return p->tableFiltrableField;
 }
 
 QStringList ModelInfo::tableOrderBy() const
 {
-    dPvt();
-    return p.tableOrderBy;
+
+    return p->tableOrderBy;
 }
 
 QVariantList ModelInfo::tableOrderByField() const
 {
-    dPvt();
-    return p.tableOrderByField;
+
+    return p->tableOrderByField;
 }
 
 QVariantHash ModelInfo::tableDeactivateField() const
 {
-    dPvt();
-    return p.tableDeactivateField;
+
+    return p->tableDeactivateField;
 }
 
 bool ModelInfo::tablePkAutoGenerate()const
 {
-    dPvt();
-    return p.tablePkAutoGenerate.toBool();
+
+    return p->tablePkAutoGenerate.toBool();
 }
 
 QString ModelInfo::tablePkSingle()const
 {
-    dPvt();
-    return p.tablePkSingle;
+
+    return p->tablePkSingle;
 }
 
 QVariantMap ModelInfo::toMap(const QObject *object)const
 {
-    dPvt();
+
     QVariantMap __return;
-    for(auto&property:p.property){
+    for(auto &property:p->property){
         if(!property.isValid())
             continue;
         auto propertyName = QString(property.name()).toLower();
@@ -1075,9 +1070,9 @@ QVariantMap ModelInfo::toMap(const QObject *object)const
 
 QVariantHash ModelInfo::toHash(const QObject *object) const
 {
-    dPvt();
+
     QVariantHash __return;
-    for(auto&property:p.property){
+    for(auto &property:p->property){
         if(!property.isValid())
             continue;
         auto propertyName = QString(property.name()).toLower();
@@ -1102,14 +1097,14 @@ QVariantMap ModelInfo::toMapModel(const QObject *object) const
 
 QVariantHash ModelInfo::toHashModel(const QObject *object)const
 {
-    dPvt();
+
     QVariantHash __return;
-    for(auto&property:p.property){
+    for(auto &property:p->property){
         if(!property.isValid())
             continue;
 
         auto propertyName = QString(property.name()).toLower();
-        propertyName=p.propertyShortVsTable.value(propertyName);
+        propertyName=p->propertyShortVsTable.value(propertyName);
         __return.insert(propertyName, property.read(object));
     }
     return __return;
@@ -1117,7 +1112,7 @@ QVariantHash ModelInfo::toHashModel(const QObject *object)const
 
 QVariantHash ModelInfo::toForeign(const QVariant &vModel,const QVariant &v) const
 {
-    dPvt();
+
     QVariantHash __return=vModel.toHash();
     auto vRecord=v;
     auto typeId=qTypeId(vRecord);
@@ -1133,7 +1128,7 @@ QVariantHash ModelInfo::toForeign(const QVariant &vModel,const QVariant &v) cons
     case QMetaType_QVariantMap:
     {
         auto vRecordHash=vRecord.toHash();
-        Q_V_HASH_ITERATOR(p.tableForeignKey){
+        Q_V_HASH_ITERATOR(p->tableForeignKey){
             i.next();
             auto vHash=i.value().toHash();
             auto fkName=vHash[qsl("fk")].toString();
@@ -1146,7 +1141,7 @@ QVariantHash ModelInfo::toForeign(const QVariant &vModel,const QVariant &v) cons
     default:
         break;
     }
-    Q_V_HASH_ITERATOR(p.tableForeignKey){
+    Q_V_HASH_ITERATOR(p->tableForeignKey){
         i.next();
         auto vHash=i.value().toHash();
         auto fkName=vHash[qsl("fk")].toString();

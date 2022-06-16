@@ -1,5 +1,6 @@
 #include "./p_qorm_model_controls.h"
 #include "../qorm_model_dto.h"
+#include <QStm>
 #include <QVariantHash>
 #include <QCoreApplication>
 
@@ -15,7 +16,8 @@ Q_COREAPP_STARTUP_FUNCTION(init);
 
 class ModelDtoControlsPvt:public QObject{
 public:
-    QString id;
+    QUuid uuid;
+    QString name;
     QString text;
     ModelDtoControls::FormType type=ModelDtoControls::FormType::CustomForm;
     ModelDtoControls::FormLayout layout=ModelDtoControls::FormLayout::Vertical;
@@ -54,24 +56,24 @@ public:
         {//rows
             QVector<QString> cacheHeader;
 
-            const auto&vHeaderList=this->headers.list();
+            const auto &vHeaderList=this->headers.list();
             const auto vFilter=this->filters.toVar().toList();
             const auto vLinks=this->links.toVar().toList();
             auto vItems=this->items.toVar().toList();
 
-            auto&vList=this->items.list();
+            auto &vList=this->items.list();
             if(vList.isEmpty()){
                 QVariantMap vRecord;
-                for(const auto&header:vHeaderList){
+                for(const auto &header:vHeaderList){
                     auto headerName=header->value();
                     vRecord[headerName]={};
                 }
                 vList<<vRecord;
             }
 
-            for(auto&v:vList){
+            for(auto &v:vList){
                 const auto vMap=v.toHash();
-                for(const auto&header:vHeaderList){
+                for(const auto &header:vHeaderList){
                     auto headerName=header->value();
                     if(vMap.contains(headerName))
                         cacheHeader<<headerName;
@@ -81,10 +83,10 @@ public:
 
             if(this->outPutStyle==QOrm::doRowArray){
                 QVariantList arItems;
-                for(auto&v:this->items.list()){
+                for(auto &v:this->items.list()){
                     const auto vMap=v.toHash();
                     QVariantList aRow;
-                    for(auto&headerName:cacheHeader){
+                    for(auto &headerName:cacheHeader){
                         auto value=vMap.value(headerName);
                         aRow<<value;
                     }
@@ -98,7 +100,7 @@ public:
 
 
             QVariantList vHeader;
-            for(const auto&header:vHeaderList){
+            for(const auto &header:vHeaderList){
                 auto headerName=header->value();
                 auto var=header->toVar();
 
@@ -109,7 +111,7 @@ public:
 
             }
 
-            vHash[vpId]=this->id;
+            vHash[vpId]=this->uuid;
             vHash[vpTitle]=this->text;
             vHash[vpType]=QVariant::fromValue<ModelDtoControls::FormType>(this->type);
             vHash[vpLayout]=QVariant::fromValue<ModelDtoControls::FormLayout>(this->layout);
@@ -131,12 +133,12 @@ public:
     }
 
 
-    void setSettings(const QVariant&value)
+    void setSettings(const QVariant &value)
     {
         auto dtoMap=value.toHash();
         QVariantHash v;
         if(!dtoMap.isEmpty()){
-            auto id=this->id.toLower().trimmed();
+            auto id=this->uuid.toString().trimmed();
             if(!id.isEmpty() || dtoMap.contains(id)){
                 v=dtoMap.value(id).toHash();
             }
@@ -203,17 +205,40 @@ void ModelDtoControls::setDescriptors(const QVariantMap &descriptors)
     }
 }
 
-QString ModelDtoControls::id() const
+QUuid &ModelDtoControls::uuid() const
 {
-
-    return p->id;
+    return p->uuid;
 }
 
-ModelDtoControls &ModelDtoControls::id(const QVariant&v)
+ModelDtoControls &ModelDtoControls::uuid(const QVariant &v)
 {
+    Q_DECLARE_VU;
+    p->uuid=vu.toUuid(v);
+    return *this;
+}
 
-    p->id=v.toString();
-    return*this;
+ModelDtoControls &ModelDtoControls::setUuid(const QVariant &v)
+{
+    Q_DECLARE_VU;
+    p->uuid=vu.toUuid(v);
+    return *this;
+}
+
+QString ModelDtoControls::name() const
+{
+    return p->name;
+}
+
+ModelDtoControls &ModelDtoControls::name(const QVariant &value)
+{
+    p->name=value.toString().trimmed();
+    return *this;
+}
+
+ModelDtoControls &ModelDtoControls::setName(const QVariant &v)
+{
+    p->name=v.toString().trimmed();
+    return *this;
 }
 
 ModelDtoControls::FormType ModelDtoControls::type() const

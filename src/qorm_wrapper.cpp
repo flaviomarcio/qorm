@@ -4,7 +4,6 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<WrapperPvt *>(this->p)
 
 class WrapperPvt
 {
@@ -80,27 +79,27 @@ public:
 Wrapper::Wrapper(const QVariant &v)
 {
     this->p = new WrapperPvt();
-    dPvt();
-    p.v = v;
+
+    p->v = v;
 }
 
 Wrapper::Wrapper(ResultValue &v)
 {
-    this->p = new WrapperPvt();
-    dPvt();
-    p.v = v.resultVariant();
+    this->p = new WrapperPvt{};
+
+    p->v = v.resultVariant();
 }
 
 Wrapper::~Wrapper()
 {
-    dPvt();
+
     delete &p;
 }
 
 Wrapper &Wrapper::w(const QString &propertySrc, const QString &propertyDestine)
 {
-    dPvt();
-    p.wrapperNames[propertySrc] = propertyDestine;
+
+    p->wrapperNames[propertySrc] = propertyDestine;
     return *this;
 }
 
@@ -111,15 +110,15 @@ Wrapper &Wrapper::w(const QString &propertySrc)
 
 Wrapper &Wrapper::clear()
 {
-    dPvt();
-    p.wrapperNames.clear();
+
+    p->wrapperNames.clear();
     return *this;
 }
 
 QVariant &Wrapper::v() const
 {
-    dPvt();
-    return p.wrapper();
+
+    return p->wrapper();
 }
 
 } // namespace QOrm

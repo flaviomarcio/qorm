@@ -10,7 +10,7 @@
 #include "./p_qorm_model_action_method.h"
 
 namespace PrivateQOrm{
-
+class ModelReportBasePvt;
 //TODO CREATE DOCUMENTATION
 class Q_ORM_EXPORT ModelReportBase : public QOrm::ObjectDb
 {
@@ -111,7 +111,7 @@ public:
     //! \return
     //!
     virtual QVariant source()const;
-    virtual ModelReportBase&source(const QVariant&value);
+    virtual ModelReportBase&source(const QVariant &value);
 
     //!
     //! \brief reportfy
@@ -133,7 +133,7 @@ protected:
     //! \return
     //!
     virtual ResultValue &search();
-    virtual ResultValue &search(const QVariant&value);
+    virtual ResultValue &search(const QVariant &value);
 
     //!
     //! \brief onBefore
@@ -182,7 +182,7 @@ protected:
     //!
     virtual ResultValue&doFailed();
 private:
-    void*p=nullptr;
+    ModelReportBasePvt*p=nullptr;
 };
 
 }

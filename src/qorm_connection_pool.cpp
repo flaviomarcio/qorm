@@ -12,8 +12,6 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<ConnectionPoolPvt *>(this->p)
-
 static qlonglong connectionCount = 0;
 Q_GLOBAL_STATIC(QStringList, static_dbcDrivers)
 
@@ -57,12 +55,11 @@ public:
 
     bool finish(QSqlDatabase &connection)
     {
-        auto &p = *this;
         if (!connection.isValid())
             return true;
 
         auto connectionName = connection.connectionName();
-        p.connectionList.removeAll(connectionName);
+        this->connectionList.removeAll(connectionName);
         connection.close();
         connection = {};
         QSqlDatabase::removeDatabase(connectionName);
@@ -92,10 +89,9 @@ public:
     bool get(QSqlDatabase &connection, bool readOnly)
     {
         Q_UNUSED(readOnly)
-        auto &p = *this;
-        p.finish(connection);
-        p.lastError = QSqlError();
-        auto driver = p.connectionSetting.driver().trimmed();
+        this->finish(connection);
+        this->lastError = QSqlError();
+        auto driver = this->connectionSetting.driver().trimmed();
 
 #if Q_ORM_LOG_VERBOSE
         sWarning() << qsl("avaliable drivers %1").arg(QSqlDatabase::drivers().join(qsl(",")));
@@ -120,7 +116,7 @@ public:
             return {};
         }
 
-        auto connectionName = qsl("%1_%2").arg(p.baseName.left(55)).arg(++connectionCount);
+        auto connectionName = qsl("%1_%2").arg(this->baseName.left(55)).arg(++connectionCount);
         auto __connection = QSqlDatabase::addDatabase(driver, connectionName);
         if (!__connection.isValid()) {
 #if Q_ORM_LOG
@@ -142,13 +138,13 @@ public:
             return {};
         }
 
-        QString hostName = p.connectionSetting.hostName().trimmed();
-        QString userName = p.connectionSetting.userName().trimmed();
-        QString password = p.connectionSetting.password().trimmed();
-        QString dataBaseName = p.connectionSetting.dataBaseName().trimmed();
-        auto port = p.connectionSetting.port();
-        QString connectOptions = p.connectionSetting.connectOptions().trimmed();
-        auto schameNames = p.connectionSetting.schemaNames();
+        QString hostName = this->connectionSetting.hostName().trimmed();
+        QString userName = this->connectionSetting.userName().trimmed();
+        QString password = this->connectionSetting.password().trimmed();
+        QString dataBaseName = this->connectionSetting.dataBaseName().trimmed();
+        auto port = this->connectionSetting.port();
+        QString connectOptions = this->connectionSetting.connectOptions().trimmed();
+        auto schameNames = this->connectionSetting.schemaNames();
 
         if (__connection.driverName() == qsl("QODBC")) {
             QString odbcDriver;
@@ -233,7 +229,7 @@ public:
         //connectionName
         cmd = keyWord.parserCommand(kgcSetApplicationName);
         if (cmd.contains(qsl("%1")))
-            listCmd << cmd.arg(p.baseName);
+            listCmd << cmd.arg(this->baseName);
 
         if (!schameNames.isEmpty()) {
             cmd = keyWord.parserCommand(kgcSetSearchPath);
@@ -265,7 +261,7 @@ public:
         }
 
         connection = __connection;
-        p.connectionList << __connection.connectionName();
+        this->connectionList << __connection.connectionName();
         return connection.isValid() && connection.isOpen();
     }
 };
@@ -295,84 +291,84 @@ ConnectionPool::ConnectionPool(const ConnectionPool &pool, QObject *parent)
 ConnectionPool::~ConnectionPool()
 {
     this->finish();
-    dPvt();
+
     delete &p;
 }
 
 ConnectionSetting &ConnectionPool::setting() const
 {
-    dPvt();
-    return p.connectionSetting;
+
+    return p->connectionSetting;
 }
 
 bool ConnectionPool::isValid()
 {
-    dPvt();
-    return p.connectionSetting.isValid();
+
+    return p->connectionSetting.isValid();
 }
 
 bool ConnectionPool::from(ConnectionPool &pool)
 {
-    dPvt();
-    return p.from(pool);
+
+    return p->from(pool);
 }
 
 bool ConnectionPool::from(const ConnectionSetting &setting)
 {
-    dPvt();
-    return p.from(setting);
+
+    return p->from(setting);
 }
 
 bool ConnectionPool::from(const QVariant &connection)
 {
-    dPvt();
-    return p.from(connection);
+
+    return p->from(connection);
 }
 
 bool ConnectionPool::from(const QSqlDatabase &connection)
 {
-    dPvt();
-    return p.from(connection);
+
+    return p->from(connection);
 }
 
 QSqlDatabase ConnectionPool::get()
 {
-    dPvt();
+
     QSqlDatabase connection;
-    if (p.get(connection, false))
+    if (p->get(connection, false))
         return connection;
     return {};
 }
 
 bool ConnectionPool::get(QSqlDatabase &connection)
 {
-    dPvt();
-    if (p.get(connection, false))
+
+    if (p->get(connection, false))
         return connection.isValid() && connection.isOpen();
     return {};
 }
 
 QSqlDatabase ConnectionPool::getReadOnly()
 {
-    dPvt();
+
     QSqlDatabase connection;
-    if (p.get(connection, true))
+    if (p->get(connection, true))
         return connection;
     return {};
 }
 
 bool ConnectionPool::getReadOnly(QSqlDatabase &connection)
 {
-    dPvt();
-    if (p.get(connection, true))
+
+    if (p->get(connection, true))
         return connection.isValid() && connection.isOpen();
     return {};
 }
 
 ConnectionPool &ConnectionPool::finish()
 {
-    dPvt();
-    for (auto &connection : p.connectionList)
+
+    for (auto &connection : p->connectionList)
         this->finish(connection);
     return *this;
 }
@@ -382,10 +378,10 @@ bool ConnectionPool::finish(QSqlDatabase &connection)
     if (!connection.isValid())
         return true;
 
-    dPvt();
+
     connection.close();
     auto connectionName = connection.connectionName();
-    p.connectionList.removeAll(connectionName);
+    p->connectionList.removeAll(connectionName);
     connection = {};
     if (!connectionName.isEmpty())
         QSqlDatabase::removeDatabase(connectionName);
@@ -401,8 +397,8 @@ bool ConnectionPool::finish(QString connection)
 
 QSqlError &ConnectionPool::lastError()
 {
-    dPvt();
-    return p.lastError;
+
+    return p->lastError;
 }
 
 } // namespace QOrm

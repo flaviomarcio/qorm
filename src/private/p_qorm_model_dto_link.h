@@ -20,7 +20,7 @@ public:
         return PrivateQOrm::ModelDtoLinkItem::header();
     }
 
-    auto&header(const QVariant&value){
+    auto &header(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setHeader(value);
         return*this;
     }
@@ -29,12 +29,12 @@ public:
         return PrivateQOrm::ModelDtoLinkItem::method();
     }
 
-    auto&method(const QVariant&value){
+    auto &method(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setMethod(value);
         return*this;
     }
 
-    auto&setMethod(const QVariant&value){
+    auto &setMethod(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setMethod(value);
         return*this;
     }
@@ -43,12 +43,12 @@ public:
         return PrivateQOrm::ModelDtoLinkItem::ref();
     }
 
-    auto&ref(const QVariant&value){
+    auto &ref(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setRef(value);
         return*this;
     }
 
-    auto&setRef(const QVariant&value){
+    auto &setRef(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setRef(value);
         return*this;
     }
@@ -57,12 +57,12 @@ public:
         return PrivateQOrm::ModelDtoLinkItem::hRef();
     }
 
-    auto&hRef(const QVariant&value){
+    auto &hRef(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setHRef(value);
         return*this;
     }
 
-    auto&setHRef(const QVariant&value){
+    auto &setHRef(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setHRef(value);
         return*this;
     }
@@ -71,12 +71,12 @@ public:
         return PrivateQOrm::ModelDtoLinkItem::parameters();
     }
 
-    auto&parameters(const QVariant&value){
+    auto &parameters(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setParameters(value);
         return*this;
     }
 
-    auto&setParameters(const QVariant&value){
+    auto &setParameters(const QVariant &value){
         PrivateQOrm::ModelDtoLinkItem::setParameters(value);
         return*this;
     }

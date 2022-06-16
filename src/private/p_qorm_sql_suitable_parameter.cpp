@@ -4,10 +4,10 @@
 #include <QJsonDocument>
 
 #define dPvt()\
-    auto&p = *reinterpret_cast<SearchParametersPvt*>(this->p)
+    auto &p = *reinterpret_cast<SearchParametersPvt*>(this->p)
 
 #define dPvt2()\
-    auto&p = *reinterpret_cast<SearchParamPvt*>(this->p)
+    auto &p = *reinterpret_cast<SearchParamPvt*>(this->p)
 
 class SearchParamPvt{
 public:
@@ -171,7 +171,7 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
     switch (qTypeId(vOther)) {
     case QMetaType_QVariantList:
     {
-        for(auto&v:vOther.toList()){
+        for(auto &v:vOther.toList()){
             auto s=SearchParam::from(v);
             if(v.isValid())
                 p.insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
@@ -185,8 +185,8 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
             i.next();
             auto s=SearchParam::from(i.value());
             if(!s.isValid()){
-                const auto&k=i.key();
-                const auto&v=i.value();
+                const auto &k=i.key();
+                const auto &v=i.value();
 
                 auto keywordOperator=QOrm::koEqual;
                 auto keywordLogical=QOrm::klAnd;
@@ -249,7 +249,7 @@ bool SearchParameters::canRead(const QVariant &v)
     switch (qTypeId(v)) {
     case QMetaType_QVariantList:
     {
-        for(auto&v:v.toList()){
+        for(auto &v:v.toList()){
             auto s=SearchParam::from(v);
             if(v.isValid())
                 return true;
@@ -296,7 +296,7 @@ SearchParameters &SearchParameters::operator=(const QVariant &v)
     case QMetaType_QVariantList:
     {
         auto vList=vu.toList(v);
-        for(auto&v:vList) {
+        for(auto &v:vList) {
             SearchParam param(v.toHash());
             if(param.isValid())
                 p.values<<v;
@@ -332,7 +332,7 @@ SearchParameters &SearchParameters::operator+=(const QVariant &v)
     case QMetaType_QVariantList:
     {
         auto vList=vu.toList(v);
-        for(auto&v:vList) {
+        for(auto &v:vList) {
             SearchParam param(v.toHash());
             if(param.isValid())
                 p.values<<v;
@@ -405,7 +405,7 @@ QList<SearchParam> SearchParameters::build() const
 {
     dPvt();
     p.vList.clear();
-    for(auto&i:p.values){
+    for(auto &i:p.values){
         p.vList << SearchParam::from(i);
     }
     return p.vList;
@@ -416,7 +416,7 @@ QVariant SearchParameters::buildVariant() const
     dPvt();
     p.vList.clear();
     QVariantList vList;
-    for(auto&i:p.values){
+    for(auto &i:p.values){
         auto v=i.toHash();
         p.vList << SearchParam::from(v);
         vList<<v;

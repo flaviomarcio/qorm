@@ -4,7 +4,7 @@
 #include <QObject>
 
 namespace QOrm {
-
+class ModelDtoOptionsPvt;
 //!
 //! \brief The ModelDtoOptions class
 //!
@@ -43,7 +43,7 @@ public:
     Q_INVOKABLE virtual void setSearchOnEmptyFilter(bool value);
 
 private:
-    void *p = nullptr;
+    ModelDtoOptionsPvt *p = nullptr;
 };
 
 } // namespace QOrm

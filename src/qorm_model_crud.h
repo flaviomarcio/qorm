@@ -56,7 +56,7 @@ private:
     void init()
     {
         this->dto().initDescriptors(&p_model);
-        const auto&modelInfo=p_dao.modelRef;
+        const auto &modelInfo=p_dao.modelRef;
         this->crudName(modelInfo.modelName()).crudDescription(modelInfo.modelDescription());
     }
 protected:
@@ -66,7 +66,7 @@ protected:
     //!
     virtual const QOrm::ModelInfo&modelInfo()
     {
-        const auto&modelInfo=this->p_model.modelInfo();
+        const auto &modelInfo=this->p_model.modelInfo();
         return modelInfo;
     }
 
@@ -95,7 +95,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &search(const QVariant&value)
+    virtual ResultValue &search(const QVariant &value)
     {
         VariantUtil util;
         if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
@@ -120,7 +120,7 @@ protected:
         SearchParameters map;
         if(!mapSource.isEmpty()){
             const QOrm::ModelInfo&modelInfo=p_dao.modelRef;
-            const auto&propertyShortVsTable=modelInfo.propertyShortVsTable();
+            const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
             QHashIterator<QString, QVariant> i(model.toHash());
             while (i.hasNext()) {
                 i.next();
@@ -173,7 +173,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &insert(const QVariant&value)
+    virtual ResultValue &insert(const QVariant &value)
     {
         T model(this, value);
         return this->insert(model);
@@ -209,7 +209,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &update(const QVariant&value)
+    virtual ResultValue &update(const QVariant &value)
     {
         T model(this, value);
         return this->update(model);
@@ -250,7 +250,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &upsert(const QVariant&value)
+    virtual ResultValue &upsert(const QVariant &value)
     {
         T model(this, value);
         return this->upsert(model);
@@ -283,7 +283,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &remove(const QVariant&value)
+    virtual ResultValue &remove(const QVariant &value)
     {
         T model(this, value);
         return this->remove(model);
@@ -325,7 +325,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &deactivate(const QVariant&value)
+    virtual ResultValue &deactivate(const QVariant &value)
     {
         T model(this, value);
         return this->deactivate(model);
@@ -345,7 +345,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onBefore(CRUDBodyActionMethod method)
+    auto &onBefore(CRUDBodyActionMethod method)
     {
         auto obj=PrivateQOrm::CRUDBase::onBefore(method);
         return*(dynamic_cast<CRUD<T>*>(obj));
@@ -356,7 +356,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onSuccess(CRUDBodyActionMethod method)
+    auto &onSuccess(CRUDBodyActionMethod method)
     {
         auto obj=PrivateQOrm::CRUDBase::onSuccess(method);
         return*(dynamic_cast<CRUD<T>*>(obj));
@@ -367,7 +367,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto&onFailed(CRUDBodyActionMethod method)
+    auto &onFailed(CRUDBodyActionMethod method)
     {
         auto obj=PrivateQOrm::CRUDBase::onFailed(method);
         return*(dynamic_cast<CRUD<T>*>(obj));

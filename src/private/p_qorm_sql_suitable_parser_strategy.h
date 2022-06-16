@@ -14,7 +14,7 @@ public:
     //! \brief SqlParserSelect
     //! \param v
     //!
-    explicit SqlParserSelect(const QVariant&v=QVariant()):SqlParserFrom<SqlParserSelect>(v)
+    explicit SqlParserSelect(const QVariant &v=QVariant()):SqlParserFrom<SqlParserSelect>(v)
     {
     }
 
@@ -23,7 +23,7 @@ public:
     //! \param limit
     //! \return
     //!
-    auto&limit(int limit)
+    auto &limit(int limit)
     {
         if(limit>0){
             auto map=this->toMap();
@@ -38,7 +38,7 @@ public:
     //! \param off_set
     //! \return
     //!
-    auto&offset(int off_set)
+    auto &offset(int off_set)
     {
         if(off_set>0){
             auto map=this->toMap();
@@ -54,7 +54,7 @@ public:
     //! \param off_set
     //! \return
     //!
-    auto&offset(int limit, int off_set)
+    auto &offset(int limit, int off_set)
     {
         if(limit>0)
             this->limit(limit);
@@ -67,7 +67,7 @@ public:
     //! \brief lock
     //! \return
     //!
-    auto&lock(){
+    auto &lock(){
         auto map=this->toMap();
         map.insert(__func__,true);
         this->setValue(map);
@@ -78,7 +78,7 @@ public:
     //! \brief lockSkip
     //! \return
     //!
-    auto&lockSkip()
+    auto &lockSkip()
     {
         auto map=this->toMap();
         map.insert(__func__,true);
@@ -90,7 +90,7 @@ public:
     //! \brief distinct
     //! \return
     //!
-    auto&distinct()
+    auto &distinct()
     {
         auto map=this->toMap();
         map.insert(__func__, true);
@@ -103,7 +103,7 @@ public:
     //! \param value
     //! \return
     //!
-    auto&distinct(bool value)
+    auto &distinct(bool value)
     {
         auto map=this->toMap();
         map.insert(__func__, value);
@@ -115,7 +115,7 @@ public:
     //! \brief fields
     //! \return
     //!
-    auto&fields()
+    auto &fields()
     {
         auto object=this->oPointer<SqlParserFields<SqlParserSelect>*>(__func__);
         if(object==nullptr){
@@ -130,9 +130,9 @@ public:
     //! \param parserObject
     //! \return
     //!
-    auto&fields(const QVariant&parserObject)
+    auto &fields(const QVariant&parserObject)
     {
-        auto&fields=this->fields();
+        auto &fields=this->fields();
         fields.f(parserObject);
         return*this;
     }
@@ -142,7 +142,7 @@ public:
     //! \param parserbject
     //! \return
     //!
-    auto&fieldsFrom(const QVariant&parserbject)
+    auto &fieldsFrom(const QVariant&parserbject)
     {
         this->fields(parserbject);
         this->from(parserbject);
@@ -154,7 +154,7 @@ public:
     //! \param parserbject
     //! \return
     //!
-    auto&fromExists(const QVariant&parserbject)
+    auto &fromExists(const QVariant&parserbject)
     {
         this->fields().f(qsl("1 as c"));
         this->limit(1);
@@ -166,7 +166,7 @@ public:
     //! \brief orderby
     //! \return
     //!
-    auto&orderby()
+    auto &orderby()
     {
         auto object=this->oPointer<SqlParserFields<SqlParserSelect>*>(__func__);
         if(object==nullptr){
@@ -220,8 +220,8 @@ public:
             QStringList fields;
             QStringList group;
             bool isGrouping=false;
-            for(auto&parser_fields:fieldList){
-                const auto&modelInfo=QOrm::ModelInfo::modelInfo(parser_fields);
+            for(auto &parser_fields:fieldList){
+                const auto &modelInfo=QOrm::ModelInfo::modelInfo(parser_fields);
                 if(modelInfo.isValid()){
                     QHashIterator<QString, QString> i(modelInfo.propertyTableVsShort());
                     while (i.hasNext()) {
@@ -278,8 +278,8 @@ public:
             auto fieldList=parser_orderby.toMap().values();
             if(!fieldList.isEmpty()){
                 QStringList fields;
-                for(auto&parser_order:fieldList){
-                    const auto&modelInfo=QOrm::ModelInfo::modelInfo(parser_order);
+                for(auto &parser_order:fieldList){
+                    const auto &modelInfo=QOrm::ModelInfo::modelInfo(parser_order);
                     if(modelInfo.isValid()){
                         QHashIterator<QString, QString> i(modelInfo.propertyTableVsShort());
                         while (i.hasNext()) {
@@ -306,7 +306,7 @@ public:
                     case QMetaType_QVariantList:
                     case QMetaType_QStringList:
                     {
-                        for(auto&v:parser_order.toList()){
+                        for(auto &v:parser_order.toList()){
                             auto name=v.toByteArray().trimmed();
                             if(!fields.contains(name))
                                 fields<<name;
@@ -354,11 +354,11 @@ public:
     {
     }
 
-    explicit SqlParserInsert(const QVariant&v):SqlParserCommand(v)
+    explicit SqlParserInsert(const QVariant &v):SqlParserCommand(v)
     {
     }
 
-    auto&destine(const QVariant&v)
+    auto &destine(const QVariant &v)
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
@@ -367,7 +367,7 @@ public:
         }
         return*this;
     }
-    auto&values(const QVariant&values)
+    auto &values(const QVariant &values)
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
@@ -382,7 +382,7 @@ public:
         auto map=this->toMap();
         auto destine=getVariantStartsWith(qsl("destine"),map);
         auto values=getVariantStartsWith(qsl("values"),map);
-        const auto&modelInfo=QOrm::ModelInfo::modelInfo(destine);
+        const auto &modelInfo=QOrm::ModelInfo::modelInfo(destine);
         auto command=parser.parserCommand(kgcInsertInto, &modelInfo, values);
         return command;
     }
@@ -391,7 +391,7 @@ public:
 class Q_ORM_EXPORT SqlParserUpdate:public SqlParserCommand{
 public:
 
-    auto&destine(const QVariant&v)
+    auto &destine(const QVariant &v)
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
@@ -401,7 +401,7 @@ public:
         return*this;
     }
 
-    auto&values(const QVariant&v)
+    auto &values(const QVariant &v)
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
@@ -415,7 +415,7 @@ public:
     {
     }
 
-    explicit SqlParserUpdate(const QVariant&v):SqlParserCommand(v)
+    explicit SqlParserUpdate(const QVariant &v):SqlParserCommand(v)
     {
     }
 
@@ -424,7 +424,7 @@ public:
         auto map=this->toMap();
         auto destine=getVariantStartsWith(qsl("destine"),map);
         auto values=getVariantStartsWith(qsl("values"), map);
-        const auto&modelInfo=QOrm::ModelInfo::modelInfo(destine);
+        const auto &modelInfo=QOrm::ModelInfo::modelInfo(destine);
         auto command=parser.parserCommand(kgcUpdateSet, &modelInfo, values);
         return command;
     }
@@ -433,7 +433,7 @@ public:
 class Q_ORM_EXPORT SqlParserUpsert:public SqlParserCommand{
 public:
 
-    auto&destine(const QVariant&v)
+    auto &destine(const QVariant &v)
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
@@ -443,7 +443,7 @@ public:
         return*this;
     }
 
-    auto&values(const QVariant&v)
+    auto &values(const QVariant &v)
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
@@ -457,7 +457,7 @@ public:
     {
     }
 
-    explicit SqlParserUpsert(const QVariant&v):SqlParserCommand(v)
+    explicit SqlParserUpsert(const QVariant &v):SqlParserCommand(v)
     {
     }
 
@@ -466,7 +466,7 @@ public:
         auto map=this->toMap();
         auto destine=getVariantStartsWith(qsl("destine"),map);
         auto values=getVariantStartsWith(qsl("values"),map);
-        const auto&modelInfo=QOrm::ModelInfo::modelInfo(destine);
+        const auto &modelInfo=QOrm::ModelInfo::modelInfo(destine);
         auto command=parser.parserCommand(kgcUpsertSet, &modelInfo, values);
         return command;
     }
@@ -475,7 +475,7 @@ public:
 class Q_ORM_EXPORT SqlParserRemove:public SqlParserFrom<SqlParserSelect>{
 public:
 
-    auto&destine(const QVariant&v)
+    auto &destine(const QVariant &v)
     {
         auto map=this->toMap();
         map.insert(__func__,v);
@@ -483,7 +483,7 @@ public:
         return*this;
     }
 
-    auto&values(const QVariant&values)
+    auto &values(const QVariant &values)
     {
         auto map=this->toMap();
         map.insert(__func__,values);
@@ -495,7 +495,7 @@ public:
     {
     }
 
-    explicit SqlParserRemove(const QVariant&v):SqlParserFrom<SqlParserSelect>(v)
+    explicit SqlParserRemove(const QVariant &v):SqlParserFrom<SqlParserSelect>(v)
     {
     }
 
@@ -520,7 +520,7 @@ public:
 
 class Q_ORM_EXPORT SqlParserProcedure:public SqlParserCallObject{
 public:
-    explicit SqlParserProcedure(const QVariant&v=QVariant()):SqlParserCallObject(v)
+    explicit SqlParserProcedure(const QVariant &v=QVariant()):SqlParserCallObject(v)
     {
     }
 
@@ -535,11 +535,11 @@ public:
 class Q_ORM_EXPORT SqlParserFunction:public SqlParserCallObject{
 public:
 
-    explicit SqlParserFunction(const QVariant&v=QVariant()):SqlParserCallObject(v)
+    explicit SqlParserFunction(const QVariant &v=QVariant()):SqlParserCallObject(v)
     {
     }
 
-    auto&nextVal(const QVariant&v)
+    auto &nextVal(const QVariant &v)
     {
         auto object=new SqlParserCommand();
         object->makeUuid();
@@ -563,12 +563,12 @@ public:
             auto object=vValue.value(qsl("object"));
             auto value=vValue.value(qsl("value"));
             QStringList command;
-            const auto&modelInfo=QOrm::ModelInfo::modelInfo(object);
+            const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
             if(modelInfo.isValid())
                 command=parser.parserCommand(type, &modelInfo, value);
             else
                 command=parser.parserCommand(type, &modelInfo, object);
-            for(auto&v:command)
+            for(auto &v:command)
                 output<<v;
         }
 
@@ -578,7 +578,7 @@ public:
 
 class Q_ORM_EXPORT SqlParserStructure:public SqlParserCallObject{
 public:
-    explicit SqlParserStructure(const QVariant&v=QVariant()):SqlParserCallObject(v)
+    explicit SqlParserStructure(const QVariant &v=QVariant()):SqlParserCallObject(v)
     {
     }
 
@@ -587,7 +587,7 @@ public:
         return true;
     }
 
-    auto&truncateTable(const QVariant&v)
+    auto &truncateTable(const QVariant &v)
     {
         auto object=new SqlParserCommand();
         object->makeUuid();
@@ -599,7 +599,7 @@ public:
         return*this;
     }
 
-    auto&truncateTableCascade(const QVariant&v)
+    auto &truncateTableCascade(const QVariant &v)
     {
         auto object=new SqlParserCommand();
         object->makeUuid();
@@ -623,10 +623,10 @@ public:
             auto object=vValue.value(qsl("object"));
             auto value=vValue.value(qsl("value"));
             QStringList command;
-            const auto&modelInfo=QOrm::ModelInfo::modelInfo(object);
+            const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
             if(modelInfo.isValid())
                 command=parser.parserCommand(type, &modelInfo, value);
-            for(auto&v:command)
+            for(auto &v:command)
                 output<<v;
         }
 
@@ -638,7 +638,7 @@ class Q_ORM_EXPORT SqlParserCombineSelect:public SqlParserCommand{
     friend class SqlSuitableBuilderPvt;
 public:
 
-    explicit SqlParserCombineSelect(const QVariant&v);
+    explicit SqlParserCombineSelect(const QVariant &v);
 
     explicit SqlParserCombineSelect();
 

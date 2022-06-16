@@ -5,8 +5,6 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<ModelDescriptorPvt *>(this->p)
-
 class ModelDescriptorPvt:public QObject
 {
 public:

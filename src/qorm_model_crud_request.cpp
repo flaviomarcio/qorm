@@ -4,25 +4,15 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<CRUDRequestPvt *>(this->p)
-
-class CRUDRequestPvt
-{
-public:
-    CRUDRequest *parent = nullptr;
-    explicit CRUDRequestPvt(CRUDRequest *parent) { this->parent = parent; }
-    virtual ~CRUDRequestPvt() {}
-};
 
 CRUDRequest::CRUDRequest(const QVariant &other) : QVariantHash(other.toHash())
 {
-    this->p = new CRUDRequestPvt{this};
+
 }
 
 CRUDRequest::~CRUDRequest()
 {
-    dPvt();
-    delete &p;
+
 }
 
 CRUDRequest &CRUDRequest::setBody(const QVariant &v)

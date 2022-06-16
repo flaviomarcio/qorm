@@ -5,7 +5,7 @@
 namespace PrivateQOrm {
 
 #define dPvt()\
-    auto&p = *reinterpret_cast<ModelDaoPvt*>(this->p)\
+    auto &p = *reinterpret_cast<ModelDaoPvt*>(this->p)\
 
 class ModelDaoPvt : public QObject{
 public:
@@ -25,8 +25,6 @@ ModelDao::ModelDao(QObject *parent) : QOrm::ObjectDb(parent)
 
 ModelDao::~ModelDao()
 {
-    dPvt();
-    p.deleteLater();
 }
 
 QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QVariant &value) const
@@ -67,7 +65,7 @@ QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QV
     case QMetaType_QStringList:
     {
         if(!searchParameters.canRead(value)){
-            for(auto&i_key:modelRef.tablePk()){
+            for(auto &i_key:modelRef.tablePk()){
                 auto key=QOrm::SqlParserItem::createObject(i_key);
                 auto v=QOrm::SqlParserItem::createValue(value);
                 searchParameters.insert(key,v);
@@ -79,10 +77,10 @@ QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QV
         return searchParameters.buildVariant();
     }
     default:
-        const auto&propertyByFieldName=modelRef.propertyByFieldName();
-        const auto&propertyByPropertyName=modelRef.propertyByPropertyName();
+        const auto &propertyByFieldName=modelRef.propertyByFieldName();
+        const auto &propertyByPropertyName=modelRef.propertyByPropertyName();
 
-        for(auto&i_key:modelRef.tablePk()){
+        for(auto &i_key:modelRef.tablePk()){
             auto key=QOrm::SqlParserItem::createObject(i_key);
 
             auto property = propertyByFieldName.value(i_key);
@@ -98,8 +96,7 @@ QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QV
 
 QOrm::SqlSuitableValue &ModelDao::suitableValue()
 {
-    dPvt();
-    auto&s=p.suitableValue;
+    auto &s=p->suitableValue;
     return s.setConnection(this->connection());
 
 }

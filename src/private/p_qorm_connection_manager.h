@@ -18,13 +18,10 @@
 
 namespace QOrm {
 
-#define dPvt()\
-    auto&p = *reinterpret_cast<ConnectionManagerPrv*>(this->p)
-
 //!
-//! \brief The ConnectionManagerPrv class
+//! \brief The ConnectionManagerPvt class
 //!
-class ConnectionManagerPrv
+class ConnectionManagerPvt
 {
 public:
     ConnectionNotify notify;
@@ -37,11 +34,11 @@ public:
     QObject*parentParent=nullptr;
     ConnectionPool defaultPool;
     //!
-    //! \brief ConnectionManagerPrv
+    //! \brief ConnectionManagerPvt
     //! \param parent
     //!
-    explicit ConnectionManagerPrv(ConnectionManager*parent);
-    virtual ~ConnectionManagerPrv();
+    explicit ConnectionManagerPvt(ConnectionManager*parent);
+    virtual ~ConnectionManagerPvt();
 
     //!
     //! \brief init

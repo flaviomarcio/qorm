@@ -11,9 +11,7 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<ConnectionSettingPrv *>(this->p)
-
-class ConnectionSettingPrv
+class ConnectionSettingPvt
 {
 public:
     QObject *parent = nullptr;
@@ -30,9 +28,9 @@ public:
     QStringList _commandBeforeOpen;
     QStringList _commandAfterClose;
 
-    explicit ConnectionSettingPrv(QObject *parent) { this->parent = parent; }
+    explicit ConnectionSettingPvt(QObject *parent) { this->parent = parent; }
 
-    virtual ~ConnectionSettingPrv() {}
+    virtual ~ConnectionSettingPvt() {}
 
     QByteArray replaceVar(const QString &value) const
     {
@@ -50,33 +48,33 @@ public:
 
 ConnectionSetting::ConnectionSetting(QObject *parent) : QObject{parent}
 {
-    this->p = new ConnectionSettingPrv(this);
+    this->p = new ConnectionSettingPvt{this};
 }
 
 ConnectionSetting::ConnectionSetting(const QSqlDatabase &detail, QObject *parent) : QObject{parent}
 {
-    this->p = new ConnectionSettingPrv(this);
-    dPvt();
-    p._name = detail.connectionName().toUtf8();
+    this->p = new ConnectionSettingPvt{this};
+
+    p->_name = detail.connectionName().toUtf8();
     this->fromConnection(detail);
 }
 
 ConnectionSetting::ConnectionSetting(const ConnectionSetting &detail, QObject *parent)
-    : QObject(parent)
+    : QObject{parent}
 {
-    this->p = new ConnectionSettingPrv(this);
+    this->p = new ConnectionSettingPvt{this};
     auto name = detail.name();
-    dPvt();
-    p._name = name;
+
+    p->_name = name;
     this->fromSetting(detail);
 }
 
 ConnectionSetting::ConnectionSetting(const QByteArray &name,
                                      const QVariantHash &detailMap,
                                      QObject *parent)
-    : QObject(parent)
+    : QObject{parent}
 {
-    this->p = new ConnectionSettingPrv(this);
+    this->p = new ConnectionSettingPvt{this};
 
     auto _name = name.trimmed();
 
@@ -85,8 +83,8 @@ ConnectionSetting::ConnectionSetting(const QByteArray &name,
         auto r = rand() % 100000000 + 1000;
         _name = qsl("connection%1").arg(r).toUtf8();
     }
-    dPvt();
-    p._name = _name;
+
+    p->_name = _name;
     auto metaObject = ConnectionSetting::staticMetaObject;
     for (int row = 0; row < metaObject.propertyCount(); ++row) {
         auto property = metaObject.property(row);
@@ -99,7 +97,7 @@ ConnectionSetting::ConnectionSetting(const QByteArray &name,
 
 ConnectionSetting::~ConnectionSetting()
 {
-    dPvt();
+
     delete &p;
 }
 
@@ -262,149 +260,149 @@ ConnectionSetting &ConnectionSetting::operator=(const QVariant &value)
 
 QVariantHash ConnectionSetting::variables() const
 {
-    dPvt();
-    return p._variables;
+
+    return p->_variables;
 }
 
 void ConnectionSetting::setVariables(const QVariantHash &value)
 {
-    dPvt();
-    p._variables = value;
+
+    p->_variables = value;
 }
 
 QByteArray ConnectionSetting::driver() const
 {
-    dPvt();
-    return p._driver;
+
+    return p->_driver;
 }
 
 void ConnectionSetting::setDriver(const QByteArray &value)
 {
-    dPvt();
-    p._driver = value;
+
+    p->_driver = value;
 }
 
 QByteArray ConnectionSetting::name() const
 {
-    dPvt();
-    return p._name;
+
+    return p->_name;
 }
 
 void ConnectionSetting::setName(const QByteArray &value)
 {
-    dPvt();
-    p._name = value.trimmed();
+
+    p->_name = value.trimmed();
 }
 
 QByteArray ConnectionSetting::hostName() const
 {
-    dPvt();
-    auto v = p.replaceVar(p._hostName.trimmed());
+
+    auto v = p->replaceVar(p->_hostName.trimmed());
     return v;
 }
 
 void ConnectionSetting::setHostName(const QByteArray &value)
 {
-    dPvt();
-    p._hostName = value.trimmed();
+
+    p->_hostName = value.trimmed();
 }
 
 QByteArray ConnectionSetting::userName() const
 {
-    dPvt();
-    auto v = p.replaceVar(p._userName.trimmed());
+
+    auto v = p->replaceVar(p->_userName.trimmed());
     return v;
 }
 
 void ConnectionSetting::setUserName(const QByteArray &value)
 {
-    dPvt();
-    p._userName = value.trimmed();
+
+    p->_userName = value.trimmed();
 }
 
 QByteArray ConnectionSetting::password() const
 {
-    dPvt();
-    auto v = p.replaceVar(p._password);
+
+    auto v = p->replaceVar(p->_password);
     return v;
 }
 
 void ConnectionSetting::setPassword(const QByteArray &value)
 {
-    dPvt();
-    p._password = value.trimmed();
+
+    p->_password = value.trimmed();
 }
 
 int ConnectionSetting::port() const
 {
-    dPvt();
-    return p._port;
+
+    return p->_port;
 }
 
 void ConnectionSetting::setPort(int value)
 {
-    dPvt();
-    p._port = value;
+
+    p->_port = value;
 }
 
 QByteArray ConnectionSetting::dataBaseName() const
 {
-    dPvt();
-    return p._dataBaseName;
+
+    return p->_dataBaseName;
 }
 
 void ConnectionSetting::setDataBaseName(const QByteArray &value)
 {
-    dPvt();
-    p._dataBaseName = value;
+
+    p->_dataBaseName = value;
 }
 
 QStringList ConnectionSetting::schemaNames() const
 {
-    dPvt();
-    return p._schemaNames;
+
+    return p->_schemaNames;
 }
 
 void ConnectionSetting::setSchemaNames(const QStringList &value)
 {
-    dPvt();
-    p._schemaNames = value;
+
+    p->_schemaNames = value;
 }
 
 QByteArray ConnectionSetting::connectOptions() const
 {
-    dPvt();
-    return p._connectOptions;
+
+    return p->_connectOptions;
 }
 
 void ConnectionSetting::setConnectOptions(const QByteArray &value)
 {
-    dPvt();
-    p._connectOptions = value;
+
+    p->_connectOptions = value;
 }
 
 QStringList ConnectionSetting::commandBeforeOpen() const
 {
-    dPvt();
-    return p._commandBeforeOpen;
+
+    return p->_commandBeforeOpen;
 }
 
 void ConnectionSetting::setCommandBeforeOpen(const QStringList &value)
 {
-    dPvt();
-    p._commandBeforeOpen = value;
+
+    p->_commandBeforeOpen = value;
 }
 
 QStringList ConnectionSetting::commandAfterClose() const
 {
-    dPvt();
-    return p._commandAfterClose;
+
+    return p->_commandAfterClose;
 }
 
 void ConnectionSetting::setCommandAfterClose(const QStringList &value)
 {
-    dPvt();
-    p._commandAfterClose = value;
+
+    p->_commandAfterClose = value;
 }
 
 } // namespace QOrm
