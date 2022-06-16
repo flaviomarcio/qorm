@@ -686,7 +686,7 @@ QStringList SqlSuitableKeyWord::formatValues(const QStringList &field, const QVa
             auto map=i.toHash();
             QStringList row;
             for(auto &f:fieldFormat){
-                auto v=map->value(f);
+                auto v=map.value(f);
                 auto s=this->formatValue(v);
                 row<<s;
             }
