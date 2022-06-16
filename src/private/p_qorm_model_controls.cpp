@@ -4,15 +4,7 @@
 #include <QVariantHash>
 #include <QCoreApplication>
 
-
-
 namespace QOrm {
-static void init(){
-    qDebug()<<QVariant::fromValue<ModelDtoControls::FormType>(ModelDtoControls::FormType::RegisterForm);
-    qDebug()<<QVariant::fromValue<ModelDtoControls::FormType>(ModelDtoControls::FormType::RegisterForm).toString();
-}
-
-Q_COREAPP_STARTUP_FUNCTION(init);
 
 class ModelDtoControlsPvt:public QObject{
 public:
@@ -32,7 +24,7 @@ public:
     ModelDtoItems<ModelDtoControls> items;
     QStm::ResultInfo resultInfo;
     QVariantMap descriptors;
-    QObject *dto=nullptr;
+    ModelDtoControls *dto=nullptr;
 
     explicit ModelDtoControlsPvt(ModelDtoControls *parent)
         :QObject{parent},
@@ -111,8 +103,8 @@ public:
 
             }
 
-            vHash[vpUuid]=this->uuid;
-            vHash[vpName]=this->name;
+            vHash[vpUuid]=this->dto->uuid();
+            vHash[vpName]=this->dto->name();
             vHash[vpTitle]=this->text;
             vHash[vpType]=QVariant::fromValue<ModelDtoControls::FormType>(this->type);
             vHash[vpLayout]=QVariant::fromValue<ModelDtoControls::FormLayout>(this->layout);
@@ -208,6 +200,9 @@ void ModelDtoControls::setDescriptors(const QVariantMap &descriptors)
 
 QUuid &ModelDtoControls::uuid() const
 {
+    Q_DECLARE_VU;
+    if(p->uuid.isNull())
+        p->uuid=vu.toMd5Uuid(this->name());
     return p->uuid;
 }
 
@@ -221,7 +216,7 @@ ModelDtoControls &ModelDtoControls::uuid(const QVariant &v)
 ModelDtoControls &ModelDtoControls::setUuid(const QVariant &v)
 {
     Q_DECLARE_VU;
-    p->uuid=vu.toUuid(v);
+    p->uuid=vu.toMd5Uuid(v);
     return *this;
 }
 
