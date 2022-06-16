@@ -32,18 +32,18 @@ namespace QOrm {\
 
 #define QORM_OBJECT_CONSTRUCTOR(ObjectName)\
 public:\
-    Q_INVOKABLE explicit ObjectName(QObject *parent = nullptr):QOrm::ModelDescriptor(parent){};\
+    Q_INVOKABLE explicit ObjectName(QObject *parent = nullptr):QOrm::ModelDescriptor{parent}{};\
 
 #define QORM_MODEL_CONSTRUCTOR(ModelName, Model)\
-    Q_INVOKABLE explicit ModelName(QObject *parent = nullptr):Model(parent){};\
+    Q_INVOKABLE explicit ModelName(QObject *parent = nullptr):Model{parent}{};\
     Q_INVOKABLE explicit ModelName(const QVariant&record):Model(nullptr){this->readFrom(record);};\
-    Q_INVOKABLE explicit ModelName(QObject *parent, const QByteArray &record):Model(parent){this->readFrom(record);};\
-    Q_INVOKABLE explicit ModelName(QObject *parent, const QVariantHash &record):Model(parent){this->readFrom(record);};\
-    Q_INVOKABLE explicit ModelName(QObject *parent, const QVariant &record):Model(parent){this->readFrom(record);};\
-    Q_INVOKABLE explicit ModelName(QObject *parent, const QUuid &record):Model(parent){this->readFrom(record);};\
-    Q_INVOKABLE explicit ModelName(QObject *parent, QSqlQuery &record):Model(parent){this->readFrom(record);};\
-    Q_INVOKABLE explicit ModelName(QObject *parent, QOrm::Query &record):Model(parent){this->readFrom(record);};\
-    Q_INVOKABLE explicit ModelName(QObject *parent, const ResultValue &record):Model(parent){this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(QObject *parent, const QByteArray &record):Model{parent}{this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(QObject *parent, const QVariantHash &record):Model{parent}{this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(QObject *parent, const QVariant &record):Model{parent}{this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(QObject *parent, const QUuid &record):Model{parent}{this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(QObject *parent, QSqlQuery &record):Model{parent}{this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(QObject *parent, QOrm::Query &record):Model{parent}{this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(QObject *parent, const ResultValue &record):Model{parent}{this->readFrom(record);};\
     ~ModelName(){};
 
 #define QORM_CONTROLLER_CONSTRUCTOR(ObjectName) \
@@ -53,12 +53,12 @@ virtual ~ObjectName(){}
 
 #define QORM_MODEL(modelClass)\
 public:\
-    virtual QByteArray modelName() const{\
-        QString name=this->metaObject()->className();\
-        return name.split(QStringLiteral("::")).last().toLower().toUtf8();\
+    virtual const QByteArray &modelName() const{\
+        static const QByteArray name=QString{this->metaObject()->className()}.split(qsl("::")).last().toLower().toUtf8();\
+        return name;\
     }\
 public:\
-    static modelClass&m(){ modelClass*__m=nullptr; if(__m==nullptr) __m = new modelClass(); return*__m;}\
+    static modelClass &m(){ modelClass*__m=nullptr; if(__m==nullptr) __m = new modelClass(); return*__m;}\
     auto &modelInfo()const{return QOrm::ModelInfo::modelInfo(modelClass::staticMetaObject);}\
     Q_PROPERTY(QByteArray tablePrefix READ tablePrefix)\
     Q_PROPERTY(QByteArray tablePrefixSeparator READ tablePrefixSeparator)\
@@ -76,26 +76,26 @@ Q_INVOKABLE virtual const QMetaObject&descriptor(){\
 #define QORM_DECLARE_TABLE_PK_COMPUSER(v1)\
 public:\
     Q_INVOKABLE virtual QVariant tablePkCompuser()const{\
-        return QVariant(v1);\
+    return QVariant{v1};\
 }
 
 #define QORM_DECLARE_TOPIC(v1)\
 public:\
     Q_INVOKABLE virtual QVariant topic()const{\
-        return QVariant(v1);\
+    return QVariant{v1};\
     }
 
 #define QORM_DECLARE_TABLE_DEACTIVATE_FIELD(name)\
 public:\
-Q_INVOKABLE virtual QByteArray tableDeactivateField()const{static auto ___return=QByteArrayLiteral(#name).trimmed(); return ___return;}
+Q_INVOKABLE virtual QByteArray tableDeactivateField()const{static auto ___return=qbl(#name).trimmed(); return ___return;}
 
 #define QORM_DESCRIPTOR_ORDERBY(name)\
 public:\
-Q_INVOKABLE virtual QByteArray descriptorOrderBy()const{static const auto ___return=QByteArrayLiteral(#name);return ___return;}
+Q_INVOKABLE virtual QByteArray descriptorOrderBy()const{static const auto ___return=qbl(#name);return ___return;}
 
 #define QORM_DECLARE_TABLE_SCHEMA(name)\
 public:\
-Q_INVOKABLE virtual QByteArray tableSchema()const{static auto __return=QByteArrayLiteral(#name).trimmed(); return __return;}
+Q_INVOKABLE virtual QByteArray tableSchema()const{static auto __return=qbl(#name).trimmed(); return __return;}
 
 #define QORM_DECLARE_MODEL_DESCRIPTION(name)\
 public:\
@@ -103,9 +103,9 @@ Q_INVOKABLE virtual QString modelDescription()const{static auto __return=QString
 
 #define QORM_DECLARE_TABLE(prefix, separator, table)\
 public:\
-Q_INVOKABLE virtual QByteArray tablePrefix()const{static const auto ___return=QByteArrayLiteral(#prefix).trimmed();return ___return;}\
-Q_INVOKABLE virtual QByteArray tablePrefixSeparator()const{static const auto ___return=QByteArrayLiteral(#separator).trimmed(); return ___return;}\
-Q_INVOKABLE virtual QByteArray tableName()const{static const auto ___return=QByteArrayLiteral(#table).trimmed();return ___return;}
+Q_INVOKABLE virtual QByteArray tablePrefix()const{static const auto ___return=qbl(#prefix).trimmed();return ___return;}\
+Q_INVOKABLE virtual QByteArray tablePrefixSeparator()const{static const auto ___return=qbl(#separator).trimmed(); return ___return;}\
+Q_INVOKABLE virtual QByteArray tableName()const{static const auto ___return=qbl(#table).trimmed();return ___return;}
 
 #define QORM_DECLARE_TABLE_SEQUENCE(name)\
 public:\
@@ -115,9 +115,9 @@ Q_INVOKABLE virtual QVariantHash tableSequence()const{ \
     auto &v=vseq_##name;\
     if(v.isEmpty()){\
         QString schema=this->tableSchema();\
-        schema+=schema.isEmpty()?"":QStringLiteral(".");\
-        v.insert(QStringLiteral("type"), QOrm::kgcSequence); \
-        v.insert(QStringLiteral("name"), schema+static_name); \
+        schema+=schema.isEmpty()?"":qsl(".");\
+        v.insert(qsl("type"), QOrm::kgcSequence); \
+        v.insert(qsl("name"), schema+static_name); \
     }\
     return v; \
 }
@@ -130,25 +130,25 @@ Q_INVOKABLE virtual QVariantHash seq_##name()const{ \
     auto &v=vseq_##name;\
     if(v.isEmpty()){\
         QString schema=this->tableSchema();\
-        schema+=schema.isEmpty()?"":QStringLiteral(".");\
-        v.insert(QStringLiteral("type"), QStringLiteral("sequence")); \
-        v.insert(QStringLiteral("name"), schema+static_name); \
+        schema+=schema.isEmpty()?"":qsl(".");\
+        v.insert(qsl("type"), qsl("sequence")); \
+        v.insert(qsl("name"), schema+static_name); \
     }\
     return v; \
 }
 
 #define QORM_DECLARE_TABLE_PRIMARY_KEY(propertyPk)\
 public:\
-Q_INVOKABLE virtual QByteArray tablePk()const{const auto ___return=QByteArrayLiteral(#propertyPk); return ___return;}\
-Q_INVOKABLE virtual QByteArray tablePk(const QByteArray &alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+QByteArrayLiteral("."))+QByteArrayLiteral(#propertyPk);}\
-Q_INVOKABLE virtual QByteArray tablePrimaryKey()const{static const auto ___return=QByteArrayLiteral(#propertyPk); return ___return;}\
-Q_INVOKABLE virtual QByteArray tablePrimaryKey(const QByteArray &alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+QByteArrayLiteral("."))+QByteArrayLiteral(#propertyPk);}
+Q_INVOKABLE virtual QByteArray tablePk()const{const auto ___return=qbl(#propertyPk); return ___return;}\
+Q_INVOKABLE virtual QByteArray tablePk(const QByteArray &alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+qbl("."))+qbl(#propertyPk);}\
+Q_INVOKABLE virtual QByteArray tablePrimaryKey()const{static const auto ___return=qbl(#propertyPk); return ___return;}\
+Q_INVOKABLE virtual QByteArray tablePrimaryKey(const QByteArray &alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+qbl("."))+qbl(#propertyPk);}
 
 
 
 #define QORM_DECLARE_TABLE_ORDERBY(name)\
 public:\
-Q_INVOKABLE virtual QByteArray tableOrderBy()const{static const auto ___return=QByteArrayLiteral(#name); return ___return;}
+Q_INVOKABLE virtual QByteArray tableOrderBy()const{static const auto ___return=qbl(#name); return ___return;}
 
 #define QORM_DECLARE_TABLE_PRIMARY_KEY_AUTO(name)\
 public:\
@@ -160,7 +160,7 @@ Q_INVOKABLE virtual bool tablePkAutoGenerate()const{return false;}
 
 #define QORM_DECLARE_TABLE_FOREIGN_KEY(propertyPk)\
 public:\
-Q_INVOKABLE virtual QByteArray tableForeignPk()const{static const auto ___return=QByteArrayLiteral(#propertyPk); return ___return;}\
+Q_INVOKABLE virtual QByteArray tableForeignPk()const{static const auto ___return=qbl(#propertyPk); return ___return;}\
 
 #define QORM_DECLARE_TABLE_FOREIGN_KEY_ON_PRIMARY_KEY(fk_propertyName, pk_modelName, pk_propertyName)\
 Q_INVOKABLE virtual QVariantHash tableForeignKey_##fk_propertyName()const{ \
@@ -170,15 +170,15 @@ Q_INVOKABLE virtual QVariantHash tableForeignKey_##fk_propertyName()const{ \
 
 #define QORM_DECLARE_WRAPPER_FIELD(wrapperName, src, to)\
     private:\
-        bool ____declare_wrapper_##src__##to##wrapperName = this->addWrapper(QByteArrayLiteral(#wrapperName), QByteArrayLiteral(#src), QByteArrayLiteral(#to));\
+        bool ____declare_wrapper_##src__##to##wrapperName = this->addWrapper(qbl(#wrapperName), qbl(#src), qbl(#to));\
     public:
 
 #define QORM_DECLARE_FIELD(propertyName, propertyTitle)\
 Q_INVOKABLE QOrm::SqlParserItem&propertyName##_field(QByteArray alias="")const{ \
     alias=alias.toLower().trimmed();\
-    alias=(alias=="")?"":(alias+QByteArrayLiteral("."));\
-    static auto fieldName = alias+tablePrefix() + tablePrefixSeparator()+QByteArrayLiteral(#propertyName);\
-    static auto fieldTitle = QByteArrayLiteral(#propertyTitle);\
+    alias=(alias=="")?"":(alias+qbl("."));\
+    static auto fieldName = alias+tablePrefix() + tablePrefixSeparator()+qbl(#propertyName);\
+    static auto fieldTitle = qbl(#propertyTitle);\
     static QOrm::SqlParserItem ____pn(fieldName, fieldTitle, QOrm::koiObject);\
     return ____pn;\
 }\
@@ -188,40 +188,39 @@ Q_INVOKABLE QByteArray &propertyName##_property()const{ \
 }\
 Q_INVOKABLE QByteArray &propertyName##_fieldName(const QByteArray &vAlias="")const{ \
     auto alias=vAlias.toLower().trimmed();\
-    alias=(alias=="")?"":(alias+QByteArrayLiteral("."));\
-    static QByteArray ___return = alias+tablePrefix() + tablePrefixSeparator()+QByteArrayLiteral(#propertyName);\
+    alias=(alias=="")?"":(alias+qbl("."));\
+    static QByteArray ___return = alias+tablePrefix() + tablePrefixSeparator()+qbl(#propertyName);\
     return ___return;\
 }
 
 #define QORM_DECLARE_PROPERTY_HEADER(propertyType, propertyName, propertyDefault, propertyTitle)\
 public:\
 QORM_DECLARE_FIELD(propertyName,)\
-Q_PROPERTY(propertyType propertyName READ propertyName WRITE set_##propertyName NOTIFY changeProperty)\
-Q_INVOKABLE virtual QVariant propertyName##_keyValue(){\
-    static const auto ___name=QByteArrayLiteral(#propertyName);\
+Q_PROPERTY(propertyType propertyName READ propertyName WRITE set_##propertyName RESET reset_##propertyName NOTIFY changeProperty)\
+virtual QVariant propertyName##_keyValue(){\
+    static const auto ___name=qbl(#propertyName);\
     return QVariantHash{{___name, this->property(___name)}};\
 }\
-Q_INVOKABLE virtual propertyType propertyName()const{\
+virtual propertyType propertyName()const{\
     return z____##propertyName;\
 }\
-Q_INVOKABLE virtual bool set_##propertyName(const propertyType&value){\
-    if(this->propertyBeforeSet(QByteArrayLiteral(#propertyName), value)){\
+virtual bool set_##propertyName(const propertyType&value){\
+    if(this->propertyBeforeSet(qbl(#propertyName), value)){\
         auto oldValue=z____##propertyName;\
         z____##propertyName=value;\
-        if(!this->propertyAfterSet(QByteArrayLiteral(#propertyName), value)){\
-            oldValue=oldValue;\
-        }\
-        else{\
+        if(this->propertyAfterSet(qbl(#propertyName), value))\
             return true;\
-        }\
+        oldValue=oldValue;\
     }\
     return false;\
 }\
-Q_INVOKABLE virtual bool propertyName##Eq(const propertyType&value)const{\
+void reset_##propertyName(){\
+    set_##propertyName({});\
+}\
+virtual bool propertyName##Eq(const propertyType&value)const{\
     if(this->propertyName()==value)\
         return true;\
-    else\
-        return false;\
+    return false;\
 }\
 private:\
     propertyType z____##propertyName=propertyDefault;\
@@ -238,56 +237,6 @@ Q_INVOKABLE virtual QVariantList tableFiltrableField()const\
 #define QORM_DECLARE_PROPERTY(propertyType, propertyName, propertyDefault)\
 public:\
 QORM_DECLARE_PROPERTY_HEADER(propertyType, propertyName, propertyDefault,)
-
-#define QORM_DECLARE_PROPERTY_QString(propertyName, propertyDefault)\
-public:\
-QORM_DECLARE_FIELD(propertyName)\
-Q_PROPERTY(QString propertyName READ propertyName WRITE set_##propertyName NOTIFY changeProperty)\
-Q_INVOKABLE virtual QString propertyName(){\
-    return z____##propertyName.mid(0, propertySize);\
-}\
-Q_INVOKABLE virtual void set_##propertyName(const QString &value){\
-    z____##propertyName=value.mid(0, propertySize);\
-}\
-private:\
-    QString z____##propertyName=propertyDefault;
-
-#define QORM_DECLARE_PROPERTY_QByteArray(propertyName, propertyDefault)\
-public:\
-QORM_DECLARE_FIELD(propertyName)\
-Q_PROPERTY(QByteArray propertyName READ propertyName WRITE set_##propertyName NOTIFY changeProperty)\
-Q_INVOKABLE virtual QByteArray propertyName(){\
-    return z____##propertyName.mid(0, propertySize);\
-}\
-Q_INVOKABLE virtual void set_##propertyName(const QByteArray &value){\
-    z____##propertyName=value.mid(0, propertySize);\
-}\
-private:\
-    QByteArray z____##propertyName=propertyDefault;
-
-#define QORM_DECLARE_PROPERTY_QInt(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(int, propertyName, propertyDefault)
-
-#define QORM_DECLARE_PROPERTY_QBool(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(bool, propertyName, propertyDefault)
-
-#define QORM_DECLARE_PROPERTY_QLongLong(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(qlonglong, propertyName, propertyDefault)
-
-#define QORM_DECLARE_PROPERTY_QDateTime(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(QDateTime, propertyName, propertyDefault)
-
-#define QORM_DECLARE_PROPERTY_QUuid(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(QUuid, propertyName, propertyDefault)
-
-#define QORM_DECLARE_PROPERTY_QMd5(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(QByteArray, propertyName, propertyDefault)
-
-#define QORM_DECLARE_PROPERTY_QDate(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(QDate, propertyName, propertyDefault)
-
-#define QORM_DECLARE_PROPERTY_QTime(propertyName, propertyDefault)\
-    QORM_DECLARE_PROPERTY(QTime, propertyName, propertyDefault)
 
 #define qmo(object)\
     object##::staticMetaObject
@@ -310,7 +259,7 @@ private:\
     class ModelName##GDao : public QOrm::ModelDao<ModelName>{\
         Q_OBJECT\
     public:\
-        Q_INVOKABLE explicit ModelName##GDao(QObject *parent = nullptr) : QOrm::ModelDao<ModelName>(parent){\
+        Q_INVOKABLE explicit ModelName##GDao(QObject *parent = nullptr) : QOrm::ModelDao<ModelName>{parent}{\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
@@ -322,11 +271,11 @@ private:\
     class ModelName##CRUD : public QOrm::CRUD<ModelName>{\
         Q_OBJECT\
     public:\
-        Q_INVOKABLE explicit ModelName##CRUD(QObject *parent = nullptr) : QOrm::CRUD<ModelName>(parent){\
+        Q_INVOKABLE explicit ModelName##CRUD(QObject *parent = nullptr) : QOrm::CRUD<ModelName>{parent}{\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE explicit ModelName##CRUD(const QVariant&crudBody, QObject *parent = nullptr) : QOrm::CRUD<ModelName>(crudBody, parent){\
+        Q_INVOKABLE explicit ModelName##CRUD(const QVariant&crudBody, QObject *parent = nullptr) : QOrm::CRUD<ModelName>{crudBody, parent}{\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
@@ -338,7 +287,7 @@ private:\
     class ModelName##GDao : public QOrm::ModelDao<ModelName>{\
         Q_OBJECT\
     public:\
-        Q_INVOKABLE explicit ModelName##GDao(QObject *parent = nullptr) : QOrm::ModelDao<ModelName>(parent){\
+        Q_INVOKABLE explicit ModelName##GDao(QObject *parent = nullptr) : QOrm::ModelDao<ModelName>{parent}{\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
@@ -350,7 +299,7 @@ private:\
     class ModelName##Report : public QOrm::ModelReport<ModelName>{\
         Q_OBJECT\
     public:\
-        Q_INVOKABLE explicit ModelName##Report(QObject *parent = nullptr) : QOrm::ModelReport<ModelName>(parent){\
+        Q_INVOKABLE explicit ModelName##Report(QObject *parent = nullptr) : QOrm::ModelReport<ModelName>{parent}{\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
@@ -429,14 +378,14 @@ public:\
         return !this->connection().isOpen();\
     }\
     Q_INVOKABLE virtual void connectionClear(){\
-        ____connectionId=QByteArrayLiteral("");\
+        ____connectionId=qbl("");\
     }\
     Q_INVOKABLE bool connectionFinish(){\
         if(this->connection().isValid()){\
             this->connection().close();\
             QSqlDatabase::removeDatabase(____connectionId);\
         }\
-        this->____connectionId=QByteArrayLiteral("");\
+        this->____connectionId=qbl("");\
         return true;\
     }
 
@@ -537,9 +486,9 @@ if(vu.vIsEmpty(v))\
     valueB=aux;\
 }
 
-#define likeL(v)QStringLiteral("%")+v
-#define likeR(v)v+QStringLiteral("%")
-#define likeLR(v)QStringLiteral("%")+v+QStringLiteral("%")
+#define likeL(v)qsl("%")+v
+#define likeR(v)v+qsl("%")
+#define likeLR(v)qsl("%")+v+qsl("%")
 
 #define vlikeL(v)likeL(QVariant(v).toString())
 #define vlikeR(v)likeR(QVariant(v).toString())
