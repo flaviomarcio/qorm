@@ -111,7 +111,8 @@ public:
 
             }
 
-            vHash[vpId]=this->uuid;
+            vHash[vpUuid]=this->uuid;
+            vHash[vpName]=this->name;
             vHash[vpTitle]=this->text;
             vHash[vpType]=QVariant::fromValue<ModelDtoControls::FormType>(this->type);
             vHash[vpLayout]=QVariant::fromValue<ModelDtoControls::FormLayout>(this->layout);

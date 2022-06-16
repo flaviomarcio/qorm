@@ -242,10 +242,9 @@ ResultValue &CRUDBlock::crudify()
     switch (__return.count()) {
     case 0:
         return this->lr().clear();
-    case 1:
-        return this->lr(__return.first());
     default:
-        return this->lr(qvh{{qsl("pages"),__return}});
+        auto vPage=__return.first().toHash();
+        return this->lr(qvh{{qsl("type"), vPage.value(qsl("type"))}, {qsl("pages"),__return}});
     }
 }
 
