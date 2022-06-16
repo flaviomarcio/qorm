@@ -2,11 +2,11 @@
 
 namespace QOrm {
 
-SqlParserValue::SqlParserValue():SqlParserItem(QVariant(), QVariant(), KeywordObjectInfo::koiValue)
+SqlParserValue::SqlParserValue():SqlParserItem{{}, {}, KeywordObjectInfo::koiValue}
 {
 }
 
-SqlParserValue::SqlParserValue(const QVariant &v):SqlParserItem(v, QVariant(), KeywordObjectInfo::koiValue)
+SqlParserValue::SqlParserValue(const QVariant &v):SqlParserItem{v, {}, KeywordObjectInfo::koiValue}
 {
 }
 

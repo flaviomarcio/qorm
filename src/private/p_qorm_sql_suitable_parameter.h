@@ -28,6 +28,7 @@ public:
 
 };
 
+class SearchParametersPvt;
 class Q_ORM_EXPORT SearchParameters:public QVariant
 {
 public:
@@ -93,7 +94,7 @@ public:
     virtual QVariant buildVariant() const;
 
 private:
-    void*p=nullptr;
+    SearchParametersPvt *p=nullptr;
 };
 
 Q_DECLARE_METATYPE(SearchParam)

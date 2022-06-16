@@ -6,16 +6,16 @@ namespace QOrm {
 #define dPvt()\
     auto &p = *reinterpret_cast<CRUDBlockPvt*>(this->p)
 
-class CRUDBlockPvt{
+class CRUDBlockPvt:public QObject{
 public:
     ModelDtoOptions options;
     QStm::ResultInfo resultInfo;
     CRUDBlock *parent=nullptr;
     QVariant crudBody;
-    QMap<QByteArray, PrivateQOrm::CRUDBase*> crudMap;
-    QList<PrivateQOrm::CRUDBase*> crudList;
+    QMap<QByteArray, PrivateQOrm::CRUDBase *> crudMap;
+    QList<PrivateQOrm::CRUDBase *> crudList;
 
-    explicit CRUDBlockPvt(CRUDBlock*parent):options(parent)
+    explicit CRUDBlockPvt(CRUDBlock*parent):QObject{parent},options{parent}
     {
         this->parent=parent;
     }
@@ -25,34 +25,33 @@ public:
     }
 };
 
-CRUDBlock::CRUDBlock(QObject *parent):QOrm::ObjectDb(parent)
+CRUDBlock::CRUDBlock(QObject *parent):QOrm::ObjectDb{parent}
 {
     this->p = new CRUDBlockPvt{this};
 }
 
-CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb(parent)
+CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb{parent}
 {
     this->p = new CRUDBlockPvt{this};
-    dPvt();
-    p.crudBody=crudBody;
+
+    p->crudBody=crudBody;
 }
 
 CRUDBlock::~CRUDBlock()
 {
-    dPvt();
-    delete&p;
+
 }
 
 ModelDtoOptions &CRUDBlock::options()
 {
-    dPvt();
-    return p.options;
+
+    return p->options;
 }
 
 QStm::ResultInfo &CRUDBlock::resultInfo()
 {
-    dPvt();
-    return p.resultInfo;
+
+    return p->resultInfo;
 }
 
 CRUDBlock &CRUDBlock::operator+=(PrivateQOrm::CRUDBase *crud)
@@ -72,50 +71,50 @@ CRUDBlock &CRUDBlock::operator<<(PrivateQOrm::CRUDBase *crud)
 
 QVariant CRUDBlock::crudBody() const
 {
-    dPvt();
-    return p.crudBody;
+
+    return p->crudBody;
 }
 
 CRUDBlock &CRUDBlock::crudBody(const QVariant &v)
 {
-    dPvt();
-    p.crudBody=v;
+
+    p->crudBody=v;
     return*this;
 }
 
-CRUDBlock&CRUDBlock::makeBlock(CRUDBlock&crudBlock, const QVariant &crudBody)
+CRUDBlock &CRUDBlock::makeBlock(CRUDBlock &crudBlock, const QVariant &crudBody)
 {
     return crudBlock.crudBody(crudBody);
 }
 
 CRUDBlock &CRUDBlock::clear()
 {
-    dPvt();
-    p.crudMap.clear();
-    for(auto &v:p.crudMap)
+
+    p->crudMap.clear();
+    for(auto &v:p->crudMap)
         this->remove(v);
-    p.crudMap.clear();
+    p->crudMap.clear();
     return*this;
 }
 
 CRUDBlock &CRUDBlock::insert(PrivateQOrm::CRUDBase *crud)
 {
-    dPvt();
+
     this->remove(crud);
     if(crud!=nullptr){
-        p.crudMap.insert(crud->crudName(), crud);
-        p.crudList<<crud;
+        p->crudMap.insert(crud->crudName(), crud);
+        p->crudList<<crud;
     }
     return*this;
 }
 
 CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
 {
-    dPvt();
-    if(p.crudMap.contains(crud->crudName())){
-        auto _crud=p.crudMap.take(crud->crudName());
+
+    if(p->crudMap.contains(crud->crudName())){
+        auto _crud=p->crudMap.take(crud->crudName());
         if(_crud!=nullptr && _crud->parent()==this){
-            p.crudList.removeOne(_crud);
+            p->crudList.removeOne(_crud);
             delete _crud;
         }
     }
@@ -124,20 +123,20 @@ CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
 
 CRUDBlock &CRUDBlock::remove(const QByteArray &crudName)
 {
-    dPvt();
-    return this->remove(p.crudMap.value(crudName));
+
+    return this->remove(p->crudMap.value(crudName));
 }
 
 ResultValue &CRUDBlock::crudify()
 {
-    dPvt();
+
     Q_DECLARE_VU;
-    if(p.crudMap.isEmpty())
+    if(p->crudMap.isEmpty())
         return this->lr().clear().setBadRequest(tr("crud block is empty"));
 
     QVariantList __return;
     QVariantHash crudPages;
-    CRUDBody crudBody(p.crudBody);
+    CRUDBody crudBody(p->crudBody);
 
     {
         auto vCrudSource=crudBody.source().toHash();
@@ -151,10 +150,10 @@ ResultValue &CRUDBlock::crudify()
         }
     }
 
-    for(auto &crud:p.crudList){
+    for(auto &crud:p->crudList){
         const auto crudName=crud->crudName().toLower();
-        crud->setOptions(p.options);
-        crud->setResultInfo(p.resultInfo);
+        crud->setOptions(p->options);
+        crud->setResultInfo(p->resultInfo);
         QVariantList crudList;
         QVariant crudSource;
         CRUDBody crudItem(crudBody);
@@ -186,7 +185,7 @@ ResultValue &CRUDBlock::crudify()
         }
 
 
-        auto makeItem=[&__return](PrivateQOrm::CRUDBase*crud, const QVariant&crudSource){
+        auto makeItem=[&__return](PrivateQOrm::CRUDBase *crud, const QVariant&crudSource){
             CRUDBody crudRecord(crudSource);
 
             auto lastCrud=__return.isEmpty()?qvh_null:__return.last().toHash();

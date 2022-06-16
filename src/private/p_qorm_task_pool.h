@@ -13,7 +13,7 @@
 #include "./p_qorm_task_slot.h"
 
 namespace QOrm {
-
+class TaskPoolPvt;
 //!
 //! \brief The TaskPool class
 //!
@@ -153,7 +153,7 @@ public slots:
     //!
     void taskResponse(const QVariantHash&task);
 private:
-    void*p=nullptr;
+    TaskPoolPvt *p=nullptr;
 };
 
 }

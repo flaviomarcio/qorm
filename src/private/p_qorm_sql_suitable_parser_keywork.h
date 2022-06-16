@@ -4,7 +4,7 @@
 #include "../qorm_sql_suitable_types.h"
 
 namespace QOrm {
-
+class SqlSuitableKeyWordPvt;
 //!
 //! \brief KeywordCache
 //!
@@ -14,7 +14,9 @@ class ModelInfo;
 //!
 //! \brief The SqlSuitableKeyWord class
 //!
-class Q_ORM_EXPORT SqlSuitableKeyWord{
+class Q_ORM_EXPORT SqlSuitableKeyWord:public QObject
+{
+    Q_OBJECT
 public:
     //!
     //! \brief SqlSuitableKeyWord
@@ -142,7 +144,7 @@ public:
     virtual void init();
 
 private:
-    void*p=nullptr;
+    SqlSuitableKeyWordPvt *p=nullptr;
 };
 
 }

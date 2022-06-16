@@ -39,9 +39,6 @@ static auto &staticSqlSuitableKeyWordLocker=*PrivateQOrm::staticSqlSuitableKeyWo
 static auto &staticSqlSuitableKeyWord=*PrivateQOrm::staticSqlSuitableKeyWord;
 static auto &staticSqlSuitableKeyWordList=*PrivateQOrm::staticSqlSuitableKeyWordList;
 
-#define dPvt()\
-    auto &p = *reinterpret_cast<SqlSuitableKeyWordPvt*>(this->p)
-
 static void deinitKeyWork()
 {
     qDeleteAll(staticSqlSuitableKeyWordList);
@@ -64,24 +61,24 @@ static bool initKeyWork(){
 static const auto __initKeyWork=initKeyWork();
 
 
-class SqlSuitableKeyWordPvt{
+class SqlSuitableKeyWordPvt:public QObject{
 public:
     QList<QSqlDriver::DbmsType> drivers;
     KeywordCache staticKeywordCache;
     SqlSuitableKeyWord*parent=nullptr;
 
-    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent)
+    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent):QObject{parent}
     {
         this->parent=parent;
     }
 
-    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QSqlDriver::DbmsType driver)
+    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QSqlDriver::DbmsType driver):QObject{parent}
     {
         this->parent=parent;
         if(!this->drivers.contains(driver))
             this->drivers<<driver;
     }
-    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QList<QSqlDriver::DbmsType> drivers)
+    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QList<QSqlDriver::DbmsType> drivers):QObject{parent}
     {
         this->parent=parent;
         this->drivers=drivers;
@@ -230,26 +227,26 @@ public:
             staticKeywordCache[kgcWhere                 ]=qbl("where "                                ).trimmed().toLower();
             staticKeywordCache[kgcSetApplicationName    ]=qbl(" "                                     ).trimmed().toLower();
             staticKeywordCache[kgcSetSearchPath         ]=qbl(" "                                     ).trimmed().toLower();
-            staticKeywordCache[kgcNextVal               ]=QByteArray();
-            staticKeywordCache[kgcNextValSelect         ]=QByteArray();
+            staticKeywordCache[kgcNextVal               ]={};
+            staticKeywordCache[kgcNextValSelect         ]={};
         }
         this->parent->init();
     }
 };
 
-SqlSuitableKeyWord::SqlSuitableKeyWord(QObject *parent)//:QObject(parent)
+SqlSuitableKeyWord::SqlSuitableKeyWord(QObject *parent):QObject{parent}
 {
     Q_UNUSED(parent)
     this->p = new SqlSuitableKeyWordPvt{this};
 }
 
-SqlSuitableKeyWord::SqlSuitableKeyWord(QSqlDriver::DbmsType driver, QObject *parent)//:QObject(parent)
+SqlSuitableKeyWord::SqlSuitableKeyWord(QSqlDriver::DbmsType driver, QObject *parent):QObject{parent}
 {
     Q_UNUSED(parent)
     this->p = new SqlSuitableKeyWordPvt(this, driver);
 }
 
-SqlSuitableKeyWord::SqlSuitableKeyWord(QList<QSqlDriver::DbmsType> drivers, QObject *parent)//:QObject(parent)
+SqlSuitableKeyWord::SqlSuitableKeyWord(QList<QSqlDriver::DbmsType> drivers, QObject *parent):QObject{parent}
 {
     Q_UNUSED(parent)
     this->p = new SqlSuitableKeyWordPvt(this, drivers);
@@ -257,26 +254,24 @@ SqlSuitableKeyWord::SqlSuitableKeyWord(QList<QSqlDriver::DbmsType> drivers, QObj
 
 SqlSuitableKeyWord::~SqlSuitableKeyWord()
 {
-    dPvt();delete&p;
 }
 
 SqlSuitableKeyWord &SqlSuitableKeyWord::operator =(const SqlSuitableKeyWord &o)
 {
-    dPvt();
+
     auto keyWord=&o;
     if(keyWord==nullptr)
         return *this;
 
-    auto &pp=*static_cast<SqlSuitableKeyWordPvt*>(o.p);
-    p.drivers=pp.drivers;
-    p.staticKeywordCache=p.staticKeywordCache;
+    p->drivers=o.p->drivers;
+    p->staticKeywordCache=p->staticKeywordCache;
     return*this;
 }
 
 bool SqlSuitableKeyWord::isValid()
 {
-    dPvt();
-    return p.isValid();
+
+    return p->isValid();
 }
 
 QString SqlSuitableKeyWord::parserCommand(int command)
@@ -448,8 +443,8 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
 KeywordCache &SqlSuitableKeyWord::commands()
 {
-    dPvt();
-    return p.staticKeywordCache;
+
+    return p->staticKeywordCache;
 }
 
 bool SqlSuitableKeyWord::parse(const QVariant &v, QByteArray &script)
@@ -479,31 +474,29 @@ SqlSuitableKeyWord &SqlSuitableKeyWord::parser(const QSqlDriver::DbmsType &drive
 
 SqlSuitableKeyWord*SqlSuitableKeyWord::parserMaker(SqlSuitableKeyWord*parser)
 {
-    if(parser!=nullptr){
-        auto &pp = *reinterpret_cast<SqlSuitableKeyWordPvt*>(parser->p);
-        pp.init();
-    }
+    if(parser!=nullptr)
+        parser->p->init();
     return parser;
 }
 
 QList<QSqlDriver::DbmsType>&SqlSuitableKeyWord::drivers()const
 {
-    dPvt();
-    return p.drivers;
+
+    return p->drivers;
 }
 
 void SqlSuitableKeyWord::setDriver(QSqlDriver::DbmsType value)
 {
-    dPvt();
-    if(p.drivers.contains(value))
-        p.drivers<<value;
+
+    if(p->drivers.contains(value))
+        p->drivers<<value;
 }
 
 void SqlSuitableKeyWord::setDrivers(QList<QSqlDriver::DbmsType> value)
 {
-    dPvt();
-    p.drivers=value;
-    p.init();
+
+    p->drivers=value;
+    p->init();
 }
 
 QString SqlSuitableKeyWord::formatValue(const QVariant &v)
@@ -693,7 +686,7 @@ QStringList SqlSuitableKeyWord::formatValues(const QStringList &field, const QVa
             auto map=i.toHash();
             QStringList row;
             for(auto &f:fieldFormat){
-                auto v=map.value(f);
+                auto v=map->value(f);
                 auto s=this->formatValue(v);
                 row<<s;
             }

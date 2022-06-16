@@ -102,14 +102,14 @@ public:
 };
 
 
-CRUDBase::CRUDBase(QObject *parent) : QOrm::ObjectDb(parent)
+CRUDBase::CRUDBase(QObject *parent) : QOrm::ObjectDb{parent}
 {
     this->p = new CRUDBasePvt{this};
     dPvt();
     p.set_crud(CRUDBody());
 }
 
-CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb(parent)
+CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent}
 {
     this->p = new CRUDBasePvt{this};
     dPvt();

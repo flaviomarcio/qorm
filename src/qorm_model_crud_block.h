@@ -7,7 +7,7 @@ QOrm::CRUDBlock crud_block(this);\
 QOrm::CRUDBlock::makeBlock(crud_block, vBody)
 
 namespace QOrm {
-
+class CRUDBlockPvt;
 //!
 //! \brief The CRUDBlock class
 //!
@@ -50,21 +50,21 @@ public:
     //! \param crud
     //! \return
     //!
-    CRUDBlock&operator+=(PrivateQOrm::CRUDBase*crud);
+    CRUDBlock &operator+=(PrivateQOrm::CRUDBase *crud);
 
     //!
     //! \brief operator -=
     //! \param crud
     //! \return
     //!
-    CRUDBlock&operator-=(PrivateQOrm::CRUDBase*crud);
+    CRUDBlock &operator-=(PrivateQOrm::CRUDBase *crud);
 
     //!
     //! \brief operator <<
     //! \param crud
     //! \return
     //!
-    CRUDBlock&operator<<(PrivateQOrm::CRUDBase*crud);
+    CRUDBlock &operator<<(PrivateQOrm::CRUDBase *crud);
 
     //!
     //! \brief crudBody
@@ -77,7 +77,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual CRUDBlock&crudBody(const QVariant &v);
+    virtual CRUDBlock &crudBody(const QVariant &v);
 
     //!
     //! \brief makeBlock
@@ -91,28 +91,28 @@ public:
     //! \brief clear
     //! \return
     //!
-    virtual CRUDBlock&clear();
+    virtual CRUDBlock &clear();
 
     //!
     //! \brief insert
     //! \param crud
     //! \return
     //!
-    virtual CRUDBlock&insert(PrivateQOrm::CRUDBase*crud);
+    virtual CRUDBlock &insert(PrivateQOrm::CRUDBase *crud);
 
     //!
     //! \brief remove
     //! \param crud
     //! \return
     //!
-    virtual CRUDBlock&remove(PrivateQOrm::CRUDBase*crud);
+    virtual CRUDBlock &remove(PrivateQOrm::CRUDBase *crud);
 
     //!
     //! \brief remove
     //! \param crudName
     //! \return
     //!
-    virtual CRUDBlock&remove(const QByteArray&crudName);
+    virtual CRUDBlock &remove(const QByteArray&crudName);
 
     //!
     //! \brief crudify
@@ -121,7 +121,7 @@ public:
     virtual ResultValue &crudify();
 
 private:
-    void*p=nullptr;
+    CRUDBlockPvt*p=nullptr;
 };
 
 }

@@ -30,7 +30,7 @@ public:
     }
 };
 
-TransactionScope::TransactionScope(QObject *parent) : ObjectDb(parent)
+TransactionScope::TransactionScope(QObject *parent) : ObjectDb{parent}
 {
     this->p = new TransactionScopePvt{this};
 }

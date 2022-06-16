@@ -6,6 +6,7 @@
 
 namespace QOrm {
 class Query;
+class SqlSuitableBuilderPvt;
 
 //!
 //! \brief The SqlSuitableBuilder class
@@ -96,7 +97,7 @@ public:
     virtual void clear();
 
 private:
-    void *p = nullptr;
+    SqlSuitableBuilderPvt *p = nullptr;
 };
 
 } // namespace QOrm

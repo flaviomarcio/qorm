@@ -21,8 +21,9 @@ namespace QOrm {
 //!
 //! \brief The ConnectionManagerPvt class
 //!
-class ConnectionManagerPvt
+class ConnectionManagerPvt:public QObject
 {
+    Q_OBJECT
 public:
     ConnectionNotify notify;
     QVariant settingsFileName;

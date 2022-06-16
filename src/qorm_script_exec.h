@@ -6,7 +6,7 @@
 #include <QFileInfoList>
 
 namespace QOrm {
-
+class ScriptExecPvt;
 //!
 //! \brief The ScriptExec class
 //!class for execute script on database
@@ -70,7 +70,7 @@ public:
     ResultValue &exec();
 
 private:
-    void *p = nullptr;
+    ScriptExecPvt *p = nullptr;
 };
 
 } // namespace QOrm

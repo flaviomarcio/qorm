@@ -3,12 +3,13 @@
 #include "./qorm_sql_suitable_types.h"
 
 namespace QOrm {
-
+class SqlSuitableValuePvt;
 //!
 //! \brief The SqlSuitableValue class
 //!
-class SqlSuitableValue
+class SqlSuitableValue:public QObject
 {
+    Q_OBJECT
 public:
     //!
     //! \brief The Format struct
@@ -51,12 +52,12 @@ public:
     //! \brief SqlSuitableValue
     //! \param db
     //!
-    explicit SqlSuitableValue(QSqlDatabase db);
+    explicit SqlSuitableValue(QSqlDatabase db, QObject *parent);
 
     //!
     //! \brief SqlSuitableValue
     //!
-    explicit SqlSuitableValue();
+    Q_INVOKABLE explicit SqlSuitableValue(QObject *parent=nullptr);
 
     //!
     //! \brief ~SqlSuitableValue
@@ -245,7 +246,7 @@ public:
     static Format &format();
 
 private:
-    void *p = nullptr;
+    SqlSuitableValuePvt *p = nullptr;
 };
 
 } // namespace QOrm

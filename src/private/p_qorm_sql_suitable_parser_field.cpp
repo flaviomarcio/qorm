@@ -2,15 +2,21 @@
 
 namespace QOrm {
 
-SqlParserField::SqlParserField():SqlParserItem()
+SqlParserField::SqlParserField()
+    :
+      SqlParserItem{}
 {
 }
 
-SqlParserField::SqlParserField(const QVariant &v):SqlParserItem(v)
+SqlParserField::SqlParserField(const QVariant &v)
+    :
+      SqlParserItem{v}
 {
 }
 
-SqlParserField::SqlParserField(const KeywordGrouping &grouping, const QVariant &name, const QVariant &nameAs, const QVariant &value, const QVariant &defaultValue):SqlParserItem(value)
+SqlParserField::SqlParserField(const KeywordGrouping &grouping, const QVariant &name, const QVariant &nameAs, const QVariant &value, const QVariant &defaultValue)
+    :
+      SqlParserItem{value}
 {
     auto map=this->toHash();
     map.insert(qsl("grouping"),grouping);

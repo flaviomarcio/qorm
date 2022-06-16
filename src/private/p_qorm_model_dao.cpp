@@ -18,7 +18,7 @@ public:
     }
 };
 
-ModelDao::ModelDao(QObject *parent) : QOrm::ObjectDb(parent)
+ModelDao::ModelDao(QObject *parent) : QOrm::ObjectDb{parent}
 {
     this->p = new ModelDaoPvt{this};
 }

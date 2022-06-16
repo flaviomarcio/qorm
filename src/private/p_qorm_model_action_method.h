@@ -4,7 +4,7 @@
 #include "./p_qorm_model_crud_body.h"
 
 namespace QOrm {
-
+class ModelActionPvt;
 //!
 //! \brief The ModelAction class
 //!
@@ -53,7 +53,7 @@ public:
     virtual ModelAction&onActionAfter(ModelActionMethodPointer action);
 
 private:
-    void*p=nullptr;
+    ModelActionPvt *p=nullptr;
 signals:
     void strategyChanged();
 };

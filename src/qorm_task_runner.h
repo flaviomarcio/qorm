@@ -3,7 +3,7 @@
 #include "./qorm_object.h"
 
 namespace QOrm {
-
+class TaskRunnerPvt;
 typedef std::function<QVariant(QSqlDatabase &db, const QVariant &task)> TaskRunnerMethod;
 
 //!
@@ -225,7 +225,7 @@ signals:
     void taskProgress(qlonglong maximum, qlonglong minimum, qlonglong value, qlonglong progress);
 
 private:
-    void *p = nullptr;
+    TaskRunnerPvt *p = nullptr;
 };
 
 } // namespace QOrm

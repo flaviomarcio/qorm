@@ -7,7 +7,7 @@
 #include "./qorm_wrapper.h"
 
 namespace QOrm {
-
+class ControllerPvt;
 //!
 //! \brief The Controller class
 //!
@@ -66,7 +66,7 @@ public:
     bool dbConnect(const QString &connectionId);
 
 private:
-    void *p = nullptr;
+    ControllerPvt *p = nullptr;
 };
 
 } // namespace QOrm

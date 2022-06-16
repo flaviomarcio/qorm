@@ -19,16 +19,11 @@ public:
     Q_PROPERTY(QByteArray userName READ userName WRITE setUserName NOTIFY userNameChanged)
     Q_PROPERTY(QByteArray password READ password WRITE setPassword NOTIFY passwordChanged)
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
-    Q_PROPERTY(
-        QByteArray dataBaseName READ dataBaseName WRITE setDataBaseName NOTIFY dataBaseNameChanged)
-    Q_PROPERTY(
-        QStringList schemaNames READ schemaNames WRITE setSchemaNames NOTIFY schemaNamesChanged)
-    Q_PROPERTY(QByteArray connectOptions READ connectOptions WRITE setConnectOptions NOTIFY
-                   connectOptionsChanged)
-    Q_PROPERTY(QStringList commandBeforeOpen READ commandBeforeOpen WRITE setCommandBeforeOpen
-                   NOTIFY commandBeforeOpenChanged)
-    Q_PROPERTY(QStringList commandAfterClose READ commandAfterClose WRITE setCommandAfterClose
-                   NOTIFY commandAfterCloseChanged)
+    Q_PROPERTY(QByteArray dataBaseName READ dataBaseName WRITE setDataBaseName NOTIFY dataBaseNameChanged)
+    Q_PROPERTY(QStringList schemaNames READ schemaNames WRITE setSchemaNames NOTIFY schemaNamesChanged)
+    Q_PROPERTY(QByteArray connectOptions READ connectOptions WRITE setConnectOptions NOTIFY connectOptionsChanged)
+    Q_PROPERTY(QStringList commandBeforeOpen READ commandBeforeOpen WRITE setCommandBeforeOpen NOTIFY commandBeforeOpenChanged)
+    Q_PROPERTY(QStringList commandAfterClose READ commandAfterClose WRITE setCommandAfterClose NOTIFY commandAfterCloseChanged)
 public:
     //!
     //! \brief ConnectionSetting

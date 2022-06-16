@@ -28,16 +28,14 @@ static const QHash<QString, QString> &ChartoUtf8()
 
 static const auto &chartoUtf8 = ChartoUtf8();
 
-#define dPvt() auto &p = *reinterpret_cast<SqlSuitableValuePvt *>(this->p)
-
-class SqlSuitableValuePvt
+class SqlSuitableValuePvt:public QObject
 {
 public:
     QSqlDriver::DbmsType dbType = QSqlDriver::UnknownDbms;
     QString connectionName;
 
 public:
-    explicit SqlSuitableValuePvt() {}
+    explicit SqlSuitableValuePvt(QObject *parent=nullptr):QObject{parent} {}
 
     virtual ~SqlSuitableValuePvt() {}
 
@@ -74,13 +72,13 @@ int SqlSuitableValue::Format::currencyPrecision() const
     return 6;
 }
 
-SqlSuitableValue::SqlSuitableValue(QSqlDatabase db)
+SqlSuitableValue::SqlSuitableValue(QSqlDatabase db, QObject *parent):QObject{parent}
 {
     this->p = new SqlSuitableValuePvt();
     this->setConnection(db);
 }
 
-SqlSuitableValue::SqlSuitableValue()
+SqlSuitableValue::SqlSuitableValue(QObject *parent):QObject{parent}
 {
     this->p = new SqlSuitableValuePvt();
     this->setConnection(QSqlDatabase());
@@ -88,8 +86,7 @@ SqlSuitableValue::SqlSuitableValue()
 
 SqlSuitableValue::~SqlSuitableValue()
 {
-    dPvt();
-    delete &p;
+
 }
 
 QString SqlSuitableValue::toUuid(const QVariant &v)
@@ -255,14 +252,14 @@ QString SqlSuitableValue::toLikeR(const QVariant &v)
 
 QSqlDatabase SqlSuitableValue::connection()
 {
-    dPvt();
-    return QSqlDatabase::database(p.connectionName);
+
+    return QSqlDatabase::database(p->connectionName);
 }
 
 SqlSuitableValue &SqlSuitableValue::setConnection(const QSqlDatabase &db)
 {
-    dPvt();
-    p.connectionName = db.connectionName();
+
+    p->connectionName = db.connectionName();
     return *this;
 }
 

@@ -6,10 +6,7 @@ static QVariant __methodFailed(QSqlDatabase&db, const QVariant&task){Q_UNUSED(ta
 
 namespace QOrm {
 
-#define dPvt()\
-auto &p = *reinterpret_cast<TaskPoolPvt*>(this->p)
-
-class TaskPoolPvt{
+class TaskPoolPvt:public QObject{
 public:
     QMutex running;
     TaskRunner *runner=nullptr;
@@ -24,7 +21,7 @@ public:
     QVariantList resultList;
     bool resultBool=false;
     QVariantHash connectionSetting;
-    explicit TaskPoolPvt(QObject*)
+    explicit TaskPoolPvt(QObject*parent):QObject{parent}
     {
     }
     virtual ~TaskPoolPvt()
@@ -36,8 +33,8 @@ TaskPool::TaskPool(TaskRunner *parent):QThread{nullptr}
 {
     this->p=new TaskPoolPvt{this};
     this->moveToThread(this);
-    dPvt();
-    p.runner=parent;
+
+    p->runner=parent;
     QObject::connect(this, &TaskPool::taskProgress, parent, &TaskRunner::taskProgress);
     this->clear();
 }
@@ -45,20 +42,18 @@ TaskPool::TaskPool(TaskRunner *parent):QThread{nullptr}
 TaskPool::~TaskPool()
 {
     this->threadDinit();
-    dPvt();
-    delete&p;
 }
 
 bool TaskPool::start(const QSqlDatabase &connection)
 {
-    dPvt();
-    if(!p.running.tryLock(1))
+
+    if(!p->running.tryLock(1))
         return false;
 
-    p.resultBool=true;
-    p.taskQueueResponse.clear();
-    p.taskQueueStarted.clear();
-    p.connectionSetting=QOrm::ConnectionSetting(connection, nullptr).toHash();
+    p->resultBool=true;
+    p->taskQueueResponse.clear();
+    p->taskQueueStarted.clear();
+    p->connectionSetting=QOrm::ConnectionSetting(connection, nullptr).toHash();
 
     if(this->isRunning()){
         this->threadInit();
@@ -73,46 +68,46 @@ bool TaskPool::start(const QSqlDatabase &connection)
 
 void TaskPool::run()
 {
-    dPvt();
+
     QTimer::singleShot(10, this, [this](){
         this->threadInit();
     });
     this->exec();
-    if(p.running.tryLock(100))
-        p.running.unlock();
+    if(p->running.tryLock(100))
+        p->running.unlock();
     else
-        p.running.unlock();
+        p->running.unlock();
 }
 
 void TaskPool::clear()
 {
-    dPvt();
-    QMutexLOCKER locker(&p.running);
-    p.methodExecute=__methodExecute;
-    p.methodSuccess=__methodSuccess;
-    p.methodFailed=__methodFailed;
-    p.taskQueueResponse.clear();
-    p.taskQueueValue.clear();
-    p.taskQueueStarted.clear();
-    p.resultList.clear();
-    p.resultBool=false;
+
+    QMutexLOCKER locker(&p->running);
+    p->methodExecute=__methodExecute;
+    p->methodSuccess=__methodSuccess;
+    p->methodFailed=__methodFailed;
+    p->taskQueueResponse.clear();
+    p->taskQueueValue.clear();
+    p->taskQueueStarted.clear();
+    p->resultList.clear();
+    p->resultBool=false;
 }
 
 void TaskPool::threadInit()
 {
-    dPvt();
-    p.resultBool=true;
-    p.taskQueueStarted=p.taskQueueValue;
 
-    auto slotCount=p.slotCount>0?p.slotCount:QThread::idealThreadCount();
-    auto idealSlotCount=p.taskQueueStarted.size();
+    p->resultBool=true;
+    p->taskQueueStarted=p->taskQueueValue;
+
+    auto slotCount=p->slotCount>0?p->slotCount:QThread::idealThreadCount();
+    auto idealSlotCount=p->taskQueueStarted.size();
     idealSlotCount=(idealSlotCount>slotCount)?slotCount:idealSlotCount;
 
-    if(p.taskQueueStarted.isEmpty()){
+    if(p->taskQueueStarted.isEmpty()){
 #if Q_ORM_LOG_VERBOSE
         sWarning()<<"no tasks";
 #endif
-        p.running.unlock();
+        p->running.unlock();
         return;
     }
 
@@ -120,15 +115,15 @@ void TaskPool::threadInit()
 #if Q_ORM_LOG
         sWarning()<<"slotCount is zero";
 #endif
-        p.running.unlock();
+        p->running.unlock();
         return;
     }
 
-    auto &lst=p.taskSlotList;
+    auto &lst=p->taskSlotList;
     for (int slot = 0; slot < idealSlotCount; ++slot) {
         auto taskSlot=lst.value(slot);
         if(taskSlot==nullptr){
-            taskSlot=new TaskSlot(this, p.connectionSetting, p.methodExecute, p.methodSuccess, p.methodFailed);
+            taskSlot=new TaskSlot(this, p->connectionSetting, p->methodExecute, p->methodSuccess, p->methodFailed);
             lst.insert(slot, taskSlot);
             auto poolName=qsl("Pool%1-%2").arg(slot).arg(QString::number(qlonglong(taskSlot->currentThreadId())));
             taskSlot->setObjectName(poolName);
@@ -139,9 +134,9 @@ void TaskPool::threadInit()
 
 void TaskPool::threadDinit()
 {
-    dPvt();
-    auto aux=p.taskSlotList;
-    p.taskSlotList.clear();
+
+    auto aux=p->taskSlotList;
+    p->taskSlotList.clear();
     for (auto &slot:aux){
         slot->quit();
         slot->wait();
@@ -154,24 +149,24 @@ void TaskPool::threadDinit()
 
 void TaskPool::taskRequest(TaskSlot *slot)
 {
-    dPvt();
-    if(!p.taskQueueStarted.isEmpty()){
-        auto task=p.taskQueueStarted.takeFirst();
+
+    if(!p->taskQueueStarted.isEmpty()){
+        auto task=p->taskQueueStarted.takeFirst();
         emit slot->taskSend(task);
         return;
     }
 
-    p.running.unlock();
+    p->running.unlock();
 }
 
 void TaskPool::taskResponse(const QVariantHash &task)
 {
-    dPvt();
+
     auto uuid=task[qsl("uuid")].toUuid();
-    p.taskQueueResponse.insert(uuid, task);
-    double maximum=p.taskQueueValue.size();
+    p->taskQueueResponse.insert(uuid, task);
+    double maximum=p->taskQueueValue.size();
     double minimum=0;
-    double value=p.taskQueueValue.size()-p.taskQueueStarted.size();
+    double value=p->taskQueueValue.size()-p->taskQueueStarted.size();
     double progress=(maximum<=0)?0:((value/maximum)*100);
     progress=(progress<0)?0:progress;
     emit taskProgress(maximum, minimum, value, progress);
@@ -179,122 +174,122 @@ void TaskPool::taskResponse(const QVariantHash &task)
 
 TaskRunner *TaskPool::runner()
 {
-    dPvt();
-    return p.runner;
+
+    return p->runner;
 }
 
 QMutex &TaskPool::running()
 {
-    dPvt();
-    return p.running;
+
+    return p->running;
 }
 
 void TaskPool::setTaskQueueValue(const QVariantList &newTaskQueueValue)
 {
-    dPvt();
-    p.taskQueueValue = newTaskQueueValue;
+
+    p->taskQueueValue = newTaskQueueValue;
 }
 
 bool TaskPool::resultBool() const
 {
-    dPvt();
-    return p.resultBool;
+
+    return p->resultBool;
 }
 
 void TaskPool::setResultBool(bool newResultBool)
 {
-    dPvt();
-    p.resultBool = newResultBool;
+
+    p->resultBool = newResultBool;
 }
 
 const QVariantList &TaskPool::resultList() const
 {
-    dPvt();
-    return p.resultList;
+
+    return p->resultList;
 }
 
 void TaskPool::setResultList(const QVariantList &newResultList)
 {
-    dPvt();
-    p.resultList = newResultList;
+
+    p->resultList = newResultList;
 }
 
 const QVariantList &TaskPool::taskQueueStarted() const
 {
-    dPvt();
-    return p.taskQueueStarted;
+
+    return p->taskQueueStarted;
 }
 
 void TaskPool::setTaskQueueStarted(const QVariantList &newTaskQueueStarted)
 {
-    dPvt();
-    p.taskQueueStarted = newTaskQueueStarted;
+
+    p->taskQueueStarted = newTaskQueueStarted;
 }
 
 QVariantList &TaskPool::taskQueueValue()
 {
-    dPvt();
-    return p.taskQueueValue;
+
+    return p->taskQueueValue;
 }
 
 const QHash<int, TaskSlot *> &TaskPool::taskSlotList() const
 {
-    dPvt();
-    return p.taskSlotList;
+
+    return p->taskSlotList;
 }
 
 void TaskPool::setTaskSlotList(const QHash<int, TaskSlot *> &newTaskSlotList)
 {
-    dPvt();
-    p.taskSlotList = newTaskSlotList;
+
+    p->taskSlotList = newTaskSlotList;
 }
 
 const TaskRunnerMethod &TaskPool::methodFailed() const
 {
-    dPvt();
-    return p.methodFailed;
+
+    return p->methodFailed;
 }
 
 void TaskPool::setMethodFailed(const TaskRunnerMethod &newMethodFailed)
 {
-    dPvt();
-    p.methodFailed = newMethodFailed;
+
+    p->methodFailed = newMethodFailed;
 }
 
 const TaskRunnerMethod &TaskPool::methodSuccess() const
 {
-    dPvt();
-    return p.methodSuccess;
+
+    return p->methodSuccess;
 }
 
 void TaskPool::setMethodSuccess(const TaskRunnerMethod &newMethodSuccess)
 {
-    dPvt();
-    p.methodSuccess = newMethodSuccess;
+
+    p->methodSuccess = newMethodSuccess;
 }
 
 const TaskRunnerMethod &TaskPool::methodExecute() const
 {
-    dPvt();
-    return p.methodExecute;
+
+    return p->methodExecute;
 }
 
 void TaskPool::setMethodExecute(const TaskRunnerMethod &newMethodExecute)
 {
-    dPvt();
-    p.methodExecute = newMethodExecute;
+
+    p->methodExecute = newMethodExecute;
 }
 
 int TaskPool::slotCount() const
 {
-    dPvt();
-    return p.slotCount>0?p.slotCount:QThread::idealThreadCount();
+
+    return p->slotCount>0?p->slotCount:QThread::idealThreadCount();
 }
 
 void TaskPool::setSlotCount(int newSlotCount)
 {
-    dPvt();
-    p.slotCount = newSlotCount;
+
+    p->slotCount = newSlotCount;
 }
 
 }

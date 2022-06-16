@@ -13,7 +13,7 @@
 #include <QtSql/QSqlDatabase>
 
 namespace QOrm {
-
+class TaskSlotPvt;
 typedef std::function<QVariant(QSqlDatabase &db, const QVariant &task)> TaskRunnerMethod;
 class TaskPool;
 class TaskRunner;
@@ -93,7 +93,7 @@ signals:
     void taskSuccess(const QVariantHash &task);
 
 private:
-    void *p = nullptr;
+    TaskSlotPvt *p = nullptr;
 };
 
 } // namespace QOrm

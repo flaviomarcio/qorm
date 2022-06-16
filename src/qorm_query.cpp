@@ -6,12 +6,12 @@ namespace QOrm {
 
 #define dPvt() auto &p = *reinterpret_cast<QueryPvt *>(this->p)
 
-Query::Query(QObject *parent) : ObjectDb(parent)
+Query::Query(QObject *parent) : ObjectDb{parent}
 {
     this->p = new QOrm::QueryPvt{this, {}};
 }
 
-Query::Query(const QSqlDatabase &db, QObject *parent) : ObjectDb(parent)
+Query::Query(const QSqlDatabase &db, QObject *parent) : ObjectDb{parent}
 {
     this->p = new QOrm::QueryPvt{this, db};
     if (!db.isValid() || !db.isOpen()) {

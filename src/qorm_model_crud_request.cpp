@@ -5,7 +5,7 @@
 namespace QOrm {
 
 
-CRUDRequest::CRUDRequest(const QVariant &other) : QVariantHash(other.toHash())
+CRUDRequest::CRUDRequest(const QVariant &other) : QVariantHash{other.toHash()}
 {
 
 }

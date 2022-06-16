@@ -8,8 +8,9 @@ class ConnectionSetting;
 //!
 //! \brief The ConnectionPool class
 //!
-class Q_ORM_EXPORT ConnectionPool
+class Q_ORM_EXPORT ConnectionPool:public QObject
 {
+    Q_OBJECT
 public:
     //!
     //! \brief ConnectionPool

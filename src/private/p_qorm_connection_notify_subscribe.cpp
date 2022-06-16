@@ -2,6 +2,9 @@
 
 namespace QOrm {
 
+typedef QList<QSqlDriver::DbmsType> DbmsTypeList;
+Q_GLOBAL_STATIC_WITH_ARGS(DbmsTypeList, listDbmsType, ({QSqlDriver::PostgreSQL}))
+
 ConnectionNotifySubscribe::ConnectionNotifySubscribe(ConnectionNotify *parent):QThread{nullptr}, notify(parent), subscribeToNotification(parent->subscribeToNotification())
 {
     this->moveToThread(this);
@@ -62,11 +65,11 @@ bool ConnectionNotifySubscribe::queueCheckConnection()
     if(!this->pool.get(db))
         return false;
 
-    if(db.isValid() & db.isOpen())
+    if(db.isValid() && db.isOpen())
         return false;
 
     auto dbmsType=db.driver()->dbmsType();
-    if(listDbmsType.contains(dbmsType))
+    if(listDbmsType->contains(dbmsType))
         return false;
 
     auto cnnMng=dynamic_cast<ConnectionManager*>(this->parent());
@@ -99,7 +102,7 @@ bool ConnectionNotifySubscribe::queueStart()
     if(!this->queueCheckConnection())
         return (this->connectedDriver!=nullptr);
 
-    if(listDbmsType.contains(this->dbmsType()))
+    if(listDbmsType->contains(this->dbmsType()))
         return (this->connectedDriver!=nullptr);
 
     for(auto &v:this->subscribeToNotification){

@@ -2,7 +2,7 @@
 
 namespace QOrm {
 
-ConnectionManagerPvt::ConnectionManagerPvt(ConnectionManager *parent):notify(parent),defaultPool(parent)
+ConnectionManagerPvt::ConnectionManagerPvt(ConnectionManager *parent):QObject{parent}, notify(parent),defaultPool(parent)
 {
     this->parent=parent;
     this->init();

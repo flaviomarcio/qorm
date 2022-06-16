@@ -11,7 +11,7 @@
 
 namespace QOrm {
 
-class ConnectionSettingPvt
+class ConnectionSettingPvt:public QObject
 {
 public:
     QObject *parent = nullptr;
@@ -28,7 +28,7 @@ public:
     QStringList _commandBeforeOpen;
     QStringList _commandAfterClose;
 
-    explicit ConnectionSettingPvt(QObject *parent) { this->parent = parent; }
+    explicit ConnectionSettingPvt(QObject *parent):QObject{parent} { this->parent = parent; }
 
     virtual ~ConnectionSettingPvt() {}
 
@@ -89,16 +89,15 @@ ConnectionSetting::ConnectionSetting(const QByteArray &name,
     for (int row = 0; row < metaObject.propertyCount(); ++row) {
         auto property = metaObject.property(row);
         auto vGet = detailMap.value(property.name());
-        if (vGet.isValid()) {
+        if (vGet.isValid())
             property.write(this, vGet);
-        }
+
     }
 }
 
 ConnectionSetting::~ConnectionSetting()
 {
 
-    delete &p;
 }
 
 ConnectionSetting &ConnectionSetting::printLog()

@@ -24,7 +24,7 @@ public:
 
 ModelDescriptor::ModelDescriptor(QObject *parent) : QObject{parent}
 {
-    this->p = new ModelDescriptorPvt(this);
+    this->p = new ModelDescriptorPvt{this};
 }
 
 ModelDescriptor::~ModelDescriptor()

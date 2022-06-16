@@ -12,7 +12,6 @@ ConnectionNotify::ConnectionNotify(QObject *parent) : QObject{parent}
 ConnectionNotify::~ConnectionNotify()
 {
 
-    p->deleteLater();
 }
 
 bool ConnectionNotify::notify_send(const QVariant &payload)

@@ -20,7 +20,7 @@ ConnectionManager::ConnectionManager(QObject *parent) : QStm::Object(nullptr)
 ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent)
     : QStm::Object(nullptr)
 {
-    this->p = new ConnectionManagerPvt(this);
+    this->p = new ConnectionManagerPvt{this};
     if (parent == nullptr)
         return;
 
@@ -36,7 +36,7 @@ ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent
 ConnectionManager::ConnectionManager(const QVariant &setting, QObject *parent)
     : QStm::Object(nullptr)
 {
-    this->p = new ConnectionManagerPvt(this);
+    this->p = new ConnectionManagerPvt{this};
     if (parent == nullptr)
         return;
     if (parent->thread() != this->thread() || parent->thread() != QThread::currentThread())
@@ -50,8 +50,6 @@ ConnectionManager::ConnectionManager(const QVariant &setting, QObject *parent)
 
 ConnectionManager::~ConnectionManager()
 {
-
-    delete &p;
 }
 
 void ConnectionManager::clear()

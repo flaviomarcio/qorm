@@ -3,7 +3,7 @@
 #include "./qorm_transaction_scope.h"
 
 namespace QOrm {
-
+class TransactionPvt;
 //!
 //! \brief The Transaction class
 //!
@@ -83,7 +83,7 @@ public:
     Q_INVOKABLE virtual void setExceptionOnFail(bool value);
 
 private:
-    void *p = nullptr;
+    TransactionPvt *p = nullptr;
 };
 
 } // namespace QOrm

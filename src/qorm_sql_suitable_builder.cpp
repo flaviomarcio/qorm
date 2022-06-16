@@ -3,79 +3,75 @@
 
 namespace QOrm {
 
-#define dPvt()\
-    auto &p = *reinterpret_cast<SqlSuitableBuilderPvt*>(this->p)
-
-SqlSuitableBuilder::SqlSuitableBuilder(Query*parent):ObjectDb(parent){
-    this->p = new SqlSuitableBuilderPvt(parent);
+SqlSuitableBuilder::SqlSuitableBuilder(Query*parent):ObjectDb{parent}
+{
+    this->p = new SqlSuitableBuilderPvt{parent};
 }
 
 SqlSuitableBuilder::~SqlSuitableBuilder()
 {
-    dPvt();delete&p;
 }
 
 SqlParserInsert &SqlSuitableBuilder::insert()
 {
-    dPvt();
-    return p.insert;
+    return p->insert;
 }
 
 SqlParserUpdate &SqlSuitableBuilder::update()
 {
-    dPvt();
-    return p.update;
+
+    return p->update;
 }
 
 SqlParserUpsert &SqlSuitableBuilder::upsert()
 {
-    dPvt();
-    return p.upsert;
+
+    return p->upsert;
 }
 
 SqlParserRemove &SqlSuitableBuilder::remove()
 {
-    dPvt();
-    return p.remove;
+
+    return p->remove;
 }
 
 SqlParserSelect &SqlSuitableBuilder::select()
 {
-    dPvt();
-    return p.select;
+
+    return p->select;
 }
 
 SqlParserProcedure &SqlSuitableBuilder::procedure()
 {
-    dPvt();
-    return p.procedure;
+
+    return p->procedure;
 }
 
 SqlParserFunction &SqlSuitableBuilder::function()
 {
-    dPvt();
-    return p.function;
+
+    return p->function;
 }
 
 SqlParserStructure &SqlSuitableBuilder::structure()
 {
-    dPvt();
-    return p.structure;
+
+    return p->structure;
 }
 
 SqlParserCombineSelect &SqlSuitableBuilder::combineSelect()
 {
-    dPvt();
-    return p.combineSelect;
+
+    return p->combineSelect;
 }
 
 bool SqlSuitableBuilder::build()
 {
-    dPvt();
-    if(!p.canBuild())
+
+    if(!p->canBuild())
         return true;
 
-    if(!p.build())
+    if(!p->build())
         return false;
 
     return true;
@@ -83,14 +79,14 @@ bool SqlSuitableBuilder::build()
 
 QStringList &SqlSuitableBuilder::preparedQuery() const
 {
-    dPvt();
-    return p._build;
+
+    return p->_build;
 }
 
 void SqlSuitableBuilder::clear()
 {
-    dPvt();
-    p.clear();
+
+    p->clear();
 }
 
 }

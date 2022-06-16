@@ -2,14 +2,12 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<ModelDtoOptionsPvt *>(this->p)
-
-class ModelDtoOptionsPvt
+class ModelDtoOptionsPvt:public QObject
 {
 public:
     ModelDtoOptions *parent = nullptr;
     bool searchOnEmptyFilter = true;
-    explicit ModelDtoOptionsPvt(ModelDtoOptions *parent) { this->parent = parent; }
+    explicit ModelDtoOptionsPvt(ModelDtoOptions *parent):QObject{parent} { this->parent = parent; }
     virtual ~ModelDtoOptionsPvt() {}
 };
 
@@ -20,7 +18,7 @@ ModelDtoOptions::ModelDtoOptions(QObject *parent) : QObject{parent}
 
 ModelDtoOptions::~ModelDtoOptions()
 {
-    delete p;
+
 }
 
 bool ModelDtoOptions::searchOnEmptyFilter() const

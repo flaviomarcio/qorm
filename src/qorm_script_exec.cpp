@@ -9,15 +9,13 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<ScriptExecPvt *>(this->p)
-
-class ScriptExecPvt
+class ScriptExecPvt:public QObject
 {
 public:
     QOrm::ObjectDb *parent = nullptr;
     QVariantList scriptValues;
     QStringList scriptedValues;
-    explicit ScriptExecPvt(QOrm::ObjectDb *parent) { this->parent = parent; }
+    explicit ScriptExecPvt(QOrm::ObjectDb *parent):QObject{parent} { this->parent = parent; }
 
     virtual ~ScriptExecPvt() {}
 
@@ -121,7 +119,7 @@ public:
     }
 };
 
-ScriptExec::ScriptExec(QObject *parent) : QOrm::ObjectDb(parent)
+ScriptExec::ScriptExec(QObject *parent) : QOrm::ObjectDb{parent}
 {
     this->p = new ScriptExecPvt{this};
 }
@@ -130,33 +128,33 @@ ScriptExec::~ScriptExec() {}
 
 ScriptExec &ScriptExec::operator=(const QVariant &v)
 {
-    dPvt();
-    p.scriptValues.clear();
-    p.scriptAppend(v);
+
+    p->scriptValues.clear();
+    p->scriptAppend(v);
     return *this;
 }
 
 ScriptExec &ScriptExec::operator=(const QFileInfoList &entryInfoList)
 {
-    dPvt();
-    p.scriptedClear();
-    p.scriptValues.clear();
+
+    p->scriptedClear();
+    p->scriptValues.clear();
     for (auto &f : entryInfoList) {
-        p.scriptAppend(QUrl::fromLocalFile(f.filePath()));
+        p->scriptAppend(QUrl::fromLocalFile(f.filePath()));
     }
     return *this;
 }
 
 ScriptExec &ScriptExec::operator<<(const QVariant &v)
 {
-    dPvt();
-    p.scriptAppend(v);
+
+    p->scriptAppend(v);
     return *this;
 }
 
 ScriptExec &ScriptExec::operator<<(const QFileInfoList &entryInfoList)
 {
-    dPvt();
+
     for (auto &f : entryInfoList) {
         auto fileName = f.filePath();
         if (!QFile::exists(fileName)) {
@@ -164,28 +162,28 @@ ScriptExec &ScriptExec::operator<<(const QFileInfoList &entryInfoList)
             continue;
         }
 
-        p.scriptAppend(fileName);
+        p->scriptAppend(fileName);
     }
     return *this;
 }
 
 QVariantList ScriptExec::scriptValues() const
 {
-    dPvt();
-    return p.scriptValues;
+
+    return p->scriptValues;
 }
 
 const QStringList &ScriptExec::scriptedValues()
 {
-    dPvt();
-    return p.scriptedMaker();
+
+    return p->scriptedMaker();
 }
 
 ResultValue &ScriptExec::exec()
 {
-    dPvt();
-    p.scriptedClear();
-    return p.scriptExec();
+
+    p->scriptedClear();
+    return p->scriptExec();
 }
 
 } // namespace QOrm

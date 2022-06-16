@@ -18,10 +18,6 @@
 
 namespace QOrm {
 
-//!
-//! \brief listDbmsType
-//!
-static const auto listDbmsType=QList<QSqlDriver::DbmsType>{QSqlDriver::PostgreSQL};
 
 //!
 //! \brief The ConnectionNotifySubscribe class

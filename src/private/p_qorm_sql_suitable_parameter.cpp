@@ -3,20 +3,6 @@
 #include "../../../qstm/src/qstm_util_variant.h"
 #include <QJsonDocument>
 
-#define dPvt()\
-    auto &p = *reinterpret_cast<SearchParametersPvt*>(this->p)
-
-#define dPvt2()\
-    auto &p = *reinterpret_cast<SearchParamPvt*>(this->p)
-
-class SearchParamPvt{
-public:
-    explicit SearchParamPvt(){
-    }
-    virtual ~SearchParamPvt(){
-    }
-};
-
 class SearchParametersPvt{
 public:
     QVariantList values;
@@ -155,7 +141,7 @@ SearchParam SearchParam::from(const QVariant &value)
 SearchParameters::SearchParameters(const QVariant &other):QVariant{}
 {
     this->p = new SearchParametersPvt();
-    dPvt();
+
 
     QVariant vOther;
     switch (qTypeId(other)) {
@@ -174,7 +160,7 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
         for(auto &v:vOther.toList()){
             auto s=SearchParam::from(v);
             if(v.isValid())
-                p.insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
+                p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
         }
         break;
     }
@@ -227,7 +213,7 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
 
                 s=SearchParam(vA, vB, keywordOperator, keywordLogical);
             }
-            p.insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
+            p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
         }
         break;
     }
@@ -238,13 +224,12 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
 
 SearchParameters::~SearchParameters()
 {
-    dPvt();
-    delete&p;
+    delete p;
 }
 
 bool SearchParameters::canRead(const QVariant &v)
 {
-    this->p = new SearchParametersPvt();
+    this->p = new SearchParametersPvt{};
 
     switch (qTypeId(v)) {
     case QMetaType_QVariantList:
@@ -282,16 +267,16 @@ bool SearchParameters::canRead(const QVariant &v)
 
 bool SearchParameters::isEmpty()const
 {
-    dPvt();
-    return p.values.isEmpty();
+
+    return p->values.isEmpty();
 }
 
 SearchParameters &SearchParameters::operator=(const QVariant &v)
 {
-    dPvt();
+
     Q_DECLARE_VU;
     QVariant::clear();
-    p.values.clear();
+    p->values.clear();
     switch (qTypeId(v)) {
     case QMetaType_QVariantList:
     {
@@ -299,7 +284,7 @@ SearchParameters &SearchParameters::operator=(const QVariant &v)
         for(auto &v:vList) {
             SearchParam param(v.toHash());
             if(param.isValid())
-                p.values<<v;
+                p->values<<v;
         }
         break;
     }
@@ -312,7 +297,7 @@ SearchParameters &SearchParameters::operator=(const QVariant &v)
             auto v=i.value().toHash();
             SearchParam param(v);
             if(param.isValid()){
-                p.values<<i.value();
+                p->values<<i.value();
             }
         }
         break;
@@ -325,7 +310,7 @@ SearchParameters &SearchParameters::operator=(const QVariant &v)
 
 SearchParameters &SearchParameters::operator+=(const QVariant &v)
 {
-    dPvt();
+
     Q_DECLARE_VU;
 
     switch (qTypeId(v)) {
@@ -335,7 +320,7 @@ SearchParameters &SearchParameters::operator+=(const QVariant &v)
         for(auto &v:vList) {
             SearchParam param(v.toHash());
             if(param.isValid())
-                p.values<<v;
+                p->values<<v;
         }
         break;
     }
@@ -348,7 +333,7 @@ SearchParameters &SearchParameters::operator+=(const QVariant &v)
             auto v=i.value().toHash();
             SearchParam param(v);
             if(param.isValid()){
-                p.values<<i.value();
+                p->values<<i.value();
             }
         }
         break;
@@ -375,50 +360,50 @@ SearchParameters SearchParameters::from(const QVariantMap &v)
 
 SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB)
 {
-    dPvt();
-    p.insert(valueA, valueB, QVariant(), QVariant(), QVariant());
+
+    p->insert(valueA, valueB, QVariant(), QVariant(), QVariant());
     return*this;
 }
 
 SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant &keywordOperator)
 {
-    dPvt();
-    p.insert(valueA, valueB, QVariant(), keywordOperator, QVariant());
+
+    p->insert(valueA, valueB, QVariant(), keywordOperator, QVariant());
     return*this;
 }
 
 SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant&keywordOperator, const QVariant&keywordLogical)
 {
-    dPvt();
-    p.insert(valueA, valueB, QVariant(), keywordOperator, keywordLogical);
+
+    p->insert(valueA, valueB, QVariant(), keywordOperator, keywordLogical);
     return*this;
 }
 
 SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant &keywordOperator, const QVariant &keywordLogical)
 {
-    dPvt();
-    p.insert(valueA, valueB, valueC, keywordOperator, keywordLogical);
+
+    p->insert(valueA, valueB, valueC, keywordOperator, keywordLogical);
     return*this;
 }
 
 QList<SearchParam> SearchParameters::build() const
 {
-    dPvt();
-    p.vList.clear();
-    for(auto &i:p.values){
-        p.vList << SearchParam::from(i);
+
+    p->vList.clear();
+    for(auto &i:p->values){
+        p->vList << SearchParam::from(i);
     }
-    return p.vList;
+    return p->vList;
 }
 
 QVariant SearchParameters::buildVariant() const
 {
-    dPvt();
-    p.vList.clear();
+
+    p->vList.clear();
     QVariantList vList;
-    for(auto &i:p.values){
+    for(auto &i:p->values){
         auto v=i.toHash();
-        p.vList << SearchParam::from(v);
+        p->vList << SearchParam::from(v);
         vList<<v;
     }
     return vList.isEmpty()?QVariant():vList;

@@ -5,7 +5,7 @@
 #include "./qorm_wrapper.h"
 
 namespace QOrm {
-
+class DaoPvt;
 //!
 //! \brief The Dao class
 //!
@@ -41,7 +41,7 @@ public:
     QOrm::SqlSuitableValue &f = format();
 
 private:
-    void *p = nullptr;
+    DaoPvt *p = nullptr;
 };
 
 } // namespace QOrm

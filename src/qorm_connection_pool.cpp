@@ -24,7 +24,7 @@ static void init()
 
 Q_COREAPP_STARTUP_FUNCTION(init)
 
-class ConnectionPoolPvt
+class ConnectionPoolPvt:public QObject
 {
 public:
     QString baseName;
@@ -34,7 +34,7 @@ public:
 
     QSqlError lastError;
     explicit ConnectionPoolPvt(QObject *parent, const ConnectionSetting &cnnSetting)
-        : connectionSetting(cnnSetting, parent)
+        : QObject{parent}, connectionSetting(cnnSetting, parent)
     {
         this->parent = parent;
         this->baseName
@@ -266,33 +266,31 @@ public:
     }
 };
 
-ConnectionPool::ConnectionPool(QObject *parent)
+ConnectionPool::ConnectionPool(QObject *parent):QObject{parent}
 {
     ConnectionSetting cnnSetting;
-    this->p = new ConnectionPoolPvt(parent, cnnSetting);
+    this->p = new ConnectionPoolPvt{parent, cnnSetting};
 }
 
-ConnectionPool::ConnectionPool(const ConnectionSetting &connectionSetting, QObject *parent)
+ConnectionPool::ConnectionPool(const ConnectionSetting &connectionSetting, QObject *parent):QObject{parent}
 {
-    this->p = new ConnectionPoolPvt(parent, connectionSetting);
+    this->p = new ConnectionPoolPvt{parent, connectionSetting};
 }
 
-ConnectionPool::ConnectionPool(const QVariant &connection, QObject *parent)
+ConnectionPool::ConnectionPool(const QVariant &connection, QObject *parent):QObject{parent}
 {
     QOrm::ConnectionSetting connectionSetting(QByteArray(), connection.toHash(), nullptr);
-    this->p = new ConnectionPoolPvt(parent, connectionSetting);
+    this->p = new ConnectionPoolPvt{parent, connectionSetting};
 }
 
-ConnectionPool::ConnectionPool(const ConnectionPool &pool, QObject *parent)
+ConnectionPool::ConnectionPool(const ConnectionPool &pool, QObject *parent):QObject{parent}
 {
-    this->p = new ConnectionPoolPvt(parent, pool.setting());
+    this->p = new ConnectionPoolPvt{parent, pool.setting()};
 }
 
 ConnectionPool::~ConnectionPool()
 {
     this->finish();
-
-    delete &p;
 }
 
 ConnectionSetting &ConnectionPool::setting() const

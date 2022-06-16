@@ -3,8 +3,6 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<TaskSlotPvt *>(this->p)
-
 class TaskSlotPvt : public QObject
 {
 public:
@@ -72,20 +70,19 @@ public:
 
     bool connectionCheck()
     {
-        auto &p = *this;
-        if (p.connection.isValid()) {
-            if (!p.connection.isOpen())
-                p.connection.open();
-            return p.connection.isOpen();
+        if (this->connection.isValid()) {
+            if (!this->connection.isOpen())
+                this->connection.open();
+            return this->connection.isOpen();
         }
 
         if (!cnnPool.isValid())
-            return this->cnnPool.finish(p.connection);
+            return this->cnnPool.finish(this->connection);
 
         if (!cnnPool.get(connection))
-            return !this->cnnPool.finish(p.connection);
+            return !this->cnnPool.finish(this->connection);
 
-        return p.connection.isOpen();
+        return this->connection.isOpen();
     }
 
 private slots:
@@ -93,31 +90,30 @@ private slots:
 
     void onTaskSend(const QVariant &task)
     {
-        auto &p = *this;
         QVariantHash vTask;
         vTask[qsl("request")] = task;
         emit this->parent->taskStart(vTask);
-        if (!p.connectionCheck()) {
+        if (!this->connectionCheck()) {
             vTask[qsl("error")] = qsl("Invalid connection on Slot");
-            p.methodFailed(p.connection, task);
+            this->methodFailed(this->connection, task);
             emit this->parent->taskError(vTask);
             emit this->parent->taskRequest(this->parent);
             return;
         }
 
-        auto response = p.methodExecute(p.connection, task);
+        auto response = this->methodExecute(this->connection, task);
         vTask[qsl("response")] = response;
-        p.connection.close();
-        if (!p.connection.open()) {
+        this->connection.close();
+        if (!this->connection.open()) {
             vTask[qsl("error")] = connection.lastError().text();
-            p.methodFailed(p.connection, vTask);
+            this->methodFailed(this->connection, vTask);
         } else {
-            auto r = p.methodSuccess(p.connection, response);
+            auto r = this->methodSuccess(this->connection, response);
             vTask[qsl("response")] = r;
         }
         emit this->parent->taskSuccess(vTask);
         emit this->parent->taskRequest(this->parent);
-        p.connection.close();
+        this->connection.close();
     }
 };
 
@@ -130,21 +126,19 @@ TaskSlot::TaskSlot(TaskPool *pool,
 {
     this->p = new TaskSlotPvt{this};
     this->moveToThread(this);
-    dPvt();
-    p.pool = pool;
-    p.runner = pool->runner();
-    p.connectionSetting = connectionSetting;
-    p.methodExecute = methodExecute;
-    p.methodSuccess = methodSuccess;
-    p.methodFailed = methodFailed;
-    p.cnnPool.setting() = p.connectionSetting;
-    p.signalConnect();
+
+    p->pool = pool;
+    p->runner = pool->runner();
+    p->connectionSetting = connectionSetting;
+    p->methodExecute = methodExecute;
+    p->methodSuccess = methodSuccess;
+    p->methodFailed = methodFailed;
+    p->cnnPool.setting() = p->connectionSetting;
+    p->signalConnect();
 }
 
 TaskSlot::~TaskSlot()
 {
-    dPvt();
-    delete &p;
 }
 
 bool TaskSlot::start()
@@ -157,15 +151,15 @@ bool TaskSlot::start()
 
 void TaskSlot::run()
 {
-    dPvt();
-    if (!p.connectionCheck()) {
+
+    if (!p->connectionCheck()) {
         this->quit();
         return;
     }
 
-    p.connection.close();
+    p->connection.close();
     this->exec();
-    p.cnnPool.finish(p.connection);
+    p->cnnPool.finish(p->connection);
 }
 
 void TaskSlot::init()

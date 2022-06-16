@@ -2,13 +2,11 @@
 
 namespace QOrm {
 
-#define dPvt() auto &p = *reinterpret_cast<ControllerPvt *>(this->p)
-
-class ControllerPvt
+class ControllerPvt:public QObject
 {
 public:
     QHash<QString, ConnectionPool *> localConnection;
-    explicit ControllerPvt(QObject *object) { Q_UNUSED(object) }
+    explicit ControllerPvt(QObject *object=nullptr):QObject{} { Q_UNUSED(object) }
     virtual ~ControllerPvt()
     {
         auto vHash = this->localConnection;
@@ -21,7 +19,7 @@ public:
     }
 };
 
-Controller::Controller(QObject *parent) : ObjectDb(parent)
+Controller::Controller(QObject *parent) : ObjectDb{parent}
 {
     this->p = new ControllerPvt{this};
 }
@@ -34,8 +32,7 @@ Controller::Controller(const QSqlDatabase &connection, QObject *parent)
 
 Controller::~Controller()
 {
-    dPvt();
-    delete &p;
+
 }
 
 bool Controller::dbConnect(QObject *objectConnection)
@@ -66,8 +63,7 @@ bool Controller::dbConnect(ConnectionPool &connectionPool)
     if (!connectionPool.get(db))
         return false;
 
-    dPvt();
-    p.localConnection.insert(db.connectionName(), &connectionPool);
+    p->localConnection.insert(db.connectionName(), &connectionPool);
     return this->setConnection(db);
 }
 
