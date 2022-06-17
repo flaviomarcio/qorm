@@ -144,7 +144,7 @@ ResultValue &CRUDBlock::crudify()
             auto vList=vCrudSource[qsl("pages")].toList();
             for(auto &v:vList){
                 auto vHash=v.toHash();
-                auto crudUuid=vHash[qsl("uuid")].toString().toLower().trimmed();
+                auto crudUuid=vHash[qsl("uuid")].toUuid().toString();
                 crudPages.insert(crudUuid, vHash);
             }
         }
@@ -174,7 +174,7 @@ ResultValue &CRUDBlock::crudify()
             if(vHash.contains(qsl("uuid")) && vHash.contains(qsl("items"))){
                 auto list=vHash[qsl("items")].toList();
                 for(auto &v:list)
-                    crudList.append(CRUDBody(crudBody.strategy(), v));
+                    crudList.append(CRUDBody{crudBody.strategy(), v});
             }
             else{
                 crudList<<crudBody;

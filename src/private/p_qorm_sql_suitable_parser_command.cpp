@@ -203,15 +203,32 @@ bool SqlParserCommand::makeObject()
         if(v!=this)
             v->makeObject();
         auto typeId=qTypeId(*v);
-        if(QMetaTypeUtilVariantDictionary.contains(typeId)){
+        switch (typeId) {
+        case QMetaType_QVariantHash:
+        case QMetaType_QVariantMap:
+        {
             auto map=v->toHash();
             vThis.insert(key, map);
             __return=true;
+            break;
         }
-
-        if(typeId==QMetaType_User){
+        case QMetaType_QString:
+        case QMetaType_QByteArray:
+        case QMetaType_QChar:
+        case QMetaType_QBitArray:
+        {
+            vThis.insert(key, v->toByteArray());
+            __return=true;
+            break;
+        }
+        case QMetaType_User:
+        {
             vThis.insert(key, qv(*v));
             __return=true;
+            break;
+        }
+        default:
+            break;
         }
     }
     this->setValue(vThis);

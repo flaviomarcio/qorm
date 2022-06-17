@@ -105,7 +105,7 @@ bool QueryPvt::prepare()
         }
         this->sqlQuery.finish();
         this->sqlQuery.clear();
-        this->sqlQuery=QSqlQuery(connection);
+        this->sqlQuery=QSqlQuery{connection};
     }
 
     if(!this->sqlBuilder.build()){
