@@ -48,7 +48,7 @@ public:
 private:
     ModelDao<T> p_dao;
     T p_model;
-    QOrm::ModelDto&p_dto=this->dto();
+    QOrm::ModelDto &p_dto=this->dto();
 
     //!
     //! \brief init
@@ -57,14 +57,14 @@ private:
     {
         this->dto().initDescriptors(&p_model);
         const auto &modelInfo=p_dao.modelRef;
-        this->crudName(modelInfo.modelName()).crudDescription(modelInfo.modelDescription());
+        this->name(modelInfo.name()).description(modelInfo.description());
     }
 protected:
     //!
     //! \brief modelInfo
     //! \return
     //!
-    virtual const QOrm::ModelInfo&modelInfo()
+    virtual const QOrm::ModelInfo &modelInfo()
     {
         const auto &modelInfo=this->p_model.modelInfo();
         return modelInfo;
@@ -119,7 +119,7 @@ protected:
         auto mapSource=this->source().toHash();
         SearchParameters map;
         if(!mapSource.isEmpty()){
-            const QOrm::ModelInfo&modelInfo=p_dao.modelRef;
+            const QOrm::ModelInfo &modelInfo=p_dao.modelRef;
             const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
             QHashIterator<QString, QVariant> i(model.toHash());
             while (i.hasNext()) {

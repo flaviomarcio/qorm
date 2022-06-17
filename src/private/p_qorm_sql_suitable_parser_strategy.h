@@ -221,13 +221,16 @@ public:
             QStringList group;
             bool isGrouping=false;
             for(auto &parser_fields:fieldList){
-                const auto &modelInfo=QOrm::ModelInfo::modelInfo(parser_fields);
+                const auto &modelInfo=QOrm::ModelInfo::from(parser_fields);
                 if(modelInfo.isValid()){
                     QHashIterator<QString, QString> i(modelInfo.propertyTableVsShort());
                     while (i.hasNext()) {
                         i.next();
-                        fields<<i.key();
-                        group<<i.key();
+                        auto fieldName=i.key().trimmed();
+                        if(fieldName.isEmpty())
+                            continue;
+                        fields<<fieldName;
+                        group<<fieldName;
                     }
                     if(isGrouping)
                         parser_groupby<<group;
@@ -248,7 +251,7 @@ public:
                     if(isGroup){
                         fields<<parser.parserCommand(KeywordGenericCommand(grouping),nullptr, map);
                     }
-                    else{
+                    else if(!value.isEmpty()){
                         group<<value;
                         fields<<value;
                     }
@@ -279,7 +282,7 @@ public:
             if(!fieldList.isEmpty()){
                 QStringList fields;
                 for(auto &parser_order:fieldList){
-                    const auto &modelInfo=QOrm::ModelInfo::modelInfo(parser_order);
+                    const auto &modelInfo=QOrm::ModelInfo::from(parser_order);
                     if(modelInfo.isValid()){
                         QHashIterator<QString, QString> i(modelInfo.propertyTableVsShort());
                         while (i.hasNext()) {
@@ -382,7 +385,7 @@ public:
         auto map=this->toMap();
         auto destine=getVariantStartsWith(qsl("destine"),map);
         auto values=getVariantStartsWith(qsl("values"),map);
-        const auto &modelInfo=QOrm::ModelInfo::modelInfo(destine);
+        const auto &modelInfo=QOrm::ModelInfo::from(destine);
         auto command=parser.parserCommand(kgcInsertInto, &modelInfo, values);
         return command;
     }
@@ -424,7 +427,7 @@ public:
         auto map=this->toMap();
         auto destine=getVariantStartsWith(qsl("destine"),map);
         auto values=getVariantStartsWith(qsl("values"), map);
-        const auto &modelInfo=QOrm::ModelInfo::modelInfo(destine);
+        const auto &modelInfo=QOrm::ModelInfo::from(destine);
         auto command=parser.parserCommand(kgcUpdateSet, &modelInfo, values);
         return command;
     }
@@ -466,7 +469,7 @@ public:
         auto map=this->toMap();
         auto destine=getVariantStartsWith(qsl("destine"),map);
         auto values=getVariantStartsWith(qsl("values"),map);
-        const auto &modelInfo=QOrm::ModelInfo::modelInfo(destine);
+        const auto &modelInfo=QOrm::ModelInfo::from(destine);
         auto command=parser.parserCommand(kgcUpsertSet, &modelInfo, values);
         return command;
     }
@@ -563,7 +566,7 @@ public:
             auto object=vValue.value(qsl("object"));
             auto value=vValue.value(qsl("value"));
             QStringList command;
-            const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
+            const auto &modelInfo=QOrm::ModelInfo::from(object);
             if(modelInfo.isValid())
                 command=parser.parserCommand(type, &modelInfo, value);
             else
@@ -623,7 +626,7 @@ public:
             auto object=vValue.value(qsl("object"));
             auto value=vValue.value(qsl("value"));
             QStringList command;
-            const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
+            const auto &modelInfo=QOrm::ModelInfo::from(object);
             if(modelInfo.isValid())
                 command=parser.parserCommand(type, &modelInfo, value);
             for(auto &v:command)

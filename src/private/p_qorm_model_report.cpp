@@ -13,8 +13,9 @@ namespace PrivateQOrm {
 class ModelReportBasePvt{
 public:
     QOrm::ModelDtoOptions options;
-    QByteArray reportName;
-    QByteArray reportDescription;
+    QUuid uuid;
+    QByteArray name;
+    QByteArray description;
     QOrm::ModelDto dto;
     QHash<QByteArray, QOrm::ModelAction*> actions;
     QHash<QByteArray, QOrm::ModelActionMethod> actionMethod;
@@ -144,33 +145,43 @@ ModelReportBase &ModelReportBase::layout(const FormLayout &value)
     return*this;
 }
 
-QByteArray ModelReportBase::reportName() const
+QUuid &ModelReportBase::uuid() const
 {
-
-    if(p->reportName.trimmed().isEmpty())
-        return this->metaObject()->className();
-    return p->reportName;
+    Q_DECLARE_VU;
+    if(p->uuid.isNull() && !p->name.isEmpty())
+        p->uuid=vu.toMd5Uuid(this->name());
+    return p->uuid;
 }
 
-ModelReportBase &ModelReportBase::reportName(const QVariant &value)
+ModelReportBase &ModelReportBase::uuid(const QUuid &value)
 {
+    p->uuid=value;
+    return *this;
+}
 
-    p->reportName=value.toByteArray().trimmed();
+QByteArray ModelReportBase::name() const
+{
+    if(p->name.trimmed().isEmpty())
+        return this->metaObject()->className();
+    return p->name;
+}
+
+ModelReportBase &ModelReportBase::name(const QVariant &value)
+{
+    p->name=value.toByteArray().trimmed();
     return*this;
 }
 
-QByteArray ModelReportBase::reportDescription() const
+QByteArray ModelReportBase::description() const
 {
-
-    if(p->reportDescription.trimmed().isEmpty())
+    if(p->description.trimmed().isEmpty())
         return this->metaObject()->className();
-    return p->reportDescription;
+    return p->description;
 }
 
-ModelReportBase &ModelReportBase::reportDescription(const QVariant &value)
+ModelReportBase &ModelReportBase::description(const QVariant &value)
 {
-
-    p->reportDescription=value.toByteArray().trimmed();
+    p->description=value.toByteArray().trimmed();
     return*this;
 }
 
@@ -273,9 +284,9 @@ ResultValue &ModelReportBase::canActionSearch()
         v=lr.resultVariant();
     }
     return this->lr(p->dto
-                    .uuid(this->reportName())
-                    .name(this->reportName())
-                    .text(this->reportDescription())
+                    .name(this->uuid())
+                    .name(this->name())
+                    .text(this->description())
                     .items(v)
                     .o()
                     );

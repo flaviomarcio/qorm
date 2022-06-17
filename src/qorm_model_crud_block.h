@@ -37,13 +37,13 @@ public:
     //! \brief options
     //! \return
     //!
-    virtual QOrm::ModelDtoOptions&options();
+    virtual QOrm::ModelDtoOptions &options();
 
     //!
     //! \brief resultInfo
     //! \return
     //!
-    virtual QStm::ResultInfo&resultInfo();
+    virtual QStm::ResultInfo &resultInfo();
 
     //!
     //! \brief operator +=
@@ -70,7 +70,7 @@ public:
     //! \brief crudBody
     //! \return
     //!
-    Q_INVOKABLE virtual QVariant crudBody()const;
+    Q_INVOKABLE virtual QVariant &crudBody()const;
 
     //!
     //! \brief crudBody
@@ -112,7 +112,7 @@ public:
     //! \param crudName
     //! \return
     //!
-    virtual CRUDBlock &remove(const QByteArray&crudName);
+    virtual CRUDBlock &remove(const QUuid &crudUuid);
 
     //!
     //! \brief crudify

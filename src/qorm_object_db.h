@@ -23,7 +23,7 @@ public:
     //!
     Q_INVOKABLE explicit ObjectDb(QObject *parent = nullptr);
     explicit ObjectDb(const QSqlDatabase &connection, QObject *parent = nullptr);
-    virtual ~ObjectDb();
+
 
     //!
     //! \brief connection

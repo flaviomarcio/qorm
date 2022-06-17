@@ -761,7 +761,7 @@ QStringList SqlSuitableKeyWord::parserCallProcedure(const QVariant &value)
     auto schema   = mapObject.value(qsl("schema")).toString().trimmed();
     auto object   = mapObject.value(qsl("object"));
     auto s_values = this->formatValues(mapObject.value("values")).join(qsl(","));
-    const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
+    const auto &modelInfo=QOrm::ModelInfo::from(object);
     if(object.isValid()){
         object=modelInfo.tableNameFull();
     }
@@ -792,7 +792,7 @@ QStringList SqlSuitableKeyWord::parserCallFunction(const QVariant &value)
     auto schema   = mapObject.value(qsl("schema")).toString().trimmed();
     auto object   = mapObject.value(qsl("object"));
     auto s_values = this->formatValues(mapObject.value("values")).join(qsl(","));
-    const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
+    const auto &modelInfo=QOrm::ModelInfo::from(object);
     if(object.isValid()){
         object=modelInfo.tableNameFull();
     }
@@ -813,7 +813,7 @@ QStringList SqlSuitableKeyWord::parserCallFunctionTable(const QVariant &value)
     auto schema   = mapObject.value(qsl("schema")).toString().trimmed();
     auto object   = mapObject.value(qsl("object"));
     auto s_values = this->formatValues(mapObject.value("values")).join(qsl(","));
-    const auto &modelInfo=QOrm::ModelInfo::modelInfo(object);
+    const auto &modelInfo=QOrm::ModelInfo::from(object);
     if(object.isValid()){
         object=modelInfo.tableNameFull();
     }

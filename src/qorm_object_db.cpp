@@ -109,11 +109,10 @@ ObjectDb::ObjectDb(QObject *parent) : QStm::Object{parent}
 ObjectDb::ObjectDb(const QSqlDatabase &connection, QObject *parent) : QStm::Object{parent}
 {
     this->p = new ObjectDbPvt{this};
-
     p->___connectionId = connection.connectionName().toUtf8();
 }
 
-ObjectDb::~ObjectDb() {}
+
 
 QSqlDatabase ObjectDb::connection() const
 {

@@ -27,7 +27,7 @@ public:\
 #define QORM_DECLARE_MODEL_CONST(ModelName, ModelAlias)\
 namespace QOrm {\
     static QMetaObject ModelAlias = ModelName::staticMetaObject;\
-    static const QOrm::ModelInfo &ModelAlias##Detail = QOrm::Model::modelInfo(ModelAlias);\
+    static const QOrm::ModelInfo &ModelAlias##Detail = QOrm::Model::from(ModelAlias);\
 }
 
 #define QORM_OBJECT_CONSTRUCTOR(ObjectName)\
@@ -59,7 +59,7 @@ public:\
     }\
 public:\
     static modelClass &m(){ modelClass*__m=nullptr; if(__m==nullptr) __m = new modelClass(); return*__m;}\
-    auto &modelInfo()const{return QOrm::ModelInfo::modelInfo(modelClass::staticMetaObject);}\
+    auto &modelInfo()const{return QOrm::ModelInfo::from(modelClass::staticMetaObject);}\
     Q_PROPERTY(QByteArray tablePrefix READ tablePrefix)\
     Q_PROPERTY(QByteArray tablePrefixSeparator READ tablePrefixSeparator)\
     Q_PROPERTY(QByteArray tableName READ tableName)\

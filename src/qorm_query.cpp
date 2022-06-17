@@ -93,7 +93,7 @@ QVariantList Query::makeRecordList()
 
 QVariantList Query::makeRecordList(const QMetaObject &metaObject)
 {
-    const auto &modelInfo = QOrm::ModelInfo::modelInfo(metaObject.className());
+    const auto &modelInfo = QOrm::ModelInfo::from(metaObject.className());
     return this->makeRecordList(modelInfo);
 }
 
@@ -164,7 +164,7 @@ QVariantHash Query::makeRecord() const
 
 QVariantHash Query::makeRecord(const QMetaObject &metaObject) const
 {
-    const auto &modelInfo = QOrm::ModelInfo::modelInfo(metaObject.className());
+    const auto &modelInfo = QOrm::ModelInfo::from(metaObject.className());
     return this->makeRecord(modelInfo);
 }
 

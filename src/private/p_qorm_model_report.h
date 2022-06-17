@@ -70,15 +70,22 @@ public:
     //! \brief reportName
     //! \return
     //!
-    virtual QByteArray reportName()const;
-    virtual ModelReportBase&reportName(const QVariant &value);
+    virtual QUuid &uuid()const;
+    virtual ModelReportBase &uuid(const QUuid &value);
+
+    //!
+    //! \brief reportName
+    //! \return
+    //!
+    virtual QByteArray name()const;
+    virtual ModelReportBase &name(const QVariant &value);
 
     //!
     //! \brief reportDescription
     //! \return
     //!
-    virtual QByteArray reportDescription()const;
-    virtual ModelReportBase&reportDescription(const QVariant &value);
+    virtual QByteArray description()const;
+    virtual ModelReportBase&description(const QVariant &value);
 
     //!
     //! \brief dto

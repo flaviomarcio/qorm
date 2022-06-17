@@ -193,30 +193,27 @@ void ModelDtoControls::setDescriptors(const QVariantMap &descriptors)
     auto vHeaders=descriptors.value(vpHeaders).toList();
     p->design=descriptors.value(vpDesign).toHash();
     p->headers.clear();
-    for (auto &v : vHeaders) {
+    for (auto &v : vHeaders)
         p->headers.value(v.toHash());
-    }
 }
 
 QUuid &ModelDtoControls::uuid() const
 {
     Q_DECLARE_VU;
-    if(p->uuid.isNull())
-        p->uuid=vu.toMd5Uuid(this->name());
+    if(p->uuid.isNull() && !p->name.isEmpty())
+        p->uuid=vu.toMd5Uuid(p->name);
     return p->uuid;
 }
 
-ModelDtoControls &ModelDtoControls::uuid(const QVariant &v)
+ModelDtoControls &ModelDtoControls::uuid(const QUuid &v)
 {
-    Q_DECLARE_VU;
-    p->uuid=vu.toUuid(v);
+    p->uuid=v;
     return *this;
 }
 
-ModelDtoControls &ModelDtoControls::setUuid(const QVariant &v)
+ModelDtoControls &ModelDtoControls::setUuid(const QUuid &v)
 {
-    Q_DECLARE_VU;
-    p->uuid=vu.toMd5Uuid(v);
+    p->uuid=v;
     return *this;
 }
 

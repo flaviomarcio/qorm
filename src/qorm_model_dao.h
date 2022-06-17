@@ -681,7 +681,7 @@ public:
     }
 
 public:
-    const QOrm::ModelInfo &modelRef = QOrm::ModelInfo::modelInfo(T::staticMetaObject);
+    const QOrm::ModelInfo &modelRef = QOrm::ModelInfo::from(T::staticMetaObject);
 };
 
 } // namespace QOrm

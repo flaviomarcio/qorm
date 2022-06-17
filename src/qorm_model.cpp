@@ -38,7 +38,7 @@ public:
     const ModelInfo &modelInfo()
     {
         const auto &className=this->model->metaObject()->className();
-        return ModelInfo::modelInfo(className);
+        return ModelInfo::from(className);
     }
 
     const QByteArray storedMd5Make()

@@ -20,38 +20,58 @@ public:
     explicit ModelInfo();
 
     //!
+    //! \brief ModelInfo
+    //! \param className
+    //!
+    explicit ModelInfo(const QByteArray &className);
+
+    //!
+    //! \brief ModelInfo
+    //! \param metaObject
+    //!
+    explicit ModelInfo(const QMetaObject &metaObject);
+
+    //!
     //! \brief ~ModelInfo
     //!
     virtual ~ModelInfo();
 
     //!
-    //! \brief modelInfo
+    //! \brief isValid
+    //! \return
+    //!
+    virtual bool isValid()const;
+
+    //!
+    //! \brief from
     //! \param v
     //! \return
     //!
-    const static ModelInfo &modelInfo(const QVariant &v);
-    const static ModelInfo &modelInfo(const QMetaObject&metaObject);
-    static ModelInfo&modelInfoInit(const QMetaObject&staticMetaObject);
+    const static ModelInfo &from(const QVariant &v);
+    const static ModelInfo &from(const QMetaObject &metaObject);
+
+    //!
+    //! \brief modelInfoInit
+    //! \param staticMetaObject
+    //! \return
+    //!
+    static ModelInfo &modelInfoInit(const QMetaObject &staticMetaObject);
 
     //!
     //! \brief modelName
     //! \return
     //!
-    virtual QString &modelName() const;
-    virtual void setModelName(const QString &value);
+    virtual QString &name()const;
+    virtual ModelInfo &name(const QString &value);
+    virtual ModelInfo &setName(const QString &value);
 
     //!
     //! \brief modelDescription
     //! \return
     //!
-    virtual QString &modelDescription() const;
-    virtual void setModelDescription(const QString &value);
-
-    //!
-    //! \brief className
-    //! \return
-    //!
-    QByteArray className() const;
+    virtual QString &description() const;
+    virtual ModelInfo &description(const QString &value);
+    virtual ModelInfo &setDescription(const QString &value);
 
     //!
     //! \brief staticMetaObject
@@ -69,26 +89,26 @@ public:
     //! \brief property
     //! \return
     //!
-    virtual QList<QMetaProperty>&property() const;
+    virtual QList<QMetaProperty> &property() const;
 
     //!
     //! \brief propertyByFieldName
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty>&propertyByFieldName() const;
+    virtual QHash<QString, QMetaProperty> &propertyByFieldName() const;
     virtual QMetaProperty propertyByFieldName(const QString &fieldName)const;
 
     //!
     //! \brief propertyFiltrable
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty>&propertyFiltrable() const;
+    virtual QHash<QString, QMetaProperty> &propertyFiltrable() const;
 
-    /**
-     * @brief propertyByPropertyName
-     * @return
-     */
-    virtual QHash<QString, QMetaProperty>&propertyByPropertyName() const;
+    //!
+    //! \brief propertyByPropertyName
+    //! \return
+    //!
+    virtual QHash<QString, QMetaProperty> &propertyByPropertyName() const;
     virtual QMetaProperty propertyByPropertyName(const QString &propertyName) const;
 
     //!
@@ -299,7 +319,6 @@ public:
     //! \return
     //!
     virtual QVariantHash toForeign(const QVariant &vModel, const QVariant &v) const;
-
 
 private:
     ModelInfoPvt *p=nullptr;

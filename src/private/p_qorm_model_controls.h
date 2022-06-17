@@ -46,8 +46,8 @@ public:
     //! \return
     //!
     virtual QUuid &uuid() const;
-    virtual ModelDtoControls &uuid(const QVariant &v);
-    virtual ModelDtoControls &setUuid(const QVariant &v);
+    virtual ModelDtoControls &uuid(const QUuid &v);
+    virtual ModelDtoControls &setUuid(const QUuid &v);
 
 
     //!

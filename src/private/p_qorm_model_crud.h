@@ -10,7 +10,7 @@
 #include "../qorm_model_dto.h"
 
 namespace QOrm {
-typedef std::function<ResultValue&(QOrm::ObjectDb*controller, const QVariant &vBody)> CRUDBodyActionMethod;
+typedef std::function<ResultValue &(QOrm::ObjectDb*controller, const QVariant &vBody)> CRUDBodyActionMethod;
 typedef QOrm::ModelAction CRUDAction;
 }
 
@@ -83,7 +83,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&type(const FormType &value);
+    virtual CRUDBase &type(const FormType &value);
 
     //!
     //! \brief layout
@@ -96,39 +96,45 @@ public:
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&layout(const FormLayout &value);
+    virtual CRUDBase &layout(const FormLayout &value);
 
     //!
-    //! \brief crudName
+    //! \brief uuid
     //! \return
     //!
-    virtual QByteArray crudName()const;
+    virtual const QUuid &uuid();
 
     //!
-    //! \brief crudName
+    //! \brief name
+    //! \return
+    //!
+    virtual const QByteArray &name();
+
+    //!
+    //! \brief name
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&crudName(const QVariant &value);
+    virtual CRUDBase &name(const QVariant &value);
 
     //!
-    //! \brief crudDescription
+    //! \brief description
     //! \return
     //!
-    virtual QByteArray crudDescription()const;
+    virtual QByteArray &description()const;
 
     //!
-    //! \brief crudDescription
+    //! \brief description
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&crudDescription(const QVariant &value);
+    virtual CRUDBase &description(const QVariant &value);
 
     //!
     //! \brief dto
     //! \return
     //!
-    virtual QOrm::ModelDto&dto();
+    virtual QOrm::ModelDto &dto();
 
     //!
     //! \brief modelInfo
@@ -147,14 +153,14 @@ public:
     //! \brief strategy
     //! \return
     //!
-    virtual QOrm::CRUDStrategy&strategy()const;
+    virtual QOrm::CRUDStrategy &strategy()const;
 
     //!
     //! \brief strategy
     //! \param strategy
     //! \return
     //!
-    virtual CRUDBase&strategy(const QVariant&strategy);
+    virtual CRUDBase &strategy(const QVariant &strategy);
 
     //!
     //! \brief source
@@ -167,7 +173,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual CRUDBase&source(const QVariant &value);
+    virtual CRUDBase &source(const QVariant &value);
 
     //!
     //! \brief crudify
@@ -180,49 +186,49 @@ public:
     //! \return
     //!
     //! remove actions
-    virtual CRUDBase&actionNulls();
+    virtual CRUDBase &actionNulls();
 
     //!
     //! \brief actionSearch
     //! \param action
     //! \return
     //!
-    virtual CRUDBase&actionSearch(QOrm::ModelAction&action);
+    virtual CRUDBase &actionSearch(QOrm::ModelAction &action);
 
     //!
     //! \brief actionInsert
     //! \param action
     //! \return
     //!
-    virtual CRUDBase&actionInsert(QOrm::ModelAction&action);
+    virtual CRUDBase &actionInsert(QOrm::ModelAction &action);
 
     //!
     //! \brief actionUpsert
     //! \param action
     //! \return
     //!
-    virtual CRUDBase&actionUpsert(QOrm::ModelAction&action);
+    virtual CRUDBase &actionUpsert(QOrm::ModelAction &action);
 
     //!
     //! \brief actionUpdate
     //! \param action
     //! \return
     //!
-    virtual CRUDBase&actionUpdate(QOrm::ModelAction&action);
+    virtual CRUDBase &actionUpdate(QOrm::ModelAction &action);
 
     //!
     //! \brief actionRemove
     //! \param action
     //! \return
     //!
-    virtual CRUDBase&actionRemove(QOrm::ModelAction&action);
+    virtual CRUDBase &actionRemove(QOrm::ModelAction &action);
 
     //!
     //! \brief actionDeactivate
     //! \param action
     //! \return
     //!
-    virtual CRUDBase&actionDeactivate(QOrm::ModelAction&action);
+    virtual CRUDBase &actionDeactivate(QOrm::ModelAction &action);
 
 protected:
 
@@ -309,21 +315,21 @@ protected:
     //! \param method
     //! \return
     //!
-    CRUDBase&onBefore(QOrm::CRUDBodyActionMethod method);
+    CRUDBase &onBefore(QOrm::CRUDBodyActionMethod method);
 
     //!
     //! \brief onSuccess
     //! \param method
     //! \return
     //!
-    CRUDBase&onSuccess(QOrm::CRUDBodyActionMethod method);
+    CRUDBase &onSuccess(QOrm::CRUDBodyActionMethod method);
 
     //!
     //! \brief onFailed
     //! \param method
     //! \return
     //!
-    CRUDBase&onFailed(QOrm::CRUDBodyActionMethod method);
+    CRUDBase &onFailed(QOrm::CRUDBodyActionMethod method);
 
     //!
     //! \brief canActionSearch
@@ -366,19 +372,19 @@ protected:
     //! \brief doBofore
     //! \return
     //!
-    virtual ResultValue&doBofore();
+    virtual ResultValue &doBofore();
 
     //!
     //! \brief doSuccess
     //! \return
     //!
-    virtual ResultValue&doSuccess();
+    virtual ResultValue &doSuccess();
 
     //!
     //! \brief doFailed
     //! \return
     //!
-    virtual ResultValue&doFailed();
+    virtual ResultValue &doFailed();
 
 private:
     CRUDBasePvt*p=nullptr;

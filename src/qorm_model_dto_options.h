@@ -19,11 +19,6 @@ public:
     Q_INVOKABLE explicit ModelDtoOptions(QObject *parent = nullptr);
 
     //!
-    //! \brief ~ModelDtoOptions
-    //!
-    virtual ~ModelDtoOptions();
-
-    //!
     //! \brief operator =
     //! \param v
     //! \return

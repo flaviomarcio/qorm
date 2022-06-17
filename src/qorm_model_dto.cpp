@@ -60,12 +60,10 @@ class ModelDtoPvt:public QObject
 {
 public:
     ModelDtoControls dtoControls;
-
-    QObject *dto = nullptr;
-
-    explicit ModelDtoPvt(ModelDto *parent):QObject{parent}
+    QObject *parent = nullptr;
+    explicit ModelDtoPvt(ModelDto *parent):QObject{parent}, dtoControls{parent}
     {
-        this->dto = parent;
+        this->parent = parent;
         auto pParent = parent->parent();
         if (pParent != nullptr)
             this->initDescriptors(pParent);
@@ -74,7 +72,7 @@ public:
     void initObjects()
     {
         const auto className
-            = QString::fromUtf8(this->dto->parent()->metaObject()->className()).toLower().trimmed();
+            = QString::fromUtf8(this->parent->parent()->metaObject()->className()).toLower().trimmed();
         auto settings = dtoSettings->value(className).toHash();
         this->dtoControls.settings(settings);
     }
@@ -86,7 +84,7 @@ public:
         auto model = dynamic_cast<QOrm::Model *>(object);
         if (model == nullptr)
             return;
-        const auto &modelInfo = ModelInfo::modelInfo(model->metaObject()->className());
+        const auto &modelInfo = ModelInfo::from(model->metaObject()->className());
         auto descriptors = modelInfo.propertyDescriptors();
         dtoControls.setDescriptors(descriptors);
     }
@@ -109,18 +107,18 @@ ModelDto::~ModelDto()
 
 }
 
-QUuid ModelDto::uuid() const
+QUuid &ModelDto::uuid() const
 {
     return p->dtoControls.uuid();
 }
 
-ModelDto &ModelDto::uuid(const QVariant &value)
+ModelDto &ModelDto::uuid(const QUuid &value)
 {
     p->dtoControls.uuid(value);
     return *this;
 }
 
-ModelDto &ModelDto::setUuid(const QVariant &value)
+ModelDto &ModelDto::setUuid(const QUuid &value)
 {
     p->dtoControls.uuid(value);
     return *this;

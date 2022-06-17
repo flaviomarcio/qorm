@@ -626,7 +626,7 @@ public:
             auto kCombineConditions=getVariantStartsWith(qsl("condition"), map).toMap();
 
             auto kCombineOn=map.value(qsl("on"));
-            const auto &modelInfo=QOrm::ModelInfo::modelInfo(kCombineOn);
+            const auto &modelInfo=QOrm::ModelInfo::from(kCombineOn);
             auto tableName=modelInfo.tableNameFull();
             auto connection=parser.parserCommand(kCombine);
 

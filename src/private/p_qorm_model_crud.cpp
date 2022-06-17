@@ -6,15 +6,12 @@
 
 namespace PrivateQOrm {
 
-
-#define dPvt()\
-    auto &p = *reinterpret_cast<CRUDBasePvt*>(this->p)
-
-class CRUDBasePvt{
+class CRUDBasePvt:public QObject{
 public:
     QOrm::ModelDtoOptions options;
-    QByteArray crudName;
-    QByteArray crudDescription;
+    QUuid uuid;
+    QByteArray name;
+    QByteArray description;
     QOrm::ModelDto dto;
     QHash<QByteArray, QOrm::ModelAction*> actions;
     QHash<QByteArray, QOrm::CRUDBodyActionMethod> actionMethod;
@@ -22,7 +19,7 @@ public:
     QVariant source;
     CRUDBase*parent=nullptr;
 
-    explicit CRUDBasePvt(CRUDBase*parent):options(parent),dto(parent)
+    explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dto{parent}
     {
         this->parent=parent;
         dto.setType(QOrm::ModelDto::FormType(CRUDBase::defaultType()));
@@ -48,7 +45,7 @@ public:
         return*this->parent;
     }
 
-    void set_crud(const QVariant&crud)
+    void set_crud(const QVariant &crud)
     {
         auto vCrud=CRUDBody(crud);
         auto vStrategy=[&vCrud](){
@@ -71,7 +68,7 @@ public:
         this->parent->lr().resultInfo().fromVar(vCrud.value(qsl("resultInfo")));
     }
 
-    void source_set(const QVariant&source)
+    void source_set(const QVariant &source)
     {
         switch (qTypeId(source)) {
         case QMetaType_QString:
@@ -86,7 +83,7 @@ public:
         }
     }
 
-    void strategy_set(const QVariant&strategy){
+    void strategy_set(const QVariant &strategy){
         if(!strategy.isValid() || strategy.isNull()){
             this->strategy=QOrm::Undefined;
             return;
@@ -105,32 +102,32 @@ public:
 CRUDBase::CRUDBase(QObject *parent) : QOrm::ObjectDb{parent}
 {
     this->p = new CRUDBasePvt{this};
-    dPvt();
-    p.set_crud(CRUDBody());
+
+    p->set_crud(CRUDBody());
 }
 
 CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent}
 {
     this->p = new CRUDBasePvt{this};
-    dPvt();
-    p.set_crud(vBody);
+
+    p->set_crud(vBody);
 }
 
-CRUDBase::~CRUDBase(){
-    dPvt();
-    delete&p;
+CRUDBase::~CRUDBase()
+{
+
 }
 
 QOrm::ModelDtoOptions &CRUDBase::options()
 {
-    dPvt();
-    return p.options;
+
+    return p->options;
 }
 
 CRUDBase &CRUDBase::setOptions(const QOrm::ModelDtoOptions &options)
 {
-    dPvt();
-    p.options=options;
+
+    p->options=options;
     return*this;
 }
 
@@ -147,66 +144,67 @@ CRUDBase &CRUDBase::setResultInfo(const QStm::ResultInfo &resultInfo)
 
 CRUDBase::FormType CRUDBase::type() const
 {
-    dPvt();
-    return FormType(p.dto.type());
+
+    return FormType(p->dto.type());
 }
 
 CRUDBase &CRUDBase::type(const FormType &value)
 {
-    dPvt();
-    p.dto.setType(QOrm::ModelDto::FormType(value));
+
+    p->dto.setType(QOrm::ModelDto::FormType(value));
     return*this;
 }
 
 CRUDBase::FormLayout CRUDBase::layout() const
 {
-    dPvt();
-    return FormLayout(p.dto.layout());
+
+    return FormLayout(p->dto.layout());
 }
 
 CRUDBase &CRUDBase::layout(const FormLayout &value)
 {
-    dPvt();
-    p.dto.setLayout(QOrm::ModelDto::FormLayout(value));
+    p->dto.setLayout(QOrm::ModelDto::FormLayout(value));
     return*this;
 }
 
-QByteArray CRUDBase::crudName() const
+const QUuid &CRUDBase::uuid()
 {
-    dPvt();
-    if(p.crudName.trimmed().isEmpty())
-        return this->metaObject()->className();
-
-    return p.crudName;
+    Q_DECLARE_VU;
+    if(p->uuid.isNull())
+        p->uuid=vu.toMd5Uuid(this->name());
+    return p->uuid;
 }
 
-CRUDBase &CRUDBase::crudName(const QVariant &value)
+const QByteArray &CRUDBase::name()
 {
-    dPvt();
-    p.crudName=value.toByteArray().trimmed();
+    if(p->name.trimmed().isEmpty())
+        p->name=this->metaObject()->className();
+    return p->name;
+}
+
+CRUDBase &CRUDBase::name(const QVariant &value)
+{
+
+    p->name=value.toByteArray().trimmed();
     return*this;
 }
 
-QByteArray CRUDBase::crudDescription() const
+QByteArray &CRUDBase::description() const
 {
-    dPvt();
-    if(p.crudDescription.trimmed().isEmpty())
-        return this->metaObject()->className();
-
-    return p.crudDescription;
+    if(p->description.trimmed().isEmpty())
+        p->description=this->metaObject()->className();
+    return p->description;
 }
 
-CRUDBase &CRUDBase::crudDescription(const QVariant &value)
+CRUDBase &CRUDBase::description(const QVariant &value)
 {
-    dPvt();
-    p.crudDescription=value.toByteArray().trimmed();
+    p->description=value.toByteArray().trimmed();
     return*this;
 }
 
 QOrm::ModelDto &CRUDBase::dto()
 {
-    dPvt();
-    return p.dto;
+    return p->dto;
 }
 
 const QOrm::ModelInfo &CRUDBase::modelInfo()
@@ -217,40 +215,40 @@ const QOrm::ModelInfo &CRUDBase::modelInfo()
 
 CRUDBase&CRUDBase::crudBody(const QVariant &v)
 {
-    dPvt();
-    p.set_crud(v);
+
+    p->set_crud(v);
     return*this;
 }
 
 QOrm::CRUDStrategy&CRUDBase::strategy()const
 {
-    dPvt();
-    return p.strategy;
+
+    return p->strategy;
 }
 
 CRUDBase &CRUDBase::strategy(const QVariant &strategy)
 {
-    dPvt();
-    p.strategy_set(strategy);
+
+    p->strategy_set(strategy);
     return*this;
 }
 
 QVariant CRUDBase::source() const{
-    dPvt();
-    return p.source;
+
+    return p->source;
 }
 
 CRUDBase &CRUDBase::source(const QVariant &value)
 {
-    dPvt();
-    p.source=value;
+
+    p->source=value;
     return*this;
 }
 
 ResultValue &CRUDBase::crudify()
 {
-    dPvt();
-    p.dto.setResultInfo(this->resultInfo());
+
+    p->dto.setResultInfo(this->resultInfo());
     auto strategy=this->strategy();
     switch (strategy) {
     case QOrm::Search:
@@ -272,51 +270,51 @@ ResultValue &CRUDBase::crudify()
 
 CRUDBase &CRUDBase::actionNulls()
 {
-    dPvt();
-    qDeleteAll(p.actions);
-    p.actions.clear();
+
+    qDeleteAll(p->actions);
+    p->actions.clear();
     return*this;
 }
 
 CRUDBase &CRUDBase::actionSearch(QOrm::ModelAction &action)
 {
-    dPvt();
-    p.actions[__func__]=&action;
+
+    p->actions[__func__]=&action;
     return*this;
 }
 
 CRUDBase &CRUDBase::actionInsert(QOrm::ModelAction &action)
 {
-    dPvt();
-    p.actions[__func__]=&action;
+
+    p->actions[__func__]=&action;
     return*this;
 }
 
 CRUDBase &CRUDBase::actionUpsert(QOrm::ModelAction &action)
 {
-    dPvt();
-    p.actions[__func__]=&action;
+
+    p->actions[__func__]=&action;
     return*this;
 }
 
 CRUDBase &CRUDBase::actionUpdate(QOrm::ModelAction &action)
 {
-    dPvt();
-    p.actions[__func__]=&action;
+
+    p->actions[__func__]=&action;
     return*this;
 }
 
 CRUDBase &CRUDBase::actionRemove(QOrm::ModelAction &action)
 {
-    dPvt();
-    p.actions[__func__]=&action;
+
+    p->actions[__func__]=&action;
     return*this;
 }
 
 CRUDBase &CRUDBase::actionDeactivate(QOrm::ModelAction &action)
 {
-    dPvt();
-    p.actions[__func__]=&action;
+
+    p->actions[__func__]=&action;
     return*this;
 }
 
@@ -385,104 +383,104 @@ ResultValue &CRUDBase::deactivate(const QVariant &value)
 
 CRUDBase &CRUDBase::onBefore(QOrm::CRUDBodyActionMethod method)
 {
-    dPvt();
-    p.actionMethod[qbl("bofore")]=method;
+
+    p->actionMethod[qbl("bofore")]=method;
     return*this;
 }
 
 CRUDBase &CRUDBase::onSuccess(QOrm::CRUDBodyActionMethod method)
 {
-    dPvt();
-    p.actionMethod[qbl("success")]=method;
+
+    p->actionMethod[qbl("success")]=method;
     return*this;
 }
 
 CRUDBase &CRUDBase::onFailed(QOrm::CRUDBodyActionMethod method)
 {
-    dPvt();
-    p.actionMethod[qbl("failed")]=method;
+
+    p->actionMethod[qbl("failed")]=method;
     return*this;
 }
 
 ResultValue &CRUDBase::canActionSearch()
 {
     Q_DECLARE_VU;
-    dPvt();
+
     static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
     QVariant v;
     if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(this->source())){
-        auto &act=p.actions[name];
+        auto &act=p->actions[name];
         auto &lr=(act==nullptr)?this->search():act->action(this->source());
         v=lr.resultVariant();
     }
-    return this->lr(p.dto
-                    .uuid(this->crudName())
-                    .name(this->crudName())
-                    .text(this->crudDescription())
+    return this->lr(p->dto
+                    .uuid(this->uuid())
+                    .name(this->name())
+                    .text(this->description())
                     .items(v).o());
 }
 
 ResultValue &CRUDBase::canActionInsert()
 {
-    dPvt();
+
     static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
-    auto &act=p.actions[name];
+    auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->insert():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionUpsert()
 {
-    dPvt();
+
     static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
-    auto &act=p.actions[name];
+    auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionUpdate()
 {
-    dPvt();
+
     static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
-    auto &act=p.actions[name];
+    auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->update():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionRemove()
 {
-    dPvt();
+
     static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
-    auto &act=p.actions[name];
+    auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->remove():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::canActionDeactivate()
 {
-    dPvt();
+
     static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
-    auto &act=p.actions[name];
+    auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->deactivate():act->action(this->source());
     return this->lr(lr);
 }
 
 ResultValue &CRUDBase::doBofore()
 {
-    dPvt();
-    return p.doModelAction(tr("bofore"));
+
+    return p->doModelAction(tr("bofore"));
 }
 
 ResultValue &CRUDBase::doSuccess()
 {
-    dPvt();
-    return p.doModelAction(tr("success"));
+
+    return p->doModelAction(tr("success"));
 }
 
 ResultValue &CRUDBase::doFailed()
 {
-    dPvt();
-    return p.doModelAction(tr("failed"));
+
+    return p->doModelAction(tr("failed"));
 }
 
 

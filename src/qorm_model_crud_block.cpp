@@ -12,7 +12,7 @@ public:
     QStm::ResultInfo resultInfo;
     CRUDBlock *parent=nullptr;
     QVariant crudBody;
-    QMap<QByteArray, PrivateQOrm::CRUDBase *> crudMap;
+    QMap<QString, PrivateQOrm::CRUDBase *> crudMap;
     QList<PrivateQOrm::CRUDBase *> crudList;
 
     explicit CRUDBlockPvt(CRUDBlock*parent):QObject{parent},options{parent}
@@ -69,7 +69,7 @@ CRUDBlock &CRUDBlock::operator<<(PrivateQOrm::CRUDBase *crud)
     return this->insert(crud);
 }
 
-QVariant CRUDBlock::crudBody() const
+QVariant &CRUDBlock::crudBody() const
 {
 
     return p->crudBody;
@@ -102,7 +102,7 @@ CRUDBlock &CRUDBlock::insert(PrivateQOrm::CRUDBase *crud)
 
     this->remove(crud);
     if(crud!=nullptr){
-        p->crudMap.insert(crud->crudName(), crud);
+        p->crudMap.insert(crud->uuid().toString(), crud);
         p->crudList<<crud;
     }
     return*this;
@@ -111,8 +111,8 @@ CRUDBlock &CRUDBlock::insert(PrivateQOrm::CRUDBase *crud)
 CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
 {
 
-    if(p->crudMap.contains(crud->crudName())){
-        auto _crud=p->crudMap.take(crud->crudName());
+    if(p->crudMap.contains(crud->uuid().toString())){
+        auto _crud=p->crudMap.take(crud->uuid().toString());
         if(_crud!=nullptr && _crud->parent()==this){
             p->crudList.removeOne(_crud);
             delete _crud;
@@ -121,10 +121,10 @@ CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
     return*this;
 }
 
-CRUDBlock &CRUDBlock::remove(const QByteArray &crudName)
+CRUDBlock &CRUDBlock::remove(const QUuid &crudUuid)
 {
 
-    return this->remove(p->crudMap.value(crudName));
+    return this->remove(p->crudMap.value(crudUuid.toString()));
 }
 
 ResultValue &CRUDBlock::crudify()
@@ -144,14 +144,14 @@ ResultValue &CRUDBlock::crudify()
             auto vList=vCrudSource[qsl("pages")].toList();
             for(auto &v:vList){
                 auto vHash=v.toHash();
-                auto crudName=vHash[qsl("id")].toString().toLower().trimmed();
-                crudPages.insert(crudName, vHash);
+                auto crudUuid=vHash[qsl("uuid")].toString().toLower().trimmed();
+                crudPages.insert(crudUuid, vHash);
             }
         }
     }
 
     for(auto &crud:p->crudList){
-        const auto crudName=crud->crudName().toLower();
+        const auto crudUuid=crud->uuid().toString();
         crud->setOptions(p->options);
         crud->setResultInfo(p->resultInfo);
         QVariantList crudList;
@@ -159,10 +159,10 @@ ResultValue &CRUDBlock::crudify()
         CRUDBody crudItem(crudBody);
 
         if(!crudPages.isEmpty())
-            crudSource=crudPages.value(crudName);
+            crudSource=crudPages.value(crudUuid);
 
 
-        if(!crudPages.contains(crudName)){
+        if(!crudPages.contains(crudUuid)){
             crudList.append(crudBody);
         }
         else if(vu.vIsList(crudSource)){
@@ -171,7 +171,7 @@ ResultValue &CRUDBlock::crudify()
         }
         else if(vu.vIsMap(crudSource)){
             auto vHash=crudSource.toHash();
-            if(vHash.contains(qsl("id")) && vHash.contains(qsl("items"))){
+            if(vHash.contains(qsl("uuid")) && vHash.contains(qsl("items"))){
                 auto list=vHash[qsl("items")].toList();
                 for(auto &v:list)
                     crudList.append(CRUDBody(crudBody.strategy(), v));

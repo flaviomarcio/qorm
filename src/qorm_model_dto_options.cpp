@@ -16,26 +16,18 @@ ModelDtoOptions::ModelDtoOptions(QObject *parent) : QObject{parent}
     this->p = new ModelDtoOptionsPvt{this};
 }
 
-ModelDtoOptions::~ModelDtoOptions()
-{
-
-}
-
 bool ModelDtoOptions::searchOnEmptyFilter() const
 {
-
     return p->searchOnEmptyFilter;
 }
 
 void ModelDtoOptions::setSearchOnEmptyFilter(bool value)
 {
-
     p->searchOnEmptyFilter = value;
 }
 
 QOrm::ModelDtoOptions &QOrm::ModelDtoOptions::operator=(const QOrm::ModelDtoOptions &v)
 {
-
     p->searchOnEmptyFilter = v.searchOnEmptyFilter();
     return *this;
 }

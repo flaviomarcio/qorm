@@ -5,10 +5,6 @@
 
 namespace QOrm {
 
-
-#define dPvt()\
-    auto &p = *reinterpret_cast<ModelActionPvt*>(this->p)\
-
 class ModelActionPvt:public QObject{
 public:
     ModelAction*parent=nullptr;

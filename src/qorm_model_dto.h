@@ -39,21 +39,21 @@ public:
     //! \brief uuid
     //! \return
     //!
-    virtual QUuid uuid() const;
+    virtual QUuid &uuid() const;
 
     //!
     //! \brief uuid
     //! \param v
     //! \return
     //!
-    virtual ModelDto &uuid(const QVariant &value);
+    virtual ModelDto &uuid(const QUuid &value);
 
     //!
     //! \brief setId
     //! \param v
     //! \return
     //!
-    virtual ModelDto &setUuid(const QVariant &v);
+    virtual ModelDto &setUuid(const QUuid &v);
 
     //!
     //! \brief name
