@@ -136,7 +136,7 @@ ResultValue &CRUDBlock::crudify()
 
     QVariantList __return;
     QVariantHash crudPages;
-    CRUDBody crudBody(p->crudBody);
+    CRUDBody crudBody{p->crudBody};
 
     {
         auto vCrudSource=crudBody.source().toHash();
@@ -144,8 +144,16 @@ ResultValue &CRUDBlock::crudify()
             auto vList=vCrudSource[qsl("pages")].toList();
             for(auto &v:vList){
                 auto vHash=v.toHash();
+                QVariant vCrudBody;
+                if(vHash.contains(qsl("items"))){
+                    auto vItems=vHash.value(qsl("items")).toList();
+                    vCrudBody=vItems;
+                }
+                else{
+                    vCrudBody=vHash;
+                }
                 auto crudUuid=vHash[qsl("uuid")].toUuid().toString();
-                crudPages.insert(crudUuid, vHash);
+                crudPages.insert(crudUuid, vCrudBody);
             }
         }
     }
@@ -156,11 +164,10 @@ ResultValue &CRUDBlock::crudify()
         crud->setResultInfo(p->resultInfo);
         QVariantList crudList;
         QVariant crudSource;
-        CRUDBody crudItem(crudBody);
+        CRUDBody crudItem{crudBody};
 
         if(!crudPages.isEmpty())
             crudSource=crudPages.value(crudUuid);
-
 
         if(!crudPages.contains(crudUuid)){
             crudList.append(crudBody);
@@ -185,12 +192,12 @@ ResultValue &CRUDBlock::crudify()
         }
 
 
-        auto makeItem=[&__return](PrivateQOrm::CRUDBase *crud, const QVariant&crudSource){
-            CRUDBody crudRecord(crudSource);
+        auto makeItem=[&__return, &crudBody](PrivateQOrm::CRUDBase *crud, const QVariant&crudSource){
+            CRUDBody crudRecord{crudBody.strategy(), crudSource};
 
             auto lastCrud=__return.isEmpty()?qvh_null:__return.last().toHash();
             if(lastCrud.isEmpty())
-                return CRUDBody(crudSource);
+                return crudRecord;
 
             QVariantHash vHash;
             auto record=lastCrud;
@@ -208,7 +215,7 @@ ResultValue &CRUDBlock::crudify()
             }
             const auto &modelInfo=crud->modelInfo();
             auto crudSourceFields=modelInfo.toForeign(crudRecord.source(), record);
-            return CRUDBody(crudRecord.strategy(), crudSourceFields);
+            return CRUDBody{crudRecord.strategy(), crudSourceFields};
         };
 
 
@@ -219,7 +226,7 @@ ResultValue &CRUDBlock::crudify()
             auto crudListCopy=crudList;
             while(!crudListCopy.isEmpty()){
                 const auto &crudSource=crudListCopy.takeLast();
-                CRUDBody crudMaked(crudSource);
+                CRUDBody crudMaked{crudSource};
                 if(!crudListCopy.isEmpty())
                     crudMaked=makeItem(crud, crudSource);
 

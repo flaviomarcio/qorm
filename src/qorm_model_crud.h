@@ -212,6 +212,14 @@ protected:
     virtual ResultValue &update(const QVariant &value)
     {
         T model(this, value);
+        if(!this->p_dao.reload(model))
+            return this->lr(this->p_dao.lr());
+
+        model.mergeFrom(value);
+
+        if(!this->p_dao.update(model))
+            return this->lr(this->p_dao.lr());
+
         return this->update(model);
     }
 

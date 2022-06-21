@@ -599,8 +599,9 @@ QVariantHash Model::toMapPKValues() const
 
         switch (qTypeId(property)) {
         case QMetaType_QUuid:{
-            auto v=value.toUuid().toString();//no remove the .toString()
-            if(v.isNull())
+            auto uuid=value.toUuid();
+            auto v=uuid.toString();
+            if(uuid.isNull())
                 return {};
             value=v;
             break;
