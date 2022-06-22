@@ -16,7 +16,7 @@ public:
     QVariantHash flags;
     QVariantHash options;
     QVariantHash sort;
-    QVariantHash design={{vpWidth,800}, {vpHeight,600}, {vpRows,2}};
+    QVariantHash design={{vpWidth,"20%"}, {vpHeight,"15%"}, {vpRows,2}, {vpLayout, vlVertical}};
     ModelDescriptor *parent=nullptr;
     explicit ModelDescriptorPvt(ModelDescriptor *parent):QObject{parent} {}
     virtual ~ModelDescriptorPvt() {}
