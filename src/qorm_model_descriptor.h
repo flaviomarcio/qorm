@@ -6,7 +6,9 @@
 #include <QVariantHash>
 #include <QVariantMap>
 
-#define Q_ORM_MODEL_SET_DESIGN(W,H,R) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
+//#define Q_ORM_MODEL_SET_VALUES(W,H,R) this->setValues(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
+
+#define Q_ORM_MODEL_SET_DESIGN(W,H,R,L) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}, {vpLayout,R}}));
 
 #define Q_ORM_MODEL_SET_SORT(value) this->setSort(value);
 
