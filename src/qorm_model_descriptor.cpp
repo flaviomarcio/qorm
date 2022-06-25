@@ -112,7 +112,7 @@ void ModelDescriptor::descriptorsInit()
 {
     p->descriptorsOrder.clear();
     p->descriptors.clear();
-    Q_ORM_MODEL_SET_DESIGN("30%","30%",3, vlVertical)
+    Q_ORM_MODEL_SET_DESIGN("30%", "30%", 0, 3, vlVertical)
 }
 
 QVariant ModelDescriptor::descriptor(const QString &name) const
