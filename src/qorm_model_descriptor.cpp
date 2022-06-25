@@ -16,7 +16,7 @@ public:
     QVariantHash flags;
     QVariantHash options;
     QVariantHash sort;
-    QVariantHash design={{vpWidth,"20%"}, {vpHeight,"15%"}, {vpRows,2}, {vpLayout, vlVertical}};
+    QVariantHash design={{vpWidth,"20%"}, {vpHeight,"20%"}, {vpRows,2}, {vpLayout, vlVertical}};
     ModelDescriptor *parent=nullptr;
     explicit ModelDescriptorPvt(ModelDescriptor *parent):QObject{parent} {}
     virtual ~ModelDescriptorPvt() {}
@@ -112,7 +112,7 @@ void ModelDescriptor::descriptorsInit()
 {
     p->descriptorsOrder.clear();
     p->descriptors.clear();
-    Q_ORM_MODEL_SET_DESIGN("20%","15%",3, vlVertical)
+    Q_ORM_MODEL_SET_DESIGN("30%","30%",3, vlVertical)
 }
 
 QVariant ModelDescriptor::descriptor(const QString &name) const
