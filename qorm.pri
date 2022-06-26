@@ -60,6 +60,8 @@ HEADERS += \
     $$PWD/src/qorm_dao.h \
     $$PWD/src/qorm_global.h \
     $$PWD/src/qorm_model_descriptor.h \
+    $$PWD/src/qorm_endpoints.h \
+    $$PWD/src/qorm_endpoint.h \
     $$PWD/src/qorm_model.h \
     $$PWD/src/qorm_model_crud_request.h \
     $$PWD/src/qorm_model_crud_block.h \
@@ -119,6 +121,8 @@ SOURCES += \
     $$PWD/src/qorm_model_dto_options.cpp \
     $$PWD/src/qorm_controller.cpp \
     $$PWD/src/qorm_dao.cpp \
+    $$PWD/src/qorm_endpoints.cpp \
+    $$PWD/src/qorm_endpoint.cpp \
     $$PWD/src/qorm_model_descriptor.cpp \
     $$PWD/src/qorm_model_crud_request.cpp \
     $$PWD/src/qorm_model_crud_block.cpp \
