@@ -186,7 +186,6 @@ ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &result
 
 QVariantMap &ModelDtoControls::descriptors()
 {
-
     return p->descriptors;
 }
 
