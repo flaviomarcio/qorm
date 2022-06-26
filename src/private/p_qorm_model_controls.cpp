@@ -32,7 +32,7 @@ public:
         filters(parent, parent),
         links(parent, parent),
         crud(parent, parent),
-        items(parent,parent),
+        items(parent, parent),
         resultInfo(parent)
     {
         this->dto=parent;
@@ -106,6 +106,7 @@ public:
             vHash[vpUuid]=this->dto->uuid();
             vHash[vpName]=this->dto->name();
             vHash[vpTitle]=this->text;
+            vHash[vpDesign]=this->dto->design();
             vHash[vpType]=QVariant::fromValue<ModelDtoControls::FormType>(this->type);
             vHash[vpLayout]=QVariant::fromValue<ModelDtoControls::FormLayout>(this->layout);
             vHash[vpHeaders]=vHeader;
@@ -146,6 +147,7 @@ public:
             this->headers.fromHash(v.value(vpHeaders).toHash());
             this->filters.fromHash(v.value(vpFilters).toHash());
             this->items.fromList(v.value(vpItems));
+            this->design=v.value(vpDesign).toHash();
         }
     }
 
@@ -154,6 +156,7 @@ public:
         this->headers.clear();
         this->filters.clear();
         this->items.clear();
+        this->design.clear();
         this->resultInfo.clear();
     }
 };
@@ -183,7 +186,6 @@ ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &result
 
 QVariantMap &ModelDtoControls::descriptors()
 {
-
     return p->descriptors;
 }
 
