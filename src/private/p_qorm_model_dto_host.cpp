@@ -9,11 +9,11 @@ Host::Host(QObject *parent) : QStm::ObjectWrapper{parent}
 
 bool Host::isValid() const
 {
-//    if(!this->protocol().isEmpty())
-//        return true;
+    if(!this->protocol().isEmpty())
+        return true;
 
-//    if(!this->hostName().isEmpty())
-//        return true;
+    if(!this->hostName().isEmpty())
+        return true;
 
     if(this->port()>0)
         return true;
@@ -74,7 +74,7 @@ void Host::setHostName(const QString &newHostName)
 
 void Host::resetHostName()
 {
-    setHostName(QStringLiteral("localhost"));
+    setHostName(QStringLiteral("${HOST}"));
 }
 
 int Host::port() const
