@@ -19,9 +19,9 @@ HEADERS += \
     $$PWD/src/private/p_qorm_model_crud.h \
     $$PWD/src/private/p_qorm_model_report.h \
     $$PWD/src/private/p_qorm_model_dao.h \
-    $$PWD/src/private/p_qorm_model_dto_crud.h \
-    $$PWD/src/private/p_qorm_model_dto_link_base.h \
-    $$PWD/src/private/p_qorm_model_dto_link.h \
+    $$PWD/src/private/p_qorm_model_dto_host.h \
+    $$PWD/src/private/p_qorm_model_dto_endpoints.h \
+    $$PWD/src/private/p_qorm_model_dto_endpoint.h \
     $$PWD/src/private/p_qorm_model_dto_filter.h \
     $$PWD/src/private/p_qorm_model_dto_header.h \
     $$PWD/src/private/p_qorm_model_dto_items.h \
@@ -60,8 +60,6 @@ HEADERS += \
     $$PWD/src/qorm_dao.h \
     $$PWD/src/qorm_global.h \
     $$PWD/src/qorm_model_descriptor.h \
-    $$PWD/src/qorm_endpoints.h \
-    $$PWD/src/qorm_endpoint.h \
     $$PWD/src/qorm_model.h \
     $$PWD/src/qorm_model_crud_request.h \
     $$PWD/src/qorm_model_crud_block.h \
@@ -91,8 +89,10 @@ SOURCES += \
     $$PWD/src/private/p_qorm_model_controls.cpp \
     $$PWD/src/private/p_qorm_model_crud_body.cpp \
     $$PWD/src/private/p_qorm_model_report_body.cpp \
-    $$PWD/src/private/p_qorm_model_dto_link_base.cpp \
     $$PWD/src/private/p_qorm_model_dao.cpp \
+    $$PWD/src/private/p_qorm_model_dto_host.cpp \
+    $$PWD/src/private/p_qorm_model_dto_endpoints.cpp \
+    $$PWD/src/private/p_qorm_model_dto_endpoint.cpp \
     $$PWD/src/private/p_qorm_model_crud.cpp \
     $$PWD/src/private/p_qorm_model_report.cpp \
     $$PWD/src/private/p_qorm_model_info.cpp \
@@ -121,8 +121,6 @@ SOURCES += \
     $$PWD/src/qorm_model_dto_options.cpp \
     $$PWD/src/qorm_controller.cpp \
     $$PWD/src/qorm_dao.cpp \
-    $$PWD/src/qorm_endpoints.cpp \
-    $$PWD/src/qorm_endpoint.cpp \
     $$PWD/src/qorm_model_descriptor.cpp \
     $$PWD/src/qorm_model_crud_request.cpp \
     $$PWD/src/qorm_model_crud_block.cpp \
@@ -130,10 +128,6 @@ SOURCES += \
     $$PWD/src/qorm_model_dto.cpp \
     $$PWD/src/qorm_object_db.cpp \
     $$PWD/src/qorm_query.cpp \
-    #$$PWD/src/qorm_report_engine.cpp \
-    #$$PWD/src/qorm_report_item.cpp \
-    #$$PWD/src/qorm_report_runner.cpp \
-    #$$PWD/src/qorm_report_strategy.cpp \
     $$PWD/src/qorm_script_exec.cpp \
     $$PWD/src/qorm_sql_suitable_builder.cpp \
     $$PWD/src/qorm_sql_suitable_types.cpp \

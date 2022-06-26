@@ -1,7 +1,7 @@
-#include "./qmfe_endpoints.h"
+#include "./p_qorm_model_dto_endpoints.h"
 #include <QVariantHash>
 
-namespace QMFE {
+namespace QOrm {
 
 class EndPointsPvt:public QObject{
 public:
@@ -13,7 +13,7 @@ private:
 };
 
 EndPoints::EndPoints(QObject *parent)
-    : ObjectWrapper{parent}
+    : QStm::ObjectWrapper{parent}
 {
     this->p=new EndPointsPvt{this};
 }
@@ -25,12 +25,12 @@ bool EndPoints::setValues(const QVariant &v)
         auto name=vHash.value(QStringLiteral("endpoint")).toString();
         this->insert(name, vHash);
     }
-    return ObjectWrapper::setValues(v);
+    return QStm::ObjectWrapper::setValues(v);
 }
 
 void EndPoints::clear()
 {
-    ObjectWrapper::clear();
+    QStm::ObjectWrapper::clear();
     p->hash.clear();
 }
 
@@ -55,7 +55,7 @@ EndPoint *EndPoints::value(const QString &name)
     return nullptr;
 }
 
-EndPoint *EndPoints::method(const Network::Method &method)
+EndPoint *EndPoints::method(const QVariant &method)
 {
     QHashIterator<QString, EndPoint*> i(p->hash);
     while(i.hasNext()){
@@ -86,4 +86,4 @@ void EndPoints::remove(const QString &name)
 }
 
 
-} // namespace QMFE
+} // namespace QOrm

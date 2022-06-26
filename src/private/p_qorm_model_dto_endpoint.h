@@ -1,31 +1,25 @@
 #pragma once
 
-#include "../common/qmfe_object_wrapper.h"
-#include "./qmfe_host.h"
-#include "./qmfe_data_body.h"
-#include "./qmfe_network_types.h"
+#include <QStm>
+#include "./p_qorm_model_dto_host.h"
 #include <QUuid>
 
-namespace QMFE {
+namespace QOrm {
 class EndPointPvt;
 //!
 //! \brief The EndPoint class
 //!
-class Q_MFE_EXPORT EndPoint : public ObjectWrapper
+class Q_STM_EXPORT EndPoint : public QStm::ObjectWrapper
 {
     Q_OBJECT
 
-    QMFE_OBJECT_WRAPPER(EndPoint)
+    QSTM_OBJECT_WRAPPER(EndPoint)
 
     Q_PROPERTY(QVariant method READ method WRITE setMethod RESET resetMethod NOTIFY methodChanged)
 
     Q_PROPERTY(QUuid uuid READ uuid WRITE setUuid RESET resetUuid NOTIFY uuidChanged)
 
     Q_PROPERTY(Host *host READ host WRITE setHost RESET resetHost NOTIFY hostChanged)
-
-    Q_PROPERTY(DataBody *paramerters READ paramerters WRITE setParamerters RESET resetParamerters NOTIFY paramertersChanged)
-
-    Q_PROPERTY(DataBody *body READ body WRITE setBody RESET resetBody NOTIFY bodyChanged)
 
     Q_PROPERTY(QString path READ path WRITE setPath RESET resetPath NOTIFY pathChanged)
 
@@ -98,24 +92,6 @@ public:
     void resetHost();
 
     //!
-    //! \brief paramerters
-    //! \return
-    //!
-    DataBody *paramerters() const;
-    void setParamerters(const DataBody *newParamerters);
-    void setParamerters(const QVariant &newParamerters);
-    void resetParamerters();
-
-    //!
-    //! \brief paramerters
-    //! \return
-    //!
-    DataBody *body() const;
-    void setBody(const DataBody *newBody);
-    void setBody(const QVariant &newBody);
-    void resetBody();
-
-    //!
     //! \brief path
     //! \return
     //!
@@ -135,7 +111,7 @@ public:
     //! \brief method
     //! \return
     //!
-    Network::Method method();
+    QVariant &method() const;
     void setMethod(const QVariant &newMethod);
     void resetMethod();
 

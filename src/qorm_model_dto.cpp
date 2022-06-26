@@ -200,7 +200,7 @@ ModelDtoFilters<ModelDtoControls> &ModelDto::filters()
     return p->dtoControls.filters();
 }
 
-ModelDtoLinks<ModelDtoControls> &ModelDto::links()
+EndPoints &ModelDto::links()
 {
 
     return p->dtoControls.links();

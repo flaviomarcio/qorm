@@ -184,7 +184,7 @@ public:
     //! \brief links
     //! \return
     //!
-    virtual ModelDtoLinks<ModelDtoControls> &links();
+    virtual EndPoints &links();
 
     //!
     //! \brief items

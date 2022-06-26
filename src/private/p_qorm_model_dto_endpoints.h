@@ -1,22 +1,21 @@
 #pragma once
 
-#include <QMFECommon>
 #include <QObject>
 #include <QVariantMap>
 #include <QUrl>
-#include "./qmfe_endpoint.h"
+#include "./p_qorm_model_dto_endpoint.h"
 
-namespace QMFE {
+namespace QOrm {
 
 class EndPointsPvt;
 
 //!
 //! \brief The EndPoints class
 //!
-class Q_MFE_EXPORT EndPoints : public ObjectWrapper
+class Q_STM_EXPORT EndPoints : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    QMFE_OBJECT_WRAPPER(EndPoints)
+    QSTM_OBJECT_WRAPPER(EndPoints)
 public:
     //!
     //! \brief EndPoints
@@ -61,7 +60,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual EndPoint *method(const Network::Method &method);
+    virtual EndPoint *method(const QVariant &method);
 
     //!
     //! \brief insert

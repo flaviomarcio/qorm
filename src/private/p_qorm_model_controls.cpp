@@ -19,21 +19,19 @@ public:
     QOrm::DtoOutPutStyle outPutStyle=QOrm::doRowObject;
     ModelDtoHeaders<ModelDtoControls> headers;
     ModelDtoFilters<ModelDtoControls> filters;
-    ModelDtoLinks<ModelDtoControls> links;
-    ModelDtoCrud<ModelDtoControls> crud;
     ModelDtoItems<ModelDtoControls> items;
     QStm::ResultInfo resultInfo;
+    EndPoints links;
     QVariantMap descriptors;
     ModelDtoControls *dto=nullptr;
 
     explicit ModelDtoControlsPvt(ModelDtoControls *parent)
         :QObject{parent},
-        headers(parent, parent),
-        filters(parent, parent),
-        links(parent, parent),
-        crud(parent, parent),
-        items(parent, parent),
-        resultInfo(parent)
+        headers{parent, parent},
+        filters{parent, parent},
+        items{parent, parent},
+        resultInfo{parent},
+        links{parent}
     {
         this->dto=parent;
     }
@@ -50,7 +48,7 @@ public:
 
             const auto &vHeaderList=this->headers.list();
             const auto vFilter=this->filters.toVar().toList();
-            const auto vLinks=this->links.toVar().toList();
+            const auto vLinks=this->links.toHash();
             auto vItems=this->items.toVar().toList();
 
             auto &vList=this->items.list();
@@ -364,16 +362,10 @@ ModelDtoFilters<ModelDtoControls> &ModelDtoControls::filters()
     return p->filters;
 }
 
-ModelDtoLinks<ModelDtoControls> &ModelDtoControls::links()
+EndPoints &ModelDtoControls::links()
 {
 
     return p->links;
-}
-
-ModelDtoCrud<ModelDtoControls> &ModelDtoControls::crud()
-{
-
-    return p->crud;
 }
 
 ModelDtoItems<ModelDtoControls> &ModelDtoControls::items()

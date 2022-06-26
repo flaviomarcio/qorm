@@ -1,14 +1,13 @@
-#include "./qmfe_endpoint.h"
-#include "./qmfe_host.h"
+#include "./p_qorm_model_dto_endpoint.h"
+#include "./p_qorm_model_dto_host.h"
 
-namespace QMFE {
+namespace QOrm {
 
 class EndPointPvt{
 public:
     QUuid uuid;
     Host host;
-    MetaEnum<Network::Method> method;
-    DataBody body;
+    QVariant method;
     QString path;
     QString url;
     explicit EndPointPvt(){
@@ -19,7 +18,7 @@ public:
 private:
 };
 
-EndPoint::EndPoint(QObject *parent) : ObjectWrapper{parent}
+EndPoint::EndPoint(QObject *parent) : QStm::ObjectWrapper{parent}
 {
     this->p=new EndPointPvt{};
 }
@@ -33,7 +32,7 @@ bool EndPoint::isValid() const
 
 void EndPoint::addContentType(const QString &applicationType) const
 {
-    Network n;
+    QStm::Network n;
     auto appType=p->host.headers().value(n.HEADER_CONTENT_TYPE).toString().split(QStringLiteral(","));
     if(appType.size()==1 && appType.first().trimmed().isEmpty())
         appType.clear();
@@ -51,37 +50,37 @@ void EndPoint::addContentType(const QString &applicationType) const
 
 void EndPoint::addContentTypeJSON() const
 {
-    Network n;
+    QStm::Network n;
     return this->addContentType(n.APPLICATION_JSON);
 }
 
 void EndPoint::addContentTypeXML() const
 {
-    Network n;
+    QStm::Network n;
     return this->addContentType(n.APPLICATION_XML);
 }
 
 void EndPoint::addContentTypeTextXML() const
 {
-    Network n;
+    QStm::Network n;
     return this->addContentType(n.APPLICATION_TEXT_XML);
 }
 
 void EndPoint::addContentTypeX_WWW_FORT_URLENCODED() const
 {
-    Network n;
+    QStm::Network n;
     return this->addContentType(n.APPLICATION_X_WWW_FORT_URLENCODED);
 }
 
 void EndPoint::addContentTypeDefault() const
 {
-    Network n;
+    QStm::Network n;
     return this->addContentType(n.APPLICATION_JSON);
 }
 
 QVariantHash EndPoint::contentTypeDefault()
 {
-    Network n;
+    QStm::Network n;
     return p->host.headers().value(n.HEADER_CONTENT_TYPE).toHash();
 }
 
@@ -92,7 +91,7 @@ QVariantHash &EndPoint::headers()const
 
 void EndPoint::addAuthBasic(const QString &userName, const QString &password) const
 {
-    Network n;
+    QStm::Network n;
     auto auth=p->host.headers().value(n.HEADER_AUTHORIZATION).toString().split(",");
     if(userName.trimmed().isEmpty() || password.trimmed().isEmpty()){
         if(auth.count()==1)
@@ -105,7 +104,7 @@ void EndPoint::addAuthBasic(const QString &userName, const QString &password) co
 
 void EndPoint::addAuthBearer(const QString &credentials) const
 {
-    Network n;
+    QStm::Network n;
     auto auth=p->host.headers().value(n.HEADER_AUTHORIZATION).toString().split(",");
     if(credentials.trimmed().isEmpty()){
         if(auth.count()==1)
@@ -150,55 +149,6 @@ void EndPoint::resetHost()
     setHost({});
 }
 
-DataBody *EndPoint::paramerters() const
-{
-    return &p->body;
-}
-
-void EndPoint::setParamerters(const DataBody *newParamerters)
-{
-    if(&p->body==newParamerters)
-        return;
-    p->body=newParamerters;
-    emit paramertersChanged();
-}
-
-void EndPoint::setParamerters(const QVariant &newParamerters)
-{
-    p->body=newParamerters;
-    emit paramertersChanged();
-}
-
-void EndPoint::resetParamerters()
-{
-    setParamerters({});
-}
-
-DataBody *EndPoint::body() const
-{
-    return &p->body;
-}
-
-void EndPoint::setBody(const DataBody *newBody)
-{
-    if(&p->body==newBody)
-        return;
-    p->body=newBody;
-    emit bodyChanged();
-}
-
-void EndPoint::setBody(const QVariant &newBody)
-{
-    auto vh=qvariant_cast<VariantHash*>(newBody);
-    p->body=(vh?vh->data():newBody);
-    emit bodyChanged();
-}
-
-void EndPoint::resetBody()
-{
-    setParamerters({});
-}
-
 const QString &EndPoint::path() const
 {
     return p->path;
@@ -233,9 +183,9 @@ void EndPoint::resetBasePath()
     setBasePath({});
 }
 
-Network::Method EndPoint::method()
+QVariant &EndPoint::method()const
 {
-    return p->method.type();
+    return p->method;
 }
 
 void EndPoint::setMethod(const QVariant &newMethod)
@@ -263,4 +213,4 @@ QString &EndPoint::url()const
     return p->url;
 }
 
-} // namespace QMFE
+} // namespace QOrm

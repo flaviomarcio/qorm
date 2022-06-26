@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../qorm_sql_suitable_types.h"
 #include "../../../qstm/src/qstm_result_info.h"
+#include "../qorm_sql_suitable_types.h"
+#include "./p_qorm_model_dto_host.h"
+#include "./p_qorm_model_dto_endpoint.h"
+#include "./p_qorm_model_dto_endpoints.h"
 #include "./p_qorm_model_dto_items.h"
 #include "./p_qorm_model_dto_header.h"
 #include "./p_qorm_model_dto_filter.h"
-#include "./p_qorm_model_dto_link.h"
-#include "./p_qorm_model_dto_crud.h"
 
 namespace QOrm {
 class ModelDtoControlsPvt;
@@ -118,10 +119,10 @@ public:
     //!
     virtual ModelDtoControls &settings(const QVariant&setting);
 
-    /**
-     * @brief outPutStyle
-     * @return
-     */
+    //!
+    //! \brief outPutStyle
+    //! \return
+    //!
     virtual DtoOutPutStyle &outPutStyle() const;
 
     //!
@@ -131,11 +132,11 @@ public:
     //!
     virtual ModelDtoControls &outPutStyle(const DtoOutPutStyle &value);
 
-    /**
-     * @brief setOutPutStyle
-     * @param value
-     * @return
-     */
+    //!
+    //! \brief setOutPutStyle
+    //! \param value
+    //! \return
+    //!
     virtual ModelDtoControls &setOutPutStyle(const DtoOutPutStyle &value);
 
     //!
@@ -144,23 +145,17 @@ public:
     //!
     virtual ModelDtoHeaders<ModelDtoControls> &headers();
 
-    /**
-     * @brief filters
-     * @return
-     */
+    //!
+    //! \brief filters
+    //! \return
+    //!
     virtual ModelDtoFilters<ModelDtoControls> &filters();
 
     //!
     //! \brief links
     //! \return
     //!
-    virtual ModelDtoLinks<ModelDtoControls> &links();
-
-    //!
-    //! \brief crud
-    //! \return
-    //!
-    virtual ModelDtoCrud<ModelDtoControls> &crud();
+    virtual EndPoints &links();
 
     //!
     //! \brief items
