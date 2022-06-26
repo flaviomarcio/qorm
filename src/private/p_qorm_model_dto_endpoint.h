@@ -27,6 +27,7 @@ class Q_STM_EXPORT EndPoint : public QStm::ObjectWrapper
 
     Q_PROPERTY(QString url READ url NOTIFY urlChanged)
 
+    Q_PROPERTY(QString name READ name WRITE setName RESET resetName NOTIFY nameChanged)
 public:
 
     //!
@@ -34,6 +35,10 @@ public:
     //! \param parent
     //!
     explicit EndPoint(QObject *parent = nullptr);
+
+    //!
+    //!
+    ~EndPoint();
 
     //!
     //! \brief isValid
@@ -122,6 +127,10 @@ public:
     //!
     QString &url() const;
 
+    const QString &name() const;
+    void setName(const QString &newName);
+    void resetName();
+
 private:
     EndPointPvt *p=nullptr;
 signals:
@@ -133,6 +142,7 @@ signals:
     void basePathChanged();
     void methodChanged();
     void urlChanged();
+    void nameChanged();
 };
 
 } // namespace QMFE

@@ -10,6 +10,7 @@ public:
     QVariant method;
     QString path;
     QString url;
+    QString name;
     explicit EndPointPvt(){
 
     }
@@ -21,6 +22,11 @@ private:
 EndPoint::EndPoint(QObject *parent) : QStm::ObjectWrapper{parent}
 {
     this->p=new EndPointPvt{};
+}
+
+EndPoint::~EndPoint()
+{
+    delete p;
 }
 
 bool EndPoint::isValid() const
@@ -211,6 +217,24 @@ QString &EndPoint::url()const
         p->url.clear();
     }
     return p->url;
+}
+
+const QString &EndPoint::name() const
+{
+    return p->name;
+}
+
+void EndPoint::setName(const QString &newName)
+{
+    if (p->name == newName.trimmed())
+        return;
+    p->name = newName.trimmed();
+    emit nameChanged();
+}
+
+void EndPoint::resetName()
+{
+    setName({}); // TODO: Adapt to use your actual default value
 }
 
 } // namespace QOrm
