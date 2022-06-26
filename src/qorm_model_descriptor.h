@@ -1,7 +1,8 @@
 #pragma once
 
 #include "../../qstm/src/qstm_types.h"
-#include "./private/p_qorm_model_controls.h"
+//#include "./private/p_qorm_model_controls.h"
+#include "./private/p_qorm_model_dto_endpoints.h"
 #include <QVariant>
 #include <QVariantHash>
 #include <QVariantMap>
@@ -32,6 +33,10 @@
 #define Q_ORM_MODEL_SET_OPTIONS(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addOption(QStringLiteral(#propertyName), propertyValue);
+
+#define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
+const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).name();
+
 
 #define Q_ORM_DESCRIPTOR_CONSTRUCTOR(ClassName) \
 public: \
@@ -236,9 +241,25 @@ public:
     virtual QVariantHash &design();
     virtual void setDesign(const QVariantHash &value);
 
+    //!
+    //! \brief getEndPoints
+    //! \return
+    //!
+    virtual EndPoints &getEndPoints() const;
+    virtual void setEndPoints(const EndPoints &newEndPoints);
+    virtual void resetEndPoints();
+
+    //!
+    //! \brief addEndPoint
+    //! \param newEndPoints
+    //! \return
+    //!
+    virtual EndPoint &addEndPoint(const QString &name, const QVariant &values);
 
 signals:
     void cellRowsChanged();
+    void endPointsChanged();
+
 private:
     ModelDescriptorPvt *p = nullptr;
 };

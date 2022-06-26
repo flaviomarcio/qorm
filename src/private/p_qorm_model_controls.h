@@ -152,10 +152,10 @@ public:
     virtual ModelDtoFilters<ModelDtoControls> &filters();
 
     //!
-    //! \brief links
+    //! \brief endpoints
     //! \return
     //!
-    virtual EndPoints &links();
+    virtual EndPoints &endpoints();
 
     //!
     //! \brief items

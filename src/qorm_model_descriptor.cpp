@@ -17,8 +17,15 @@ public:
     QVariantHash options;
     QVariantHash sort;
     QVariantHash design={{vpWidth,"20%"}, {vpHeight,"20%"}, {vpRows,2}, {vpLayout, vlVertical}};
+    EndPoints endPoints;
     ModelDescriptor *parent=nullptr;
-    explicit ModelDescriptorPvt(ModelDescriptor *parent):QObject{parent} {}
+    explicit ModelDescriptorPvt(ModelDescriptor *parent)
+        :
+          QObject{parent},
+          endPoints{parent}
+    {
+
+    }
     virtual ~ModelDescriptorPvt() {}
 };
 
@@ -299,6 +306,33 @@ void ModelDescriptor::setDesign(const QVariantHash &value)
 {
 
     p->design=value;
+}
+
+EndPoints &ModelDescriptor::getEndPoints() const
+{
+    return p->endPoints;
+}
+
+void ModelDescriptor::setEndPoints(const EndPoints &newEndPoints)
+{
+    if (&p->endPoints == &newEndPoints)
+        return;
+    p->endPoints = &newEndPoints;
+    emit endPointsChanged();
+}
+
+void ModelDescriptor::resetEndPoints()
+{
+    p->endPoints.clear();
+    emit endPointsChanged();
+}
+
+EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &values)
+{
+    auto link=new EndPoint{this};
+    link->setValues(values);
+    p->endPoints.insert(name.trimmed(), link);
+    return *link;
 }
 
 } // namespace QOrm

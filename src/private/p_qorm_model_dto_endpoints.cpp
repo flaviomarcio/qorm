@@ -9,6 +9,13 @@ public:
     explicit EndPointsPvt(QObject *parent):QObject{parent}
     {
     }
+
+    ~EndPointsPvt()
+    {
+        auto aux=this->hash.values();
+        this->hash.clear();
+        qDeleteAll(aux);
+    }
 private:
 };
 

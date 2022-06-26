@@ -21,7 +21,7 @@ public:
     ModelDtoFilters<ModelDtoControls> filters;
     ModelDtoItems<ModelDtoControls> items;
     QStm::ResultInfo resultInfo;
-    EndPoints links;
+    EndPoints endpoints;
     QVariantMap descriptors;
     ModelDtoControls *dto=nullptr;
 
@@ -31,7 +31,7 @@ public:
         filters{parent, parent},
         items{parent, parent},
         resultInfo{parent},
-        links{parent}
+        endpoints{parent}
     {
         this->dto=parent;
     }
@@ -48,7 +48,7 @@ public:
 
             const auto &vHeaderList=this->headers.list();
             const auto vFilter=this->filters.toVar().toList();
-            const auto vLinks=this->links.toHash();
+            const auto vEndPoints=this->endpoints.toHash();
             auto vItems=this->items.toVar().toList();
 
             auto &vList=this->items.list();
@@ -110,7 +110,7 @@ public:
             vHash[vpHeaders]=vHeader;
             vHash[vpFilters]=vFilter;
             vHash[vpItems]=vItems;
-            vHash[vpLinks]=vLinks;
+            vHash[vpEndPoints]=vEndPoints;
             vHash[vpResultInfo]=this->resultInfo.toHash();
 
             {
@@ -362,10 +362,10 @@ ModelDtoFilters<ModelDtoControls> &ModelDtoControls::filters()
     return p->filters;
 }
 
-EndPoints &ModelDtoControls::links()
+EndPoints &ModelDtoControls::endpoints()
 {
 
-    return p->links;
+    return p->endpoints;
 }
 
 ModelDtoItems<ModelDtoControls> &ModelDtoControls::items()
