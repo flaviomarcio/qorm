@@ -82,4 +82,4 @@ private:
 protected:
 };
 
-} // namespace QMFE
+} // namespace QOrm

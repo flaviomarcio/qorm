@@ -90,4 +90,4 @@ signals:
     void basePathChanged();
 };
 
-} // namespace QMFE
+} // namespace QOrm

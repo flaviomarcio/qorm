@@ -145,4 +145,4 @@ signals:
     void nameChanged();
 };
 
-} // namespace QMFE
+} // namespace QOrm

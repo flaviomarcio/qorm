@@ -131,4 +131,4 @@ void Host::resetBasePath()
     setBasePath(QStringLiteral("/"));
 }
 
-} // namespace QMFE
+} // namespace QOrm
