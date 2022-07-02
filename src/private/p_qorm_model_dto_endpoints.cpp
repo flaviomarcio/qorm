@@ -5,15 +5,26 @@ namespace QOrm {
 
 class EndPointsPvt:public QObject{
 public:
-    QHash<QString, EndPoint*> hash;
+    QVariantList list;
+    QVariantHash hash;
+    QVector<EndPoint*> objectList;
+    QHash<QString, EndPoint*> objectHash;
     explicit EndPointsPvt(QObject *parent):QObject{parent}
     {
     }
 
     ~EndPointsPvt()
     {
-        auto aux=this->hash.values();
+        this->clear();
+    }
+
+    void clear()
+    {
         this->hash.clear();
+        this->list.clear();
+        this->objectList.clear();
+        auto aux=objectHash.values();
+        objectHash.clear();
         qDeleteAll(aux);
     }
 private:
@@ -38,25 +49,25 @@ bool EndPoints::setValues(const QVariant &v)
 void EndPoints::clear()
 {
     QStm::ObjectWrapper::clear();
-    p->hash.clear();
+    p->clear();
 }
 
 int EndPoints::count()const
 {
-    return p->hash.count();
+    return p->objectHash.count();
 }
 
 EndPoint *EndPoints::endpoint()
 {
-    if(p->hash.isEmpty())
+    if(p->objectHash.isEmpty())
         return nullptr;
 
-    return p->hash.cbegin().value();
+    return p->objectHash.cbegin().value();
 }
 
 EndPoint *EndPoints::value(const QString &name)
 {
-    auto obj=p->hash.value(name.trimmed().toLower());
+    auto obj=p->objectHash.value(name.trimmed().toLower());
     if(obj)
         return obj;
     return nullptr;
@@ -64,7 +75,7 @@ EndPoint *EndPoints::value(const QString &name)
 
 EndPoint *EndPoints::method(const QVariant &method)
 {
-    QHashIterator<QString, EndPoint*> i(p->hash);
+    QHashIterator<QString, EndPoint*> i(p->objectHash);
     while(i.hasNext()){
         i.next();
         auto value=i.value();
@@ -74,9 +85,12 @@ EndPoint *EndPoints::method(const QVariant &method)
     return nullptr;
 }
 
-void EndPoints::insert(const QString &name, EndPoint *link)
+void EndPoints::insert(const QString &name, EndPoint *endPoint)
 {
-    p->hash.insert(name.trimmed().toLower(), link);
+    if(!endPoint) return;
+    if(endPoint->parent()!=this)
+        endPoint->setParent(this);
+    p->objectHash.insert(name.trimmed().toLower(), endPoint);
 }
 
 void EndPoints::insert(const QString &name, const QVariant &link)
@@ -84,12 +98,57 @@ void EndPoints::insert(const QString &name, const QVariant &link)
     auto _link=link.value<EndPoint*>();
     if(_link==nullptr)
         return;
-    p->hash.insert(name.trimmed().toLower(), _link);
+    p->objectHash.insert(name.trimmed().toLower(), _link);
 }
 
 void EndPoints::remove(const QString &name)
 {
-    p->hash.remove(name.trimmed());
+    p->objectHash.remove(name.trimmed());
+}
+
+QVariantList &EndPoints::items() const
+{
+    p->list.clear();
+    if(p->objectHash.isEmpty())
+        return p->list;
+    auto vList=p->objectHash.values();
+    for(auto&v:vList){
+        auto e=v->toHash();
+        p->list.append(e);
+    }
+    return p->list;
+}
+
+void EndPoints::setItems(const QVariant &newItems)
+{
+    p->clear();
+    for(auto&v:newItems.toList()){
+        auto e=EndPoint::from(v, this);
+        if(!e) continue;
+        this->insert(e->name(), e);
+    }
+    emit itemsChanged();
+}
+
+void EndPoints::resetItems()
+{
+    setItems({});
+}
+
+QVariantList &EndPoints::toList() const
+{
+    return this->items();
+}
+
+QVector<EndPoint *> &EndPoints::toObjectList() const
+{
+    p->objectList=p->objectHash.values();
+    return p->objectList;
+}
+
+QHash<QString, EndPoint *> &EndPoints::toObjectHash() const
+{
+    return p->objectHash;
 }
 
 

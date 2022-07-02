@@ -15,7 +15,7 @@ public:
     //! \brief CRUD
     //! \param parent
     //!
-    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr) : PrivateQOrm::CRUDBase(parent), p_dao(this), p_model(this)
+    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr) : PrivateQOrm::CRUDBase{parent}, p_dao{this}, p_model{this}
     {
         this->init();
     }
@@ -25,7 +25,7 @@ public:
     //! \param crudBody
     //! \param parent
     //!
-    explicit CRUD(const QVariant&crudBody, QObject *parent = nullptr)
+    explicit CRUD(const QVariant &crudBody, QObject *parent = nullptr)
         :
         PrivateQOrm::CRUDBase(crudBody, parent)
         , p_dao(this)
@@ -75,7 +75,7 @@ protected:
     //! \param model
     //! \return
     //!
-    virtual ResultValue &search(const T&model)
+    virtual ResultValue &search(const T &model)
     {
         auto value=model.toMapPKValues();
         VariantUtil util;
@@ -152,12 +152,14 @@ protected:
     //! \param model
     //! \return
     //!
-    virtual ResultValue &insert(T&model)
+    virtual ResultValue &insert(T &model)
     {
         if(!model.isValid())
             return this->lr(model.lr());
 
         model.autoMakeUuid();
+        model.uuidSet();
+        model.datetimeSet();
 
         if(model.isEmptyPK() && !model.uuidSet())
             return this->lr(model.lr());
@@ -193,8 +195,10 @@ protected:
     //! \param model
     //! \return
     //!
-    virtual ResultValue &update(T&model)
+    virtual ResultValue &update(T &model)
     {
+        model.uuidSet();
+        model.datetimeSet();
         if(!model.isValid())
             return this->lr(model.lr());
 
@@ -237,11 +241,12 @@ protected:
     //! \param model
     //! \return
     //!
-    virtual ResultValue &upsert(T&model)
+    virtual ResultValue &upsert(T &model)
     {
         model.autoMakeUuid();
-
-        if(model.isEmptyPK() && !model.uuidSet())
+        model.uuidSet();
+        model.datetimeSet();
+        if(model.isEmptyPK())
             return this->lr(model.lr());
 
         if(!model.isValid())
@@ -261,6 +266,10 @@ protected:
     virtual ResultValue &upsert(const QVariant &value)
     {
         T model(this, value);
+        if(!this->p_dao.reload(model))
+            return this->lr(this->p_dao.lr());
+
+        model.mergeFrom(value);
         return this->upsert(model);
     }
 
@@ -278,7 +287,7 @@ protected:
     //! \param value
     //! \return
     //!
-    virtual ResultValue &remove(T&value)
+    virtual ResultValue &remove(T &value)
     {
         if(!this->p_dao.remove(value))
             return this->lr(this->p_dao.lr());
@@ -311,7 +320,7 @@ protected:
     //! \param model
     //! \return
     //!
-    virtual ResultValue &deactivate(T&model)
+    virtual ResultValue &deactivate(T &model)
     {
         if(model.isEmptyPK())
             return this->lr();

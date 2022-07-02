@@ -29,6 +29,7 @@ public:
     QHash<QString,QString> propertyShortVsTable;
     QHash<QString,QString> propertyShortFKVsShortPK;
     QVariantMap propertyDescriptors;
+    QVariantList propertyEndPoints;
     QVariantHash propertySort;
     QStringList propertyList;
     QStringList propertyTableList;
@@ -431,9 +432,9 @@ public:
             pvt->methods[method.name()]=method;
         }
 
-        auto tablePkAutoGenerate = pvt->invokeBool(object, qbl("tablePkAutoGenerate"));
         auto modelName = pvt->invokeText(object, qbl("modelName")).trimmed();
         auto modelDescription = pvt->invokeText(object, qbl("modelDescription")).trimmed();
+        auto tablePkAutoGenerate = pvt->invokeBool(object, qbl("tablePkAutoGenerate"));
         auto tableSchema = pvt->invokeText(object, qbl("tableSchema")).trimmed();
         auto tablePrefix = pvt->invokeText(object, qbl("tablePrefix")).trimmed();
         auto tablePrefixSeparator = pvt->invokeText(object, qbl("tablePrefixSeparator")).trimmed();
@@ -624,6 +625,7 @@ public:
                 objectDescriptor->descriptorsInit();
                 if(pvt->description.isEmpty())
                     pvt->description=objectDescriptor->description();
+                pvt->propertyEndPoints=objectDescriptor->endPoints().toList();
                 pvt->propertyDescriptors=objectDescriptor->descriptors();
                 pvt->propertySort=objectDescriptor->sort();
             };
@@ -879,13 +881,16 @@ QHash<QString, QMetaProperty> &ModelInfo::propertyFK() const
 
 QVariantMap ModelInfo::propertyDescriptors() const
 {
-
     return p->propertyDescriptors;
+}
+
+QVariantList ModelInfo::propertyEndPoints() const
+{
+    return p->propertyEndPoints;
 }
 
 QVariantHash ModelInfo::propertySort() const
 {
-
     return p->propertySort;
 }
 

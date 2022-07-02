@@ -308,7 +308,7 @@ void ModelDescriptor::setDesign(const QVariantHash &value)
     p->design=value;
 }
 
-EndPoints &ModelDescriptor::getEndPoints() const
+EndPoints &ModelDescriptor::endPoints() const
 {
     return p->endPoints;
 }
@@ -327,12 +327,24 @@ void ModelDescriptor::resetEndPoints()
     emit endPointsChanged();
 }
 
+void ModelDescriptor::addEndPoint(const EndPoint *newEndPoint)
+{
+    auto v=p->endPoints.value(newEndPoint->name().toLower());
+    if(v){
+        if(v==newEndPoint)
+            return;
+        delete v;
+    }
+    p->endPoints.insert(newEndPoint->name(), newEndPoint);
+}
+
 EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &values)
 {
-    auto link=new EndPoint{this};
-    link->setValues(values);
-    p->endPoints.insert(name.trimmed(), link);
-    return *link;
+    auto endpoint=new EndPoint{this};
+    endpoint->setValues(values);
+    endpoint->setName(name);
+    p->endPoints.insert(endpoint->name(), endpoint);
+    return *endpoint;
 }
 
 } // namespace QOrm

@@ -160,6 +160,12 @@ public:
     virtual QVariantMap propertyDescriptors() const;
 
     //!
+    //! \brief propertyEndPoints
+    //! \return
+    //!
+    virtual QVariantList propertyEndPoints() const;
+
+    //!
     //! \brief propertySort
     //! \return
     //!

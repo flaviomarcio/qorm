@@ -242,18 +242,19 @@ public:
     virtual void setDesign(const QVariantHash &value);
 
     //!
-    //! \brief getEndPoints
+    //! \brief endPoints
     //! \return
     //!
-    virtual EndPoints &getEndPoints() const;
+    virtual EndPoints &endPoints() const;
     virtual void setEndPoints(const EndPoints &newEndPoints);
     virtual void resetEndPoints();
 
     //!
     //! \brief addEndPoint
-    //! \param newEndPoints
+    //! \param newEndPoint
     //! \return
     //!
+    virtual void addEndPoint(const EndPoint *newEndPoint);
     virtual EndPoint &addEndPoint(const QString &name, const QVariant &values);
 
 signals:

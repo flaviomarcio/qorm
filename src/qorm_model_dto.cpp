@@ -87,6 +87,7 @@ public:
         const auto &modelInfo = ModelInfo::from(model->metaObject()->className());
         auto descriptors = modelInfo.propertyDescriptors();
         dtoControls.setDescriptors(descriptors);
+        dtoControls.endpoints().setItems(modelInfo.propertyEndPoints());
     }
 };
 

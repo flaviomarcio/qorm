@@ -16,6 +16,7 @@ class Q_STM_EXPORT EndPoints : public QStm::ObjectWrapper
 {
     Q_OBJECT
     QSTM_OBJECT_WRAPPER(EndPoints)
+    Q_PROPERTY(QVariant items READ items WRITE setItems RESET resetItems NOTIFY itemsChanged)
 public:
     //!
     //! \brief EndPoints
@@ -67,7 +68,7 @@ public:
     //! \param name
     //! \param link
     //!
-    virtual void insert(const QString &name, EndPoint *link);
+    virtual void insert(const QString &name, EndPoint *endPoint);
     Q_INVOKABLE virtual void insert(const QString &name, const QVariant &link);
 
     //!
@@ -76,6 +77,34 @@ public:
     //!
     Q_INVOKABLE virtual void remove(const QString &name);
 
+    //!
+    //! \brief items
+    //! \return
+    //!
+    QVariantList &items() const;
+    void setItems(const QVariant &newItems);
+    void resetItems();
+
+    //!
+    //! \brief toList
+    //! \return
+    //!
+    QVariantList &toList()const;
+
+    //!
+    //! \brief toObjectList
+    //! \return
+    //!
+    QVector<EndPoint*> &toObjectList()const;
+
+    //!
+    //! \brief toObjectHash
+    //! \return
+    //!
+    QHash<QString, EndPoint*> &toObjectHash()const;
+
+signals:
+    void itemsChanged();
 
 private:
     EndPointsPvt *p=nullptr;

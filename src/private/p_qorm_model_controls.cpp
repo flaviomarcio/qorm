@@ -48,7 +48,7 @@ public:
 
             const auto &vHeaderList=this->headers.list();
             const auto vFilter=this->filters.toVar().toList();
-            const auto vEndPoints=this->endpoints.toHash();
+            const auto vEndPoints=this->endpoints.toList();
             auto vItems=this->items.toVar().toList();
 
             auto &vList=this->items.list();
@@ -66,7 +66,7 @@ public:
                 for(const auto &header:vHeaderList){
                     auto headerName=header->value();
                     if(vMap.contains(headerName))
-                        cacheHeader<<headerName;
+                        cacheHeader.append(headerName);
                 }
                 break;
             }
@@ -78,10 +78,10 @@ public:
                     QVariantList aRow;
                     for(auto &headerName:cacheHeader){
                         auto value=vMap.value(headerName);
-                        aRow<<value;
+                        aRow.append(value);
                     }
                     if(!aRow.isEmpty())
-                        arItems<<aRow;
+                        arItems.append(aRow);
                 }
                 vHash.insert(vpItems, vItems );
                 vItems=arItems;
@@ -95,9 +95,9 @@ public:
                 auto var=header->toVar();
 
                 if(headerName==vActions)
-                    vHeader<<var;
+                    vHeader.append(var);
                 else if(cacheHeader.contains(headerName))//se o cachec contiver a header entao lancaremos
-                    vHeader<<var;
+                    vHeader.append(var);
 
             }
 
@@ -116,7 +116,7 @@ public:
             {
                 Q_V_HASH_ITERATOR(this->sort){
                     i.next();
-                    vHash[i.key()]=i.value();
+                    vHash.insert(i.key(), i.value());
                 }
             }
 

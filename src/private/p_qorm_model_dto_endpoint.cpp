@@ -208,7 +208,8 @@ void EndPoint::resetMethod()
 QString &EndPoint::url()const
 {
     if(this->isValid()){
-        auto url=QStringLiteral("%1:%2/%3/%4").arg(this->p->host.hostName()).arg(this->p->host.port()).arg(this->basePath(), this->path());
+        auto port=this->p->host.port()<=0?"":QStringLiteral(":%1").arg(this->p->host.port());
+        auto url=QStringLiteral("%1%2/%3/%4").arg(this->p->host.hostName()).arg(port).arg(this->basePath(), this->path());
         while(url.contains(QStringLiteral("//")))
             url.replace(QStringLiteral("//"), QStringLiteral("/"));
         p->url=QStringLiteral("%1://%2").arg(this->p->host.protocol(), url);
@@ -234,7 +235,7 @@ void EndPoint::setName(const QString &newName)
 
 void EndPoint::resetName()
 {
-    setName({}); // TODO: Adapt to use your actual default value
+    setName({}); 
 }
 
 } // namespace QOrm
