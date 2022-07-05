@@ -107,7 +107,7 @@ QVariantMap ModelDescriptor::descriptors() const
     QVariantList vList;
     p->descriptors.clear();
     for (auto &name : p->descriptorsOrder) {
-        vList << descriptors[name];
+        vList.append(descriptors[name]);
     }    
     descriptors.clear();
     descriptors[vpHeaders]=vList;
@@ -327,15 +327,16 @@ void ModelDescriptor::resetEndPoints()
     emit endPointsChanged();
 }
 
-void ModelDescriptor::addEndPoint(const EndPoint *newEndPoint)
+EndPoint &ModelDescriptor::addEndPoint(EndPoint *newEndPoint)
 {
     auto v=p->endPoints.value(newEndPoint->name().toLower());
     if(v){
         if(v==newEndPoint)
-            return;
+            return *newEndPoint;
         delete v;
     }
-    p->endPoints.insert(newEndPoint->name(), newEndPoint);
+    p->endPoints.insert(newEndPoint->uuid().toString(), newEndPoint);
+    return *newEndPoint;
 }
 
 EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &values)
@@ -343,8 +344,7 @@ EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &valu
     auto endpoint=new EndPoint{this};
     endpoint->setValues(values);
     endpoint->setName(name);
-    p->endPoints.insert(endpoint->name(), endpoint);
-    return *endpoint;
+    return this->addEndPoint(endpoint);
 }
 
 } // namespace QOrm

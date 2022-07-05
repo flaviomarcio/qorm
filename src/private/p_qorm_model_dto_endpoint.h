@@ -84,7 +84,7 @@ public:
     //! \brief uuid
     //! \return
     //!
-    QUuid &uuid() const;
+    const QUuid &uuid();
     void setUuid(const QUuid &newUuid);
     void resetUuid();
 

@@ -233,11 +233,11 @@ public:
     //!
     virtual QVariant inputLinks() const
     {
-        return this->v.value(vpEndPoint);
+        return this->v.value(vpInputLink);
     }
     virtual ModelDtoHeader &inputLinks(const QVariant &value)
     {
-        this->v.insert(vpEndPoint, value);
+        this->v.insert(vpInputLink, value);
         return*this;
     }
 
@@ -576,7 +576,7 @@ public:
         object->filterStyle(v.value(vpFilterStyle));
         object->inputType(v.value(vpInputType));
         object->inputMask(v.value(vpInputMask));
-        object->inputLinks(v.value(vpEndPoint));
+        object->inputLinks(v.value(vpInputLink));
         object->obrigatory(v.value(vpObrigatory));
         return*object;
     }

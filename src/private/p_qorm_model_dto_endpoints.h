@@ -89,7 +89,13 @@ public:
     //! \brief toList
     //! \return
     //!
-    QVariantList &toList()const;
+    const QVariantList toList();
+
+    //!
+    //! \brief toHash
+    //! \return
+    //!
+    const QVariantHash toHash();
 
     //!
     //! \brief toObjectList

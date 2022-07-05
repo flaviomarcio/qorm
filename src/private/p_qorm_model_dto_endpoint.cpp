@@ -1,5 +1,6 @@
 #include "./p_qorm_model_dto_endpoint.h"
 #include "./p_qorm_model_dto_host.h"
+#include <QJsonDocument>
 
 namespace QOrm {
 
@@ -121,8 +122,13 @@ void EndPoint::addAuthBearer(const QString &credentials) const
     p->host.headers().insert(n.HEADER_AUTHORIZATION, auth.join(','));
 }
 
-QUuid &EndPoint::uuid() const
+const QUuid &EndPoint::uuid()
 {
+    if(p->uuid.isNull()){
+        Q_DECLARE_VU;
+        auto vHash=this->extractHash(this, QStringList{{__func__}});
+        p->uuid=vu.toUuid(vHash);
+    }
     return p->uuid;
 }
 

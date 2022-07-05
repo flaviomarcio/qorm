@@ -135,9 +135,20 @@ void EndPoints::resetItems()
     setItems({});
 }
 
-QVariantList &EndPoints::toList() const
+const QVariantList EndPoints::toList()
 {
     return this->items();
+}
+
+const QVariantHash EndPoints::toHash()
+{
+    QVariantHash hash;
+    QHashIterator<QString, EndPoint*> i(p->objectHash);
+    while (i.hasNext()){
+        i.next();
+        hash.insert(i.value()->uuid().toString(), i.value()->toHash());
+    }
+    return hash;
 }
 
 QVector<EndPoint *> &EndPoints::toObjectList() const

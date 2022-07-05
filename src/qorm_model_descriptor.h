@@ -35,7 +35,7 @@
     this->addOption(QStringLiteral(#propertyName), propertyValue);
 
 #define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
-const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).name();
+const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).uuid().toString();
 
 
 #define Q_ORM_DESCRIPTOR_CONSTRUCTOR(ClassName) \
@@ -254,7 +254,7 @@ public:
     //! \param newEndPoint
     //! \return
     //!
-    virtual void addEndPoint(const EndPoint *newEndPoint);
+    virtual EndPoint &addEndPoint(EndPoint *newEndPoint);
     virtual EndPoint &addEndPoint(const QString &name, const QVariant &values);
 
 signals:
