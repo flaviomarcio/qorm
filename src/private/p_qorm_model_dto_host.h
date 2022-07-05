@@ -5,7 +5,8 @@
 
 namespace QOrm {
 
-class Q_ORM_EXPORT Host : public QStm::ObjectWrapper
+class HostPvt;
+class Q_STM_EXPORT Host : public QStm::ObjectWrapper
 {
     Q_OBJECT
     QSTM_OBJECT_WRAPPER(Host)
@@ -21,6 +22,8 @@ class Q_ORM_EXPORT Host : public QStm::ObjectWrapper
 public:
     Q_INVOKABLE explicit Host(QObject *parent = nullptr);
 
+    ~Host();
+
     //!
     //! \brief isValid
     //! \return
@@ -33,54 +36,29 @@ public:
     //!
     Q_INVOKABLE bool isEmpty()const;
 
-    //!
-    //! \brief protocol
-    //! \return
-    //!
     const QString &protocol() const;
     void setProtocol(const QString &newProtocol);
     void resetProtocol();
 
-    //!
-    //! \brief hostName
-    //! \return
-    //!
     const QString &hostName() const;
     void setHostName(const QString &newHostName);
     void resetHostName();
 
-    //!
-    //! \brief port
-    //! \return
-    //!
     int port() const;
     void setPort(int newPort);
     void resetPort();
 
-    //!
-    //! \brief headers
-    //! \return
-    //!
-    QVariantHash &headers();
+    QVariantHash &headers()const;
     void setHeaders(const QVariantHash &newHeaders);
+    void addHeaders(const QVariantHash &newHeaders);
     void resetHeaders();
 
-    //!
-    //! \brief basePath
-    //! \return
-    //!
     const QString &basePath() const;
     void setBasePath(const QString &newBasePath);
     void resetBasePath();
 
 private:
-    QString _protocol;
-    QString _hostName;
-    int _port;
-    QVariantHash _headers;
-    QString _basePath;
-
-
+    HostPvt *p=nullptr;
 signals:
 
     void protocolChanged();

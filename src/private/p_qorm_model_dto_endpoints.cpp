@@ -38,11 +38,8 @@ EndPoints::EndPoints(QObject *parent)
 
 bool EndPoints::setValues(const QVariant &v)
 {
-    for(auto&v:v.toList()){
-        auto vHash=v.toHash();
-        auto name=vHash.value(QStringLiteral("endpoint")).toString();
-        this->insert(name, vHash);
-    }
+    for(auto&v:v.toList())
+        this->insert(v);
     return QStm::ObjectWrapper::setValues(v);
 }
 
@@ -93,12 +90,13 @@ void EndPoints::insert(const QString &name, EndPoint *endPoint)
     p->objectHash.insert(name.trimmed().toLower(), endPoint);
 }
 
-void EndPoints::insert(const QString &name, const QVariant &link)
+void EndPoints::insert(const QVariant &endPoint)
 {
-    auto _link=link.value<EndPoint*>();
-    if(_link==nullptr)
-        return;
-    p->objectHash.insert(name.trimmed().toLower(), _link);
+    auto endpoint=endPoint.value<EndPoint*>();
+    if(endpoint==nullptr)
+        endpoint=EndPoint::from(endPoint, this);
+    if(!endpoint)return;
+    p->objectHash.insert(endpoint->uuid().toString(), endpoint);
 }
 
 void EndPoints::remove(const QString &name)

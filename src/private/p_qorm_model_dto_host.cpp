@@ -2,12 +2,54 @@
 
 namespace QOrm {
 
-Host::Host(QObject *parent) : QStm::ObjectWrapper{parent}
-{
+class HostPvt{
+public:
+    QStm::Network n;
+    Host *parent=nullptr;
+    QString protocol=n.HTTP_PROTOCOL;
+    QString hostName=n.LOCALHOST;
+    int port=-1;
+    QVariantHash headers;
+    QString basePath;
+    explicit HostPvt(Host *parent)
+    {
+        this->parent=parent;
+    }
 
+    virtual ~HostPvt()
+    {
+
+    }
+};
+
+Host::Host(QObject *parent) : ObjectWrapper{parent}
+{
+    this->p=new HostPvt{this};
+}
+
+Host::~Host()
+{
+    delete p;
 }
 
 bool Host::isValid() const
+{
+    if(!this->protocol().isEmpty())
+        return true;
+
+    if(!this->hostName().isEmpty())
+        return true;
+
+    if(!this->basePath().isEmpty())
+        return true;
+
+    if(!this->headers().isEmpty())
+        return true;
+
+    return {};
+}
+
+bool Host::isEmpty() const
 {
     if(!this->protocol().isEmpty())
         return true;
@@ -21,36 +63,22 @@ bool Host::isValid() const
     if(!this->basePath().isEmpty())
         return true;
 
-    return {};
-}
-
-bool Host::isEmpty() const
-{
-    if(this->protocol().isEmpty())
-        return {};
-
-    if(this->hostName().isEmpty())
-        return {};
-
-    if(this->port()<=0)
-        return {};
-
-    if(this->basePath().isEmpty())
-        return {};
-
     return true;
 }
 
 const QString &Host::protocol() const
 {
-    return _protocol;
+
+    if(p->protocol.trimmed().isEmpty())
+        return p->n.HTTP_PROTOCOL;
+    return p->protocol;
 }
 
 void Host::setProtocol(const QString &newProtocol)
 {
-    if (_protocol == newProtocol)
+    if (p->protocol == newProtocol)
         return;
-    _protocol = newProtocol;
+    p->protocol = newProtocol;
     emit protocolChanged();
 }
 
@@ -61,32 +89,36 @@ void Host::resetProtocol()
 
 const QString &Host::hostName() const
 {
-    return _hostName;
+    if(p->hostName.isEmpty())
+        p->hostName=p->n.LOCALHOST;
+    return p->hostName;
 }
 
 void Host::setHostName(const QString &newHostName)
 {
-    if (_hostName == newHostName)
+    if (p->hostName == newHostName)
         return;
-    _hostName = newHostName;
+    p->hostName = newHostName;
     emit hostNameChanged();
 }
 
 void Host::resetHostName()
 {
-    setHostName(QStringLiteral("${HOST}"));
+    setHostName({});
 }
 
 int Host::port() const
 {
-    return _port;
+    if(p->port<=0)
+        p->port=p->n.HTTP_PORT_DEFAULT;
+    return p->port;
 }
 
 void Host::setPort(int newPort)
 {
-    if (_port == newPort)
+    if (p->port == newPort)
         return;
-    _port = newPort;
+    p->port = newPort;
     emit portChanged();
 }
 
@@ -95,16 +127,26 @@ void Host::resetPort()
     setPort(-1);
 }
 
-QVariantHash &Host::headers()
+QVariantHash &Host::headers() const
 {
-    return _headers;
+    return p->headers;
 }
 
 void Host::setHeaders(const QVariantHash &newHeaders)
 {
-    if (_headers == newHeaders)
+    if (p->headers == newHeaders)
         return;
-    _headers = newHeaders;
+    p->headers = newHeaders;
+    emit headersChanged();
+}
+
+void Host::addHeaders(const QVariantHash &newHeaders)
+{
+    QHashIterator <QString, QVariant> i(newHeaders);
+    while(i.hasNext()){
+        i.next();
+        p->headers.insert(i.key(), i.value());
+    }
     emit headersChanged();
 }
 
@@ -115,20 +157,22 @@ void Host::resetHeaders()
 
 const QString &Host::basePath() const
 {
-    return _basePath;
+    if(p->basePath.trimmed().isEmpty())
+        p->basePath=QStringLiteral("/");
+    return p->basePath;
 }
 
 void Host::setBasePath(const QString &newBasePath)
 {
-    if (_basePath == newBasePath)
+    if (p->basePath == newBasePath)
         return;
-    _basePath = newBasePath;
+    p->basePath = newBasePath;
     emit basePathChanged();
 }
 
 void Host::resetBasePath()
 {
-    setBasePath(QStringLiteral("/"));
+    setBasePath({});
 }
 
 } // namespace QOrm

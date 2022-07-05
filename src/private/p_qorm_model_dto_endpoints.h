@@ -69,7 +69,7 @@ public:
     //! \param link
     //!
     virtual void insert(const QString &name, EndPoint *endPoint);
-    Q_INVOKABLE virtual void insert(const QString &name, const QVariant &link);
+    Q_INVOKABLE virtual void insert(const QVariant &endPoint);
 
     //!
     //! \brief remove
