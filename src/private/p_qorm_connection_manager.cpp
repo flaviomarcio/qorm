@@ -311,7 +311,7 @@ bool ConnectionManagerPvt::load(const QStringList &settingsFileName)
 bool ConnectionManagerPvt::load(QObject *settingsObject)
 {
     static auto ignoreMethods=QVector<QByteArray>{"destroyed","objectNameChanged","deleteLater","_q_reregisterTimers"};
-    static auto staticNames=QVector<QByteArray>{qbl("settingsfilename"), qbl("settings_server"), qbl("settingsserver")};
+    static auto staticNames=QVector<QByteArray>{qbl("resourcesettings")};
     auto &p=*this;
     if(settingsObject==nullptr)
         return false;
