@@ -24,7 +24,7 @@ public:
     //! \param vSource
     //! \return
     //!
-    virtual ResultValue&action(const QVariant &vSource);
+    virtual ResultValue &action(const QVariant &vSource);
 
     //!
     //! \brief ~ModelAction

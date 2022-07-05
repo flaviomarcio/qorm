@@ -16,13 +16,13 @@ public:
     explicit SqlParserItem();
     explicit SqlParserItem(const QVariant &value);
 
-    explicit SqlParserItem(const QVariant &value, const QVariant&title, const KeywordObjectInfo&info);
+    explicit SqlParserItem(const QVariant &value, const QVariant &title, const KeywordObjectInfo&info);
 
     void init(QVariantHash&map);
 
-    SqlParserItem setDefaultValue(const QVariant&defaultValue)const;
+    SqlParserItem setDefaultValue(const QVariant &defaultValue)const;
 
-    SqlParserItem defVal(const QVariant&defaultValue);
+    SqlParserItem defVal(const QVariant &defaultValue);
 
     QVariantMap toMap()const;
 

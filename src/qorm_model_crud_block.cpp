@@ -192,7 +192,7 @@ ResultValue &CRUDBlock::crudify()
         }
 
 
-        auto makeItem=[&__return, &crudBody](PrivateQOrm::CRUDBase *crud, const QVariant&crudSource){
+        auto makeItem=[&__return, &crudBody](PrivateQOrm::CRUDBase *crud, const QVariant &crudSource){
             CRUDBody crudRecord{crudBody.strategy(), crudSource};
 
             auto lastCrud=__return.isEmpty()?qvh_null:__return.last().toHash();

@@ -267,35 +267,35 @@ public:
     //! \param record
     //! \return
     //!
-    virtual ResultValue&readFrom(const QVariant &record);
+    virtual ResultValue &readFrom(const QVariant &record);
 
     //!
     //! \brief readFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue&readFrom(QSqlQuery &record);
+    virtual ResultValue &readFrom(QSqlQuery &record);
 
     //!
     //! \brief readFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue&readFrom(Query &record);
+    virtual ResultValue &readFrom(Query &record);
 
     //!
     //! \brief readFrom
     //! \param resultValue
     //! \return
     //!
-    virtual ResultValue&readFrom(const ResultValue &resultValue);
+    virtual ResultValue &readFrom(const ResultValue &resultValue);
 
     //!
     //! \brief readFrom
     //! \param model
     //! \return
     //!
-    virtual ResultValue&readFrom(const Model &model);
+    virtual ResultValue &readFrom(const Model &model);
 
     //!
     //! \brief readWrapper
@@ -303,14 +303,14 @@ public:
     //! \param vMap
     //! \return
     //!
-    virtual ResultValue&readWrapper(const QString &wrapper, const QVariant &vMap);
+    virtual ResultValue &readWrapper(const QString &wrapper, const QVariant &vMap);
 
     //!
     //! \brief readWrapper
     //! \param vMap
     //! \return
     //!
-    virtual ResultValue&readWrapper(const QVariant &vMap);
+    virtual ResultValue &readWrapper(const QVariant &vMap);
 
     //!
     //! \brief readWrapper
@@ -318,49 +318,49 @@ public:
     //! \param resultValue
     //! \return
     //!
-    virtual ResultValue&readWrapper(const QString &wrapper, ResultValue&resultValue);
+    virtual ResultValue &readWrapper(const QString &wrapper, ResultValue &resultValue);
 
     //!
     //! \brief readWrapper
     //! \param resultValue
     //! \return
     //!
-    virtual ResultValue&readWrapper(ResultValue&resultValue);
+    virtual ResultValue &readWrapper(ResultValue &resultValue);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue&mergeFrom(const QByteArray&record);
+    virtual ResultValue &mergeFrom(const QByteArray&record);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue&mergeFrom(const QVariantHash&record);
+    virtual ResultValue &mergeFrom(const QVariantHash&record);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue&mergeFrom(const QVariant &record);
+    virtual ResultValue &mergeFrom(const QVariant &record);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue&mergeFrom(QSqlQuery &record);
+    virtual ResultValue &mergeFrom(QSqlQuery &record);
 
     //!
     //! \brief mergeFrom
     //! \param resultValue
     //! \return
     //!
-    virtual ResultValue&mergeFrom(ResultValue&resultValue);
+    virtual ResultValue &mergeFrom(ResultValue &resultValue);
 
     //!
     //! \brief setProperty
@@ -382,19 +382,19 @@ public:
     //! \brief uuidSet
     //! \return
     //!define new uuid in the primarykey property when it is null/invalid
-    virtual ResultValue&uuidSet();
+    virtual ResultValue &uuidSet();
 
     //!
     //! \brief deactivateSetValues
     //! \return
     //!
-    virtual ResultValue&deactivateSetValues();
+    virtual ResultValue &deactivateSetValues();
 
     //!
     //! \brief datetimeSet
     //! \return
     //!define new datetime/date/time in the primarykey property when it is null/invalid
-    virtual ResultValue&datetimeSet();
+    virtual ResultValue &datetimeSet();
 
     //!
     //! \brief isValid
@@ -406,13 +406,13 @@ public:
     //! \brief isActive
     //! \return
     //!
-    virtual ResultValue&isActive();
+    virtual ResultValue &isActive();
 
     //!
     //! \brief isEmptyPK
     //! \return
     //!
-    virtual ResultValue&isEmptyPK();
+    virtual ResultValue &isEmptyPK();
 
     //!
     //! \brief beforePost

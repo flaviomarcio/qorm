@@ -36,7 +36,7 @@ public:\
 
 #define QORM_MODEL_CONSTRUCTOR(ModelName, Model)\
     Q_INVOKABLE explicit ModelName(QObject *parent = nullptr):Model{parent}{};\
-    Q_INVOKABLE explicit ModelName(const QVariant&record):Model(nullptr){this->readFrom(record);};\
+    Q_INVOKABLE explicit ModelName(const QVariant &record):Model(nullptr){this->readFrom(record);};\
     Q_INVOKABLE explicit ModelName(QObject *parent, const QByteArray &record):Model{parent}{this->readFrom(record);};\
     Q_INVOKABLE explicit ModelName(QObject *parent, const QVariantHash &record):Model{parent}{this->readFrom(record);};\
     Q_INVOKABLE explicit ModelName(QObject *parent, const QVariant &record):Model{parent}{this->readFrom(record);};\
@@ -275,7 +275,7 @@ QORM_DECLARE_PROPERTY_HEADER(propertyType, propertyName, propertyDefault,)
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE explicit ModelName##CRUD(const QVariant&crudBody, QObject *parent = nullptr) : QOrm::CRUD<ModelName>{crudBody, parent}{\
+        Q_INVOKABLE explicit ModelName##CRUD(const QVariant &crudBody, QObject *parent = nullptr) : QOrm::CRUD<ModelName>{crudBody, parent}{\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
@@ -303,7 +303,7 @@ QORM_DECLARE_PROPERTY_HEADER(propertyType, propertyName, propertyDefault,)
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
-        Q_INVOKABLE explicit ModelName##Report(const QVariant&crudBody, QObject *parent = nullptr) : QOrm::ModelReport<ModelName>(crudBody, parent){\
+        Q_INVOKABLE explicit ModelName##Report(const QVariant &crudBody, QObject *parent = nullptr) : QOrm::ModelReport<ModelName>(crudBody, parent){\
             if(this->parent()!=parent)\
                 this->setParent(parent);\
         }\
@@ -387,31 +387,6 @@ public:\
         }\
         this->____connectionId=qbl("");\
         return true;\
-    }
-
-#define QORM_SERVER_CONNECTION_MANAGER_SUPPORT(instanceClassName)\
-private:\
-    QOrm::ConnectionManager*____connectionManager=nullptr;\
-public:\
-    Q_INVOKABLE virtual QOrm::ConnectionManager&connectionManager(){\
-        static QMutex ____instance_mutex;\
-        if(____connectionManager==nullptr){\
-            QMutexLocker locker(&____instance_mutex);/*garantia de unica instancia*/ \
-            if(____connectionManager==nullptr)\
-                ____connectionManager = new QOrm::ConnectionManager(this);\
-        }\
-        if(____connectionManager->isEmpty() || !____connectionManager->isLoaded()){\
-            QMutexLocker locker(&____instance_mutex);/*garantia de unica instancia*/ \
-            if(____connectionManager->isEmpty() || !____connectionManager->isLoaded())\
-                ____connectionManager->load(this);\
-        }\
-        return*____connectionManager;\
-    }\
-    Q_INVOKABLE virtual QOrm::ConnectionPool &pool(){\
-        return this->connectionManager().pool();\
-    }\
-    Q_INVOKABLE virtual QOrm::ConnectionPool &pool(const QByteArray &value){\
-        return this->connectionManager().pool(value);\
     }
 
 #define Q_V_SET(v)\

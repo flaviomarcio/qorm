@@ -41,7 +41,7 @@ public:
 
     bool prepareExecCache();
 
-    bool exec(const QVariant&command);
+    bool exec(const QVariant &command);
 
     bool initNext();
 

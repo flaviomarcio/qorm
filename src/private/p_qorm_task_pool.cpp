@@ -1,8 +1,8 @@
 #include "./p_qorm_task_pool.h"
 
-static QVariant __methodExecute(QSqlDatabase&db, const QVariant&task){Q_UNUSED(task) Q_UNUSED(db) return {};};
-static QVariant __methodSuccess(QSqlDatabase&db, const QVariant&task){Q_UNUSED(task) Q_UNUSED(db) return task;};
-static QVariant __methodFailed(QSqlDatabase&db, const QVariant&task){Q_UNUSED(task) Q_UNUSED(db) return task;};
+static QVariant __methodExecute(QSqlDatabase&db, const QVariant &task){Q_UNUSED(task) Q_UNUSED(db) return {};};
+static QVariant __methodSuccess(QSqlDatabase&db, const QVariant &task){Q_UNUSED(task) Q_UNUSED(db) return task;};
+static QVariant __methodFailed(QSqlDatabase&db, const QVariant &task){Q_UNUSED(task) Q_UNUSED(db) return task;};
 
 namespace QOrm {
 

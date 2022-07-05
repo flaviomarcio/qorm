@@ -13,8 +13,8 @@ class Q_ORM_EXPORT SearchParam:public QVariantHash
 {
 public:
     explicit SearchParam(const QVariant &v=QVariant());
-    explicit SearchParam(const QVariant &valueA, const QVariant &valueB, const QVariant&keywordOperator, const QVariant&keywordLogical);
-    explicit SearchParam(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant&keywordOperator, const QVariant&keywordLogical);
+    explicit SearchParam(const QVariant &valueA, const QVariant &valueB, const QVariant &keywordOperator, const QVariant &keywordLogical);
+    explicit SearchParam(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant &keywordOperator, const QVariant &keywordLogical);
     virtual ~SearchParam();
     bool isValid();
     QString key()const;

@@ -374,7 +374,7 @@ public:
         return this->model->lr()=this->read(record);
     }
 
-    ResultValue&merge(QSqlQuery &cursorQuery)
+    ResultValue &merge(QSqlQuery &cursorQuery)
     {
         QVariantHash record;
         auto sqlRecord=cursorQuery.record();
@@ -383,7 +383,7 @@ public:
         return this->merge(record);
     }
 
-    ResultValue&merge(const QVariantHash &record)
+    ResultValue &merge(const QVariantHash &record)
     {
 
         auto metaObject = this->model->metaObject();
@@ -485,7 +485,7 @@ public:
         return vHash;
     }
 
-    ResultValue&fromWrapper(const QString &wrapperName, const QVariant &vWrapper)const
+    ResultValue &fromWrapper(const QString &wrapperName, const QVariant &vWrapper)const
     {
         auto vMap=this->wrapperToModelMap(wrapperName, vWrapper);
         return this->model->readFrom(vMap);

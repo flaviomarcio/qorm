@@ -140,11 +140,11 @@ public:
     {
         return this->v.value(qsl("align"));
     }
-    virtual ModelDtoFilter&align(const QVariant& value)
+    virtual ModelDtoFilter&align(const QVariant & value)
     {
         return this->setAlign(value);
     }
-    virtual ModelDtoFilter&setAlign(const QVariant& value)
+    virtual ModelDtoFilter&setAlign(const QVariant & value)
     {
         this->v.insert(qsl("align"), value);
         return*this;
@@ -158,11 +158,11 @@ public:
     {
         return this->v.value(qsl("width")).toBool();
     }
-    virtual ModelDtoFilter&width(const QVariant& value)
+    virtual ModelDtoFilter&width(const QVariant & value)
     {
         return this->setWidth(value);
     }
-    virtual ModelDtoFilter&setWidth(const QVariant& value)
+    virtual ModelDtoFilter&setWidth(const QVariant & value)
     {
         this->v.insert(qsl("width"), value);
         return*this;

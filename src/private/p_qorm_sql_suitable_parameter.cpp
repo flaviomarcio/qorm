@@ -372,7 +372,7 @@ SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVarian
     return*this;
 }
 
-SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant&keywordOperator, const QVariant&keywordLogical)
+SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant &keywordOperator, const QVariant &keywordLogical)
 {
 
     p->insert(valueA, valueB, QVariant(), keywordOperator, keywordLogical);

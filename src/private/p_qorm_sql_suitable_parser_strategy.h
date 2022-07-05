@@ -130,7 +130,7 @@ public:
     //! \param parserObject
     //! \return
     //!
-    auto &fields(const QVariant&parserObject)
+    auto &fields(const QVariant &parserObject)
     {
         auto &fields=this->fields();
         fields.f(parserObject);
@@ -142,7 +142,7 @@ public:
     //! \param parserbject
     //! \return
     //!
-    auto &fieldsFrom(const QVariant&parserbject)
+    auto &fieldsFrom(const QVariant &parserbject)
     {
         this->fields(parserbject);
         this->from(parserbject);
@@ -154,7 +154,7 @@ public:
     //! \param parserbject
     //! \return
     //!
-    auto &fromExists(const QVariant&parserbject)
+    auto &fromExists(const QVariant &parserbject)
     {
         this->fields().f(qsl("1 as c"));
         this->limit(1);

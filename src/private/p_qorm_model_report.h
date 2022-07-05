@@ -111,7 +111,7 @@ public:
     //! \return
     //!
     virtual QVariant strategy()const;
-    virtual ModelReportBase&strategy(const QVariant&strategy);
+    virtual ModelReportBase&strategy(const QVariant &strategy);
 
     //!
     //! \brief source
@@ -175,19 +175,19 @@ protected:
     //! \brief doBofore
     //! \return
     //!
-    virtual ResultValue&doBofore();
+    virtual ResultValue &doBofore();
 
     //!
     //! \brief doSuccess
     //! \return
     //!
-    virtual ResultValue&doSuccess();
+    virtual ResultValue &doSuccess();
 
     //!
     //! \brief doFailed
     //! \return
     //!
-    virtual ResultValue&doFailed();
+    virtual ResultValue &doFailed();
 private:
     ModelReportBasePvt *p=nullptr;
 };

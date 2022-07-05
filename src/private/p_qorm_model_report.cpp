@@ -66,7 +66,7 @@ public:
         this->source_set(vSource());
     }
 
-    void source_set(const QVariant&source)
+    void source_set(const QVariant &source)
     {
         switch (qTypeId(source)) {
         case QMetaType_QString:
@@ -80,7 +80,7 @@ public:
         }
     }
 
-    void strategy_set(const QVariant&strategy)
+    void strategy_set(const QVariant &strategy)
     {
         this->strategy=strategy;
     }

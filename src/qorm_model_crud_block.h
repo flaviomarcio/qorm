@@ -85,7 +85,7 @@ public:
     //! \param crudBody
     //! \return
     //!
-    static CRUDBlock &makeBlock(CRUDBlock &crudBlock, const QVariant&crudBody);
+    static CRUDBlock &makeBlock(CRUDBlock &crudBlock, const QVariant &crudBody);
 
     //!
     //! \brief clear

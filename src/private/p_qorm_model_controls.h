@@ -117,7 +117,7 @@ public:
     //! \param setting
     //! \return
     //!
-    virtual ModelDtoControls &settings(const QVariant&setting);
+    virtual ModelDtoControls &settings(const QVariant &setting);
 
     //!
     //! \brief outPutStyle

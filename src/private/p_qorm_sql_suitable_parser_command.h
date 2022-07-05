@@ -75,7 +75,7 @@ public:
 
     virtual void make();
 
-    virtual void make(const QVariant&);
+    virtual void make(const QVariant &);
 
     virtual bool makeObject();
 
