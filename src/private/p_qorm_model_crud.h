@@ -387,7 +387,7 @@ protected:
     virtual ResultValue &doFailed();
 
 private:
-    CRUDBasePvt*p=nullptr;
+    CRUDBasePvt *p=nullptr;
 };
 
 }

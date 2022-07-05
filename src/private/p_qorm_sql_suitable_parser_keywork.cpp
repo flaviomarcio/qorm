@@ -10,7 +10,7 @@
 #include <QStringList>
 #include <QCoreApplication>
 
-namespace PrivateQOrm {
+namespace QOrm {
 
 typedef QMap<QSqlDriver::DbmsType,QOrm::SqlSuitableKeyWord*> DriverSuiteMap;
 typedef QList<QOrm::SqlSuitableKeyWord*> DriverSuiteList;
@@ -19,34 +19,22 @@ typedef QList<QOrm::SqlSuitableKeyWord*> DriverSuiteList;
 Q_GLOBAL_STATIC_WITH_ARGS(QString, format_date_time, ("yyyy-MM-dd hh:mm:ss.zzz"))
 Q_GLOBAL_STATIC_WITH_ARGS(QString, format_date, ("yyyy-MM-dd"))
 Q_GLOBAL_STATIC_WITH_ARGS(QString, format_time, ("hh:mm:ss.zzz"))
-Q_GLOBAL_STATIC_WITH_ARGS(QDate, __d1900, (QDate(1900,01,01)))
-Q_GLOBAL_STATIC_WITH_ARGS(QDateTime, __dt1900, (QDateTime(QDate(1900,01,01),QTime())))
+Q_GLOBAL_STATIC_WITH_ARGS(QDate, __d1900, (QDate{1900,1,1}))
+Q_GLOBAL_STATIC_WITH_ARGS(QDateTime, __dt1900, (QDateTime{QDate{1900,1,1}, {}}))
 
 Q_GLOBAL_STATIC(QMutex, staticSqlSuitableKeyWordLocker)
 Q_GLOBAL_STATIC(DriverSuiteMap, staticSqlSuitableKeyWord)
 Q_GLOBAL_STATIC(DriverSuiteList, staticSqlSuitableKeyWordList)
 
-}
-
-namespace QOrm {
-
-static const auto &format_date_time=*PrivateQOrm::format_date_time;
-static const auto &format_date=*PrivateQOrm::format_date;
-static const auto &format_time=*PrivateQOrm::format_time;
-static const auto &__d1900=*PrivateQOrm::__d1900;
-static const auto &__dt1900=*PrivateQOrm::__dt1900;
-static auto &staticSqlSuitableKeyWordLocker=*PrivateQOrm::staticSqlSuitableKeyWordLocker;
-static auto &staticSqlSuitableKeyWord=*PrivateQOrm::staticSqlSuitableKeyWord;
-static auto &staticSqlSuitableKeyWordList=*PrivateQOrm::staticSqlSuitableKeyWordList;
-
 static void deinitKeyWork()
 {
-    qDeleteAll(staticSqlSuitableKeyWordList);
-    staticSqlSuitableKeyWordList.clear();
-    staticSqlSuitableKeyWord.clear();
+    qDeleteAll(*staticSqlSuitableKeyWordList);
+    staticSqlSuitableKeyWordList->clear();
+    staticSqlSuitableKeyWord->clear();
 }
 
-static bool initKeyWork(){
+static void init()
+{
     QORM_DECLARE_KEY_WORD(SqlSuitableKeyWordAnsi);
     QORM_DECLARE_KEY_WORD(SqlSuitableKeyWordMySql);
     QORM_DECLARE_KEY_WORD(SqlSuitableKeyWordOracle);
@@ -54,11 +42,9 @@ static bool initKeyWork(){
     QORM_DECLARE_KEY_WORD(SqlSuitableKeyWordSQLite);
     QORM_DECLARE_KEY_WORD(SqlSuitableKeyWordTSQL);
     qAddPostRoutine(deinitKeyWork); //gera loop infinito e nao deixa a aplicacao terminar
-    return true;
 }
 
-//Q_COREAPP_STARTUP_FUNCTION(initKeyWork)//NAO DEVE USAR POIS QUANDO TUDO LINKADO A APLICACAO PODE LEVANTAR ANTES DO METODO TER SIDO CHAMADO
-static const auto __initKeyWork=initKeyWork();
+Q_COREAPP_STARTUP_FUNCTION(init);
 
 
 class SqlSuitableKeyWordPvt:public QObject{
@@ -96,14 +82,14 @@ public:
 
     void init()
     {
-        QMutexLOCKER locker(&staticSqlSuitableKeyWordLocker);
+        QMutexLOCKER locker(staticSqlSuitableKeyWordLocker);
         auto vList=this->parent->drivers();
         for(auto &driver : vList){
-            if(staticSqlSuitableKeyWordList.contains(this->parent))
-                staticSqlSuitableKeyWordList<<this->parent;
+            if(staticSqlSuitableKeyWordList->contains(this->parent))
+                staticSqlSuitableKeyWordList->append(this->parent);
 
-            if(!staticSqlSuitableKeyWord.contains(driver))
-                staticSqlSuitableKeyWord.insert(driver, this->parent);
+            if(!staticSqlSuitableKeyWord->contains(driver))
+                staticSqlSuitableKeyWord->insert(driver, this->parent);
         }
 
         {
@@ -468,7 +454,7 @@ SqlSuitableKeyWord &SqlSuitableKeyWord::parser(const QSqlDriver *driver)
 
 SqlSuitableKeyWord &SqlSuitableKeyWord::parser(const QSqlDriver::DbmsType &driver)
 {
-    auto &_driver=staticSqlSuitableKeyWord[driver];
+    auto &_driver=(*staticSqlSuitableKeyWord)[driver];
     return *_driver;
 }
 
@@ -530,17 +516,17 @@ QString SqlSuitableKeyWord::formatValue(const QVariant &v)
     case QMetaType_QDateTime:
     {
         auto d=v.toDateTime();
-        d = (d.date()>=__d1900)?d:__dt1900;
-        return qsl("'")+d.toString(format_date_time)+qsl("'");
+        d = (d.date()>=*__d1900)?d:*__dt1900;
+        return qsl("'")+d.toString(*format_date_time)+qsl("'");
     }
     case QMetaType_QDate:
     {
         auto d=v.toDate();
-        d = (d>=__d1900)?d:__d1900;
-        return qsl("'")+d.toString(format_date)+qsl("'");
+        d = (d>=*__d1900)?d:*__d1900;
+        return qsl("'")+d.toString(*format_date)+qsl("'");
     }
     case QMetaType_QTime:
-        return qsl("'")+v.toTime().toString(format_date)+qsl("'");
+        return qsl("'")+v.toTime().toString(*format_time)+qsl("'");
     case QMetaType_QUuid:
     {
         auto u = v.toUuid();
@@ -618,17 +604,17 @@ QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
     case QMetaType_QDateTime:
     {
         auto d=v.toDateTime();
-        d = (d.date()>=__d1900)?d:__dt1900;
-        return qsl("'")+d.toString(format_date_time)+qsl("'");
+        d = (d.date()>=*__d1900)?d:*__dt1900;
+        return qsl("'")+d.toString(*format_date_time)+qsl("'");
     }
     case QMetaType_QDate:
     {
         auto d=v.toDate();
-        d = (d>=__d1900)?d:__d1900;
-        return qsl("'")+d.toString(format_date)+qsl("'");
+        d = (d>=*__d1900)?d:*__d1900;
+        return qsl("'")+d.toString(*format_date)+qsl("'");
     }
     case QMetaType_QTime:
-        return qsl("'")+v.toTime().toString(format_date)+qsl("'");
+        return qsl("'")+v.toTime().toString(*format_date)+qsl("'");
     case QMetaType_QUuid:
     {
         auto u = v.toUuid();

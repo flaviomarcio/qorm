@@ -434,7 +434,7 @@ public:
     Model&operator=(const QVariant &v);
 
 private:
-    ModelPvt*p=nullptr;
+    ModelPvt *p=nullptr;
 signals:
     void changeProperty();
 };

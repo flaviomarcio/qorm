@@ -75,6 +75,7 @@ HEADERS += \
     $$PWD/src/qorm_sql_suitable_builder.h \
     $$PWD/src/qorm_sql_suitable_types.h \
     $$PWD/src/qorm_sql_suitable_value.h \
+    $$PWD/src/qorm_startup.h \
     $$PWD/src/qorm_task_runner.h \
     $$PWD/src/qorm_transaction.h \
     $$PWD/src/qorm_transaction_scope.h \
@@ -132,6 +133,7 @@ SOURCES += \
     $$PWD/src/qorm_sql_suitable_builder.cpp \
     $$PWD/src/qorm_sql_suitable_types.cpp \
     $$PWD/src/qorm_sql_suitable_value.cpp \
+    $$PWD/src/qorm_startup.cpp \
     $$PWD/src/qorm_task_runner.cpp \
     $$PWD/src/qorm_transaction.cpp \
     $$PWD/src/qorm_transaction_scope.cpp \

@@ -158,7 +158,7 @@ QVariantMap ConnectionManager::toMap() const
     QVariantMap RETURN;
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
         auto property = this->metaObject()->property(row);
-        if (QByteArray(property.name()) == QT_STRINGIFY2(objectName))
+        if (QByteArray{property.name()} == QT_STRINGIFY2(objectName))
             continue;
 
         const auto key = property.name();
@@ -177,7 +177,7 @@ QVariantHash ConnectionManager::toHash() const
     QVariantHash RETURN;
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
         auto property = this->metaObject()->property(row);
-        if (QByteArray(property.name()) == QT_STRINGIFY2(objectName))
+        if (QByteArray{property.name()} == QT_STRINGIFY2(objectName))
             continue;
 
         const auto key = property.name();

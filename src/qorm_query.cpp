@@ -125,7 +125,7 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
         if (recordsIndex.isEmpty()) {
             for (int col = 0; col < metaObject.propertyCount(); ++col) {
                 auto property = metaObject.property(col);
-                auto propertyName = QByteArray(property.name()).toLower().trimmed();
+                auto propertyName = QByteArray{property.name()}.toLower().trimmed();
                 auto fieldName = propertyTableList.value(propertyName).trimmed();
                 if (fieldName.isEmpty())
                     continue;
@@ -187,7 +187,7 @@ QVariantHash Query::makeRecord(const ModelInfo &modelInfo) const
     QStringList propertys;
     for (int col = 0; col < metaObject.propertyCount(); ++col) {
         auto property = metaObject.property(col);
-        QString propertyName = QByteArray(property.name()).toLower().trimmed();
+        QString propertyName = QByteArray{property.name()}.toLower().trimmed();
         propertyName = propertyTableList.value(propertyName).trimmed();
         if (!propertyName.isEmpty()) {
             auto index = p->sqlRecord.indexOf(propertyName);
@@ -208,7 +208,7 @@ bool Query::modelRead(QOrm::Model *model) const
     auto &metaObject = *model->metaObject();
     for (int col = 0; col < metaObject.propertyCount(); ++col) {
         auto property = metaObject.property(col);
-        auto propertyName = QByteArray(property.name()).toLower().trimmed();
+        auto propertyName = QByteArray{property.name()}.toLower().trimmed();
         if (!p->sqlQueryFields.contains(propertyName))
             continue;
         auto index = p->sqlRecord.indexOf(propertyName);

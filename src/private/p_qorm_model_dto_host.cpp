@@ -6,6 +6,7 @@ class HostPvt{
 public:
     QStm::Network n;
     Host *parent=nullptr;
+    QUuid uuid;
     QByteArray protocol=n.HTTP_PROTOCOL;
     QByteArray hostName=n.LOCALHOST;
     int port=-1;
@@ -173,6 +174,24 @@ void Host::setBasePath(const QByteArray &newBasePath)
 void Host::resetBasePath()
 {
     setBasePath({});
+}
+
+const QUuid &Host::uuid() const
+{
+    return p->uuid;
+}
+
+void Host::setUuid(const QUuid &newUuid)
+{
+    if (p->uuid == newUuid)
+        return;
+    p->uuid = newUuid;
+    emit uuidChanged();
+}
+
+void Host::resetUuid()
+{
+    setUuid({}); 
 }
 
 } // namespace QOrm

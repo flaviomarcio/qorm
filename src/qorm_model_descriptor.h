@@ -34,6 +34,9 @@
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addOption(QStringLiteral(#propertyName), propertyValue);
 
+#define Q_ORM_MODEL_DECLARE_HOST(VALUES)\
+const auto NAME##Host=this->addHost(VALUES).uuid().toString();
+
 #define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
 const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).uuid().toString();
 
@@ -248,6 +251,14 @@ public:
     virtual EndPoints &endPoints() const;
     virtual void setEndPoints(const EndPoints &newEndPoints);
     virtual void resetEndPoints();
+
+    //!
+    //! \brief addEndPoint
+    //! \param newEndPoint
+    //! \return
+    //!
+    virtual Host &addHost(Host *newHost);
+    virtual Host &addHost(const QVariant &newHost);
 
     //!
     //! \brief addEndPoint

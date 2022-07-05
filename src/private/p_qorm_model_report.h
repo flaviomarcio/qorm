@@ -189,7 +189,7 @@ protected:
     //!
     virtual ResultValue&doFailed();
 private:
-    ModelReportBasePvt*p=nullptr;
+    ModelReportBasePvt *p=nullptr;
 };
 
 }

@@ -17,6 +17,7 @@ public:
     QVariantHash options;
     QVariantHash sort;
     QVariantHash design={{vpWidth,"20%"}, {vpHeight,"20%"}, {vpRows,2}, {vpLayout, vlVertical}};
+    Host host;
     EndPoints endPoints;
     ModelDescriptor *parent=nullptr;
     explicit ModelDescriptorPvt(ModelDescriptor *parent)
@@ -279,7 +280,7 @@ void ModelDescriptor::addOption(const QString &name, const QVariantHash &v)
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
         i.next();
-        d[i.key()] = i.value();
+        d.insert(i.key(),i.value());
     }
     p->options[name] = d;
 }
@@ -327,6 +328,18 @@ void ModelDescriptor::resetEndPoints()
     emit endPointsChanged();
 }
 
+Host &ModelDescriptor::addHost(Host *newHost)
+{
+    p->host=newHost;
+    return p->host;
+}
+
+Host &ModelDescriptor::addHost(const QVariant &newHost)
+{
+    p->host=newHost;
+    return p->host;
+}
+
 EndPoint &ModelDescriptor::addEndPoint(EndPoint *newEndPoint)
 {
     auto v=p->endPoints.value(newEndPoint->uuid());
@@ -335,6 +348,7 @@ EndPoint &ModelDescriptor::addEndPoint(EndPoint *newEndPoint)
             return *newEndPoint;
         delete v;
     }
+    newEndPoint->host()->setValues(&p->host);
     p->endPoints.insert(newEndPoint);
     return *newEndPoint;
 }
@@ -344,6 +358,7 @@ EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &valu
     auto endpoint=new EndPoint{this};
     endpoint->setValues(values);
     endpoint->setName(name.toUtf8());
+    endpoint->host()->setValues(&p->host);
     return this->addEndPoint(endpoint);
 }
 

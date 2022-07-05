@@ -1,6 +1,7 @@
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_const.h"
 #include "../qorm_model.h"
+#include "../qorm_startup.h"
 #include <QMutex>
 #include <QCoreApplication>
 
@@ -11,7 +12,8 @@ Q_GLOBAL_STATIC(HashModelInfo, __static_model_info)
 
 class ModelInfoPvt{
 public:
-    QMetaObject staticMetaObject;
+    QMetaObject staticMetaObjectModel;
+    QMetaObject staticMetaObjectDescriptor;
     QHash<QString, QMetaMethod> methods;
     QList<QMetaProperty> property;
     QHash<QString, QMetaProperty> propertyHash;
@@ -402,13 +404,21 @@ public:
             return;
 
         pvt->clear();
-
-        pvt->staticMetaObject=staticMetaObject;
         QScopedPointer<QObject> scopePointer(staticMetaObject.newInstance(Q_ARG(QObject*, nullptr )));
         auto object=scopePointer.data();
 
         if(object==nullptr)
             return;
+
+        auto modelObject=dynamic_cast<Model*>(object);
+
+        if(modelObject==nullptr){
+            delete object;
+            return;
+        }
+
+        pvt->staticMetaObjectModel=staticMetaObject;
+        pvt->staticMetaObjectDescriptor=modelObject->descriptor();
 
         for(int i = 0; i < staticMetaObject.propertyCount(); ++i) {
             auto property=staticMetaObject.property(i);
@@ -420,7 +430,7 @@ public:
             if(__propertyIgnoredList->contains(propertyName.toLower()))
                 continue;
 
-            pvt->propertyHash[property.name()]=property;
+            pvt->propertyHash.insert(property.name(), property);
             pvt->property.append(property);
         }
 
@@ -432,20 +442,20 @@ public:
             pvt->methods[method.name()]=method;
         }
 
-        auto modelName = pvt->invokeText(object, qbl("modelName")).trimmed();
-        auto modelDescription = pvt->invokeText(object, qbl("modelDescription")).trimmed();
-        auto tablePkAutoGenerate = pvt->invokeBool(object, qbl("tablePkAutoGenerate"));
-        auto tableSchema = pvt->invokeText(object, qbl("tableSchema")).trimmed();
-        auto tablePrefix = pvt->invokeText(object, qbl("tablePrefix")).trimmed();
-        auto tablePrefixSeparator = pvt->invokeText(object, qbl("tablePrefixSeparator")).trimmed();
-        auto tableName = pvt->invokeText(object, qbl("tableName")).trimmed();
-        auto tablePk = pvt->invokeText(object, qbl("tablePk")).trimmed();
-        auto tableOrderBy = pvt->invokeText(object, qbl("tableOrderBy")).trimmed();
-        auto tableForeignPk = pvt->invokeText(object, qbl("tableForeignPk")).trimmed();
-        auto tableDeactivateField = pvt->invokeText(object, qbl("tableDeactivateField")).trimmed();
-        auto tableSequence = pvt->invokeMap(object, qbl("tableSequence"));
-        auto tableFiltrableField = pvt->invokeList(object, qbl("tableFiltrableField"));
-        auto tablePkCompuser = pvt->invokeVar(object, qbl("tablePkCompuser"));
+        auto modelName = pvt->invokeText(modelObject, qbl("modelName")).trimmed();
+        auto modelDescription = pvt->invokeText(modelObject, qbl("modelDescription")).trimmed();
+        auto tablePkAutoGenerate = pvt->invokeBool(modelObject, qbl("tablePkAutoGenerate"));
+        auto tableSchema = pvt->invokeText(modelObject, qbl("tableSchema")).trimmed();
+        auto tablePrefix = pvt->invokeText(modelObject, qbl("tablePrefix")).trimmed();
+        auto tablePrefixSeparator = pvt->invokeText(modelObject, qbl("tablePrefixSeparator")).trimmed();
+        auto tableName = pvt->invokeText(modelObject, qbl("tableName")).trimmed();
+        auto tablePk = pvt->invokeText(modelObject, qbl("tablePk")).trimmed();
+        auto tableOrderBy = pvt->invokeText(modelObject, qbl("tableOrderBy")).trimmed();
+        auto tableForeignPk = pvt->invokeText(modelObject, qbl("tableForeignPk")).trimmed();
+        auto tableDeactivateField = pvt->invokeText(modelObject, qbl("tableDeactivateField")).trimmed();
+        auto tableSequence = pvt->invokeMap(modelObject, qbl("tableSequence"));
+        auto tableFiltrableField = pvt->invokeList(modelObject, qbl("tableFiltrableField"));
+        auto tablePkCompuser = pvt->invokeVar(modelObject, qbl("tablePkCompuser"));
 
         QVector<QString> tableFiltrableField_;
         if(!tableFiltrableField.isEmpty()){
@@ -453,7 +463,7 @@ public:
                 auto s = v.toString().trimmed();
                 if(tableFiltrableField_.contains(s))
                     continue;
-                tableFiltrableField_<<s;
+                tableFiltrableField_.append(s);
             }
         }
 
@@ -495,8 +505,8 @@ public:
             if(!property.isValid())
                 continue;
 
-            pvt->tablePk<<field;
-            pvt->tablePkField<<SqlParserItem::createObject(field);
+            pvt->tablePk.append(field);
+            pvt->tablePkField.append(SqlParserItem::createObject(field));
             pvt->propertyPK.insert(propertyName, pvt->propertyHash[propertyName]);
         }
 
@@ -505,9 +515,11 @@ public:
         for(auto &propertyName:tableForeignPk.split(qbl_space)){
             if(propertyName.isEmpty())
                 continue;
+
             auto property=pvt->propertyHash.value(propertyName);
             if(!property.isValid())
                 continue;
+
             auto field=tablePrefix+tablePrefixSeparator+propertyName;
             pvt->tableForeignPk.append(field);
             pvt->tableForeignPkField.append(SqlParserItem::createObject(field));
@@ -521,21 +533,23 @@ public:
                 auto &property=i.value();
                 const auto propertyA=propertyName;
                 const auto propertyB=tablePrefix+qbl("_")+propertyName;
-                pvt->propertyList<<propertyName;
-                pvt->propertyTableList<<propertyB;
-                pvt->propertyShortVsTable[propertyA]=propertyB;
-                pvt->propertyTableVsShort[propertyB]=propertyA;
-                pvt->propertyByPropertyName[propertyA]=property;
-                pvt->propertyByFieldName[propertyB]=property;
+                pvt->propertyList.append(propertyName);
+                pvt->propertyTableList.append(propertyB);
+                pvt->propertyShortVsTable.insert(propertyA, propertyB);
+                pvt->propertyTableVsShort.insert(propertyB, propertyA);
+                pvt->propertyByPropertyName.insert(propertyA, property);
+                pvt->propertyByFieldName.insert(propertyB, property);
 
                 if(tableFiltrableField_.contains(propertyName))
-                    pvt->propertyFiltrable[propertyName]=property;
+                    pvt->propertyFiltrable.insert(propertyName, property);
 
                 if(!QMetaTypeUtilVariantDictionary.contains(qTypeId(property)))//property info
                     continue;
+
                 auto split=propertyName.split(qsl("qorm__info__"));
                 if(split.size()!=2)
                     continue;
+
                 auto name=split.last().trimmed();
                 pvt->propertyInfo.insert(name, property);
             }
@@ -546,14 +560,16 @@ public:
                     auto methodName=i.key();
                     if(!methodName.startsWith(qbl("tableForeignKey_")))
                         continue;
-                    auto vHash = pvt->invokeMap(object, methodName);
+
+                    auto vHash = pvt->invokeMap(modelObject, methodName);
                     auto fieldName=vHash[qsl("fk")].toString().trimmed();
                     if(fieldName.isEmpty())
                         continue;
+
                     pvt->tableForeignKey.insert(fieldName, vHash);
                     auto property=pvt->propertyHash.value(fieldName);
                     if(property.isValid())//if exists
-                        pvt->propertyFK[property.name()]=property;
+                        pvt->propertyFK.insert(property.name(), property);
                 }
             }
 
@@ -567,8 +583,8 @@ public:
                 auto field=tablePrefix+tablePrefixSeparator+propertyName;
                 if(!pvt->propertyTableList.contains(field))
                     continue;
-                pvt->tableOrderBy<<field;
-                pvt->tableOrderByField<<SqlParserItem::createObject(field);
+                pvt->tableOrderBy.append(field);
+                pvt->tableOrderByField.append(SqlParserItem::createObject(field));
             }
 
             for(auto &row:tableDeactivateField.split(qbl_space)){
@@ -585,7 +601,7 @@ public:
                 auto property=pvt->propertyHash.value(propertyName);
                 if(!property.isValid())
                     continue;
-                //sWarning()<<qsl("deactivate field(%1) not exists in model(%2) properties").arg(propertyName, staticMetaObject.className());
+
                 if(!pvt->propertyByPropertyName.contains(propertyName))
                     continue;
 
@@ -603,33 +619,35 @@ public:
                 pvt->tableDeactivateField.insert(vField, vValue);
             }
 
-            auto makeDescritor=[&pvt, &object](){
-                auto model=dynamic_cast<QOrm::Model*>(object);
-                if(!model)
-                    return;
+//            auto makeDescritor=[&pvt, &modelObject](){
+//                auto model=dynamic_cast<QOrm::Model*>(modelObject);
+//                if(!model)
+//                    return;
 
-                auto metaObject=model->descriptor();
-                if(!metaObject.inherits(&ModelDescriptor::staticMetaObject))//SE HERDAR de QOrm::ModelDescriptor
-                    return;
+//                pvt->staticMetaObjectDescriptor=model->descriptor();
 
-                QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
-                if(!scopePointer.data())
-                    return;
+//                auto metaObject=model->descriptor();
+//                if(!metaObject.inherits(&ModelDescriptor::staticMetaObject))//SE HERDAR de QOrm::ModelDescriptor
+//                    return;
 
-                auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
-                if(!objectDescriptor){
-                    pvt->propertyDescriptors.clear();
-                    return;
-                }
+//                QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
+//                if(!scopePointer.data())
+//                    return;
 
-                objectDescriptor->descriptorsInit();
-                if(pvt->description.isEmpty())
-                    pvt->description=objectDescriptor->description();
-                pvt->propertyEndPoints=objectDescriptor->endPoints().toList();
-                pvt->propertyDescriptors=objectDescriptor->descriptors();
-                pvt->propertySort=objectDescriptor->sort();
-            };
-            makeDescritor();
+//                auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
+//                if(!objectDescriptor){
+//                    pvt->propertyDescriptors.clear();
+//                    return;
+//                }
+
+//                objectDescriptor->descriptorsInit();
+//                if(pvt->description.isEmpty())
+//                    pvt->description=objectDescriptor->description();
+//                pvt->propertyEndPoints=objectDescriptor->endPoints().toList();
+//                pvt->propertyDescriptors=objectDescriptor->descriptors();
+//                pvt->propertySort=objectDescriptor->sort();
+//            };
+//            makeDescritor();
 
             auto makeTablePkCompuser=[&tablePkCompuser, &pvt](){
                 if(!tablePkCompuser.isValid() || tablePkCompuser.isNull())
@@ -666,7 +684,50 @@ public:
             makeTablePkCompuser();
         }
     }
+
+    static void initDescriptores()
+    {
+        auto makeDescritor=[](ModelInfo* modelInfo){
+
+            auto pvt=modelInfo->p;
+
+            auto metaObject=pvt->staticMetaObjectDescriptor;
+            if(!metaObject.inherits(&ModelDescriptor::staticMetaObject))//SE HERDAR de QOrm::ModelDescriptor
+                return;
+
+            QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
+            if(!scopePointer.data())
+                return;
+
+            auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
+            if(!objectDescriptor){
+                pvt->propertyDescriptors.clear();
+                return;
+            }
+
+            objectDescriptor->descriptorsInit();
+            if(pvt->description.isEmpty())
+                pvt->description=objectDescriptor->description();
+            pvt->propertyEndPoints=objectDescriptor->endPoints().toList();
+            pvt->propertyDescriptors=objectDescriptor->descriptors();
+            pvt->propertySort=objectDescriptor->sort();
+        };
+
+        QHashIterator <QByteArray, QOrm::ModelInfo*> i(*__static_model_info);
+        while(i.hasNext()){
+            i.next();
+            makeDescritor(i.value());
+        }
+    }
 };
+
+
+static void init()
+{
+    ModelInfoPvt::initDescriptores();
+}
+
+Q_ORM_STARTUP_FUNCTION(init);
 
 ModelInfo::ModelInfo()
 {
@@ -775,7 +836,7 @@ ModelInfo &ModelInfo::modelInfoInit(const QMetaObject &staticMetaObject)
 
 QMetaObject &ModelInfo::staticMetaObject() const
 {
-    return p->staticMetaObject;
+    return p->staticMetaObjectModel;
 }
 
 const QStringList &ModelInfo::propertyIgnoredList()
@@ -898,7 +959,7 @@ QVariantHash ModelInfo::propertyParserToTable(const QVariant &v) const
 {
 
     QVVM vvm;
-    auto &propertyList=p->propertyShortVsTable;
+    const auto &propertyList=p->propertyShortVsTable;
     auto vHash=v.toHash();
     Q_V_HASH_ITERATOR(vHash){
         i.next();
@@ -906,7 +967,7 @@ QVariantHash ModelInfo::propertyParserToTable(const QVariant &v) const
         SqlParserItem ik;
         SqlParserItem iv;
         if(propertyList.contains(k))
-            ik=SqlParserItem::createObject(propertyList[k]);
+            ik=SqlParserItem::createObject(propertyList.value(k));
         else
             ik=SqlParserItem::createValue(k);
 
@@ -932,7 +993,7 @@ QVariantHash ModelInfo::propertyParserToProperty(const QVariant &v) const
 {
 
     QVVM vvm;
-    auto &propertyList=p->propertyTableVsShort;
+    const auto &propertyList=p->propertyTableVsShort;
     auto vHash=v.toHash();
     Q_V_HASH_ITERATOR(vHash){
         i.next();
@@ -940,7 +1001,7 @@ QVariantHash ModelInfo::propertyParserToProperty(const QVariant &v) const
         SqlParserItem ik;
         SqlParserItem iv;
         if(propertyList.contains(k))
-            ik=SqlParserItem::createObject(propertyList[k]);
+            ik=SqlParserItem::createObject(propertyList.value(k));
         else
             ik=SqlParserItem::createValue(k);
 
@@ -1083,7 +1144,7 @@ QVariantMap ModelInfo::toMap(const QObject *object)const
     for(auto &property:p->property){
         if(!property.isValid())
             continue;
-        auto propertyName = QString(property.name()).toLower();
+        auto propertyName = QString{property.name()}.toLower();
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
@@ -1093,7 +1154,7 @@ QVariantMap ModelInfo::toMap(const QObject *object)const
         default:
             value=value=property.read(object);
         }
-        __return[propertyName]=value;
+        __return.insert(propertyName, value);
     }
     return __return;
 }
@@ -1105,7 +1166,7 @@ QVariantHash ModelInfo::toHash(const QObject *object) const
     for(auto &property:p->property){
         if(!property.isValid())
             continue;
-        auto propertyName = QString(property.name()).toLower();
+        auto propertyName =QString{property.name()}.toLower();
         QVariant value;
         switch (qTypeId(property)){
         case QMetaType_User:
@@ -1115,7 +1176,7 @@ QVariantHash ModelInfo::toHash(const QObject *object) const
         default:
             value=value=property.read(object);
         }
-        __return[propertyName]=value;
+        __return.insert(propertyName, value);
     }
     return __return;
 }
@@ -1133,7 +1194,7 @@ QVariantHash ModelInfo::toHashModel(const QObject *object)const
         if(!property.isValid())
             continue;
 
-        auto propertyName = QString(property.name()).toLower();
+        auto propertyName = QString{property.name()}.toLower();
         propertyName=p->propertyShortVsTable.value(propertyName);
         __return.insert(propertyName, property.read(object));
     }
@@ -1164,7 +1225,7 @@ QVariantHash ModelInfo::toForeign(const QVariant &vModel,const QVariant &v) cons
             auto fkName=vHash[qsl("fk")].toString();
             auto pkName=vHash[qsl("pk")].toString();
             auto pkValue=vRecordHash.value(pkName);
-            __return[fkName]=pkValue;
+            __return.insert(fkName, pkValue);
         }
         return __return;
     }
@@ -1175,7 +1236,7 @@ QVariantHash ModelInfo::toForeign(const QVariant &vModel,const QVariant &v) cons
         i.next();
         auto vHash=i.value().toHash();
         auto fkName=vHash[qsl("fk")].toString();
-        __return[fkName]=vRecord;
+        __return.insert(fkName, vRecord);
     }
     return __return;
 }

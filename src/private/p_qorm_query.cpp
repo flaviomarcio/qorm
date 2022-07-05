@@ -1,4 +1,5 @@
 #include "./p_qorm_query.h"
+#include "../qorm_startup.h"
 
 namespace QOrm{
 #ifdef QT_DEBUG
@@ -6,7 +7,7 @@ static bool static_log_register=true;
 #else
 static bool static_log_register=false;
 #endif
-static QString static_log_dir;
+Q_GLOBAL_STATIC(QString, static_log_dir);
 
 static void static_log_dir_clear(const QString &ormLogDir)
 {
@@ -47,7 +48,7 @@ static void static_log_dir_clear(const QString &ormLogDir)
 
 static void static_log_init_dir()
 {
-    auto env = QString(getenv(qbl("Q_LOG_ENABLED"))).trimmed();
+    auto env = QString{getenv(qbl("Q_LOG_ENABLED"))}.trimmed();
 #ifdef QT_DEBUG
     static_log_register = env.isEmpty()?true :QVariant(env).toBool();
 #else
@@ -56,18 +57,23 @@ static void static_log_init_dir()
     if(!static_log_register)
         return;
 
-    static const auto log_local_name=QString(__PRETTY_FUNCTION__).split(qsl("::")).first().replace(qsl("void "),qsl_null).split(qsl_space).last();
-    static_log_dir=qsl("%1/%2/%3").arg(QDir::homePath(), log_local_name, qApp->applicationName());
+    static const auto log_local_name=QString{__PRETTY_FUNCTION__}.split(qsl("::")).first().replace(qsl("void "),qsl_null).split(qsl_space).last();
+    *static_log_dir=qsl("%1/%2/%3").arg(QDir::homePath(), log_local_name, qApp->applicationName());
 
-    QDir dir(static_log_dir);
-    if(!dir.exists(static_log_dir))
-        dir.mkpath(static_log_dir);
+    QDir dir(*static_log_dir);
+    if(!dir.exists(*static_log_dir))
+        dir.mkpath(*static_log_dir);
 
-    if(dir.exists(static_log_dir))
-        static_log_dir_clear(static_log_dir);
+    if(dir.exists(*static_log_dir))
+        static_log_dir_clear(*static_log_dir);
 }
 
-Q_COREAPP_STARTUP_FUNCTION(static_log_init_dir)
+static void init()
+{
+    static_log_init_dir();
+}
+
+Q_ORM_STARTUP_FUNCTION(init);
 
 QueryPvt::QueryPvt(Query *parent, const QSqlDatabase &db) : QObject{parent}, sqlBuilder(parent)
 {
@@ -75,7 +81,7 @@ QueryPvt::QueryPvt(Query *parent, const QSqlDatabase &db) : QObject{parent}, sql
     auto currentName=QThread::currentThread()->objectName().trimmed();
     if(currentName.isEmpty())
         currentName=QString::number(qlonglong(QThread::currentThreadId()),16);
-    this->fileLog=qsl("%1/%2.sql").arg(static_log_dir, QString::number(qlonglong(QThread::currentThreadId()),16));
+    this->fileLog=qsl("%1/%2.sql").arg(*static_log_dir, QString::number(qlonglong(QThread::currentThreadId()),16));
     this->connectionName=db.isOpen()?db.connectionName():QString();
     this->sqlQuery=QSqlQuery(db);
 }

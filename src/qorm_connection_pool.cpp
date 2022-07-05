@@ -2,6 +2,7 @@
 #include "./private/p_qorm_sql_suitable_parser_keywork.h"
 #include "./qorm_connection_setting.h"
 #include "./qorm_macro.h"
+#include "./qorm_startup.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMutex>
@@ -22,7 +23,7 @@ static void init()
         static_dbcDrivers->append(line);
 }
 
-Q_COREAPP_STARTUP_FUNCTION(init)
+Q_COREAPP_STARTUP_FUNCTION(init);
 
 class ConnectionPoolPvt:public QObject
 {

@@ -121,7 +121,7 @@ public:
     virtual ResultValue &crudify();
 
 private:
-    CRUDBlockPvt*p=nullptr;
+    CRUDBlockPvt *p=nullptr;
 };
 
 }

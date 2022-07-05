@@ -1,5 +1,6 @@
 #include "./qorm_model_dto.h"
 #include "./qorm_model.h"
+#include "./qorm_startup.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -54,7 +55,7 @@ static void initDtoSettingsCache()
     *dtoSettings = __dtoSettings;
 }
 
-Q_COREAPP_STARTUP_FUNCTION(initDtoSettingsCache)
+Q_ORM_STARTUP_FUNCTION(initDtoSettingsCache);
 
 class ModelDtoPvt:public QObject
 {

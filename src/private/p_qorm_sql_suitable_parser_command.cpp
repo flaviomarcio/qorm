@@ -1,16 +1,10 @@
 #include "p_qorm_sql_suitable_parser_command.h"
+#include "../qorm_startup.h"
 #include <QCoreApplication>
 
 namespace QOrm {
 
 static qlonglong __sequence_zzzz=0;
-
-static void init()
-{
-    __sequence_zzzz=0;
-}
-
-Q_COREAPP_STARTUP_FUNCTION(init)
 
 SqlParserCommand::SqlParserCommand(const QVariant &v):QVariant{v}
 {
