@@ -6,11 +6,11 @@ class HostPvt{
 public:
     QStm::Network n;
     Host *parent=nullptr;
-    QString protocol=n.HTTP_PROTOCOL;
-    QString hostName=n.LOCALHOST;
+    QByteArray protocol=n.HTTP_PROTOCOL;
+    QByteArray hostName=n.LOCALHOST;
     int port=-1;
     QVariantHash headers;
-    QString basePath;
+    QByteArray basePath;
     explicit HostPvt(Host *parent)
     {
         this->parent=parent;
@@ -66,7 +66,7 @@ bool Host::isEmpty() const
     return true;
 }
 
-const QString &Host::protocol() const
+const QByteArray &Host::protocol() const
 {
 
     if(p->protocol.trimmed().isEmpty())
@@ -74,7 +74,7 @@ const QString &Host::protocol() const
     return p->protocol;
 }
 
-void Host::setProtocol(const QString &newProtocol)
+void Host::setProtocol(const QByteArray &newProtocol)
 {
     if (p->protocol == newProtocol)
         return;
@@ -84,17 +84,17 @@ void Host::setProtocol(const QString &newProtocol)
 
 void Host::resetProtocol()
 {
-    setProtocol(QStringLiteral("http"));
+    setProtocol(QByteArrayLiteral("http"));
 }
 
-const QString &Host::hostName() const
+const QByteArray &Host::hostName() const
 {
     if(p->hostName.isEmpty())
         p->hostName=p->n.LOCALHOST;
     return p->hostName;
 }
 
-void Host::setHostName(const QString &newHostName)
+void Host::setHostName(const QByteArray &newHostName)
 {
     if (p->hostName == newHostName)
         return;
@@ -155,14 +155,14 @@ void Host::resetHeaders()
     setHeaders({});
 }
 
-const QString &Host::basePath() const
+const QByteArray &Host::basePath() const
 {
     if(p->basePath.trimmed().isEmpty())
-        p->basePath=QStringLiteral("/");
+        p->basePath=QByteArrayLiteral("/");
     return p->basePath;
 }
 
-void Host::setBasePath(const QString &newBasePath)
+void Host::setBasePath(const QByteArray &newBasePath)
 {
     if (p->basePath == newBasePath)
         return;

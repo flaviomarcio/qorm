@@ -21,13 +21,13 @@ class Q_STM_EXPORT EndPoint : public QStm::ObjectWrapper
 
     Q_PROPERTY(Host *host READ host WRITE setHost RESET resetHost NOTIFY hostChanged)
 
-    Q_PROPERTY(QString path READ path WRITE setPath RESET resetPath NOTIFY pathChanged)
+    Q_PROPERTY(QByteArray path READ path WRITE setPath RESET resetPath NOTIFY pathChanged)
 
-    Q_PROPERTY(QString basePath READ basePath WRITE setBasePath RESET resetBasePath NOTIFY basePathChanged)
+    Q_PROPERTY(QByteArray basePath READ basePath WRITE setBasePath RESET resetBasePath NOTIFY basePathChanged)
 
-    Q_PROPERTY(QString url READ url NOTIFY urlChanged)
+    Q_PROPERTY(QByteArray url READ url NOTIFY urlChanged)
 
-    Q_PROPERTY(QString name READ name WRITE setName RESET resetName NOTIFY nameChanged)
+    Q_PROPERTY(QByteArray name READ name WRITE setName RESET resetName NOTIFY nameChanged)
 public:
 
     //!
@@ -51,7 +51,7 @@ public:
     //! \param userName
     //! \param password
     //!
-    Q_INVOKABLE void addContentType(const QString &applicationType) const;
+    Q_INVOKABLE void addContentType(const QByteArray &applicationType) const;
 
     Q_INVOKABLE void addContentTypeJSON() const;
 
@@ -72,13 +72,13 @@ public:
     //! \param userName
     //! \param password
     //!
-    Q_INVOKABLE void addAuthBasic(const QString &userName, const QString &password) const;
+    Q_INVOKABLE void addAuthBasic(const QByteArray &userName, const QByteArray &password) const;
 
     //!
     //! \brief addAuthBearer
     //! \param credentials
     //!
-    Q_INVOKABLE void addAuthBearer(const QString &credentials) const;
+    Q_INVOKABLE void addAuthBearer(const QByteArray &credentials) const;
 
     //!
     //! \brief uuid
@@ -100,16 +100,16 @@ public:
     //! \brief path
     //! \return
     //!
-    const QString &path() const;
-    void setPath(const QString &newPath);
+    const QByteArray &path() const;
+    void setPath(const QByteArray &newPath);
     void resetPath();
 
     //!
     //! \brief basePath
     //! \return
     //!
-    const QString &basePath() const;
-    void setBasePath(const QString &newBasePath);
+    const QByteArray &basePath() const;
+    void setBasePath(const QByteArray &newBasePath);
     void resetBasePath();
 
     //!
@@ -125,10 +125,10 @@ public:
     //! \brief url
     //! \return
     //!
-    QString &url() const;
+    QByteArray &url() const;
 
-    const QString &name() const;
-    void setName(const QString &newName);
+    const QByteArray &name() const;
+    void setName(const QByteArray &newName);
     void resetName();
 
 private:

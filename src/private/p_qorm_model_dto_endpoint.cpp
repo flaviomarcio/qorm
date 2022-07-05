@@ -9,9 +9,9 @@ public:
     QUuid uuid;
     Host host;
     QVariant method;
-    QString path;
-    QString url;
-    QString name;
+    QByteArray path;
+    QByteArray url;
+    QByteArray name;
     explicit EndPointPvt(){
 
     }
@@ -37,10 +37,10 @@ bool EndPoint::isValid() const
     return true;
 }
 
-void EndPoint::addContentType(const QString &applicationType) const
+void EndPoint::addContentType(const QByteArray &applicationType) const
 {
     QStm::Network n;
-    auto appType=p->host.headers().value(n.HEADER_CONTENT_TYPE).toString().split(QStringLiteral(","));
+    auto appType=p->host.headers().value(n.HEADER_CONTENT_TYPE).toString().split(QByteArrayLiteral(","));
     if(appType.size()==1 && appType.first().trimmed().isEmpty())
         appType.clear();
     if(applicationType.trimmed().isEmpty()){
@@ -96,7 +96,7 @@ QVariantHash &EndPoint::headers()const
     return p->host.headers();
 }
 
-void EndPoint::addAuthBasic(const QString &userName, const QString &password) const
+void EndPoint::addAuthBasic(const QByteArray &userName, const QByteArray &password) const
 {
     QStm::Network n;
     auto auth=p->host.headers().value(n.HEADER_AUTHORIZATION).toString().split(",");
@@ -109,7 +109,7 @@ void EndPoint::addAuthBasic(const QString &userName, const QString &password) co
     p->host.headers().insert(n.HEADER_AUTHORIZATION, auth.join(','));
 }
 
-void EndPoint::addAuthBearer(const QString &credentials) const
+void EndPoint::addAuthBearer(const QByteArray &credentials) const
 {
     QStm::Network n;
     auto auth=p->host.headers().value(n.HEADER_AUTHORIZATION).toString().split(",");
@@ -161,12 +161,12 @@ void EndPoint::resetHost()
     setHost({});
 }
 
-const QString &EndPoint::path() const
+const QByteArray &EndPoint::path() const
 {
     return p->path;
 }
 
-void EndPoint::setPath(const QString &newPath)
+void EndPoint::setPath(const QByteArray &newPath)
 {
     if (p->path == newPath)
         return;
@@ -179,12 +179,12 @@ void EndPoint::resetPath()
     setPath({});
 }
 
-const QString &EndPoint::basePath() const
+const QByteArray &EndPoint::basePath() const
 {
     return this->p->host.basePath();
 }
 
-void EndPoint::setBasePath(const QString &newBasePath)
+void EndPoint::setBasePath(const QByteArray &newBasePath)
 {
     this->p->host.setBasePath(newBasePath);
     emit basePathChanged();
@@ -211,14 +211,12 @@ void EndPoint::resetMethod()
     setMethod({}); 
 }
 
-QString &EndPoint::url()const
+QByteArray &EndPoint::url()const
 {
+    QStm::Network n;
     if(this->isValid()){
-        auto port=this->p->host.port()<=0?"":QStringLiteral(":%1").arg(this->p->host.port());
-        auto url=QStringLiteral("%1%2/%3/%4").arg(this->p->host.hostName()).arg(port).arg(this->basePath(), this->path());
-        while(url.contains(QStringLiteral("//")))
-            url.replace(QStringLiteral("//"), QStringLiteral("/"));
-        p->url=QStringLiteral("%1://%2").arg(this->p->host.protocol(), url);
+        auto &h=p->host;
+        p->url=n.urlParsert(h.protocol(), h.hostName(), h.port(), h.basePath(), this->path());
     }
     else{
         p->url.clear();
@@ -226,12 +224,12 @@ QString &EndPoint::url()const
     return p->url;
 }
 
-const QString &EndPoint::name() const
+const QByteArray &EndPoint::name() const
 {
     return p->name;
 }
 
-void EndPoint::setName(const QString &newName)
+void EndPoint::setName(const QByteArray &newName)
 {
     if (p->name == newName.trimmed())
         return;

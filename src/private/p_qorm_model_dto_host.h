@@ -10,15 +10,15 @@ class Q_STM_EXPORT Host : public QStm::ObjectWrapper
 {
     Q_OBJECT
     QSTM_OBJECT_WRAPPER(Host)
-    Q_PROPERTY(QString protocol READ protocol WRITE setProtocol RESET resetProtocol NOTIFY protocolChanged)
+    Q_PROPERTY(QByteArray protocol READ protocol WRITE setProtocol RESET resetProtocol NOTIFY protocolChanged)
 
-    Q_PROPERTY(QString hostName READ hostName WRITE setHostName RESET resetHostName NOTIFY hostNameChanged)
+    Q_PROPERTY(QByteArray hostName READ hostName WRITE setHostName RESET resetHostName NOTIFY hostNameChanged)
 
     Q_PROPERTY(int port READ port WRITE setPort RESET resetPort NOTIFY portChanged)
 
     Q_PROPERTY(QVariantHash headers READ headers WRITE setHeaders RESET resetHeaders NOTIFY headersChanged)
 
-    Q_PROPERTY(QString basePath READ basePath WRITE setBasePath RESET resetBasePath NOTIFY basePathChanged)
+    Q_PROPERTY(QByteArray basePath READ basePath WRITE setBasePath RESET resetBasePath NOTIFY basePathChanged)
 public:
     Q_INVOKABLE explicit Host(QObject *parent = nullptr);
 
@@ -36,12 +36,12 @@ public:
     //!
     Q_INVOKABLE bool isEmpty()const;
 
-    const QString &protocol() const;
-    void setProtocol(const QString &newProtocol);
+    const QByteArray &protocol() const;
+    void setProtocol(const QByteArray &newProtocol);
     void resetProtocol();
 
-    const QString &hostName() const;
-    void setHostName(const QString &newHostName);
+    const QByteArray &hostName() const;
+    void setHostName(const QByteArray &newHostName);
     void resetHostName();
 
     int port() const;
@@ -53,8 +53,8 @@ public:
     void addHeaders(const QVariantHash &newHeaders);
     void resetHeaders();
 
-    const QString &basePath() const;
-    void setBasePath(const QString &newBasePath);
+    const QByteArray &basePath() const;
+    void setBasePath(const QByteArray &newBasePath);
     void resetBasePath();
 
 private:

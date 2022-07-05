@@ -62,9 +62,9 @@ EndPoint *EndPoints::endpoint()
     return p->objectHash.cbegin().value();
 }
 
-EndPoint *EndPoints::value(const QString &name)
+EndPoint *EndPoints::value(const QUuid &uuid)
 {
-    auto obj=p->objectHash.value(name.trimmed().toLower());
+    auto obj=p->objectHash.value(uuid.toString());
     if(obj)
         return obj;
     return nullptr;
@@ -82,12 +82,12 @@ EndPoint *EndPoints::method(const QVariant &method)
     return nullptr;
 }
 
-void EndPoints::insert(const QString &name, EndPoint *endPoint)
+void EndPoints::insert(EndPoint *endPoint)
 {
     if(!endPoint) return;
     if(endPoint->parent()!=this)
         endPoint->setParent(this);
-    p->objectHash.insert(name.trimmed().toLower(), endPoint);
+    p->objectHash.insert(endPoint->uuid().toString(), endPoint);
 }
 
 void EndPoints::insert(const QVariant &endPoint)
@@ -99,9 +99,9 @@ void EndPoints::insert(const QVariant &endPoint)
     p->objectHash.insert(endpoint->uuid().toString(), endpoint);
 }
 
-void EndPoints::remove(const QString &name)
+void EndPoints::remove(const QUuid &uuid)
 {
-    p->objectHash.remove(name.trimmed());
+    p->objectHash.remove(uuid.toString());
 }
 
 QVariantList &EndPoints::items() const
@@ -123,7 +123,7 @@ void EndPoints::setItems(const QVariant &newItems)
     for(auto&v:newItems.toList()){
         auto e=EndPoint::from(v, this);
         if(!e) continue;
-        this->insert(e->name(), e);
+        this->insert(e);
     }
     emit itemsChanged();
 }

@@ -54,7 +54,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual EndPoint *value(const QString &name);
+    virtual EndPoint *value(const QUuid &uuid);
 
     //!
     //! \brief value
@@ -65,17 +65,16 @@ public:
 
     //!
     //! \brief insert
-    //! \param name
-    //! \param link
+    //! \param endPoint
     //!
-    virtual void insert(const QString &name, EndPoint *endPoint);
+    virtual void insert(EndPoint *endPoint);
     Q_INVOKABLE virtual void insert(const QVariant &endPoint);
 
     //!
     //! \brief remove
     //! \param name
     //!
-    Q_INVOKABLE virtual void remove(const QString &name);
+    Q_INVOKABLE virtual void remove(const QUuid &uuid);
 
     //!
     //! \brief items

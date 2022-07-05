@@ -329,13 +329,13 @@ void ModelDescriptor::resetEndPoints()
 
 EndPoint &ModelDescriptor::addEndPoint(EndPoint *newEndPoint)
 {
-    auto v=p->endPoints.value(newEndPoint->name().toLower());
+    auto v=p->endPoints.value(newEndPoint->uuid());
     if(v){
         if(v==newEndPoint)
             return *newEndPoint;
         delete v;
     }
-    p->endPoints.insert(newEndPoint->uuid().toString(), newEndPoint);
+    p->endPoints.insert(newEndPoint);
     return *newEndPoint;
 }
 
@@ -343,7 +343,7 @@ EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &valu
 {
     auto endpoint=new EndPoint{this};
     endpoint->setValues(values);
-    endpoint->setName(name);
+    endpoint->setName(name.toUtf8());
     return this->addEndPoint(endpoint);
 }
 
