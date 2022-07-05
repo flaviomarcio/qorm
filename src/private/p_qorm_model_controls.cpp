@@ -58,7 +58,7 @@ public:
                     auto headerName=header->value();
                     vRecord[headerName]={};
                 }
-                vList<<vRecord;
+                vList.append(vRecord);
             }
 
             for(auto &v:vList){
