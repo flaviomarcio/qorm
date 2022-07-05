@@ -35,7 +35,7 @@
     this->addOption(QStringLiteral(#propertyName), propertyValue);
 
 #define Q_ORM_MODEL_DECLARE_HOST(VALUES)\
-const auto NAME##Host=this->addHost(VALUES).uuid().toString();
+this->addHost(VALUES);
 
 #define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
 const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).uuid().toString();
