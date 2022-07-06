@@ -82,13 +82,48 @@ public:
     }
 
     //!
-    //! \brief type
-    //! \param type
+    //! \brief displayer
     //! \return
     //!
-    virtual QVariant type() const
+    virtual bool displayer() const
     {
-        return this->v.value(vpOrder);
+        return this->v.value(vpDisplayer).toBool();
+    }
+    virtual ModelDtoHeader &displayer(const QVariant &displayer)
+    {
+        return this->setDisplayer(displayer);
+    }
+    virtual ModelDtoHeader &setDisplayer(const QVariant &displayer)
+    {
+        this->v.insert(vpDisplayer,displayer.toBool());
+        return*this;
+    }
+
+    //!
+    //! \brief displayText
+    //! \return
+    //!
+    virtual bool displayText() const
+    {
+        return this->v.value(vpDisplayText).toBool();
+    }
+    virtual ModelDtoHeader &displayText(const QVariant &displayText)
+    {
+        return this->setDisplayText(displayText);
+    }
+    virtual ModelDtoHeader &setDisplayText(const QVariant &displayText)
+    {
+        this->v.insert(vpDisplayText, displayText.toBool());
+        return*this;
+    }
+
+    //!
+    //! \brief dataType
+    //! \return
+    //!
+    virtual QVariant dataType() const
+    {
+        return this->v.value(vpDataType);
     }
     virtual ModelDtoHeader &dataType(const QVariant &type)
     {
@@ -97,6 +132,24 @@ public:
     virtual ModelDtoHeader &setDataType(const QVariant &type)
     {
         this->v.insert(vpDataType,type);
+        return*this;
+    }
+
+    //!
+    //! \brief displayer
+    //! \return
+    //!
+    virtual bool primaryKey() const
+    {
+        return this->v.value(vpPrimaryKey).toBool();
+    }
+    virtual ModelDtoHeader &primaryKey(const QVariant &primaryKey)
+    {
+        return this->setDisplayer(primaryKey);
+    }
+    virtual ModelDtoHeader &setPrimaryKey(const QVariant &primaryKey)
+    {
+        this->v.insert(vpPrimaryKey,primaryKey.toBool());
         return*this;
     }
 
@@ -483,7 +536,7 @@ public:
     {
         QVariantList vList;
         for(const auto &v:this->___objectList)
-            vList<<v->toVar();
+            vList.append(v->toVar());
         return vList;
     };
 
@@ -495,7 +548,7 @@ public:
     {
         QVariantList vList;
         for(const auto &v:this->___objectList)
-            vList<<v->toVar();
+            vList.append(v->toVar());
         return vList;
     };
 
@@ -555,12 +608,14 @@ public:
         if(object==nullptr){
             object=new ModelDtoHeader<T>(this->___d, this);
             object->order(this->___objectMap.count());
-            this->___objectList<<object;
+            this->___objectList.append(object);
             this->___objectMap.insert(value, object);
         }
         object->dataType(v.value(vpDataType));
         object->value(v.value(vpField));
         object->order(v.value(vpOrder));
+        object->displayer(v.value(vpDisplayer));
+        object->displayText(v.value(vpDisplayText));
         object->defaultValue(v.value(vpDefaultValue));
         object->defaultSelect(v.value(vpDefaultSelect));
         object->text(v.value(vpTitle));
@@ -578,6 +633,7 @@ public:
         object->inputMask(v.value(vpInputMask));
         object->inputLinks(v.value(vpInputLink));
         object->obrigatory(v.value(vpObrigatory));
+        object->primaryKey(v.value(vpPrimaryKey));
         return*object;
     }
 
