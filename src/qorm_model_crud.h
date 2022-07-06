@@ -35,6 +35,15 @@ public:
     }
 
     //!
+    //! \brief host
+    //! \return
+    //!
+    Host &host()
+    {
+        return p_dao.host();
+    }
+
+    //!
     //! \brief crudify
     //! \return
     //!

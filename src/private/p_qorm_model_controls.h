@@ -152,6 +152,12 @@ public:
     virtual ModelDtoFilters<ModelDtoControls> &filters();
 
     //!
+    //! \brief host
+    //! \return
+    //!
+    virtual Host &host();
+
+    //!
     //! \brief endpoints
     //! \return
     //!

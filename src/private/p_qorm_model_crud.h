@@ -4,6 +4,7 @@
 #include <QVariantHash>
 #include "./p_qorm_model_crud_body.h"
 #include "./p_qorm_model_action_method.h"
+#include "./p_qorm_model_dto_host.h"
 #include "../qorm_model_dto_options.h"
 #include "../qorm_model_crud_request.h"
 #include "../qorm_model_dao.h"
@@ -47,10 +48,16 @@ public:
     ~CRUDBase();
 
     //!
+    //! \brief host
+    //! \return
+    //!
+    QOrm::Host &host();
+
+    //!
     //! \brief options
     //! \return
     //!
-    QOrm::ModelDtoOptions&options();
+    QOrm::ModelDtoOptions &options();
 
     //!
     //! \brief setOptions
@@ -63,14 +70,14 @@ public:
     //! \brief resultInfo
     //! \return
     //!
-    QStm::ResultInfo&resultInfo();
+    QStm::ResultInfo &resultInfo();
 
     //!
     //! \brief setResultInfo
     //! \param resultInfo
     //! \return
     //!
-    CRUDBase &setResultInfo(const QStm::ResultInfo&resultInfo);
+    CRUDBase &setResultInfo(const QStm::ResultInfo &resultInfo);
 
     //!
     //! \brief type

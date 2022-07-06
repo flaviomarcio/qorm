@@ -4,6 +4,7 @@
 #include <QVariantMap>
 #include <QUrl>
 #include "./p_qorm_model_dto_endpoint.h"
+#include "./p_qorm_model_dto_host.h"
 
 namespace QOrm {
 
@@ -41,6 +42,16 @@ public:
     //! \return
     //!
     Q_INVOKABLE virtual int count() const;
+
+    //!
+    //! \brief host
+    //! \return
+    //!
+    Host &host();
+    void host(const Host &newHost);
+    void host(const QVariant &newHost);
+    void setHost(const Host &newHost);
+    void resetHost();
 
     //!
     //! \brief value
@@ -108,8 +119,11 @@ public:
     //!
     QHash<QString, EndPoint*> &toObjectHash()const;
 
+
 signals:
     void itemsChanged();
+
+    void hostChanged();
 
 private:
     EndPointsPvt *p=nullptr;

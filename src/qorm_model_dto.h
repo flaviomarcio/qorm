@@ -181,10 +181,23 @@ public:
     virtual ModelDtoFilters<ModelDtoControls> &filters();
 
     //!
-    //! \brief links
+    //! \brief Host
     //! \return
     //!
-    virtual EndPoints &links();
+    virtual Host &host();
+
+    //!
+    //! \brief Host
+    //! \return
+    //!
+    virtual ModelDto &host(const Host &host);
+    virtual ModelDto &host(const QVariant &host);
+
+    //!
+    //! \brief EndPoints
+    //! \return
+    //!
+    virtual EndPoints &endPoints();
 
     //!
     //! \brief items

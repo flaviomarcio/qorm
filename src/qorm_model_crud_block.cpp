@@ -14,14 +14,10 @@ public:
     QVariant crudBody;
     QMap<QString, PrivateQOrm::CRUDBase *> crudMap;
     QList<PrivateQOrm::CRUDBase *> crudList;
-
-    explicit CRUDBlockPvt(CRUDBlock*parent):QObject{parent},options{parent}
+    Host host;
+    explicit CRUDBlockPvt(CRUDBlock*parent):QObject{parent}, options{parent}
     {
         this->parent=parent;
-    }
-
-    virtual ~CRUDBlockPvt()
-    {
     }
 };
 
@@ -37,20 +33,30 @@ CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb{p
     p->crudBody=crudBody;
 }
 
-CRUDBlock::~CRUDBlock()
+Host &CRUDBlock::host()
 {
+    return p->host;
+}
 
+CRUDBlock &CRUDBlock::host(const Host &value)
+{
+    p->host=&value;
+    return *this;
+}
+
+CRUDBlock &CRUDBlock::host(const QVariant &value)
+{
+    p->host=value;
+    return *this;
 }
 
 ModelDtoOptions &CRUDBlock::options()
 {
-
     return p->options;
 }
 
 QStm::ResultInfo &CRUDBlock::resultInfo()
 {
-
     return p->resultInfo;
 }
 
@@ -71,13 +77,11 @@ CRUDBlock &CRUDBlock::operator<<(PrivateQOrm::CRUDBase *crud)
 
 QVariant &CRUDBlock::crudBody() const
 {
-
     return p->crudBody;
 }
 
 CRUDBlock &CRUDBlock::crudBody(const QVariant &v)
 {
-
     p->crudBody=v;
     return*this;
 }
@@ -89,7 +93,6 @@ CRUDBlock &CRUDBlock::makeBlock(CRUDBlock &crudBlock, const QVariant &crudBody)
 
 CRUDBlock &CRUDBlock::clear()
 {
-
     p->crudMap.clear();
     for(auto &v:p->crudMap)
         this->remove(v);
@@ -99,7 +102,6 @@ CRUDBlock &CRUDBlock::clear()
 
 CRUDBlock &CRUDBlock::insert(PrivateQOrm::CRUDBase *crud)
 {
-
     this->remove(crud);
     if(crud!=nullptr){
         p->crudMap.insert(crud->uuid().toString(), crud);
@@ -110,7 +112,6 @@ CRUDBlock &CRUDBlock::insert(PrivateQOrm::CRUDBase *crud)
 
 CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
 {
-
     if(p->crudMap.contains(crud->uuid().toString())){
         auto _crud=p->crudMap.take(crud->uuid().toString());
         if(_crud!=nullptr && _crud->parent()==this){
@@ -123,13 +124,11 @@ CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
 
 CRUDBlock &CRUDBlock::remove(const QUuid &crudUuid)
 {
-
     return this->remove(p->crudMap.value(crudUuid.toString()));
 }
 
 ResultValue &CRUDBlock::crudify()
 {
-
     Q_DECLARE_VU;
     if(p->crudMap.isEmpty())
         return this->lr().clear().setBadRequest(tr("crud block is empty"));
@@ -162,6 +161,7 @@ ResultValue &CRUDBlock::crudify()
         const auto crudUuid=crud->uuid().toString();
         crud->setOptions(p->options);
         crud->setResultInfo(p->resultInfo);
+        crud->host().setValues(&p->host);
         QVariantList crudList;
         QVariant crudSource;
         CRUDBody crudItem{crudBody};

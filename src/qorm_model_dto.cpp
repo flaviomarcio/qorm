@@ -198,130 +198,127 @@ ModelDtoHeaders<ModelDtoControls> &ModelDto::headers()
 
 ModelDtoFilters<ModelDtoControls> &ModelDto::filters()
 {
-
     return p->dtoControls.filters();
 }
 
-EndPoints &ModelDto::links()
+Host &ModelDto::host()
 {
+    return p->dtoControls.endpoints().host();
+}
 
+ModelDto &ModelDto::host(const Host &host)
+{
+    p->dtoControls.endpoints().host(host);
+    return *this;
+}
+
+ModelDto &ModelDto::host(const QVariant &host)
+{
+    p->dtoControls.endpoints().host(host);
+    return *this;
+}
+
+EndPoints &ModelDto::endPoints()
+{
     return p->dtoControls.endpoints();
 }
 
 ModelDtoItems<ModelDtoControls> &ModelDto::items()
 {
-
     return p->dtoControls.items();
 }
 
 ModelDtoControls &ModelDto::items(const QVariant &v)
 {
-
     return p->dtoControls.items(v);
 }
 
 ModelDtoControls &ModelDto::items(const ResultValue &lr)
 {
-
     return p->dtoControls.items(lr.resultVariant());
 }
 
 QStm::ResultInfo &ModelDto::resultInfo()
 {
-
     return p->dtoControls.resultInfo();
 }
 
 ModelDtoControls &ModelDto::resultInfo(const QVariant &v)
 {
-
     p->dtoControls.resultInfo().fromVar(v);
     return p->dtoControls;
 }
 
 ModelDtoControls &ModelDto::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
-
     p->dtoControls.resultInfo().fromHash(resultInfo.toHash());
     return p->dtoControls;
 }
 
 ModelDto &ModelDto::setValue(const QVariant &v)
 {
-
     p->dtoControls.items(v);
     return *this;
 }
 
 QString ModelDto::text() const
 {
-
     return p->dtoControls.text();
 }
 
 ModelDto &ModelDto::text(const QVariant &v)
 {
-
     p->dtoControls.text(v);
     return *this;
 }
 
 ModelDto &ModelDto::setText(const QVariant &v)
 {
-
     p->dtoControls.text(v);
     return *this;
 }
 
 QVariantHash ModelDto::sort() const
 {
-
     return p->dtoControls.sort();
 }
 
 ModelDto &ModelDto::sort(const QVariant &v)
 {
-
     p->dtoControls.sort(v);
     return *this;
 }
 
 ModelDto &ModelDto::setSort(const QVariant &v)
 {
-
     p->dtoControls.setSort(v);
     return *this;
 }
 
 ModelDto &ModelDto::setValue(const ResultValue &lr)
 {
-
     p->dtoControls.setValue(lr.resultVariant());
     return *this;
 }
 
 ModelDto &ModelDto::clear()
 {
-
     p->clear();
     return *this;
 }
 
 ResultValue &ModelDto::o()
 {
-
     return p->dtoControls.o();
 }
 
 ResultValue &ModelDto::toOutput()
 {
-
     return p->dtoControls.o();
 }
 
 ModelDto &ModelDto::initDescriptors(QObject *object)
 {
-
     p->initDescriptors(object);
     return *this;
 }

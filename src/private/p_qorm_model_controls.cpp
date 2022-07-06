@@ -362,6 +362,11 @@ ModelDtoFilters<ModelDtoControls> &ModelDtoControls::filters()
     return p->filters;
 }
 
+Host &ModelDtoControls::host()
+{
+    return p->endpoints.host();
+}
+
 EndPoints &ModelDtoControls::endpoints()
 {
 

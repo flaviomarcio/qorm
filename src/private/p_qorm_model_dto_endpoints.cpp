@@ -9,6 +9,7 @@ public:
     QVariantHash hash;
     QVector<EndPoint*> objectList;
     QHash<QString, EndPoint*> objectHash;
+    Host host;
     explicit EndPointsPvt(QObject *parent):QObject{parent}
     {
     }
@@ -27,6 +28,16 @@ public:
         objectHash.clear();
         qDeleteAll(aux);
     }
+
+    void setHost()
+    {
+        QHashIterator<QString, EndPoint*> i(objectHash);
+        while (i.hasNext()){
+            i.next();
+            i.value()->host()->setValues(&host);
+        }
+    }
+
 private:
 };
 
@@ -52,6 +63,35 @@ void EndPoints::clear()
 int EndPoints::count()const
 {
     return p->objectHash.count();
+}
+
+Host &EndPoints::host()
+{
+    return p->host;
+}
+
+void EndPoints::host(const Host &newHost)
+{
+    p->host = &newHost;
+    emit hostChanged();
+}
+
+void EndPoints::host(const QVariant &newHost)
+{
+    p->host = newHost;
+    emit hostChanged();
+}
+
+void EndPoints::setHost(const Host &newHost)
+{
+    p->host = &newHost;
+    emit hostChanged();
+}
+
+void EndPoints::resetHost()
+{
+    p->host.clear();
+    emit hostChanged();
 }
 
 EndPoint *EndPoints::endpoint()
@@ -107,6 +147,7 @@ void EndPoints::remove(const QUuid &uuid)
 QVariantList &EndPoints::items() const
 {
     p->list.clear();
+    p->setHost();
     if(p->objectHash.isEmpty())
         return p->list;
     auto vList=p->objectHash.values();
@@ -140,6 +181,7 @@ const QVariantList EndPoints::toList()
 
 const QVariantHash EndPoints::toHash()
 {
+    p->setHost();
     QVariantHash hash;
     QHashIterator<QString, EndPoint*> i(p->objectHash);
     while (i.hasNext()){
@@ -151,12 +193,14 @@ const QVariantHash EndPoints::toHash()
 
 QVector<EndPoint *> &EndPoints::toObjectList() const
 {
+    p->setHost();
     p->objectList=p->objectHash.values();
     return p->objectList;
 }
 
 QHash<QString, EndPoint *> &EndPoints::toObjectHash() const
 {
+    p->setHost();
     return p->objectHash;
 }
 

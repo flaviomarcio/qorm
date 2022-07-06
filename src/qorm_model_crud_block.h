@@ -29,9 +29,12 @@ public:
     explicit CRUDBlock(const QVariant &crudBody, QObject *parent=nullptr);
 
     //!
-    //! \brief ~CRUDBlock
+    //! \brief host
+    //! \return
     //!
-    virtual ~CRUDBlock();
+    Host &host();
+    CRUDBlock &host(const Host &value);
+    CRUDBlock &host(const QVariant &value);
 
     //!
     //! \brief options
