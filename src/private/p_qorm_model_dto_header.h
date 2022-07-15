@@ -345,14 +345,13 @@ public:
     //! \brief readOnly
     //! \return
     //!
-    virtual bool readOnly() const
+    virtual QVariant readOnly() const
     {
-        return this->v.value(vpReadOnly).toBool();
+        return this->v.value(vpReadOnly);
     }
     virtual ModelDtoHeader &readOnly(const QVariant &value)
     {
-        auto v=(value.isNull() || !value.isValid())?true:value.toBool();
-        this->v.insert(vpReadOnly, v);
+        this->v.insert(vpReadOnly, value);
         return*this;
     }
 
