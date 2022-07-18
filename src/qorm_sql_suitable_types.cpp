@@ -1,4 +1,5 @@
 #include "./qorm_sql_suitable_types.h"
+#include "../../qstm/src/qstm_types_const.h"
 
 namespace QOrm {
 

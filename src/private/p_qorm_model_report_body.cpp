@@ -5,7 +5,7 @@ ReportBody::ReportBody(const QVariant &other):QVariantHash(other.toHash())
 
 }
 
-ReportBody::ReportBody(const QVariant &strategy, const QVariant &source):QVariantHash{{qsl("strategy"), strategy}, {qsl("source"), source}}
+ReportBody::ReportBody(const QVariant &strategy, const QVariant &source):QVariantHash{{QStringLiteral("strategy"), strategy}, {QStringLiteral("source"), source}}
 {
 
 }

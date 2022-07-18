@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./qorm_transaction_scope.h"
+#include "./qorm_object_db.h"
 
 namespace QOrm {
 class TransactionPvt;

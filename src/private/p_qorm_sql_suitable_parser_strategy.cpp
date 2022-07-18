@@ -7,11 +7,11 @@
 
 namespace QOrm {
 
-SqlParserCombineSelect::SqlParserCombineSelect(const QVariant &v):SqlParserCommand(v)
+SqlParserCombineSelect::SqlParserCombineSelect(const QVariant &v):SqlParserCommand{v}
 {
 }
 
-SqlParserCombineSelect::SqlParserCombineSelect():SqlParserCommand()
+SqlParserCombineSelect::SqlParserCombineSelect():SqlParserCommand{}
 {
 }
 

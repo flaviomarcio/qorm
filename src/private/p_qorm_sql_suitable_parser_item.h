@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./p_qorm_sql_suitable_parser_command.h"
+#include "../qorm_sql_suitable_types.h"
 
 namespace QOrm{
 
@@ -16,9 +17,9 @@ public:
     explicit SqlParserItem();
     explicit SqlParserItem(const QVariant &value);
 
-    explicit SqlParserItem(const QVariant &value, const QVariant &title, const KeywordObjectInfo&info);
+    explicit SqlParserItem(const QVariant &value, const QVariant &title, const KeywordObjectInfo &info);
 
-    void init(QVariantHash&map);
+    void init(QVariantHash &map);
 
     SqlParserItem setDefaultValue(const QVariant &defaultValue)const;
 

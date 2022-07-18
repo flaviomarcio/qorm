@@ -18,11 +18,6 @@ public:
     explicit TransactionScope(QObject *parent);
 
     //!
-    //! \brief ~TransactionScope
-    //!
-    ~TransactionScope();
-
-    //!
     //! \brief rollback
     //! \return
     //!execute rollback transaction

@@ -1,13 +1,16 @@
 #pragma once
 
-#include "./qorm_sql_suitable_types.h"
+//#include "./qorm_sql_suitable_types.h"
+#include <QObject>
+#include "./qorm_global.h"
+#include <QSqlDatabase>
 
 namespace QOrm {
 class SqlSuitableValuePvt;
 //!
 //! \brief The SqlSuitableValue class
 //!
-class SqlSuitableValue:public QObject
+class Q_ORM_EXPORT SqlSuitableValue:public QObject
 {
     Q_OBJECT
 public:

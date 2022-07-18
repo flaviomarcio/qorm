@@ -1,10 +1,11 @@
 #include "./qorm_query.h"
 #include "./private/p_qorm_query.h"
 #include "./qorm_model.h"
+#include "./qorm_const.h"
+#include "./qorm_macro.h"
+#include <QCryptographicHash>
 
 namespace QOrm {
-
-#define dPvt() auto &p = *reinterpret_cast<QueryPvt *>(this->p)
 
 Query::Query(QObject *parent) : ObjectDb{parent}
 {
@@ -16,63 +17,57 @@ Query::Query(const QSqlDatabase &db, QObject *parent) : ObjectDb{parent}
     this->p = new QOrm::QueryPvt{this, db};
     if (!db.isValid() || !db.isOpen()) {
 #if Q_ORM_LOG
-        sWarning() << qsl("connection is not valid");
+        oWarning() << QStringLiteral("connection is not valid");
 #endif
     }
 }
 
-Query::~Query()
+ResultValue &Query::lr() const
 {
+    auto&lr=Object::lr();
+    auto code = p->sqlError.nativeErrorCode().toUtf8().trimmed();
+    if(!code.isEmpty()){
+        auto message = p->sqlError.text().toUtf8().trimmed();
+        if(code.isEmpty() && message.isEmpty())
+            return lr.clear().setCritical(code, message);
+        lr.setCritical(code, message);
+    }
+    return lr;
 }
 
-QSqlError &Query::lastError() const
+const Query &Query::clear()
 {
-
-    return p->sqlError;
-}
-
-ResultValue &Query::lr()
-{
-
-    return Object::lr(p->sqlError);
-}
-
-void Query::clear() const
-{
-
     p->clear();
+    return *this;
 }
 
-void Query::close() const
+const Query &Query::close()
 {
-
     p->close();
+    return *this;
 }
 
-bool Query::setModel(QMetaObject &metaObject)
+QSqlQuery &Query::sqlQuery()const
 {
-
-    return p->makeModelMetaObject(metaObject);
-}
-
-SqlSuitableBuilder &Query::builder()
-{
-
-    return p->sqlBuilder;
-}
-
-SqlSuitableBuilder &Query::b()
-{
-
-    return p->sqlBuilder;
+    return p->sqlQuery;
 }
 
 QSqlRecord &Query::sqlRecord()
 {
-
     if (p->sqlRecord.isEmpty())
         p->sqlRecord = p->sqlQuery.record();
     return p->sqlRecord;
+}
+
+Query &Query::setModel(QMetaObject &metaObject)
+{
+    p->makeModelMetaObject(metaObject);
+    return *this;
+}
+
+SqlSuitableBuilder &Query::builder()
+{
+    return p->sqlBuilder;
 }
 
 QVariantList Query::makeRecordList()
@@ -99,7 +94,6 @@ QVariantList Query::makeRecordList(const QMetaObject &metaObject)
 
 QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
 {
-
     auto metaObject = modelInfo.staticMetaObject();
     QVariantList recordList;
     if (metaObject.methodCount() == 0) {
@@ -149,7 +143,6 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
 
 QVariantHash Query::makeRecord() const
 {
-
     if (!p->initNext())
         return {};
 
@@ -170,7 +163,6 @@ QVariantHash Query::makeRecord(const QMetaObject &metaObject) const
 
 QVariantHash Query::makeRecord(const ModelInfo &modelInfo) const
 {
-
     if (!p->initNext())
         return {};
 
@@ -184,7 +176,6 @@ QVariantHash Query::makeRecord(const ModelInfo &modelInfo) const
     }
 
     QList<int> recordsIndex;
-    QStringList propertys;
     for (int col = 0; col < metaObject.propertyCount(); ++col) {
         auto property = metaObject.property(col);
         QString propertyName = QByteArray{property.name()}.toLower().trimmed();
@@ -222,16 +213,8 @@ bool Query::modelRead(QOrm::Model *model) const
     return __return;
 }
 
-Query &Query::close()
-{
-
-    p->close();
-    return *this;
-}
-
 bool Query::next() const
 {
-
     if (!p->next())
         return false;
 
@@ -254,91 +237,77 @@ bool Query::prepareCache() const
 
 bool Query::exec()
 {
-
     if (!p->prepareExec())
         return false;
-    return p->exec(QVariant());
+    return p->exec({});
 }
 
 bool Query::exec(const QVariant &command)
 {
-
     return p->exec(command);
 }
 
 bool Query::execBatch()
 {
-
     this->prepare();
     return p->sqlQuery.execBatch(QSqlQuery::ValuesAsRows);
 }
 
 bool Query::execBatch(int mode)
 {
-
     this->prepare();
     return p->sqlQuery.execBatch(QSqlQuery::BatchExecutionMode(mode));
 }
 
-void Query::bindValue(const QString &placeholder, const QVariant &val, QSql::ParamType type)
+Query &Query::bindValue(const QString &placeholder, const QVariant &val, QSql::ParamType type)
 {
-
     this->prepare();
     p->sqlQuery.bindValue(placeholder, val, type);
+    return *this;
 }
 
-void Query::bindValue(int pos, const QVariant &val, QSql::ParamType type)
+Query &Query::bindValue(int pos, const QVariant &val, QSql::ParamType type)
 {
-
     this->prepare();
     p->sqlQuery.bindValue(pos, val, type);
+    return *this;
 }
 
-void Query::addBindValue(const QVariant &val, QSql::ParamType type)
+Query &Query::addBindValue(const QVariant &val, QSql::ParamType type)
 {
-
     this->prepare();
     p->sqlQuery.addBindValue(val, type);
+    return *this;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-QMap<QString, QVariant> Query::boundValues() const
-#else
 QVariantList Query::boundValues() const
-#endif
 {
-
     return p->sqlQuery.boundValues();
 }
 
 QString Query::executedQuery() const
 {
-
     return p->sqlQuery.executedQuery();
 }
 
 QVariant Query::value(const int &column) const
 {
-
     return p->sqlQuery.value(column);
 }
 
 QVariant Query::value(QString &columnName) const
 {
-
     auto column = p->sqlRecord.indexOf(columnName);
     return p->sqlQuery.value(column);
 }
 
 QVariant Query::lastInsertId() const
 {
-
     return p->sqlQuery.lastInsertId();
 }
 
 SqlSuitableKeyWord &Query::parser()
 {
-
     if (p->parser == nullptr)
         p->parser = &QOrm::SqlSuitableKeyWord::parser(this->connection());
 

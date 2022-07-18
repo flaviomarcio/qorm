@@ -1,17 +1,20 @@
 #include "./qorm_model.h"
 #include "./qorm_query.h"
-#include "./private/p_qorm_const.h"
+#include "./qorm_macro.h"
 #include "./private/p_qorm_query.h"
+#include "./private/p_qorm_sql_suitable_parser_item.h"
+#include "./private/p_qorm_const.h"
 #include "./private/p_qorm_model_info.h"
 #include <QCryptographicHash>
 #include <QMetaProperty>
-#include <QtSql/QSqlField>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlRecord>
-#include <QtSql/QSqlQuery>
+#include <QSqlField>
+#include <QSqlError>
+#include <QSqlRecord>
+#include <QSqlQuery>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QBitArray>
+#include <QSqlQuery>
 
 namespace PrivateOrm {
 }
@@ -82,8 +85,8 @@ public:
         Q_DECLARE_VU;
 
         QVariant vValue;
-        auto typeIdp = qTypeId(property);
-        if(typeIdp==QMetaType_QUuid && qTypeId(value)!=typeIdp)
+        auto typeIdp = property.typeId();
+        if(typeIdp==QMetaType::QUuid && value.typeId()!=typeIdp)
             vValue=vu.toUuid(value);
         else
             vValue=value;
@@ -91,25 +94,25 @@ public:
         if(property.write(this->model, vValue))
             return true;
 
-        auto typeIdv=qTypeId(vValue);
+        auto typeIdv=vValue.typeId();
         switch (typeIdp) {
-        case QMetaType_QString:
-        case QMetaType_QByteArray:
-        case QMetaType_QChar:
-        case QMetaType_QBitArray:
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        case QMetaType::QChar:
+        case QMetaType::QBitArray:
         {
             QVariant v;
             switch (typeIdv) {
-            case QMetaType_QVariantMap:
-            case QMetaType_QVariantHash:
-            case QMetaType_QVariantList:
-            case QMetaType_QStringList:
+            case QMetaType::QVariantMap:
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantList:
+            case QMetaType::QStringList:
                 v=QJsonDocument::fromVariant(vValue).toJson(QJsonDocument::Compact);
                 break;
-            case QMetaType_QUuid:
+            case QMetaType::QUuid:
                 v=vu.toUuid(vValue);
                 break;
-            case QMetaType_QUrl:
+            case QMetaType::QUrl:
                 v=vu.toUrl(vValue);
                 break;
             default:
@@ -118,151 +121,151 @@ public:
             }
 
             switch (typeIdp) {
-            case QMetaType_QUuid:
+            case QMetaType::QUuid:
             {
                 if(property.write(this->model, vValue.toUuid()))
                     return true;
                 break;
             }
-            case QMetaType_QString:
+            case QMetaType::QString:
             {
                 if(property.write(this->model, v.toString()))
                     return true;
                 break;
             }
-            case QMetaType_QByteArray:
+            case QMetaType::QByteArray:
             {
                 if(property.write(this->model, v.toByteArray()))
                     return true;
                 break;
             }
-            case QMetaType_QChar:
+            case QMetaType::QChar:
             {
                 if(property.write(this->model, v.toChar()))
                     return true;
                 break;
             }
-            case QMetaType_QBitArray:
+            case QMetaType::QBitArray:
             {
                 if(property.write(this->model, v.toBitArray()))
                     return true;
                 break;
             }
             default:
-                if((typeIdp>=QMetaType_User) && (property.write(this->model, vValue.toInt())))
+                if((typeIdp>=QMetaType::User) && (property.write(this->model, vValue.toInt())))
                     return true;
             }
             return false;
         }
-        case QMetaType_LongLong:
+        case QMetaType::LongLong:
         {
             if(property.write(this->model, QLocale::c().toLongLong(vValue.toString())))
                 return true;
             break;
         }
-        case QMetaType_ULongLong:
+        case QMetaType::ULongLong:
         {
             if(property.write(this->model, static_cast<qlonglong>(QLocale::c().toULongLong(vValue.toString()))))
                 return true;
             break;
         }
-        case QMetaType_Int:
+        case QMetaType::Int:
         {
             if(property.write(this->model, QLocale::c().toInt(vValue.toString())))
                 return true;
             break;
         }
-        case QMetaType_UInt:
+        case QMetaType::UInt:
         {
             if(property.write(this->model, QLocale::c().toUInt(vValue.toString())))
                 return true;
             break;
         }
-        case QMetaType_Double:
+        case QMetaType::Double:
         {
             if(property.write(this->model, QLocale::c().toDouble(vValue.toString())))
                 return true;
             return false;
         }
-        case QMetaType_QUrl:
+        case QMetaType::QUrl:
         {
             if(property.write(this->model, vValue.toUrl()))
                 return true;
             break;
         }
-        case QMetaType_QUuid:
+        case QMetaType::QUuid:
         {
             if(property.write(this->model, vValue.toUuid()))
                 return true;
             break;
         }
-        case QMetaType_QVariantHash:
+        case QMetaType::QVariantHash:
         {
             if(property.write(this->model, vValue.toHash()))
                 return true;
             break;
         }
-        case QMetaType_QVariantMap:
+        case QMetaType::QVariantMap:
         {
             if(property.write(this->model, vValue.toMap()))
                 return true;
             break;
         }
-        case QMetaType_QVariantList:
+        case QMetaType::QVariantList:
         {
             if(property.write(this->model, vValue.toList()))
                 return true;
             break;
         }
-        case QMetaType_QStringList:
+        case QMetaType::QStringList:
         {
             if(property.write(this->model, vValue.toStringList()))
                 return true;
             break;
         }
-        case QMetaType_QDate:
+        case QMetaType::QDate:
         {
             if(property.write(this->model, vValue.toDate()))
                 return true;
             break;
         }
-        case QMetaType_QDateTime:
+        case QMetaType::QDateTime:
         {
             if(property.write(this->model, vValue.toDateTime()))
                 return true;
             break;
         }
-        case QMetaType_QTime:
+        case QMetaType::QTime:
         {
             if(property.write(this->model, vValue.toTime()))
                 return true;
             break;
         }
         default:
-            if((typeIdp==QMetaType_Bool) && (property.write(this->model, vValue.toBool())))
+            if((typeIdp==QMetaType::Bool) && (property.write(this->model, vValue.toBool())))
                 return true;
 
-            if(typeIdv==QMetaType_Bool){
+            if(typeIdv==QMetaType::Bool){
                 if(property.write(this->model, vValue.toBool()))
                     return true;
 
                 switch (typeIdv) {
-                case QMetaType_Int:
-                case QMetaType_UInt:
-                case QMetaType_ULongLong:
-                case QMetaType_LongLong:
-                case QMetaType_Double:
+                case QMetaType::Int:
+                case QMetaType::UInt:
+                case QMetaType::ULongLong:
+                case QMetaType::LongLong:
+                case QMetaType::Double:
                 {
                     if(property.write(this->model, (vValue.toInt()==1)))
                         return true;
                     break;
                 }
-                case QMetaType_QString:
-                case QMetaType_QByteArray:
-                case QMetaType_QChar:
+                case QMetaType::QString:
+                case QMetaType::QByteArray:
+                case QMetaType::QChar:
                 {
                     auto vv=vValue.toString().toLower();
-                    bool vBool=(vv==qsl("true"));
+                    bool vBool=(vv==QStringLiteral("true"));
                     if(property.write(this->model, vBool))
                         return true;
                     break;
@@ -285,15 +288,15 @@ public:
         auto prefix = modelInfo.tablePrefix();
 
         QVariant record;
-        switch (qTypeId(vRecord)) {
-        case QMetaType_QVariantList:
+        switch (vRecord.typeId()) {
+        case QMetaType::QVariantList:
         {
             auto vList=vRecord.toList();
             auto v=vList.isEmpty()?QVariant{}:vList.first();
             //check object
-            switch (qTypeId(v)) {
-            case QMetaType_QVariantHash:
-            case QMetaType_QVariantMap:
+            switch (v.typeId()) {
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:
                 record=v;
                 break;
             default:
@@ -308,9 +311,9 @@ public:
         if(!record.isValid())
             return this->model->lr();
 
-        switch (qTypeId(record)) {
-        case QMetaType_QVariantHash:
-        case QMetaType_QVariantMap:
+        switch (record.typeId()) {
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
         {
             Q_DECLARE_VU;
             auto recordHash=record.toHash();
@@ -341,17 +344,17 @@ public:
             if(name.startsWith(prefix))
                 name=name.split(prefix).last();
 
-            switch (qTypeId(record)) {
-            case QMetaType_QUuid:
+            switch (record.typeId()) {
+            case QMetaType::QUuid:
             {
                 auto uuid=record.toUuid();
                 if(!this->model->setProperty(name.toUtf8(), uuid))
-                    sWarning()<<qsl("no setProperty('%1', %2)").arg(name, record.toString());
+                    oWarning()<<QStringLiteral("no setProperty('%1', %2)").arg(name, record.toString());
                 break;
             }
             default:
                 if(!this->model->setProperty(name.toUtf8(), record))
-                    sWarning()<<qsl("no setProperty('%1', %2)").arg(name, record.toString());
+                    oWarning()<<QStringLiteral("no setProperty('%1', %2)").arg(name, record.toString());
             }
         }
 
@@ -365,19 +368,19 @@ public:
         return this->read(v);
     }
 
-    auto &read(QSqlQuery&sqlQuery)
+    auto &read(const QSqlQuery *sqlQuery)
     {
         QVariantHash record;
-        auto sqlRecord=sqlQuery.record();
+        auto sqlRecord=sqlQuery->record();
         for (int col = 0; col < sqlRecord.count(); ++col)
             record.insert(sqlRecord.fieldName(col), sqlRecord.value(col));
         return this->model->lr()=this->read(record);
     }
 
-    ResultValue &merge(QSqlQuery &cursorQuery)
+    ResultValue &merge(const QSqlQuery *cursorQuery)
     {
         QVariantHash record;
-        auto sqlRecord=cursorQuery.record();
+        auto sqlRecord=cursorQuery->record();
         for (int col = 0; col < sqlRecord.count(); ++col)
             record.insert(sqlRecord.fieldName(col), sqlRecord.value(col));
         return this->merge(record);
@@ -414,14 +417,14 @@ public:
         auto name=wrapperName.toLower().trimmed().toUtf8();
         const auto &mapWrapper=this->mapWrapper.value(name);
         QVariantList vList;
-        auto typeId=qTypeId(v);
+        auto typeId=v.typeId();
         switch (typeId) {
-        case QMetaType_QVariantHash:
-        case QMetaType_QVariantMap:
-            vList<<v.toHash();
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+            vList.append(v.toHash());
             break;
-        case QMetaType_QVariantList:
-        case QMetaType_QStringList:
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
             vList=v.toList();
             break;
         default:
@@ -436,34 +439,28 @@ public:
             
             const auto &modelInfo = this->modelInfo();
             QVariantHash rHash;
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            QHashIterator<QByteArray, QByteArray> i(mapWrapper);
-#else
             QMultiHashIterator<QByteArray, QByteArray> i(mapWrapper);
-#endif
             while (i.hasNext()) {
                 i.next();
                 auto &k=modelInfo.tablePrefix()+i.key();
                 auto &s=i.value();
                 auto v=record.value(k);
-                switch (qTypeId(v)){
-                case QMetaType_QUuid:
+                switch (v.typeId()){
+                case QMetaType::QUuid:
                     rHash.insert(s,v.toUuid().toString());
                     break;
-                case QMetaType_QUrl:
+                case QMetaType::QUrl:
                     rHash.insert(s,v.toUrl().toString());
                     break;
-                case QMetaType_User:
-                    rHash.insert(s,v.toInt());
-                    break;
-                case QMetaType_CustomType:
+                case QMetaType::User:
+                case 65538/*CustomType*/:
                     rHash.insert(s,v.toInt());
                     break;
                 default:
                     rHash.insert(s,v);
                 }
             }
-            rList<<rHash;
+            rList.append(rHash);
         }
         return rList;
     }
@@ -492,7 +489,7 @@ public:
     }
 };
 
-Model::Model(QObject *parent):QStm::Object{parent}
+Model::Model(QObject *parent):QOrm::Object{parent}
 {
     this->p=new ModelPvt{this};
 }
@@ -556,7 +553,7 @@ QVariantList Model::toList(const QVariantList &vList)
     for(const auto &v:vList){
         if(!this->readFrom(v))
             continue;
-        rList<<this->toHash();
+        rList.append(this->toHash());
     }
     return rList;
 }
@@ -597,8 +594,8 @@ QVariantHash Model::toMapPKValues() const
 
         auto value=property.read(this);
 
-        switch (qTypeId(property)) {
-        case QMetaType_QUuid:{
+        switch (property.typeId()) {
+        case QMetaType::QUuid:{
             auto uuid=value.toUuid();
             auto v=uuid.toString();
             if(uuid.isNull())
@@ -606,15 +603,15 @@ QVariantHash Model::toMapPKValues() const
             value=v;
             break;
         }
-        case QMetaType_QUrl:{
+        case QMetaType::QUrl:{
             auto v=value.toUrl().toString();//no remove the .toString()
             if(v.isNull())
                 return {};
             value=v;
             break;
         }
-        case QMetaType_QVariantHash:
-        case QMetaType_QVariantMap:
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
         {
             auto v=value.toHash();
             if(v.isEmpty())
@@ -622,10 +619,10 @@ QVariantHash Model::toMapPKValues() const
             value=v;
             break;
         }
-        case QMetaType_QString:
-        case QMetaType_QByteArray:
-        case QMetaType_QChar:
-        case QMetaType_QBitArray:
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        case QMetaType::QChar:
+        case QMetaType::QBitArray:
         {
             auto v=value.toString().trimmed();
             if(v.isEmpty())
@@ -670,7 +667,7 @@ QVariantHash Model::toMapFKValues() const
 
 QVariantHash Model::toWrapper() const
 {
-    return this->toWrapper(qsl_null);
+    return this->toWrapper("");
 }
 
 QVariantHash Model::toWrapper(const QString &wrapperName) const
@@ -706,19 +703,19 @@ QVariantList Model::toWrapper(const QString &wrapperName, ResultValue &v) const
 QVariantList Model::toWrapper(const QVariantList &v) const
 {
 
-    return p->toWrapper(qsl_null, v);
+    return p->toWrapper({}, v);
 }
 
 QVariantList Model::toWrapper(const QVariantHash &v) const
 {
 
-    return p->toWrapper(qsl_null, v);
+    return p->toWrapper({}, v);
 }
 
 QVariantList Model::toWrapper(ResultValue &v) const
 {
 
-    return p->toWrapper(qsl_null, v.resultVariant());
+    return p->toWrapper({}, v.resultVariant());
 }
 
 bool Model::addWrapper(const QString &wrapperName, const QString &src, const QString &dst)
@@ -726,8 +723,8 @@ bool Model::addWrapper(const QString &wrapperName, const QString &src, const QSt
 
     auto name=wrapperName.toLower().trimmed().toUtf8();
     auto mapWrapper=p->mapWrapper.value(name);
-    auto v1=src.toUtf8().replace(qbl("\""), qbl_null).trimmed();
-    auto v2=dst.toUtf8().replace(qbl("\""), qbl_null).trimmed();
+    auto v1=src.toUtf8().replace(QByteArrayLiteral("\""), "").trimmed();
+    auto v2=dst.toUtf8().replace(QByteArrayLiteral("\""), "").trimmed();
     mapWrapper.insert(v1, v2);
     p->mapWrapper.insert(name,mapWrapper);
     return true;
@@ -775,7 +772,7 @@ bool Model::isWrapperModifier(const QVariantHash &wrapper, const QString &fromWr
 
 bool Model::isWrapperModifierSet(const QVariantHash &wrapper)
 {
-    return this->isWrapperModifierSet(wrapper, qsl_null);
+    return this->isWrapperModifierSet(wrapper, {});
 }
 
 bool Model::isWrapperModifierSet(const QVariantHash &wrapper, const QString &fromWrapper)
@@ -807,15 +804,15 @@ ResultValue &Model::readFrom(const QVariant &record)
     return p->read(record);
 }
 
-ResultValue &Model::readFrom(QSqlQuery &record)
+ResultValue &Model::readFrom(const QSqlQuery *record)
 {
 
     return p->read(record);
 }
 
-ResultValue &Model::readFrom(Query &record)
+ResultValue &Model::readFrom(const Query *record)
 {
-    return this->readFrom(record.p->sqlQuery);
+    return this->readFrom(&record->sqlQuery());
 }
 
 ResultValue &Model::readFrom(const ResultValue &resultValue)
@@ -838,13 +835,13 @@ ResultValue &Model::readWrapper(const QString &wrapper, const QVariant &vMap)
 ResultValue &Model::readWrapper(ResultValue &resultValue)
 {
 
-    return p->fromWrapper(qsl_null, resultValue.resultHash());
+    return p->fromWrapper({}, resultValue.resultHash());
 }
 
 ResultValue &Model::readWrapper(const QVariant &vMap)
 {
 
-    return p->fromWrapper(qsl_null, vMap.toHash());
+    return p->fromWrapper({}, vMap.toHash());
 }
 
 ResultValue &Model::readWrapper(const QString &wrapper, ResultValue &resultValue)
@@ -871,7 +868,7 @@ ResultValue &Model::mergeFrom(const QVariant &record)
     return p->merge(record.toHash());
 }
 
-ResultValue &Model::mergeFrom(QSqlQuery &record)
+ResultValue &Model::mergeFrom(const QSqlQuery *record)
 {
 
     return p->merge(record);
@@ -910,7 +907,7 @@ ResultValue &Model::uuidSet()
     Q_V_PROPERTY_ITERATOR(modelInfo.propertyPK()){
         i.next();
         auto &property=i.value();
-        if(qTypeId(property)!=QMetaType_QUuid)
+        if(property.typeId()!=QMetaType::QUuid)
             continue;
 
         auto v=property.read(this).toUuid();
@@ -948,8 +945,8 @@ ResultValue &Model::datetimeSet()
         i.next();
         auto &property=i.value();
         auto v=property.read(this);
-        switch (qTypeId(property)) {
-        case QMetaType_QDateTime:
+        switch (property.typeId()) {
+        case QMetaType::QDateTime:
         {
             auto dt=v.toDateTime();
             if(dt.isNull() || !v.isValid()){
@@ -957,7 +954,7 @@ ResultValue &Model::datetimeSet()
             }
             break;
         }
-        case QMetaType_QDate:
+        case QMetaType::QDate:
         {
             auto dt=v.toDate();
             if(dt.isNull() || !v.isValid()){
@@ -965,7 +962,7 @@ ResultValue &Model::datetimeSet()
             }
             break;
         }
-        case QMetaType_QTime:
+        case QMetaType::QTime:
         {
             auto dt=v.toTime();
             if(dt.isNull() || !v.isValid()){

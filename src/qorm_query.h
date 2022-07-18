@@ -1,7 +1,8 @@
 #pragma once
 
 #include "./qorm_sql_suitable_builder.h"
-#include <QtSql/QSqlRecord>
+#include <QSqlRecord>
+#include <QSqlQuery>
 
 namespace QOrm {
 class Model;
@@ -12,6 +13,7 @@ class QueryPvt;
 //!
 class Q_ORM_EXPORT Query : public ObjectDb
 {
+    Q_OBJECT
 public:
     //!
     //! \brief Query
@@ -25,36 +27,41 @@ public:
     //! \param parent
     //!
     explicit Query(const QSqlDatabase &db, QObject *parent = nullptr);
-    ~Query();
-
-    //!
-    //! \brief lastError
-    //! \return
-    //!
-    virtual QSqlError &lastError() const;
 
     //!
     //! \brief lr
     //! \return
     //!
-    ResultValue &lr();
+    ResultValue &lr()const;
 
     //!
     //! \brief clear
     //!
-    virtual void clear() const;
+    virtual const Query &clear();
 
     //!
     //! \brief close
     //!
-    virtual void close() const;
+    virtual const Query &close();
+
+    //!
+    //! \brief sqlQuery
+    //! \return
+    //!
+    virtual QSqlQuery &sqlQuery() const;
+
+    //!
+    //! \brief sqlRecord
+    //! \return
+    //!
+    virtual QSqlRecord &sqlRecord();
 
     //!
     //! \brief setModel
     //! \param metaObject
     //! \return
     //!
-    virtual bool setModel(QMetaObject &metaObject);
+    virtual Query &setModel(QMetaObject &metaObject);
 
     //!
     //! \brief builder
@@ -62,17 +69,6 @@ public:
     //!
     virtual SqlSuitableBuilder &builder();
 
-    //!
-    //! \brief b
-    //! \return
-    //!
-    virtual SqlSuitableBuilder &b();
-
-    //!
-    //! \brief sqlRecord
-    //! \return
-    //!
-    virtual QSqlRecord &sqlRecord();
 
     //!
     //! \brief makeRecordList
@@ -133,11 +129,6 @@ public:
     }
 
     //!
-    //! \brief close
-    //!
-    virtual Query &close();
-
-    //!
     //! \brief next
     //! \return
     //!
@@ -187,9 +178,7 @@ public:
     //! \param val
     //! \param type
     //!
-    virtual void bindValue(const QString &placeholder,
-                           const QVariant &val,
-                           QSql::ParamType type = QSql::In);
+    virtual Query &bindValue(const QString &placeholder, const QVariant &val, QSql::ParamType type = QSql::In);
 
     //!
     //! \brief bindValue
@@ -197,27 +186,19 @@ public:
     //! \param val
     //! \param type
     //!
-    virtual void bindValue(int pos, const QVariant &val, QSql::ParamType type = QSql::In);
+    virtual Query &bindValue(int pos, const QVariant &val, QSql::ParamType type = QSql::In);
 
     //!
     //! \brief addBindValue
     //! \param val
     //! \param type
     //!
-    virtual void addBindValue(const QVariant &val, QSql::ParamType type = QSql::In);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    //!
-    //! \brief boundValues
-    //! \return
-    //!
-    QMap<QString, QVariant> boundValues() const;
-#else
+    virtual Query &addBindValue(const QVariant &val, QSql::ParamType type = QSql::In);
     //!
     //! \brief boundValues
     //! \return
     //!
     virtual QVariantList boundValues() const;
-#endif
 
     //!
     //! \brief executedQuery

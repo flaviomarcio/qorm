@@ -2,7 +2,7 @@
 
 #include "./private/p_qorm_sql_suitable_parser_strategy.h"
 #include "./qorm_object_db.h"
-#include "./qorm_sql_suitable_types.h"
+//#include "./qorm_sql_suitable_types.h"
 
 namespace QOrm {
 class Query;

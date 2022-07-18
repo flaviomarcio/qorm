@@ -1,4 +1,5 @@
 #include "./p_qorm_sql_suitable_parser_keywork_ansi.h"
+#include "../qorm_sql_suitable_types.h"
 
 namespace QOrm {
 
@@ -13,7 +14,7 @@ SqlSuitableKeyWordAnsi::~SqlSuitableKeyWordAnsi()
 
 void SqlSuitableKeyWordAnsi::init()
 {
-    this->commands()[kgcSelectTop]=qbl_null;
+    this->commands()[kgcSelectTop]={};
 }
 
 }

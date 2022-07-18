@@ -1,15 +1,17 @@
 #include "./qorm_connection_manager.h"
 #include "./private/p_qorm_connection_manager.h"
+#include "./qorm_macro.h"
+#include <QMetaProperty>
 
 namespace QOrm {
 
-ConnectionManager::ConnectionManager(QObject *parent) : QStm::Object(nullptr)
+ConnectionManager::ConnectionManager(QObject *parent) : QOrm::Object(nullptr)
 {
     this->p = new ConnectionManagerPvt{this};
     if (parent == nullptr)
         return;
     if (parent->thread() != this->thread() || parent->thread() != QThread::currentThread())
-        sWarning() << "Invalid parent";
+        oWarning() << "Invalid parent";
     else
         this->setParent(parent);
 
@@ -25,7 +27,7 @@ ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent
         return;
 
     if (parent->thread() != this->thread() || parent->thread() != QThread::currentThread())
-        sWarning() << "Invalid parent";
+        oWarning() << "Invalid parent";
     else
         this->setParent(parent);
 
@@ -40,7 +42,7 @@ ConnectionManager::ConnectionManager(const QVariant &setting, QObject *parent)
     if (parent == nullptr)
         return;
     if (parent->thread() != this->thread() || parent->thread() != QThread::currentThread())
-        sWarning() << "Invalid parent";
+        oWarning() << "Invalid parent";
     else
         this->setParent(parent);
 
@@ -48,43 +50,33 @@ ConnectionManager::ConnectionManager(const QVariant &setting, QObject *parent)
     p->v_load(setting);
 }
 
-ConnectionManager::~ConnectionManager()
-{
-}
-
 void ConnectionManager::clear()
 {
-
     p->clear();
 }
 
 QByteArray ConnectionManager::enviroment() const
 {
-
     return p->enviroment;
 }
 
 void ConnectionManager::setEnviroment(const QByteArray &value)
 {
-
     p->enviroment = value;
 }
 
 QByteArray ConnectionManager::secretKey() const
 {
-
     return p->secret;
 }
 
 void ConnectionManager::setSecretKey(const QByteArray &value)
 {
-
     p->secret = value;
 }
 
 QVariantHash ConnectionManager::paramaters() const
 {
-
     QVariantHash paramaters;
     QHashIterator<QString, ConnectionSetting *> i(p->settings);
     while (i.hasNext()) {
@@ -102,51 +94,48 @@ QVariantHash ConnectionManager::paramaters() const
 
 void ConnectionManager::setParamaters(const QVariantHash &value)
 {
-
     auto lst = p->settings.values();
     qDeleteAll(lst);
     p->settings.clear();
     for (auto &v : value) {
-        if (!QMetaTypeUtilVariantDictionary.contains(qTypeId(v)))
-            continue;
-        this->insert(v.toHash());
+        switch (v.typeId()) {
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+            this->insert(v.toHash());
+        default:
+            break;
+        }
     }
 }
 
 ConnectionManager &ConnectionManager::insert(ConnectionSetting &value)
 {
-
     return p->insert(value.toHash());
 }
 
 ConnectionManager &ConnectionManager::insert(const QVariantHash &value)
 {
-
     return p->insert(value);
 }
 
 ConnectionSetting &ConnectionManager::detail()
 {
-
     return this->detail(p->enviroment);
 }
 
 ConnectionSetting &ConnectionManager::detail(const QByteArray &value)
 {
-
     auto name = value;
     return p->detailGetCheck(name);
 }
 
 ConnectionPool &ConnectionManager::pool()
 {
-
     return p->pool(p->enviroment);
 }
 
 ConnectionPool &ConnectionManager::pool(const QByteArray &value)
 {
-
     return p->pool(value);
 }
 
@@ -190,49 +179,41 @@ QVariantHash ConnectionManager::toHash() const
 
 bool ConnectionManager::isEmpty() const
 {
-
     return p->isEmpty();
 }
 
 bool ConnectionManager::isLoaded() const
 {
-
     return p->isLoaded();
 }
 
 bool ConnectionManager::load(const QVariant &settings)
 {
-
     return p->v_load(settings);
 }
 
 bool ConnectionManager::load(QObject *settingsObject)
 {
-
     return p->load(settingsObject);
 }
 
 bool ConnectionManager::load(const ConnectionManager &manager)
 {
-
     return p->load(manager.toHash());
 }
 
 QVariant ConnectionManager::settingsFileName()
 {
-
     return p->settingsFileName;
 }
 
 bool ConnectionManager::setSettingsFileName(const QString &fileName)
 {
-
     return p->load(fileName);
 }
 
 ConnectionNotify &ConnectionManager::notify()
 {
-
     return p->notify;
 }
 

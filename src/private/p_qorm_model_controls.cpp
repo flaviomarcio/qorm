@@ -1,5 +1,5 @@
 #include "./p_qorm_model_controls.h"
-#include "../qorm_model_dto.h"
+#include "../../qstm/src/qstm_macro.h"
 #include <QStm>
 #include <QVariantHash>
 #include <QCoreApplication>
@@ -134,10 +134,10 @@ public:
             if(!id.isEmpty() || dtoMap.contains(id)){
                 v=dtoMap.value(id).toHash();
             }
-            else if(dtoMap.contains(qsl_null) || dtoMap.contains(vpDefault)){
+            else if(dtoMap.contains({}) || dtoMap.contains(vpDefault)){
                 v=dtoMap.value(vpDefault).toHash();
                 if(v.isEmpty())
-                    v=dtoMap.value(qsl_null).toHash();
+                    v=dtoMap.value({}).toHash();
             }
         }
 
@@ -164,10 +164,6 @@ ModelDtoControls::ModelDtoControls(QObject *parent) : QStm::Object{parent}
     this->p = new ModelDtoControlsPvt{this};
 }
 
-ModelDtoControls::~ModelDtoControls()
-{
-
-}
 
 QStm::ResultInfo &ModelDtoControls::resultInfo()
 {
@@ -388,7 +384,6 @@ ModelDtoControls &ModelDtoControls::items(const QVariant &v)
 
 ModelDtoControls &ModelDtoControls::items(const ResultValue &lr)
 {
-
     p->items.fromList(this->lr(lr).resultVariant());
     return*this;
 }

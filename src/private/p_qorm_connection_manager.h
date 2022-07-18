@@ -1,20 +1,10 @@
 #pragma once
 
-#include "../qorm_connection_manager.h"
-#include "../../../qstm/src/qstm_types.h"
-#include <QFile>
-#include <QDir>
-#include <QSettings>
 #include <QStringList>
 #include <QVariantHash>
 #include <QVariantList>
-#include <QVariantHash>
-#include <QMetaMethod>
-#include <QMetaProperty>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonParseError>
-#include <QGenericArgument>
+#include "../qorm_connection_manager.h"
+//#include "../../../qstm/src/qstm_types.h"
 
 namespace QOrm {
 
@@ -82,7 +72,7 @@ public:
     //! \param settingName
     //! \return
     //!
-    ConnectionSetting&detailGetCheck(QByteArray&settingName);
+    ConnectionSetting&detailGetCheck(QByteArray &settingName);
 
     //!
     //! \brief insert

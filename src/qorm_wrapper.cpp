@@ -1,29 +1,29 @@
 #include "./qorm_wrapper.h"
 #include "../../qstm/src/qstm_meta_types.h"
-#include "../../qstm/src/qstm_types.h"
+//#include "../../qstm/src/qstm_types.h"
 
 namespace QOrm {
 
 
-class WrapperPvt
+class WrapperPvt:public QObject
 {
 public:
     QHash<QString, QString> wrapperNames;
     QVariant v;
-    explicit WrapperPvt() {}
+    explicit WrapperPvt(QObject *parent=nullptr):QObject{parent} {}
 
     virtual ~WrapperPvt() {}
 
     QVariant &wrapper()
     {
         QVariantList list;
-        switch (qTypeId(v)) {
-        case QMetaType_QVariantHash:
-        case QMetaType_QVariantMap:
+        switch (v.typeId()) {
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
             list << this->v;
             break;
-        case QMetaType_QVariantList:
-        case QMetaType_QStringList:
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
             list = v.toList();
             break;
         default:
@@ -31,9 +31,9 @@ public:
         }
 
         for (auto &v : list) {
-            switch (qTypeId(v)) {
-            case QMetaType_QVariantHash:
-            case QMetaType_QVariantMap:
+            switch (v.typeId()) {
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:
                 break;
             default:
                 continue; //next
@@ -59,13 +59,13 @@ public:
             v = QVariant(wrapperHash);
         }
 
-        switch (qTypeId(v)) {
-        case QMetaType_QVariantHash:
-        case QMetaType_QVariantMap:
+        switch (v.typeId()) {
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
             this->v = list.first();
             break;
-        case QMetaType_QVariantList:
-        case QMetaType_QStringList:
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
             this->v = list;
             break;
         default:
@@ -76,25 +76,19 @@ public:
     }
 };
 
-Wrapper::Wrapper(const QVariant &v)
+Wrapper::Wrapper(const QVariant &v):QObject{}
 {
-    this->p = new WrapperPvt();
-
+    this->p = new WrapperPvt{this};
     p->v = v;
 }
 
-Wrapper::Wrapper(ResultValue &v)
+Wrapper::Wrapper(ResultValue &v):QObject{}
 {
-    this->p = new WrapperPvt{};
+    this->p = new WrapperPvt{this};
 
     p->v = v.resultVariant();
 }
 
-Wrapper::~Wrapper()
-{
-
-    delete &p;
-}
 
 Wrapper &Wrapper::w(const QString &propertySrc, const QString &propertyDestine)
 {

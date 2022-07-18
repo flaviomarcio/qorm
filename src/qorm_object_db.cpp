@@ -1,4 +1,6 @@
 #include "./qorm_object_db.h"
+#include "./qorm_const.h"
+#include "./qorm_macro.h"
 #include <QMetaMethod>
 #include <QMetaObject>
 #include <QMetaProperty>
@@ -8,16 +10,16 @@ namespace QOrm {
 class ObjectDbPvt : public QObject
 {
 public:
-    VariantUtil vUtil;
-    DateUtil dtUtil;
-    DoubleUtil dbUtil;
+//    VariantUtil vUtil;
+//    DateUtil dtUtil;
+//    DoubleUtil dbUtil;
     QObject *parent = nullptr;
     QByteArray ___connectionId;
     explicit ObjectDbPvt(QObject *parent) : QObject{parent} { this->parent = parent; }
 
     bool invokeMethodConnection(QObject *objectCheck, QSqlDatabase &outConnection)
     {
-        static QByteArray connectionIdMethod(qbl("connectionid"));
+        static QByteArray connectionIdMethod(QByteArrayLiteral("connectionid"));
         auto metaObject = objectCheck->metaObject();
         for (int i = 0; i < metaObject->methodCount(); ++i) {
             auto method = metaObject->method(i);
@@ -33,7 +35,7 @@ public:
             QGenericReturnArgument invokeReturn;
 
             switch (method.returnType()) {
-            case QMetaType_QString:
+            case QMetaType::QString:
                 invokeReturn = Q_RETURN_ARG(QString, _textStr);
                 break;
             default:
@@ -42,7 +44,7 @@ public:
 
             if (!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)) {
 #ifdef Q_ORM_LOG_SUPER_VERBOSE
-                sWarning() << qbl("Invalid invoke ") << method.name() << qbl(" to object:")
+                oWarning() << QByteArrayLiteral("Invalid invoke ") << method.name() << QByteArrayLiteral(" to object:")
                            << objectCheck->metaObject()->className();
 #endif
                 return {};
@@ -50,7 +52,7 @@ public:
 
             QByteArray connectionId;
             switch (method.returnType()) {
-            case QMetaType_QString:
+            case QMetaType::QString:
                 connectionId = _textStr.toUtf8().trimmed();
                 break;
             default:
@@ -106,7 +108,7 @@ ObjectDb::ObjectDb(QObject *parent) : QStm::Object{parent}
     this->p = new ObjectDbPvt{this};
 }
 
-ObjectDb::ObjectDb(const QSqlDatabase &connection, QObject *parent) : QStm::Object{parent}
+ObjectDb::ObjectDb(const QSqlDatabase &connection, QObject *parent) : QOrm::Object{parent}
 {
     this->p = new ObjectDbPvt{this};
     p->___connectionId = connection.connectionName().toUtf8();
@@ -143,106 +145,106 @@ QByteArray ObjectDb::connectionId() const
     return p->connectionId();
 }
 
-VariantUtil &ObjectDb::vu()
-{
+//VariantUtil &ObjectDb::vu()
+//{
 
-    p->vUtil.clear();
-    return p->vUtil;
-}
+//    p->vUtil.clear();
+//    return p->vUtil;
+//}
 
-VariantUtil &ObjectDb::vu(const QVariant &v)
-{
+//VariantUtil &ObjectDb::vu(const QVariant &v)
+//{
 
-    if (v.isValid())
-        p->vUtil.setValue(v);
-    else
-        p->vUtil.clear();
-    return p->vUtil;
-}
+//    if (v.isValid())
+//        p->vUtil.setValue(v);
+//    else
+//        p->vUtil.clear();
+//    return p->vUtil;
+//}
 
-VariantUtil &ObjectDb::vUtil()
-{
+//VariantUtil &ObjectDb::vUtil()
+//{
 
-    p->vUtil.clear();
-    return p->vUtil;
-}
+//    p->vUtil.clear();
+//    return p->vUtil;
+//}
 
-VariantUtil &ObjectDb::vUtil(const QVariant &v)
-{
+//VariantUtil &ObjectDb::vUtil(const QVariant &v)
+//{
 
-    if (v.isValid())
-        p->vUtil.setValue(v);
-    else
-        p->vUtil.clear();
-    return p->vUtil;
-}
+//    if (v.isValid())
+//        p->vUtil.setValue(v);
+//    else
+//        p->vUtil.clear();
+//    return p->vUtil;
+//}
 
-DateUtil &ObjectDb::dtUtil()
-{
+//DateUtil &ObjectDb::dtUtil()
+//{
 
-    p->dtUtil.clear();
-    return p->dtUtil;
-}
+//    p->dtUtil.clear();
+//    return p->dtUtil;
+//}
 
-DateUtil &ObjectDb::dtUtil(const QVariant &v)
-{
+//DateUtil &ObjectDb::dtUtil(const QVariant &v)
+//{
 
-    if (v.isValid())
-        p->vUtil.setValue(v);
-    else
-        p->vUtil.clear();
-    return p->dtUtil;
-}
+//    if (v.isValid())
+//        p->vUtil.setValue(v);
+//    else
+//        p->vUtil.clear();
+//    return p->dtUtil;
+//}
 
-DateUtil &ObjectDb::dtu()
-{
+//DateUtil &ObjectDb::dtu()
+//{
 
-    p->dtUtil.clear();
-    return p->dtUtil;
-}
+//    p->dtUtil.clear();
+//    return p->dtUtil;
+//}
 
-DateUtil &ObjectDb::dtu(const QVariant &v)
-{
+//DateUtil &ObjectDb::dtu(const QVariant &v)
+//{
 
-    if (v.isValid())
-        p->vUtil.setValue(v);
-    else
-        p->vUtil.clear();
-    return p->dtUtil;
-}
+//    if (v.isValid())
+//        p->vUtil.setValue(v);
+//    else
+//        p->vUtil.clear();
+//    return p->dtUtil;
+//}
 
-DoubleUtil &ObjectDb::dbUtil()
-{
+//DoubleUtil &ObjectDb::dbUtil()
+//{
 
-    p->dbUtil.clear();
-    return p->dbUtil;
-}
+//    p->dbUtil.clear();
+//    return p->dbUtil;
+//}
 
-DoubleUtil &ObjectDb::dbUtil(const QVariant &v)
-{
+//DoubleUtil &ObjectDb::dbUtil(const QVariant &v)
+//{
 
-    if (v.isValid())
-        p->dbUtil.setValue(v);
-    else
-        p->dbUtil.clear();
-    return p->dbUtil;
-}
+//    if (v.isValid())
+//        p->dbUtil.setValue(v);
+//    else
+//        p->dbUtil.clear();
+//    return p->dbUtil;
+//}
 
-DoubleUtil &ObjectDb::dbu()
-{
+//DoubleUtil &ObjectDb::dbu()
+//{
 
-    p->dbUtil.clear();
-    return p->dbUtil;
-}
+//    p->dbUtil.clear();
+//    return p->dbUtil;
+//}
 
-DoubleUtil &ObjectDb::dbu(const QVariant &v)
-{
+//DoubleUtil &ObjectDb::dbu(const QVariant &v)
+//{
 
-    if (v.isValid())
-        p->dbUtil.setValue(v);
-    else
-        p->dbUtil.clear();
-    return p->dbUtil;
-}
+//    if (v.isValid())
+//        p->dbUtil.setValue(v);
+//    else
+//        p->dbUtil.clear();
+//    return p->dbUtil;
+//}
 
 } // namespace QOrm

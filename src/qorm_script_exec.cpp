@@ -1,11 +1,12 @@
 #include "./qorm_script_exec.h"
+#include "./qorm_macro.h"
 #include <QFile>
 #include <QMetaMethod>
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QUrl>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QSqlError>
+#include <QSqlQuery>
 
 namespace QOrm {
 
@@ -25,10 +26,10 @@ public:
 
     QStringList scriptParser(const QVariant &v)
     {
-        switch (qTypeId(v)) {
-        case QMetaType_QString:
-        case QMetaType_QByteArray:
-        case QMetaType_QUrl: {
+        switch (v.typeId()) {
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        case QMetaType::QUrl: {
             QStringList __return;
             QFile file(v.toString());
 
@@ -43,22 +44,22 @@ public:
             if (bytes.isEmpty())
                 return {};
 
-            auto lines = bytes.split(qsl("\n"));
+            auto lines = bytes.split(QStringLiteral("\n"));
             for (auto &v : lines) {
-                auto vLines = v.split(qsl(";"));
+                auto vLines = v.split(QStringLiteral(";"));
                 for (auto line : vLines) {
                     line = line.trimmed();
 
                     if (line.isEmpty())
                         continue;
 
-                    if (line.startsWith(qsl("--")))
+                    if (line.startsWith(QStringLiteral("--")))
                         continue;
 
-                    if (line.startsWith(qsl("//")))
+                    if (line.startsWith(QStringLiteral("//")))
                         continue;
 
-                    if (line.startsWith(qsl("##")))
+                    if (line.startsWith(QStringLiteral("##")))
                         continue;
 
                     __return << line.trimmed();
@@ -66,11 +67,11 @@ public:
             }
             return __return;
         }
-        case QMetaType_QStringList:
+        case QMetaType::QStringList:
             return v.toStringList();
             break;
         default:
-            return qvsl{v.toString()};
+            return QStringList{v.toString()};
         }
         return {};
     }
@@ -93,7 +94,7 @@ public:
         const auto &script = this->scriptedMaker();
         auto db = this->parent->connection();
         if (!db.isValid() || !db.isOpen()) {
-            sWarning() << qsl("connection is not valid");
+            oWarning() << QStringLiteral("connection is not valid");
             return this->parent->lr(__return) = __return.isEmpty();
         }
 
@@ -101,7 +102,7 @@ public:
             auto scommand = command.trimmed();
             QSqlQuery query(db);
             QSqlError sqlError;
-            if (scommand.isEmpty() || scommand.startsWith(qsl("--")))
+            if (scommand.isEmpty() || scommand.startsWith(QStringLiteral("--")))
                 continue;
 
             if (query.exec(command)) {
@@ -111,9 +112,7 @@ public:
             }
 
             sqlError = query.lastError();
-            __return << qvh{{qsl_fy(nativeErrorCode), sqlError.nativeErrorCode()},
-                            {qsl_fy(text), sqlError.text()},
-                            {qsl_fy(command), command}};
+            __return.append(QVariantHash{{QT_STRINGIFY(nativeErrorCode), sqlError.nativeErrorCode()}, {QT_STRINGIFY(text), sqlError.text()}, {QT_STRINGIFY(command), command}});
         }
         return this->parent->lr(__return) = __return.isEmpty();
     }
@@ -123,8 +122,6 @@ ScriptExec::ScriptExec(QObject *parent) : QOrm::ObjectDb{parent}
 {
     this->p = new ScriptExecPvt{this};
 }
-
-ScriptExec::~ScriptExec() {}
 
 ScriptExec &ScriptExec::operator=(const QVariant &v)
 {
@@ -158,7 +155,7 @@ ScriptExec &ScriptExec::operator<<(const QFileInfoList &entryInfoList)
     for (auto &f : entryInfoList) {
         auto fileName = f.filePath();
         if (!QFile::exists(fileName)) {
-            sWarning() << tr("Invalid filename: %1").arg(fileName);
+            oWarning() << tr("Invalid filename: %1").arg(fileName);
             continue;
         }
 

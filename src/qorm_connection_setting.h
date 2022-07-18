@@ -1,7 +1,9 @@
 #pragma once
 
 #include "./qorm_global.h"
-#include "./qorm_types.h"
+#include <QSqlDatabase>
+#include <QVariantHash>
+#include <QStringList>
 
 namespace QOrm {
 class ConnectionSettingPvt;

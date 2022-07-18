@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../qorm_const.h"
-#include "../qorm_object.h"
+//#include "../qorm_const.h"
+//#include "../qorm_object.h"
+#include <QObject>
 
 namespace QOrm {
 

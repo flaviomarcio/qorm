@@ -1,20 +1,13 @@
 #pragma once
 
-#include "../qorm_connection_manager.h"
+#include <QThread>
+#include <QTimer>
+#include <QVariant>
+#include <QSqlDatabase>
+#include <QSqlDriver>
 #include "../qorm_connection_notify.h"
 #include "../qorm_connection_pool.h"
-#include <QTimer>
-#include <QThread>
-#include <QObject>
-#include <QVariant>
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlDriver>
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
+//#include "../qorm_connection_manager.h"
 
 namespace QOrm {
 

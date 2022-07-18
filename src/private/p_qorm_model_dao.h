@@ -1,10 +1,11 @@
 #pragma once
 
+#include <QVariant>
+#include <QSqlError>
 #include "../qorm_object_db.h"
 #include "../qorm_sql_suitable_value.h"
-#include "./p_qorm_sql_suitable_parser_strategy_options.h"
 #include "./p_qorm_model_info.h"
-#include <QVariant>
+//#include "./p_qorm_sql_suitable_parser_strategy_options.h"
 
 namespace PrivateQOrm{
 class ModelDaoPvt;
@@ -22,23 +23,18 @@ public:
     Q_INVOKABLE explicit ModelDao(QObject *parent = nullptr);
 
     //!
-    //! \brief ~ModelDao
-    //!
-    ~ModelDao();
-
-    //!
     //! \brief variantToParameters
     //! \param modelRef
     //! \param value
     //! \return
     //!
-    QVariant variantToParameters(const QOrm::ModelInfo&modelRef, const QVariant &value)const;
+    QVariant variantToParameters(const QOrm::ModelInfo &modelRef, const QVariant &value)const;
 
     //!
     //! \brief suitableValue
     //! \return
     //!
-    QOrm::SqlSuitableValue&suitableValue();
+    QOrm::SqlSuitableValue &suitableValue();
 private:
     ModelDaoPvt *p=nullptr;
 };

@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../qorm_model_dao.h"
-#include "./p_qorm_model_crud_body.h"
+#include "../qorm_types.h"
+#include "../qorm_object_db.h"
+//#include "../qorm_model_dao.h"
+//#include "./p_qorm_model_crud_body.h"
 
 namespace QOrm {
 class ModelActionPvt;
@@ -36,21 +38,21 @@ public:
     //! \param action
     //! \return
     //!
-    virtual ModelAction&onActionBefore(ModelActionMethodPointer action);
+    virtual ModelAction &onActionBefore(ModelActionMethodPointer action);
 
     //!
     //! \brief onAction
     //! \param action
     //! \return
     //!
-    virtual ModelAction&onAction(ModelActionMethodPointer action);
+    virtual ModelAction &onAction(ModelActionMethodPointer action);
 
     //!
     //! \brief onActionAfter
     //! \param action
     //! \return
     //!
-    virtual ModelAction&onActionAfter(ModelActionMethodPointer action);
+    virtual ModelAction &onActionAfter(ModelActionMethodPointer action);
 
 private:
     ModelActionPvt *p=nullptr;

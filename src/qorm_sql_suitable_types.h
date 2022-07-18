@@ -1,7 +1,9 @@
 #pragma once
 
+#include <QVector>
+#include <QtSql/QSqlDriver>
 #include "./qorm_global.h"
-#include "./qorm_types.h"
+//#include "./qorm_types.h"
 
 namespace QOrm {
 

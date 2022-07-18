@@ -1,6 +1,7 @@
 #pragma once
 
-#include "./qorm_object.h"
+#include "./qorm_global.h"
+#include <QSqlDatabase>
 
 namespace QOrm {
 class ConnectionPoolPvt;

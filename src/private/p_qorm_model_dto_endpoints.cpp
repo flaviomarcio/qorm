@@ -49,7 +49,7 @@ EndPoints::EndPoints(QObject *parent)
 
 bool EndPoints::setValues(const QVariant &v)
 {
-    for(auto&v:v.toList())
+    for(auto &v:v.toList())
         this->insert(v);
     return QStm::ObjectWrapper::setValues(v);
 }
@@ -151,7 +151,7 @@ QVariantList &EndPoints::items() const
     if(p->objectHash.isEmpty())
         return p->list;
     auto vList=p->objectHash.values();
-    for(auto&v:vList){
+    for(auto &v:vList){
         auto e=v->toHash();
         p->list.append(e);
     }
@@ -161,7 +161,7 @@ QVariantList &EndPoints::items() const
 void EndPoints::setItems(const QVariant &newItems)
 {
     p->clear();
-    for(auto&v:newItems.toList()){
+    for(auto &v:newItems.toList()){
         auto e=EndPoint::from(v, this);
         if(!e) continue;
         this->insert(e);

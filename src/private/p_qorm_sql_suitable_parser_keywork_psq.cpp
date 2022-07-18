@@ -1,4 +1,6 @@
 #include "./p_qorm_sql_suitable_parser_keywork_psq.h"
+#include "../qorm_sql_suitable_types.h"
+
 
 namespace QOrm {
 
@@ -13,25 +15,25 @@ SqlSuitableKeyWordPSql::~SqlSuitableKeyWordPSql()
 
 void SqlSuitableKeyWordPSql::init()
 {
-    this->commands()[kgcSelectTop                ]=qbl("select");
-    this->commands()[kgcSelectForExists          ]=qbl("select");
-    this->commands()[kgcSelectDistinct           ]=qbl("select distinct");
-    this->commands()[kgcSelectDistinctTop        ]=qbl("select distinct");
-    this->commands()[kgcIsNull                   ]=qbl("coalesce");
-    this->commands()[kgcIsNullCheckValue         ]=qbl("coalesce(%1, %2)");
-    this->commands()[kgcUpsertSetValues          ]=qbl("merge %1 u using(%2)as m on when matched update set %3 when not matched %4 %5");
-    this->commands()[kgcUpsertSet                ]=qbl_null;
-    this->commands()[kgcSetApplicationName       ]=qbl("set application_name to '%1'");
-    this->commands()[kgcSetSearchPath            ]=qbl("set search_path = %1");
-    this->commands()[kgcSetTransactionReadOnlyOn ]=qbl("set default_transaction_read_only = on");
-    this->commands()[kgcSetTransactionReadOnlyOff]=qbl("set default_transaction_read_only = off");
-    this->commands()[kgcForUpdateFinishScript    ]=qbl("for update");
-    this->commands()[kgcForSkipLockedFinishScript]=qbl("for update skip locked");
-    this->commands()[kgcNextVal                  ]=qbl("nextval");
-    this->commands()[kgcNextValSelect            ]=qbl("select nextval('%1') as value");
-    this->commands()[kgcOffset                   ]=qbl("offset %1");
-    this->commands()[kgcILike                    ]=qbl("%1 ilike %2 ").trimmed().toLower();
-    this->commands()[kgcLike                     ]=qbl("%1 ilike %2 ").trimmed().toLower();
+    this->commands()[kgcSelectTop                ]=QByteArrayLiteral("select");
+    this->commands()[kgcSelectForExists          ]=QByteArrayLiteral("select");
+    this->commands()[kgcSelectDistinct           ]=QByteArrayLiteral("select distinct");
+    this->commands()[kgcSelectDistinctTop        ]=QByteArrayLiteral("select distinct");
+    this->commands()[kgcIsNull                   ]=QByteArrayLiteral("coalesce");
+    this->commands()[kgcIsNullCheckValue         ]=QByteArrayLiteral("coalesce(%1, %2)");
+    this->commands()[kgcUpsertSetValues          ]=QByteArrayLiteral("merge %1 u using(%2)as m on when matched update set %3 when not matched %4 %5");
+    this->commands()[kgcUpsertSet                ]={};
+    this->commands()[kgcSetApplicationName       ]=QByteArrayLiteral("set application_name to '%1'");
+    this->commands()[kgcSetSearchPath            ]=QByteArrayLiteral("set search_path = %1");
+    this->commands()[kgcSetTransactionReadOnlyOn ]=QByteArrayLiteral("set default_transaction_read_only = on");
+    this->commands()[kgcSetTransactionReadOnlyOff]=QByteArrayLiteral("set default_transaction_read_only = off");
+    this->commands()[kgcForUpdateFinishScript    ]=QByteArrayLiteral("for update");
+    this->commands()[kgcForSkipLockedFinishScript]=QByteArrayLiteral("for update skip locked");
+    this->commands()[kgcNextVal                  ]=QByteArrayLiteral("nextval");
+    this->commands()[kgcNextValSelect            ]=QByteArrayLiteral("select nextval('%1') as value");
+    this->commands()[kgcOffset                   ]=QByteArrayLiteral("offset %1");
+    this->commands()[kgcILike                    ]=QByteArrayLiteral("%1 ilike %2 ").trimmed().toLower();
+    this->commands()[kgcLike                     ]=QByteArrayLiteral("%1 ilike %2 ").trimmed().toLower();
 
 }
 
@@ -43,13 +45,16 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
     QStringList RETURN;
     if(command==kgcUpdate || command==kgcUpdateSet || command==kgcUpdateSetValues){
         auto listRecords=value;
-        if(qTypeId(listRecords)==QMetaType_QVariantList){
+        switch (listRecords.typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+        {
             auto l=listRecords.toList();
             listRecords=l.size()==1?l.first():l;
+            break;
         }
-        else if(qTypeId(listRecords)==QMetaType_QStringList){
-            auto l=listRecords.toStringList();
-            listRecords=l.size()==1?QVariant(l.first()):l;
+        default:
+            break;
         }
 
         auto tableNameFull=modelInfo->tableNameFull();
@@ -66,25 +71,25 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                 QStringList fields;
                 for(auto &v1:propertyTableList){
                     auto property=modelInfo->propertyByFieldName().value(v1);
-                    auto vType=qTypeId(property);
+                    auto vType=property.typeId();
                     auto v2=v1;
-                    if(vType==QMetaType_QUuid)
-                        v2+=qsl("::uuid");
-                    else if(vType==QMetaType_QDateTime)
-                        v2+=qsl("::timestamp");
-                    else if(vType==QMetaType_QDate)
-                        v2+=qsl("::date");
-                    fields << qsl("%1=s.%2").arg(v1, v2);
+                    if(vType==QMetaType::QUuid)
+                        v2+=QStringLiteral("::uuid");
+                    else if(vType==QMetaType::QDateTime)
+                        v2+=QStringLiteral("::timestamp");
+                    else if(vType==QMetaType::QDate)
+                        v2+=QStringLiteral("::date");
+                    fields << QStringLiteral("%1=s.%2").arg(v1, v2);
                 }
-                tableFieldsSet=fields.join(qsl(","));
+                tableFieldsSet=fields.join(QStringLiteral(","));
             }
 
             QString RETURNING;
             {
                 QStringList l;
                 for(auto &v:modelInfo->tablePk())
-                    l<<qsl("u.")+v;
-                RETURNING = qsl("RETURNING %1").arg(l.join(qsl(",")));
+                    l<<QStringLiteral("u.")+v;
+                RETURNING = QStringLiteral("RETURNING %1").arg(l.join(QStringLiteral(",")));
             }
 
             if(!modelInfo->tablePk().isEmpty()){
@@ -92,23 +97,23 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                 for(auto &v1:modelInfo->tablePk()){
 
                     auto property=modelInfo->propertyByFieldName().value(v1);
-                    auto vType=qTypeId(property);
+                    auto vType=property.typeId();
 
                     auto v2=v1;
-                    if(vType==QMetaType_QUuid)
-                        v2+=qsl("::uuid");
-                    else if(vType==QMetaType_QDateTime)
-                        v2+=qsl("::timestamp");
-                    else if(vType==QMetaType_QDate)
-                        v2+=qsl("::date");
+                    if(vType==QMetaType::QUuid)
+                        v2+=QStringLiteral("::uuid");
+                    else if(vType==QMetaType::QDateTime)
+                        v2+=QStringLiteral("::timestamp");
+                    else if(vType==QMetaType::QDate)
+                        v2+=QStringLiteral("::date");
 
-                    fieldsWhere<<qsl("u.%1 = s.%2").arg(v1,v2);
+                    fieldsWhere<<QStringLiteral("u.%1 = s.%2").arg(v1,v2);
                 }
-                tableWhere=qsl("where %1").arg(fieldsWhere.join(qsl(" and ")));
+                tableWhere=QStringLiteral("where %1").arg(fieldsWhere.join(QStringLiteral(" and ")));
             }
 
-            tableFromValues=this->parserCommand(kgcFromValues).arg(values.join(qsl(",")),qsl("s"),propertyTableList.join(qsl(",")));
-            auto v1=this->parserCommand(kgcUpdateSet).arg(tableNameFull+qsl(" as u"), tableFieldsSet,tableFromValues,tableWhere,RETURNING);
+            tableFromValues=this->parserCommand(kgcFromValues).arg(values.join(QStringLiteral(",")),QStringLiteral("s"),propertyTableList.join(QStringLiteral(",")));
+            auto v1=this->parserCommand(kgcUpdateSet).arg(tableNameFull+QStringLiteral(" as u"), tableFieldsSet,tableFromValues,tableWhere,RETURNING);
             RETURN<<v1;
         }
         return RETURN;
@@ -117,22 +122,22 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
 
         auto propertyTableList=modelInfo->propertyTableList();
         QVariantList list;
-        if(qTypeId(value)==QMetaType_QVariantList)
+        if(value.typeId()==QMetaType::QVariantList)
             list=value.toList();
         else
             list<<value;
 
         QVariantList listRecords;
         for(auto &v:list){
-            if(qTypeId(v)==QMetaType_QVariantMap || qTypeId(v)==QMetaType_QVariantHash)
+            if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
                 listRecords<<v;
             else
                 listRecords<<QVariantMap();//deve gerar erro
         }
 
         if(!listRecords.isEmpty()){
-            auto tablePk=modelInfo->tablePk();
-            auto RETURNING=qsl("RETURNING %1").arg(modelInfo->tablePk().join(qsl(",")));
+            //auto tablePk=modelInfo->tablePk();
+            auto RETURNING=QStringLiteral("RETURNING %1").arg(modelInfo->tablePk().join(QStringLiteral(",")));
 
             QString mergeUsingOn;
             QString mergeUpdate;
@@ -142,28 +147,28 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                     QStringList onA;
                     QStringList onB;
                     for(auto &v:modelInfo->tablePk()){
-                        onA << qsl("m.%1").arg(v);
-                        onB << qsl("u.%1").arg(v);
+                        onA << QStringLiteral("m.%1").arg(v);
+                        onB << QStringLiteral("u.%1").arg(v);
                     }
-                    mergeUsingOn=qsl("%1 = %2").arg(onA.join(qsl(",")), onB.join(qsl(",")));
+                    mergeUsingOn=QStringLiteral("%1 = %2").arg(onA.join(QStringLiteral(",")), onB.join(QStringLiteral(",")));
                 }
 
                 {
                     QStringList fields;
                     for(auto &v1:propertyTableList){
                         auto property=modelInfo->propertyByFieldName().value(v1);
-                        auto vType=qTypeId(property);
+                        auto vType=property.typeId();
                         auto v2=v1;
-                        if(vType==QMetaType_QUuid)
-                            v2+=qsl("::uuid");
-                        else if(vType==QMetaType_QDateTime)
-                            v2+=qsl("::timestamp");
-                        else if(vType==QMetaType_QDate)
-                            v2+=qsl("::date");
-                        fields << qsl("%1=excluded.%2").arg(v1, v2);
+                        if(vType==QMetaType::QUuid)
+                            v2+=QStringLiteral("::uuid");
+                        else if(vType==QMetaType::QDateTime)
+                            v2+=QStringLiteral("::timestamp");
+                        else if(vType==QMetaType::QDate)
+                            v2+=QStringLiteral("::date");
+                        fields << QStringLiteral("%1=excluded.%2").arg(v1, v2);
                     }
 
-                    mergeUpdate=fields.join(qsl(","));
+                    mergeUpdate=fields.join(QStringLiteral(","));
                 }
 
                 {
@@ -172,14 +177,14 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                             propertyTableList.removeAll(v);
                     }
 
-                    QStringList fields;
+                    //QStringList fields;
                     QStringList onA;
                     QStringList onB;
                     for(auto &v:propertyTableList){
-                        onA << qsl("%1").arg(v);
-                        onB << qsl("m.%1").arg(v);
+                        onA << QStringLiteral("%1").arg(v);
+                        onB << QStringLiteral("m.%1").arg(v);
                     }
-                    mergeInsert=qsl("insert into %1 (%2)values(%3)").arg(modelInfo->tableNameFull(),onA.join(qsl(",")), onB.join(qsl(",")));
+                    mergeInsert=QStringLiteral("insert into %1 (%2)values(%3)").arg(modelInfo->tableNameFull(),onA.join(QStringLiteral(",")), onB.join(QStringLiteral(",")));
                 }
 
             }
@@ -187,7 +192,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
             auto values=this->formatValues(propertyTableList, listRecords);
             if(!values.isEmpty()){
                 //auto mergeTable = QString("merge %1 u").arg(modelInfo->tableNameFull());
-                //auto usingValues = QString("using(select*from (values %1) as x (%2)) u on %3").arg(values.join(qsl(","))).arg(propertyTableList.join(qsl(","))).arg(mergeUsingOn);
+                //auto usingValues = QString("using(select*from (values %1) as x (%2)) u on %3").arg(values.join(QStringLiteral(","))).arg(propertyTableList.join(QStringLiteral(","))).arg(mergeUsingOn);
                 //auto matchedUpdate = QString("matched update %1").arg(mergeUpdate);
                 //auto matchedInsert = QString("not matched update %1").arg(mergeInsert);
                 //auto v1=QString("%1 %2 %3 %4").arg(mergeTable).arg(usingValues).arg(matchedUpdate).arg(matchedInsert);
@@ -195,9 +200,9 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                 //merge %1 u using(%2)as m on when matched update set %3 when not matched %4 %5
                 //auto v1=this->parserCommand(kgcUpsertSetValues).arg().arg(usingValues).arg(mergeUpdate).arg(mergeInsert).arg(RETURNING);
 
-                mergeInsert=qsl("insert into %1 (%2)values %3").arg(modelInfo->tableNameFull(), modelInfo->propertyTableList().join(qsl(",")), values.join(qsl(",")));
+                mergeInsert=QStringLiteral("insert into %1 (%2)values %3").arg(modelInfo->tableNameFull(), modelInfo->propertyTableList().join(QStringLiteral(",")), values.join(QStringLiteral(",")));
 
-                auto v1=qsl("%1 on conflict(%2) DO UPDATE SET %3 %4 ").arg(mergeInsert, modelInfo->tablePk().join(qsl(",")), mergeUpdate, RETURNING);
+                auto v1=QStringLiteral("%1 on conflict(%2) DO UPDATE SET %3 %4 ").arg(mergeInsert, modelInfo->tablePk().join(QStringLiteral(",")), mergeUpdate, RETURNING);
 
                 RETURN<<v1;
             }

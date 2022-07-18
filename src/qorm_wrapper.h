@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./qorm_global.h"
 #include "../../qstm/src/qstm_result.h"
 
 namespace QOrm {
@@ -7,8 +8,9 @@ class WrapperPvt;
 //!
 //! \brief The Wrapper class
 //!
-class Wrapper
+class Q_ORM_EXPORT Wrapper:public QObject
 {
+    Q_OBJECT
 public:
     //!
     //! \brief Wrapper
@@ -22,10 +24,6 @@ public:
     //!
     explicit Wrapper(ResultValue &v);
 
-    //!
-    //! \brief ~Wrapper
-    //!
-    virtual ~Wrapper();
 
     //!
     //! \brief w

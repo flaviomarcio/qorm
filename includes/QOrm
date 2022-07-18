@@ -16,7 +16,6 @@
 #include "../src/qorm_model_crud.h"
 #include "../src/qorm_model_report.h"
 #include "../src/qorm_model_dao.h"
-#include "../src/qorm_model_dto.h"
 #include "../src/qorm_object.h"
 #include "../src/qorm_object_db.h"
 #include "../src/qorm_query.h"

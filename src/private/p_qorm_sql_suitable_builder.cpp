@@ -102,7 +102,7 @@ bool SqlSuitableBuilderPvt::build()
         if(strategy->ignorePrepare())
             continue;
 
-        auto command=lst.join(' ') + qsl(";");
+        auto command=lst.join(' ') + QStringLiteral(";");
         {
             auto &p=*static_cast<QueryPvt*>(query->p);
             if(!p.sqlQuery.prepare(command))

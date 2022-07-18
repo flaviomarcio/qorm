@@ -27,7 +27,6 @@ HEADERS += \
     $$PWD/src/private/p_qorm_model_dto_items.h \
     $$PWD/src/private/p_qorm_model_dto_types.h \
     $$PWD/src/private/p_qorm_model_info.h \
-    $$PWD/src/private/p_qorm_qt_include.h \
     $$PWD/src/private/p_qorm_query.h \
     #$$PWD/src/private/p_qorm_report_runner.h \
     $$PWD/src/private/p_qorm_sql_suitable_builder.h \
@@ -65,6 +64,7 @@ HEADERS += \
     $$PWD/src/qorm_model_crud_block.h \
     $$PWD/src/qorm_model_crud_types.h \
     $$PWD/src/qorm_model_crud.h \
+    $$PWD/src/qorm_model_macro.h \
     $$PWD/src/qorm_model_report.h \
     $$PWD/src/qorm_model_dao.h \
     $$PWD/src/qorm_model_dto.h \

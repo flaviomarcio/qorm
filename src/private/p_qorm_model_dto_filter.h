@@ -48,7 +48,7 @@ public:
     //!
     virtual QVariant type() const
     {
-        return this->v.value(qsl("type"));
+        return this->v.value(QStringLiteral("type"));
     }
     virtual ModelDtoFilter&type(const QVariant &type)
     {
@@ -56,7 +56,7 @@ public:
     }
     virtual ModelDtoFilter&setType(const QVariant &type)
     {
-        this->v.insert(qsl("type"),type);
+        this->v.insert(QStringLiteral("type"),type);
         return*this;
     }
 
@@ -66,7 +66,7 @@ public:
     //!
     virtual QByteArray value() const
     {
-        return this->v.value(qsl("value")).toByteArray();
+        return this->v.value(QStringLiteral("value")).toByteArray();
     }
     virtual ModelDtoFilter&value(const QVariant &value)
     {
@@ -74,7 +74,7 @@ public:
     }
     virtual ModelDtoFilter&setValue(const QVariant &value)
     {
-        this->v.insert(qsl("value"), value);
+        this->v.insert(QStringLiteral("value"), value);
         return*this;
     }
 
@@ -84,7 +84,7 @@ public:
     //!
     virtual QString defaultValue() const
     {
-        return this->v.value(qsl("defaultValue")).toByteArray();
+        return this->v.value(QStringLiteral("defaultValue")).toByteArray();
     }
     virtual ModelDtoFilter&defaultValue(const QVariant &value)
     {
@@ -92,7 +92,7 @@ public:
     }
     virtual ModelDtoFilter&setDefaultValue(const QVariant &value)
     {
-        this->v.insert(qsl("defaultValue"), value.toByteArray());
+        this->v.insert(QStringLiteral("defaultValue"), value.toByteArray());
         return*this;
     }
 
@@ -102,7 +102,7 @@ public:
     //!
     virtual QString comboValue() const
     {
-        return this->v.value(qsl("comboValue")).toByteArray();
+        return this->v.value(QStringLiteral("comboValue")).toByteArray();
     }
     virtual ModelDtoFilter&comboValue(const QVariant &value)
     {
@@ -110,7 +110,7 @@ public:
     }
     virtual ModelDtoFilter&setComboValue(const QVariant &value)
     {
-        this->v.insert(qsl("comboValue"), value.toByteArray());
+        this->v.insert(QStringLiteral("comboValue"), value.toByteArray());
         return*this;
     }
 
@@ -120,7 +120,7 @@ public:
     //!
     virtual QString text() const
     {
-        return this->v.value(qsl("text")).toByteArray();
+        return this->v.value(QStringLiteral("text")).toByteArray();
     }
     virtual ModelDtoFilter&text(const QVariant &value)
     {
@@ -128,7 +128,7 @@ public:
     }
     virtual ModelDtoFilter&setText(const QVariant &value)
     {
-        this->v.insert(qsl("text"), value.toByteArray());
+        this->v.insert(QStringLiteral("text"), value.toByteArray());
         return*this;
     }
 
@@ -138,7 +138,7 @@ public:
     //!
     virtual QVariant align() const
     {
-        return this->v.value(qsl("align"));
+        return this->v.value(QStringLiteral("align"));
     }
     virtual ModelDtoFilter&align(const QVariant & value)
     {
@@ -146,7 +146,7 @@ public:
     }
     virtual ModelDtoFilter&setAlign(const QVariant & value)
     {
-        this->v.insert(qsl("align"), value);
+        this->v.insert(QStringLiteral("align"), value);
         return*this;
     }
 
@@ -156,7 +156,7 @@ public:
     //!
     virtual QVariant width() const
     {
-        return this->v.value(qsl("width")).toBool();
+        return this->v.value(QStringLiteral("width")).toBool();
     }
     virtual ModelDtoFilter&width(const QVariant & value)
     {
@@ -164,7 +164,7 @@ public:
     }
     virtual ModelDtoFilter&setWidth(const QVariant & value)
     {
-        this->v.insert(qsl("width"), value);
+        this->v.insert(QStringLiteral("width"), value);
         return*this;
     }
 
@@ -174,7 +174,7 @@ public:
     //!
     virtual bool sortable() const
     {
-        return this->v.value(qsl("sortable")).toBool();
+        return this->v.value(QStringLiteral("sortable")).toBool();
     }
     virtual ModelDtoFilter&sortable(const QVariant &value)
     {
@@ -182,7 +182,7 @@ public:
     }
     virtual ModelDtoFilter&setSortable(const QVariant &value)
     {
-        this->v.insert(qsl("sortable"), value);
+        this->v.insert(QStringLiteral("sortable"), value);
         return*this;
     }
 
@@ -192,7 +192,7 @@ public:
     //!
     virtual bool filtrable() const
     {
-        return this->v.value(qsl("filtrable")).toBool();
+        return this->v.value(QStringLiteral("filtrable")).toBool();
     }
     virtual ModelDtoFilter&filtrable(const QVariant &value)
     {
@@ -200,7 +200,7 @@ public:
     }
     virtual ModelDtoFilter&setFiltrable(const QVariant &value)
     {
-        this->v.insert(qsl("filtrable"), value);
+        this->v.insert(QStringLiteral("filtrable"), value);
         return*this;
     }
 
@@ -210,7 +210,7 @@ public:
     //!
     virtual DtoFilterStyle filterStyle() const
     {
-        return DtoFilterStyle(this->v.value(qsl("filterStyle")).toInt());
+        return DtoFilterStyle(this->v.value(QStringLiteral("filterStyle")).toInt());
     }
     virtual ModelDtoFilter&filterStyle(const DtoFilterStyle &value)
     {
@@ -218,7 +218,7 @@ public:
     }
     virtual ModelDtoFilter&setFilterStyle(const QVariant &value)
     {
-        this->v.insert(qsl("filterStyle"), value);
+        this->v.insert(QStringLiteral("filterStyle"), value);
         return*this;
     }
 
@@ -279,7 +279,7 @@ public:
         return this->value(QVariantHash{{vpType,v}});
     }
 
-    virtual ModelDtoFilter<T>&value(const QVariantHash&v)
+    virtual ModelDtoFilter<T>&value(const QVariantHash &v)
     {
         auto object=new ModelDtoFilter<T>(this->___d, this);
         object->setType(v.value(vpType));

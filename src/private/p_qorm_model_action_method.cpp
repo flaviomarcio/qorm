@@ -1,6 +1,6 @@
 #include "./p_qorm_model_action_method.h"
-#include "../qorm_query.h"
-#include "../qorm_transaction_scope.h"
+//#include "../qorm_query.h"
+//#include "../qorm_transaction_scope.h"
 #include <QJsonDocument>
 
 namespace QOrm {
@@ -26,9 +26,9 @@ public:
     QVariantList makeBodyLoop(const QVariant &v)
     {
         auto vHash=v.toHash();
-        if(vHash.contains(qsl("id")) && vHash.contains(qsl("items")))
-            return vHash[qsl("items")].toList();
-        return qvl{vHash};
+        if(vHash.contains(QStringLiteral("id")) && vHash.contains(QStringLiteral("items")))
+            return vHash[QStringLiteral("items")].toList();
+        return QVariantList{vHash};
     }
 };
 

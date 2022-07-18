@@ -21,9 +21,6 @@ public:
     Q_INVOKABLE explicit ScriptExec(QObject *parent = nullptr);
 
     //!
-    virtual ~ScriptExec();
-
-    //!
     //! \brief operator =
     //! \param v
     //! \return

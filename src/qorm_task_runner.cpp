@@ -1,5 +1,11 @@
+#include "./qorm_task_runner.h"
 #include "./private/p_qorm_task_pool.h"
 #include "./qorm_object_db.h"
+#include "./qorm_const.h"
+#if Q_ORM_LOG
+#include "./qorm_macro.h"
+#endif
+
 
 namespace QOrm {
 
@@ -22,21 +28,16 @@ public:
     }
 };
 
-TaskRunner::TaskRunner(QObject *parent) : QStm::Object{parent}
+TaskRunner::TaskRunner(QObject *parent) : QOrm::Object{parent}
 {
     this->p = new TaskRunnerPvt{this};
-}
-
-TaskRunner::~TaskRunner()
-{
-
 }
 
 TaskRunner &TaskRunner::print()
 {
 
-    sInfo() << "slotCount: " << p->pool.slotCount();
-    sInfo() << "taskQueueValue.size: " << p->pool.taskQueueValue().size();
+    oInfo() << "slotCount: " << p->pool.slotCount();
+    oInfo() << "taskQueueValue.size: " << p->pool.taskQueueValue().size();
     return *this;
 }
 
@@ -56,17 +57,17 @@ TaskRunner &TaskRunner::vs(const QVariant &values)
 {
 
     QVariantList vList;
-    switch (qTypeId(values)) {
-    case QMetaType_QVariantHash:
-    case QMetaType_QVariantMap:
+    switch (values.typeId()) {
+    case QMetaType::QVariantHash:
+    case QMetaType::QVariantMap:
         vList = values.toHash().values();
         break;
-    case QMetaType_QVariantList:
-    case QMetaType_QStringList:
+    case QMetaType::QVariantList:
+    case QMetaType::QStringList:
         vList = values.toList();
         break;
     default:
-        vList << values;
+        vList.append(values);
     }
     for (auto &v : vList)
         p->pool.taskQueueValue() << v;
@@ -137,14 +138,14 @@ ResultValue &TaskRunner::start()
     auto name = this->objectName().trimmed();
     if (!name.isEmpty())
         name = QThread::currentThread()->objectName().trimmed();
-    this->setObjectName(qsl("TaskRunner") + name);
+    this->setObjectName(QStringLiteral("TaskRunner") + name);
 
     name = this->objectName().trimmed();
     if (!name.isEmpty())
         name = QThread::currentThread()->objectName().trimmed();
-    p->pool.setObjectName(qsl("TaskPool") + name);
+    p->pool.setObjectName(QStringLiteral("TaskPool") + name);
     p->pool.start(p->connection());
-    QMutexLOCKER locker(&p->pool.running());
+    QMutexLocker<QMutex> locker(&p->pool.running());
     return this->lr().setResult(p->pool.resultList()) = p->pool.resultBool();
 }
 
@@ -166,9 +167,9 @@ QUuid TaskRunner::taskAppend(const QVariant &taskValue)
 
     auto uuid = QUuid::createUuid();
     QVariantHash vTask;
-    vTask.insert(qsl("uuid"), uuid.toString());
-    vTask.insert(qsl("order"), p->pool.taskQueueValue().size() + 1);
-    vTask.insert(qsl("value"), taskValue);
+    vTask.insert(QStringLiteral("uuid"), uuid.toString());
+    vTask.insert(QStringLiteral("order"), p->pool.taskQueueValue().size() + 1);
+    vTask.insert(QStringLiteral("value"), taskValue);
     p->pool.taskQueueValue() << vTask;
     return uuid;
 }

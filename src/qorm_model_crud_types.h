@@ -1,9 +1,9 @@
 #pragma once
 
-#include "./qorm_global.h"
 #include <QVariant>
 #include <QVariantHash>
 #include <QVariantList>
+//#include "./qorm_global.h"
 
 namespace QOrm {
 

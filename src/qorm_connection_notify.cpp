@@ -1,6 +1,6 @@
 #include "./qorm_connection_notify.h"
 #include "./private/p_qorm_connection_notify.h"
-#include "./private/p_qorm_connection_notify_subscribe.h"
+//#include "./private/p_qorm_connection_notify_subscribe.h"
 
 namespace QOrm {
 

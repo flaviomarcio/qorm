@@ -1,6 +1,6 @@
 #include "./qorm_transaction_scope.h"
 #include "./qorm_transaction.h"
-#include <QMutex>
+#include "./qorm_macro.h"
 
 namespace QOrm {
 
@@ -13,7 +13,7 @@ public:
         transaction.setRollbackOnError(true);
         transaction.setExceptionOnFail(true);
         if (!transaction.transaction())
-            this->failTryException(qsl("failt create transation"));
+            this->failTryException(QStringLiteral("failt create transation"));
     }
 
     ~TransactionScopePvt() { this->transaction.commit(); }
@@ -22,7 +22,7 @@ public:
     {
         this->transaction.lr().setCritical(v);
         if (!this->transaction.exceptionOnFail())
-            sWarning() << qsl("dangerous failure detected and ignored during try-rollback, "
+            oWarning() << QStringLiteral("dangerous failure detected and ignored during try-rollback, "
                               "try-transaction or try-commit");
         else
             qFatal("dangerous failure detected and ignored during try-rollback, try-transaction or "
@@ -35,13 +35,8 @@ TransactionScope::TransactionScope(QObject *parent) : ObjectDb{parent}
     this->p = new TransactionScopePvt{this};
 }
 
-TransactionScope::~TransactionScope()
-{
-}
-
 bool TransactionScope::rollback()
 {
-
     return p->transaction.rollback();
 }
 

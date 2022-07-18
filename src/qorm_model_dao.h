@@ -1,11 +1,30 @@
 #pragma once
 
+#include "./qorm_query.h"
 #include "./private/p_qorm_model_dao.h"
-#include "./qorm_model.h"
+#include "./private/p_qorm_sql_suitable_parser_strategy_options.h"
 
 namespace QOrm {
 
 typedef SqlParserConditions<SqlParserCommand> DaoConditions;
+
+#define likeL(v)QStringLiteral("%")+v
+#define likeR(v)v+QStringLiteral("%")
+#define likeLR(v)QStringLiteral("%")+v+QStringLiteral("%")
+
+#define vlikeL(v)likeL(QVariant(v).toString())
+#define vlikeR(v)likeR(QVariant(v).toString())
+#define vlikeLR(v)likeLR(QVariant(v).toString())
+
+#define vpsFiltrableStrategyLikeLR \
+QVariantHash{QStringLiteral("operator"),QOrm::koLike}, {QStringLiteral("format"),QStringLiteral("%%1cS%")}}
+
+#define vpsFiltrableStrategyLikeL \
+QVariantHash{{QStringLiteral("operator"),QOrm::koLike}, {QStringLiteral("format"),QStringLiteral("%%1")}}
+
+#define vpsFiltrableStrategyLikeR \
+QVariantHash{{QStringLiteral("operator"),QOrm::koLike}, {QStringLiteral("format"),QStringLiteral("%1%")}}
+
 
 //!
 //! \brief The ModelDao class
@@ -49,14 +68,14 @@ public:
         strategy.limit(1).fieldsFrom(modelRef);
         QVariant value;
         if (v.isValid()) {
-            SearchParameters vv(this->variantToParameters(v));
+            SearchParameters vv{this->variantToParameters(v)};
             vv += this->modelRef.tableDeactivateField();
             value = vv.buildVariant();
         }
         if (value.isValid())
             strategy.where().condition(value);
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
 
         if (!query.next())
             return this->lr() = false;
@@ -68,7 +87,7 @@ public:
     //! \brief recordList
     //! \return
     //!
-    auto &recordList() { return this->recordList(QVariant()); }
+    auto &recordList() { return this->recordList({}); }
 
     //!
     //! \brief recordList
@@ -94,7 +113,7 @@ public:
             strategy.orderby().f(v);
 
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
 
         return this->lr(query.makeRecordList());
     }
@@ -103,7 +122,7 @@ public:
     //! \brief recordMap
     //! \return
     //!
-    auto &recordMap() { return this->recordMap(QVariant()); }
+    auto &recordMap() { return this->recordMap({}); }
 
     //!
     //! \brief recordMap
@@ -131,7 +150,7 @@ public:
         }
 
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
 
         QVariantHash vHash;
         for (auto &v : query.makeRecordList()) {
@@ -141,15 +160,15 @@ public:
             for (auto &pkField : tablePk) {
                 const auto property = modelRef.propertyByFieldName(pkField);
                 const auto vMapValue = vMap.value(pkField);
-                const auto vType = qTypeId(property);
+                const auto vType = property.typeId();
                 if (vType == vMapValue.Invalid || !vMapValue.isValid() || vMapValue.isNull())
-                    key << qsl_null;
+                    key.append("");
                 else if (vType == vMapValue.Uuid)
-                    key << vMapValue.toUuid().toString();
+                    key.append(vMapValue.toUuid().toString());
                 else if (vType == vMapValue.Url)
-                    key << vMapValue.toUrl().toString();
+                    key.append(vMapValue.toUrl().toString());
                 else
-                    key << vMapValue.toString();
+                    key.append(vMapValue.toString());
             }
             vHash.insert(key.join('.'), v);
         }
@@ -198,7 +217,7 @@ public:
         }
 
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
 
         if (!query.next())
             return this->lr() = false;
@@ -224,19 +243,19 @@ public:
             return this->lr() = false;
 
         QVariantList list;
-        switch (qTypeId(value)) {
-        case QMetaType_QVariantList: {
+        switch (value.typeId()) {
+        case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
                 T model(v);
                 model.autoMakeUuid();
-                list << model.toHashModel();
+                list.append(model.toHashModel());
             }
             break;
         }
         default:
             T model(value);
             model.autoMakeUuid();
-            list << model.toHashModel();
+            list.append(model.toHashModel());
         }
 
         for (auto &v : list) {
@@ -244,7 +263,7 @@ public:
             query.builder().insert().destine(modelRef).values(v);
 
             if (!query.exec())
-                return this->lr(query.lastError());
+                return this->lr(query.lr());
         }
         return this->lr() = true;
     }
@@ -270,23 +289,23 @@ public:
         if (value.isNull() || !value.isValid())
             return this->lr() = false;
         QVariantList list;
-        switch (qTypeId(value)) {
-        case QMetaType_QVariantList: {
+        switch (value.typeId()) {
+        case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
                 T model(v);
-                list << model.toHashModel();
+                list.append(model.toHashModel());
             }
             break;
         }
         default:
-            list << value;
+            list.append(value);
         }
         for (auto &v : list) {
             QOrm::Query query(this);
             query.builder().update().destine(modelRef).values(v);
 
             if (!query.exec())
-                return this->lr(query.lastError());
+                return this->lr(query.lr());
         }
         return this->lr() = true;
     }
@@ -316,19 +335,19 @@ public:
         if (value.isNull() || !value.isValid())
             return this->lr() = false;
         QVariantList list;
-        switch (qTypeId(value)) {
-        case QMetaType_QVariantList: {
+        switch (value.typeId()) {
+        case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
                 T model(v);
                 model.autoMakeUuid();
-                list << model.toHashModel();
+                list.append(model.toHashModel());
             }
             break;
         }
         default:
             T model(value);
             model.autoMakeUuid();
-            list << model.toHashModel();
+            list.append(model.toHashModel());
         }
 
         for (auto &v : list) {
@@ -336,7 +355,7 @@ public:
             query.builder().upsert().destine(modelRef).values(v);
 
             if (!query.exec())
-                return this->lr(query.lastError());
+                return this->lr(query.lr());
         }
         return this->lr() = true;
     }
@@ -369,16 +388,16 @@ public:
     auto &deactivate(const QVariant &value)
     {
         QVariantList list;
-        switch (qTypeId(value)) {
-        case QMetaType_QVariantList: {
+        switch (value.typeId()) {
+        case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
                 T model(v);
-                list << model.toHashModel();
+                list.append(model.toHashModel());
             }
             break;
         }
         default:
-            list << value;
+            list.append(value);
         }
         for (auto &v : list) {
             T model(this, v);
@@ -424,7 +443,7 @@ public:
         }
 
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
 
         return this->lr() = true;
     }
@@ -539,7 +558,7 @@ public:
             strategy.where().condition(value);
         }
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
         auto vList = query.makeRecordList(this->modelRef);
         if (vList.isEmpty())
             return this->lr() = false;
@@ -557,7 +576,7 @@ public:
         query.builder().structure().truncateTable(this->modelRef);
 
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
 
         if (!query.next())
             return this->lr() = false;
@@ -574,7 +593,7 @@ public:
         Query query(this);
         query.builder().structure().truncateTableCascade(this->modelRef);
         if (!query.exec())
-            return this->lr(query.lastError());
+            return this->lr(query.lr());
 
         if (!query.next())
             return this->lr() = false;
@@ -598,7 +617,7 @@ public:
         Query query(this);
         query.builder().function().nextVal(v);
         if (!query.exec())
-            return this->lr().clear() = query.lastError();
+            return this->lr().clear() = query.lr();
 
         if (!query.next())
             return this->lr().clear() = false;
@@ -652,7 +671,7 @@ public:
             ;
             auto f_value = map.value(vField.name().toString());
             if (!__return.contains(f_value))
-                __return << f_value;
+                __return.append(f_value);
         }
         return __return;
     }

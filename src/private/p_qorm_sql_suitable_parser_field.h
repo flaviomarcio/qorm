@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./p_qorm_sql_suitable_parser_item.h"
+//#include "../../qstm/src/qstm_macro.h"
 
 namespace QOrm {
 
@@ -22,45 +23,45 @@ template<class TemplateParent>
 class SqlParserFields: public SqlParserCommand{
 public:
     TemplateParent*parent=nullptr;
-    explicit SqlParserFields(const QVariant &v=QVariant()):SqlParserCommand(v)
+    explicit SqlParserFields(const QVariant &v={}):SqlParserCommand{v}
     {
     }
-    explicit SqlParserFields(TemplateParent*parent, const QVariant &v=QVariant()):SqlParserCommand(v)
+    explicit SqlParserFields(TemplateParent*parent, const QVariant &v={}):SqlParserCommand{v}
     {
         this->parent=parent;
     }
     auto &f(const QVariant &v)
     {
-        this->insert(qsl("f.")+QUuid::createUuid().toString(),v);
+        this->insert(QStringLiteral("f.")+QUuid::createUuid().toString(),v);
         return*this;
     }
     auto &as(const QVariant &name, const QVariant &nameAs)
     {
-        return this->f(SqlParserField(KeywordGrouping::kgNone, name, nameAs, QVariant(), QVariant()));
+        return this->f(SqlParserField(KeywordGrouping::kgNone, name, nameAs, {}, {}));
     }
     auto &as(const QVariant &name, const QVariant &nameAs, const QVariant &defaultValue)
     {
-        return this->f(SqlParserField(KeywordGrouping::kgNone, name, nameAs, QVariant(), defaultValue));
+        return this->f(SqlParserField(KeywordGrouping::kgNone, name, nameAs, {}, defaultValue));
     }
     auto &sum(const QVariant &name, const QVariant &nameAs, const QVariant &defaultValue)
     {
-        return this->f(SqlParserField(KeywordGrouping::kgSumAs, name, nameAs, QVariant(), defaultValue));
+        return this->f(SqlParserField(KeywordGrouping::kgSumAs, name, nameAs, {}, defaultValue));
     }
     auto &max(const QVariant &name, const QVariant &nameAs, const QVariant &defaultValue)
     {
-        return this->f(SqlParserField(KeywordGrouping::kgMaxAs, name, nameAs, QVariant(), defaultValue));
+        return this->f(SqlParserField(KeywordGrouping::kgMaxAs, name, nameAs, {}, defaultValue));
     }
     auto &min(const QVariant &name, const QVariant &nameAs, const QVariant &defaultValue)
     {
-        return this->f(SqlParserField(KeywordGrouping::kgMinAs, name, nameAs, QVariant(), defaultValue));
+        return this->f(SqlParserField(KeywordGrouping::kgMinAs, name, nameAs, {}, defaultValue));
     }
     auto &avg(const QVariant &name, const QVariant &nameAs, const QVariant &defaultValue)
     {
-        return this->f(SqlParserField(KeywordGrouping::kgAvgAs, name, nameAs, QVariant(), defaultValue));
+        return this->f(SqlParserField(KeywordGrouping::kgAvgAs, name, nameAs, {}, defaultValue));
     }
     auto &count()
     {
-        return this->f(SqlParserField(KeywordGrouping::kgCountAs, 1, qsl("rows"), 1, 0));
+        return this->f(SqlParserField(KeywordGrouping::kgCountAs, 1, QStringLiteral("rows"), 1, 0));
     }
     auto &count(const QVariant &name, const QVariant &nameAs, const QVariant &defaultValue)
     {
@@ -70,8 +71,8 @@ public:
 
         auto _nameAs=nameAs.toString();
         if(_nameAs.isNull())
-            _nameAs=qsl("rows");
-        return this->f(SqlParserField(KeywordGrouping::kgCountAs, _name, _nameAs, QVariant(), defaultValue));
+            _nameAs=QStringLiteral("rows");
+        return this->f(SqlParserField(KeywordGrouping::kgCountAs, _name, _nameAs, {}, defaultValue));
     }
 
 };

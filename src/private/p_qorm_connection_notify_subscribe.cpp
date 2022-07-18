@@ -1,4 +1,13 @@
 #include "./p_qorm_connection_notify_subscribe.h"
+#include "../qorm_macro.h"
+#include "../qorm_connection_manager.h"
+#include "../../../qstm/src/qstm_util_variant.h"
+#include <QSqlError>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QSqlQuery>
+
 
 namespace QOrm {
 
@@ -107,7 +116,7 @@ bool ConnectionNotifySubscribe::queueStart()
 
     for(auto &v:this->subscribeToNotification){
         if(!this->connectedDriver->subscribeToNotification(v)){
-            sWarning()<<tr("Invalid channel(%1) for subscribeToNotification").arg(v);
+            oWarning()<<tr("Invalid channel(%1) for subscribeToNotification").arg(v);
             continue;
         }
         QObject::connect(this->connectedDriver, QOverload<const QString &, QSqlDriver::NotificationSource, const QVariant &>::of(&QSqlDriver::notification), this, &ConnectionNotifySubscribe::onNotificationReceive);
@@ -138,17 +147,17 @@ bool ConnectionNotifySubscribe::queueSend(const QString &channel, const QVariant
     auto channelList=channel.trimmed().isEmpty()?this->subscribeToNotification:QStringList{channel.trimmed()};
 
     auto &v=payload;
-    switch (qTypeId(v)) {
-    case QMetaType_QVariantHash:
-    case QMetaType_QVariantMap:
-    case QMetaType_QVariantList:
-    case QMetaType_QStringList:
+    switch (v.typeId()) {
+    case QMetaType::QVariantHash:
+    case QMetaType::QVariantMap:
+    case QMetaType::QVariantList:
+    case QMetaType::QStringList:
         payloadBytes=QJsonDocument::fromVariant(payload).toJson(QJsonDocument::Compact).trimmed().toHex();
         break;
-    case QMetaType_QUuid:
+    case QMetaType::QUuid:
         payloadBytes=v.toUuid().toString();
         break;
-    case QMetaType_QUrl:
+    case QMetaType::QUrl:
         payloadBytes=v.toUrl().toString();
         break;
     default:
@@ -158,12 +167,12 @@ bool ConnectionNotifySubscribe::queueSend(const QString &channel, const QVariant
     QSqlDatabase localConnection;
 
     if(payloadBytes.isEmpty()){
-        sWarning()<<tr("payload is empty");
+        oWarning()<<tr("payload is empty");
         return false;
     }
 
     if(!this->pool.get(localConnection)){
-        sWarning()<<tr("invalid connection on subscriber");
+        oWarning()<<tr("invalid connection on subscriber");
         return false;
     }
 
@@ -171,14 +180,14 @@ bool ConnectionNotifySubscribe::queueSend(const QString &channel, const QVariant
     const auto dbmsType = this->dbmsType();
     if(dbmsType==QSqlDriver::PostgreSQL){
         for(auto &channel:channelList)
-            commandList<<qsl("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
+            commandList<<QStringLiteral("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
     }
 
     auto __return=false;
     for(auto &command:commandList){
         auto q=localConnection.exec(command);
         if(q.lastError().type()!=QSqlError::NoError){
-            sWarning()<<tr("invalid execute %1").arg(q.lastError().text());
+            oWarning()<<tr("invalid execute %1").arg(q.lastError().text());
             break;
         }
 

@@ -1,5 +1,5 @@
 #include "./qorm_model_descriptor.h"
-#include "./private/p_qorm_const.h"
+//#include "./private/p_qorm_const.h"
 #include <QMetaProperty>
 #include <QRect>
 

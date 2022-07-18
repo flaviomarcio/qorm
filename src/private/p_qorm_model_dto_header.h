@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./p_qorm_model_dto_types.h"
+#include "../../qstm/src/qstm_object.h"
 
 namespace QOrm {
 
@@ -22,18 +23,17 @@ public:
 
     Q_ENUM(FilterStyle)
 
-    Q_PROPERTY(QVariant order READ order WRITE setOrder NOTIFY widthChanged)
+    Q_PROPERTY(QVariant order READ order WRITE setOrder NOTIFY orderChanged)
     Q_PROPERTY(QVariant dataType READ dataType WRITE setDataType NOTIFY dataTypeChanged)
-    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY textChanged)
-    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaulChanged)
-    Q_PROPERTY(QVariant text READ text WRITE setText NOTIFY valueChanged)
-    Q_PROPERTY(QVariant length READ length WRITE setLength NOTIFY typeChanged)
-    Q_PROPERTY(QVariant width READ width WRITE setWidth NOTIFY orderChanged)
-    Q_PROPERTY(QVariant align READ align WRITE setAlign NOTIFY filtrableChanged)
-    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY sortableChanged)
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(QVariant text READ text WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(QVariant length READ length WRITE setLength NOTIFY lengthChanged)
+    Q_PROPERTY(QVariant width READ width WRITE setWidth NOTIFY widthChanged)
+    Q_PROPERTY(QVariant align READ align WRITE setAlign NOTIFY alignChanged)
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(bool editable READ editable WRITE setEditable NOTIFY editableChanged)
-    Q_PROPERTY(bool sortable READ sortable WRITE setSortable NOTIFY visibleChanged)
-    Q_PROPERTY(bool filtrable READ filtrable WRITE setFiltrable NOTIFY alignChanged)
+    Q_PROPERTY(bool sortable READ sortable WRITE setSortable NOTIFY sortableChanged)
+    Q_PROPERTY(bool filtrable READ filtrable WRITE setFiltrable NOTIFY filtrableChanged)
     Q_PROPERTY(QVariant filterStyle READ filterStyle WRITE setFilterStyle NOTIFY filterStyleChanged)
     Q_PROPERTY(QVariant filtrableStrategy READ filtrableStrategy WRITE setFiltrableStrategy NOTIFY filtrableStrategyChanged)
     Q_PROPERTY(QVariant readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
@@ -145,7 +145,7 @@ public:
     }
     virtual ModelDtoHeader &primaryKey(const QVariant &primaryKey)
     {
-        return this->setDisplayer(primaryKey);
+        return this->setPrimaryKey(primaryKey);
     }
     virtual ModelDtoHeader &setPrimaryKey(const QVariant &primaryKey)
     {
@@ -510,7 +510,7 @@ public:
     //! \param v
     //! \param parent
     //!
-    explicit ModelDtoHeaders(T*dto, const QVariantHash&v, QObject*parent=nullptr):QStm::Object{parent}
+    explicit ModelDtoHeaders(T*dto, const QVariantHash &v, QObject*parent=nullptr):QStm::Object{parent}
     {
         Q_UNUSED(v)
         this->___d=dto;
@@ -600,7 +600,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual ModelDtoHeader<T> &value(const QVariantHash&v)
+    virtual ModelDtoHeader<T> &value(const QVariantHash &v)
     {
         auto value=v.value(vpField).toString();
         auto object=this->___objectMap.value(value);

@@ -14,6 +14,7 @@ SqlParserValues::SqlParserValues(const QVariant &v):SqlParserCommand(v)
 {
 }
 
+
 SqlParserValues &SqlParserValues::value(const QVariant &v)
 {
     SqlParserItem*c=nullptr;
@@ -28,14 +29,17 @@ SqlParserValues &SqlParserValues::value(const QVariant &v)
         this->setPointer(c->makeUuid().toString(), c);
     }
 
-    auto typeId=qTypeId(v);
-    if(QMetaTypeUtilVariantList.contains(typeId)){
+    switch (v.typeId()) {
+    case QMetaType::QVariantList:
+    case QMetaType::QStringList:
+    {
         for(auto &i:v.toList())
             this->value(i);
         return*this;
     }
-
-    if(QMetaTypeUtilVariantDictionary.contains(typeId)){
+    case QMetaType::QVariantHash:
+    case QMetaType::QVariantMap:
+    {
         QHashIterator<QString, QVariant> i(v.toHash());
         while (i.hasNext()) {
             i.next();
@@ -43,9 +47,10 @@ SqlParserValues &SqlParserValues::value(const QVariant &v)
         }
         return*this;
     }
-
-    this->value(v);
-    return*this;
+    default:
+        this->value(v);
+        return*this;
+    }
 }
 
 SqlParserValues &SqlParserValues::v(const QVariant &v)

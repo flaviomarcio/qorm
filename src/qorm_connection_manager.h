@@ -3,14 +3,14 @@
 #include "./qorm_connection_notify.h"
 #include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
-#include <QSettings>
+#include "./qorm_object.h"
 
 namespace QOrm {
 class ConnectionManagerPvt;
 //!
 //! \brief The ConnectionManager class
 //!
-class Q_ORM_EXPORT ConnectionManager : public QStm::Object
+class Q_ORM_EXPORT ConnectionManager : public QOrm::Object
 {
     Q_OBJECT
 public:
@@ -33,11 +33,6 @@ public:
     //! \param parent
     //!
     Q_INVOKABLE explicit ConnectionManager(const QVariant &setting, QObject *parent = nullptr);
-
-    //!
-    //! \brief ~ConnectionManager
-    //!
-    ~ConnectionManager();
 
     Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment NOTIFY enviromentChanged)
     Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey NOTIFY secreChanged)

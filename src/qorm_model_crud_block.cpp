@@ -1,10 +1,8 @@
 #include "./qorm_model_crud_block.h"
 #include "../../qstm/src/qstm_util_variant.h"
+#include "./private/p_qorm_model_crud_body.h"
 
 namespace QOrm {
-
-#define dPvt()\
-    auto &p = *reinterpret_cast<CRUDBlockPvt*>(this->p)
 
 class CRUDBlockPvt:public QObject{
 public:
@@ -139,19 +137,19 @@ ResultValue &CRUDBlock::crudify()
 
     {
         auto vCrudSource=crudBody.source().toHash();
-        if(vCrudSource.contains(qsl("pages"))){
-            auto vList=vCrudSource[qsl("pages")].toList();
+        if(vCrudSource.contains(QStringLiteral("pages"))){
+            auto vList=vCrudSource[QStringLiteral("pages")].toList();
             for(auto &v:vList){
                 auto vHash=v.toHash();
                 QVariant vCrudBody;
-                if(vHash.contains(qsl("items"))){
-                    auto vItems=vHash.value(qsl("items")).toList();
+                if(vHash.contains(QStringLiteral("items"))){
+                    auto vItems=vHash.value(QStringLiteral("items")).toList();
                     vCrudBody=vItems;
                 }
                 else{
                     vCrudBody=vHash;
                 }
-                auto crudUuid=vHash[qsl("uuid")].toUuid().toString();
+                auto crudUuid=vHash[QStringLiteral("uuid")].toUuid().toString();
                 crudPages.insert(crudUuid, vCrudBody);
             }
         }
@@ -178,8 +176,8 @@ ResultValue &CRUDBlock::crudify()
         }
         else if(vu.vIsMap(crudSource)){
             auto vHash=crudSource.toHash();
-            if(vHash.contains(qsl("uuid")) && vHash.contains(qsl("items"))){
-                auto list=vHash[qsl("items")].toList();
+            if(vHash.contains(QStringLiteral("uuid")) && vHash.contains(QStringLiteral("items"))){
+                auto list=vHash[QStringLiteral("items")].toList();
                 for(auto &v:list)
                     crudList.append(CRUDBody{crudBody.strategy(), v});
             }
@@ -195,21 +193,21 @@ ResultValue &CRUDBlock::crudify()
         auto makeItem=[&__return, &crudBody](PrivateQOrm::CRUDBase *crud, const QVariant &crudSource){
             CRUDBody crudRecord{crudBody.strategy(), crudSource};
 
-            auto lastCrud=__return.isEmpty()?qvh_null:__return.last().toHash();
+            auto lastCrud=__return.isEmpty()?QVariantHash{}:__return.last().toHash();
             if(lastCrud.isEmpty())
                 return crudRecord;
 
             QVariantHash vHash;
             auto record=lastCrud;
-            if(lastCrud.contains(qsl("pages"))){
-                auto crud=lastCrud[qsl("pages")].toList();
+            if(lastCrud.contains(QStringLiteral("pages"))){
+                auto crud=lastCrud[QStringLiteral("pages")].toList();
                 if(!crud.isEmpty()){
                     vHash = crud.first().toHash();
-                    if(vHash.contains(qsl("items")))
+                    if(vHash.contains(QStringLiteral("items")))
                         record=vHash;
                     else{
-                        crud=vHash[qsl("items")].toList();
-                        record=crud.isEmpty()?qvh_null:crud.first().toHash();
+                        crud=vHash[QStringLiteral("items")].toList();
+                        record=crud.isEmpty()?QVariantHash{}:crud.first().toHash();
                     }
                 }
             }
@@ -251,7 +249,7 @@ ResultValue &CRUDBlock::crudify()
         return this->lr().clear();
     default:
         auto vPage=__return.first().toHash();
-        return this->lr(qvh{{qsl("type"), vPage.value(qsl("type"))}, {qsl("pages"),__return}});
+        return this->lr(QVariantHash{{QStringLiteral("type"), vPage.value(QStringLiteral("type"))}, {QStringLiteral("pages"),__return}});
     }
 }
 

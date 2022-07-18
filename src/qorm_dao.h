@@ -2,7 +2,6 @@
 
 #include "./qorm_object_db.h"
 #include "./qorm_sql_suitable_value.h"
-#include "./qorm_wrapper.h"
 
 namespace QOrm {
 class DaoPvt;

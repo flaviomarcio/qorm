@@ -1,8 +1,11 @@
 #include "./qorm_sql_suitable_value.h"
-#include "./qorm_macro.h"
+#include "../../qstm/src/qstm_macro.h"
 #include <QMetaType>
 #include <QUrl>
 #include <QUuid>
+#include <QSqlDriver>
+#include <QVariant>
+#include <QDateTime>
 
 Q_GLOBAL_STATIC_WITH_ARGS(QByteArray, static_null, ("null"))
 //typedef QHash<int, QString> TypeVariantType;
@@ -13,16 +16,16 @@ namespace QOrm {
 static const QHash<QString, QString> &ChartoUtf8()
 {
     static auto __return = QHash<QString, QString>(
-        {{qsl("õe"), qsl("oe")}, {qsl("ão"), qsl("ao")}, {qsl("ã"), qsl("a")},
-         {qsl("á"), qsl("a")},   {qsl("Á"), qsl("a")},   {qsl("ã"), qsl("a")},
-         {qsl("Ã"), qsl("a")},   {qsl("â"), qsl("a")},   {qsl("Â"), qsl("a")},
-         {qsl("é"), qsl("e")},   {qsl("É"), qsl("e")},   {qsl("ê"), qsl("e")},
-         {qsl("Ê"), qsl("e")},   {qsl("í"), qsl("i")},   {qsl("Í"), qsl("i")},
-         {qsl("õ"), qsl("o")},   {qsl("Õ"), qsl("o")},   {qsl("ô"), qsl("o")},
-         {qsl("Ô"), qsl("o")},   {qsl("ó"), qsl("o")},   {qsl("Ó"), qsl("o")},
-         {qsl("ú"), qsl("u")},   {qsl("Ú"), qsl("u")},   {qsl("ç"), qsl("c")},
-         {qsl("Ç"), qsl("c")},   {qsl("ª"), qsl("_")},   {qsl("º"), qsl("_")},
-         {qsl("°"), qsl("_")}});
+        {{QStringLiteral("õe"), QStringLiteral("oe")}, {QStringLiteral("ão"), QStringLiteral("ao")}, {QStringLiteral("ã"), QStringLiteral("a")},
+         {QStringLiteral("á"), QStringLiteral("a")},   {QStringLiteral("Á"), QStringLiteral("a")},   {QStringLiteral("ã"), QStringLiteral("a")},
+         {QStringLiteral("Ã"), QStringLiteral("a")},   {QStringLiteral("â"), QStringLiteral("a")},   {QStringLiteral("Â"), QStringLiteral("a")},
+         {QStringLiteral("é"), QStringLiteral("e")},   {QStringLiteral("É"), QStringLiteral("e")},   {QStringLiteral("ê"), QStringLiteral("e")},
+         {QStringLiteral("Ê"), QStringLiteral("e")},   {QStringLiteral("í"), QStringLiteral("i")},   {QStringLiteral("Í"), QStringLiteral("i")},
+         {QStringLiteral("õ"), QStringLiteral("o")},   {QStringLiteral("Õ"), QStringLiteral("o")},   {QStringLiteral("ô"), QStringLiteral("o")},
+         {QStringLiteral("Ô"), QStringLiteral("o")},   {QStringLiteral("ó"), QStringLiteral("o")},   {QStringLiteral("Ó"), QStringLiteral("o")},
+         {QStringLiteral("ú"), QStringLiteral("u")},   {QStringLiteral("Ú"), QStringLiteral("u")},   {QStringLiteral("ç"), QStringLiteral("c")},
+         {QStringLiteral("Ç"), QStringLiteral("c")},   {QStringLiteral("ª"), QStringLiteral("_")},   {QStringLiteral("º"), QStringLiteral("_")},
+         {QStringLiteral("°"), QStringLiteral("_")}});
     return __return;
 }
 
@@ -49,17 +52,17 @@ public:
 
 QString SqlSuitableValue::Format::timesTamp() const
 {
-    return qsl("yyyy-MM-dd hh:mm:ss.zzz");
+    return QStringLiteral("yyyy-MM-dd hh:mm:ss.zzz");
 }
 
 QString SqlSuitableValue::Format::date() const
 {
-    return qsl("yyyy-MM-dd");
+    return QStringLiteral("yyyy-MM-dd");
 }
 
 QString SqlSuitableValue::Format::time() const
 {
-    return qsl("hh:mm:ss.zzz");
+    return QStringLiteral("hh:mm:ss.zzz");
 }
 
 int SqlSuitableValue::Format::doublePrecision() const
@@ -74,14 +77,14 @@ int SqlSuitableValue::Format::currencyPrecision() const
 
 SqlSuitableValue::SqlSuitableValue(QSqlDatabase db, QObject *parent):QObject{parent}
 {
-    this->p = new SqlSuitableValuePvt();
+    this->p = new SqlSuitableValuePvt(this);
     this->setConnection(db);
 }
 
 SqlSuitableValue::SqlSuitableValue(QObject *parent):QObject{parent}
 {
-    this->p = new SqlSuitableValuePvt();
-    this->setConnection(QSqlDatabase());
+    this->p = new SqlSuitableValuePvt(this);
+    this->setConnection({});
 }
 
 SqlSuitableValue::~SqlSuitableValue()
@@ -127,20 +130,20 @@ QString SqlSuitableValue::toCur(const double &v)
 QString SqlSuitableValue::toStr(const QString &v)
 {
     if (v.isEmpty() || v.isNull() || v.startsWith(QChar('\0')))
-        return qsl("''");
+        return QStringLiteral("''");
 
-    auto str = QString(v).replace(qsl("'"), qsl_space).trimmed();
-    return qsl("'%1'").arg(str);
+    auto str = QString(v).replace(QStringLiteral("'"), QStringLiteral(" ").trimmed());
+    return QStringLiteral("'%1'").arg(str);
 }
 
 QString SqlSuitableValue::toStr(const QByteArray &v)
 {
-    return QString(v).replace(qsl("'"), qsl_space);
+    return QString(v).replace(QStringLiteral("'"), QStringLiteral(" "));
 }
 
 QString SqlSuitableValue::toStrPure(const QString &v)
 {
-    return QString(v).replace(qsl("'"), qsl_space);
+    return QString(v).replace(QStringLiteral("'"), QStringLiteral(" "));
 }
 
 QString SqlSuitableValue::toDat(const QDateTime &v)
@@ -188,47 +191,47 @@ QString SqlSuitableValue::toBoo(const bool &v)
     case QSqlDriver::SQLite:
         return this->toInt(v ? 1 : 0);
     default:
-        return v ? qsl("true") : qsl("false");
+        return v ? QStringLiteral("true") : QStringLiteral("false");
     }
 }
 
 QString SqlSuitableValue::toVar(const QVariant &v)
 {
-    return this->toVar(v, qTypeId(v));
+    return this->toVar(v, v.typeId());
 }
 
 QString SqlSuitableValue::toVar(const QVariant &v, const int &vType)
 {
     switch (vType) {
-    case QMetaType_Int:
+    case QMetaType::Int:
         return SqlSuitableValue::toInt(v.toInt());
-    case QMetaType_UInt:
+    case QMetaType::UInt:
         return SqlSuitableValue::toInt(v.toInt());
-    case QMetaType_LongLong:
+    case QMetaType::LongLong:
         return SqlSuitableValue::toLng(v.toLongLong());
-    case QMetaType_ULongLong:
+    case QMetaType::ULongLong:
         return SqlSuitableValue::toLng(v.toLongLong());
-    case QMetaType_Double:
+    case QMetaType::Double:
         return SqlSuitableValue::toDbl(v.toDouble());
-    case QMetaType_Bool:
+    case QMetaType::Bool:
         return SqlSuitableValue::toBoo(v.toBool());
-    case QMetaType_QString:
+    case QMetaType::QString:
         return toStr(v.toString());
-    case QMetaType_QByteArray:
+    case QMetaType::QByteArray:
         return toStr(v.toString());
-    case QMetaType_QBitArray:
+    case QMetaType::QBitArray:
         return toStr(v.toString());
-    case QMetaType_QChar:
+    case QMetaType::QChar:
         return toStr(v.toString());
-    case QMetaType_QDate:
+    case QMetaType::QDate:
         return v.toDate().isValid() ? this->toDat(v.toDate()) : *static_null;
-    case QMetaType_QTime:
+    case QMetaType::QTime:
         return v.toTime().isValid() ? this->toTim(v.toTime()) : *static_null;
-    case QMetaType_QDateTime:
+    case QMetaType::QDateTime:
         return v.toDateTime().isValid() ? this->toDat(v.toDateTime()) : *static_null;
-    case QMetaType_QUrl:
+    case QMetaType::QUrl:
         return toStr(v.toUrl().toString());
-    case QMetaType_QUuid:
+    case QMetaType::QUuid:
         return v.toUuid().isNull() ? *static_null : toStr(v.toUuid().toByteArray());
     default:
         return *static_null;
@@ -237,17 +240,17 @@ QString SqlSuitableValue::toVar(const QVariant &v, const int &vType)
 
 QString SqlSuitableValue::toLikeLR(const QVariant &v)
 {
-    return qsl("%") + SqlSuitableValuePvt::parserTextLike(v) + qsl("%");
+    return QStringLiteral("%") + SqlSuitableValuePvt::parserTextLike(v) + QStringLiteral("%");
 }
 
 QString SqlSuitableValue::toLikeL(const QVariant &v)
 {
-    return qsl("%") + SqlSuitableValuePvt::parserTextLike(v);
+    return QStringLiteral("%") + SqlSuitableValuePvt::parserTextLike(v);
 }
 
 QString SqlSuitableValue::toLikeR(const QVariant &v)
 {
-    return SqlSuitableValuePvt::parserTextLike(v) + qsl("%");
+    return SqlSuitableValuePvt::parserTextLike(v) + QStringLiteral("%");
 }
 
 QSqlDatabase SqlSuitableValue::connection()

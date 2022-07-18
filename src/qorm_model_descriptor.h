@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../../qstm/src/qstm_types.h"
-//#include "./private/p_qorm_model_controls.h"
-#include "./private/p_qorm_model_dto_endpoints.h"
 #include <QVariant>
 #include <QVariantHash>
 #include <QVariantMap>
+#include "./qorm_model_macro.h"
+#include "./private/p_qorm_model_dto_endpoints.h"
+//#include "../../qstm/src/qstm_types.h"
+//#include "./private/p_qorm_model_controls.h"
 
 //#define Q_ORM_MODEL_SET_VALUES(W,H,R) this->setValues(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
 
@@ -15,8 +16,7 @@
 
 #define Q_ORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value);
 
-#define Q_ORM_MODEL_SET_DESCRIPTOR(propertyName, propertyValue) \
-    this->addDescriptor(QStringLiteral(#propertyName), propertyValue);
+#define Q_ORM_MODEL_SET_DESCRIPTOR(propertyName, propertyValue) addDescriptor(QStringLiteral(#propertyName), propertyValue);
 
 #define Q_ORM_MODEL_SET_EDIT(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
@@ -34,8 +34,7 @@
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addOption(QStringLiteral(#propertyName), propertyValue);
 
-#define Q_ORM_MODEL_DECLARE_HOST(VALUES)\
-this->addHost(VALUES);
+#define Q_ORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES);
 
 #define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
 const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).uuid().toString();

@@ -1,7 +1,8 @@
 #include "./qorm_model_dto.h"
 #include "./qorm_model.h"
 #include "./qorm_startup.h"
-
+#include "./qorm_const.h"
+#include "./qorm_macro.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -18,13 +19,13 @@ Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
 static void initDtoSettingsCache()
 {
     QVariantHash __dtoSettings;
-    QDir dir(qsl(":"));
-    dir.setNameFilters(QStringList{qsl("settings.qorm.dto.json")});
+    QDir dir(QStringLiteral(":"));
+    dir.setNameFilters(QStringList{QStringLiteral("settings.qorm.dto.json")});
     for (auto &info : dir.entryInfoList()) {
         QFile fileSrc(info.filePath());
         if (!fileSrc.open(fileSrc.ReadOnly))
 #if Q_ORM_LOG
-            sWarning() << qsl("No open file:") << fileSrc.fileName() << qsl(", error: ")
+            oWarning() << QStringLiteral("No open file:") << fileSrc.fileName() << QStringLiteral(", error: ")
                        << fileSrc.errorString();
 #endif
         continue;
@@ -33,11 +34,11 @@ static void initDtoSettingsCache()
         fileSrc.close();
         QVariantList vList;
         auto vDoc = QJsonDocument::fromJson(bytes).toVariant();
-        switch (qTypeId(vDoc)) {
-        case QMetaType_QVariantHash:
-        case QMetaType_QVariantMap:
-        case QMetaType_QVariantList:
-        case QMetaType_QStringList:
+        switch (vDoc.typeId()) {
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
             vList << vDoc;
             break;
         default:

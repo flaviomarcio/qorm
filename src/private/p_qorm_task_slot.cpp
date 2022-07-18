@@ -1,5 +1,9 @@
 #include "./p_qorm_task_slot.h"
 #include "./p_qorm_task_pool.h"
+#include "../qorm_task_runner.h"
+#include "../qorm_connection_pool.h"
+#include "../qorm_connection_setting.h"
+#include <QSqlError>
 
 namespace QOrm {
 
@@ -91,10 +95,10 @@ private slots:
     void onTaskSend(const QVariant &task)
     {
         QVariantHash vTask;
-        vTask[qsl("request")] = task;
+        vTask[QStringLiteral("request")] = task;
         emit this->parent->taskStart(vTask);
         if (!this->connectionCheck()) {
-            vTask[qsl("error")] = qsl("Invalid connection on Slot");
+            vTask[QStringLiteral("error")] = QStringLiteral("Invalid connection on Slot");
             this->methodFailed(this->connection, task);
             emit this->parent->taskError(vTask);
             emit this->parent->taskRequest(this->parent);
@@ -102,14 +106,14 @@ private slots:
         }
 
         auto response = this->methodExecute(this->connection, task);
-        vTask[qsl("response")] = response;
+        vTask[QStringLiteral("response")] = response;
         this->connection.close();
         if (!this->connection.open()) {
-            vTask[qsl("error")] = connection.lastError().text();
+            vTask[QStringLiteral("error")] = connection.lastError().text();
             this->methodFailed(this->connection, vTask);
         } else {
             auto r = this->methodSuccess(this->connection, response);
-            vTask[qsl("response")] = r;
+            vTask[QStringLiteral("response")] = r;
         }
         emit this->parent->taskSuccess(vTask);
         emit this->parent->taskRequest(this->parent);

@@ -1,15 +1,13 @@
 #pragma once
 
 #include "../qorm_sql_suitable_builder.h"
-#include "../qorm_object_db.h"
-#include "../qorm_model.h"
 #include "../qorm_query.h"
 #include <QThread>
 #include <QDir>
 #include <QMutex>
-#include <QtSql/QSqlRecord>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QCoreApplication>
 
 namespace QOrm{
@@ -55,9 +53,9 @@ public:
 
     bool makeModelMetaObject(QMetaObject&metaObject);
 
-    void writeLog(const QString &scriptSQL, const QSqlError&error);
+    void writeLog(const QString &scriptSQL, const QSqlError &error);
 
-    void writeLogFinish(const QSqlError&error);
+    void writeLogFinish(const QSqlError &error);
 
 };
 

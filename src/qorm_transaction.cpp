@@ -1,5 +1,7 @@
 #include "./qorm_transaction.h"
+#include "./qorm_macro.h"
 #include <QMutex>
+#include <QSqlError>
 
 namespace QOrm {
 
@@ -25,28 +27,28 @@ public:
         auto obj = ___connections->key(cnn);
 
         if (cnn.isEmpty()) {
-            this->failTryException(qsl("Fail:Invalid connection on transaction"));
+            this->failTryException(QStringLiteral("Fail:Invalid connection on transaction"));
             return;
         }
 
         if (obj == this->parent) {
-            this->failTryException(qsl("Double transaction on the same object"));
+            this->failTryException(QStringLiteral("Double transaction on the same object"));
             return;
         }
 
         if (obj != nullptr) {
-            this->failTryException(qsl("Double transaction in connection on the other object"));
+            this->failTryException(QStringLiteral("Double transaction in connection on the other object"));
             return;
         }
 
-        QMutexLOCKER locker(___mutex_cache);
+        QMutexLocker<QMutex> locker(___mutex_cache);
         ___connections->insert(this->parent, cnn);
         this->objTran = this->parent;
     }
 
     void objUnreg()
     {
-        QMutexLOCKER locker(___mutex_cache);
+        QMutexLocker<QMutex> locker(___mutex_cache);
         auto cnn = this->parent->connection().connectionName();
         auto obj = ___connections->key(cnn);
         if (obj == this->parent) {
@@ -65,7 +67,7 @@ public:
     {
         this->parent->lr().setCritical(v);
         if (!this->exceptionOnFail)
-            sWarning() << qsl("dangerous failure detected and ignored during try-rollback, "
+            oWarning() << QStringLiteral("dangerous failure detected and ignored during try-rollback, "
                               "try-transaction or try-commit");
         else
             qFatal("dangerous failure detected and ignored during try-rollback, try-transaction or "
@@ -78,7 +80,7 @@ public:
         if (this->objTran != nullptr)
             return this->objTran;
 
-        QMutexLOCKER locker(___mutex_cache);
+        QMutexLocker<QMutex> locker(___mutex_cache);
         auto cnn = this->parent->connectionId();
         if (!cnn.isEmpty()) {
             this->objTran = ___connections->key(cnn);
@@ -140,8 +142,8 @@ ResultValue &Transaction::commit()
             this->lr() = db.commit();
         else {
             this->lr() = db.rollback();
-            sWarning() << qsl("Detected error on commit, automatic rollback");
-            sWarning() << this->lr().toString();
+            oWarning() << QStringLiteral("Detected error on commit, automatic rollback");
+            oWarning() << this->lr().toString();
         }
 
         p->objUnreg();
@@ -209,7 +211,7 @@ void Transaction::setRollbackOnError(bool value)
 {
 
     if (!value)
-        sWarning() << qsl(
+        oWarning() << QStringLiteral(
             "in the business structure disable autorollback this can be very, very dangerous");
     p->rollbackOnError = value;
 }
@@ -224,7 +226,7 @@ void Transaction::setExceptionOnFail(bool value)
 {
 
     if (!value)
-        sWarning() << qsl(
+        oWarning() << QStringLiteral(
             "in the business structure disable autorollback this can be very, very dangerous");
     p->exceptionOnFail = value;
 }

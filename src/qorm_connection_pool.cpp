@@ -1,15 +1,16 @@
 #include "./qorm_connection_pool.h"
 #include "./private/p_qorm_sql_suitable_parser_keywork.h"
+#include "./qorm_sql_suitable_types.h"
 #include "./qorm_connection_setting.h"
 #include "./qorm_macro.h"
-#include "./qorm_startup.h"
+#include "./qorm_const.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMutex>
 #include <QSettings>
 #include <QThread>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QSqlError>
+#include <QSqlQuery>
 
 namespace QOrm {
 
@@ -18,7 +19,7 @@ Q_GLOBAL_STATIC(QStringList, static_dbcDrivers)
 
 static void init()
 {
-    QSettings setting(qsl("/etc/odbcinst.ini"), QSettings::IniFormat);
+    QSettings setting(QStringLiteral("/etc/odbcinst.ini"), QSettings::IniFormat);
     for (auto &line : setting.childGroups())
         static_dbcDrivers->append(line);
 }
@@ -39,7 +40,7 @@ public:
     {
         this->parent = parent;
         this->baseName
-            = ((this->parent != nullptr) ? this->parent->objectName().trimmed() : qsl_null).left(50);
+            = ((this->parent != nullptr) ? this->parent->objectName().trimmed() : "").left(50);
         if (!this->baseName.isEmpty())
             return;
         auto thread = QThread::currentThread();
@@ -50,7 +51,7 @@ public:
         if (!this->baseName.isEmpty())
             return;
         auto threadId = QString::number(qlonglong(QThread::currentThreadId()), 16);
-        this->baseName = qsl("pool%1").arg(threadId).left(50);
+        this->baseName = QStringLiteral("pool%1").arg(threadId).left(50);
     }
     virtual ~ConnectionPoolPvt() {}
 
@@ -95,35 +96,35 @@ public:
         auto driver = this->connectionSetting.driver().trimmed();
 
 #if Q_ORM_LOG_VERBOSE
-        sWarning() << qsl("avaliable drivers %1").arg(QSqlDatabase::drivers().join(qsl(",")));
+        oWarning() << QStringLiteral("avaliable drivers %1").arg(QSqlDatabase::drivers().join(QStringLiteral(",")));
 #endif
 
         if (driver.isEmpty()) {
 #if Q_ORM_LOG
             static const auto drivers = QSqlDatabase::drivers();
-            auto msg = qsl("driver is empty, avaliable drivers, %1").arg(drivers.join(qsl(",")));
-            this->lastError = QSqlError(qsl("NoDriver"), msg);
-            sWarning() << msg;
+            auto msg = QStringLiteral("driver is empty, avaliable drivers, %1").arg(drivers.join(QStringLiteral(",")));
+            this->lastError = QSqlError(QStringLiteral("NoDriver"), msg);
+            oWarning() << msg;
 #endif
             return {};
         }
 
         if (!QSqlDatabase::isDriverAvailable(driver)) {
 #if Q_ORM_LOG
-            auto msg = qsl("no avaliable driver: ") + driver;
-            this->lastError = QSqlError(qsl("NoDriver"), msg);
-            sWarning() << msg;
+            auto msg = QStringLiteral("no avaliable driver: ") + driver;
+            this->lastError = QSqlError(QStringLiteral("NoDriver"), msg);
+            oWarning() << msg;
 #endif
             return {};
         }
 
-        auto connectionName = qsl("%1_%2").arg(this->baseName.left(55)).arg(++connectionCount);
+        auto connectionName = QStringLiteral("%1_%2").arg(this->baseName.left(55)).arg(++connectionCount);
         auto __connection = QSqlDatabase::addDatabase(driver, connectionName);
         if (!__connection.isValid()) {
 #if Q_ORM_LOG
-            auto msg = qsl("invalid QSqlDatabase connection settings");
+            auto msg = QStringLiteral("invalid QSqlDatabase connection settings");
             this->lastError = QSqlError(driver, msg);
-            sWarning() << msg;
+            oWarning() << msg;
 #endif
             this->finish(__connection);
             return {};
@@ -131,9 +132,9 @@ public:
 
         if (!__connection.lastError().text().isEmpty()) {
 #if Q_ORM_LOG
-            auto msg = qsl("QSqlDatabase error: ") + __connection.lastError().text();
+            auto msg = QStringLiteral("QSqlDatabase error: ") + __connection.lastError().text();
             this->lastError = QSqlError(driver, msg);
-            sWarning() << msg;
+            oWarning() << msg;
 #endif
             this->finish(__connection);
             return {};
@@ -147,15 +148,15 @@ public:
         QString connectOptions = this->connectionSetting.connectOptions().trimmed();
         auto schameNames = this->connectionSetting.schemaNames();
 
-        if (__connection.driverName() == qsl("QODBC")) {
+        if (__connection.driverName() == QStringLiteral("QODBC")) {
             QString odbcDriver;
             const auto &odbcDriverList = *static_dbcDrivers;
             if (odbcDriverList.isEmpty())
                 odbcDriver.clear();
-            else if (odbcDriverList.contains(qsl("freetds")))
-                odbcDriver = qsl("freetds");
-            else if (odbcDriverList.contains(qsl("ODBC Driver 17 for SQL Server")))
-                odbcDriver = qsl("ODBC Driver 17 for SQL Server");
+            else if (odbcDriverList.contains(QStringLiteral("freetds")))
+                odbcDriver = QStringLiteral("freetds");
+            else if (odbcDriverList.contains(QStringLiteral("ODBC Driver 17 for SQL Server")))
+                odbcDriver = QStringLiteral("ODBC Driver 17 for SQL Server");
             else
                 odbcDriver = odbcDriverList.first();
 
@@ -165,22 +166,22 @@ public:
                 QSqlDatabase::removeDatabase(name);
             } else {
                 QStringList params;
-                params << qsl("Driver=%1").arg(odbcDriver);
+                params << QStringLiteral("Driver=%1").arg(odbcDriver);
                 if (!hostName.isEmpty())
-                    params << qsl("Server=%1").arg(hostName);
+                    params << QStringLiteral("Server=%1").arg(hostName);
                 if (!dataBaseName.isEmpty())
-                    params << qsl("Database=%1").arg(dataBaseName);
+                    params << QStringLiteral("Database=%1").arg(dataBaseName);
                 if (port > 0)
-                    params << qsl("Port=%1").arg(port);
+                    params << QStringLiteral("Port=%1").arg(port);
                 if (!userName.isEmpty())
-                    params << qsl("Uid=%1").arg(userName);
+                    params << QStringLiteral("Uid=%1").arg(userName);
                 if (!password.isEmpty())
-                    params << qsl("Pwd=%1").arg(password);
+                    params << QStringLiteral("Pwd=%1").arg(password);
 
                 if (readOnly)
-                    params << qsl("ApplicationIntent=ReadOnly");
-                params << qsl("Application Name=%1").arg(qAppName());
-                auto __db = params.join(qsl(";"));
+                    params << QStringLiteral("ApplicationIntent=ReadOnly");
+                params << QStringLiteral("Application Name=%1").arg(qAppName());
+                auto __db = params.join(QStringLiteral(";"));
                 __connection.setDatabaseName(__db);
             }
 
@@ -196,7 +197,7 @@ public:
         if (!__connection.isValid()) {
 #if Q_ORM_LOG
             this->lastError = __connection.lastError();
-            sWarning() << __connection.lastError().text();
+            oWarning() << __connection.lastError().text();
 #endif
             this->finish(__connection);
             return {};
@@ -205,12 +206,12 @@ public:
         if (!__connection.open()) {
 #if Q_ORM_LOG
             this->lastError = __connection.lastError();
-            sWarning() << __connection.lastError().text();
-            if (__connection.driverName() == qsl("QODBC")) {
+            oWarning() << __connection.lastError().text();
+            if (__connection.driverName() == QStringLiteral("QODBC")) {
 #ifndef QT_DEBUG
-                __connection.setPassword(qsl_null);
+                __connection.setPassword({});
 #endif
-                sWarning() << __connection.databaseName();
+                oWarning() << __connection.databaseName();
             }
 #endif
             this->finish(__connection);
@@ -218,7 +219,7 @@ public:
         }
 
 #if Q_ORM_LOG_VERBOSE
-        sWarning() << tr("%1:%2 is connected").arg(db.driverName(), db.connectionName());
+        oWarning() << tr("%1:%2 is connected").arg(db.driverName(), db.connectionName());
 #endif
         auto &keyWord = SqlSuitableKeyWord::parser(__connection);
         if (!keyWord.isValid())
@@ -229,13 +230,13 @@ public:
 
         //connectionName
         cmd = keyWord.parserCommand(kgcSetApplicationName);
-        if (cmd.contains(qsl("%1")))
+        if (cmd.contains(QStringLiteral("%1")))
             listCmd << cmd.arg(this->baseName);
 
         if (!schameNames.isEmpty()) {
             cmd = keyWord.parserCommand(kgcSetSearchPath);
-            if (cmd.contains(qsl("%1")))
-                listCmd << cmd.arg(schameNames.join(qsl(",")));
+            if (cmd.contains(QStringLiteral("%1")))
+                listCmd << cmd.arg(schameNames.join(QStringLiteral(",")));
         }
 
         {
@@ -248,11 +249,11 @@ public:
         }
 
         if (!listCmd.isEmpty()) {
-            cmd = listCmd.join(qsl(";"));
+            cmd = listCmd.join(QStringLiteral(";"));
             QSqlQuery query(__connection);
             if (!query.exec(cmd)) {
                 this->lastError = __connection.lastError();
-                sWarning() << qsl("%1:%2 error:%3")
+                oWarning() << QStringLiteral("%1:%2 error:%3")
                                   .arg(__connection.driverName(),
                                        __connection.connectionName(),
                                        query.lastError().text());

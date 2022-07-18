@@ -3,12 +3,18 @@
 #include <QMetaType>
 #include <QMetaMethod>
 #include <QMetaProperty>
+#include <QDateTime>
+#include <QVariant>
+#include <QVariantHash>
+#include <QUuid>
+#include "./qorm_global.h"
 #include "./qorm_object.h"
-#include "./qorm_query.h"
-#include "./qorm_model_dto.h"
+#include "./qorm_model_macro.h"
 #include "./qorm_model_descriptor.h"
+#include "./qorm_sql_suitable_types.h"
 #include "./private/p_qorm_model_info.h"
-#include "./private/p_qorm_sql_suitable_parser_strategy_options.h"
+
+class QSqlQuery;
 
 namespace QOrm {
 class ModelPvt;
@@ -16,12 +22,11 @@ class Query;
 //!
 //! \brief The Model class
 //!
-class Q_ORM_EXPORT Model:public QStm::Object
+class Q_ORM_EXPORT Model:public QOrm::Object
 {
     Q_OBJECT
 public:
     QORM_MODEL(QOrm::Model)
-    QORM_OBJECT()
     QORM_DECLARE_DESCRIPTOR(ModelDescriptor)
     QORM_DECLARE_MODEL_DESCRIPTION()
     QORM_DECLARE_TABLE_SCHEMA()
@@ -30,7 +35,7 @@ public:
     QORM_DECLARE_TABLE_FOREIGN_KEY()
     QORM_DECLARE_TABLE_SEQUENCE()
     QORM_DECLARE_TABLE_PRIMARY_KEY_NON_AUTO()
-    QORM_DECLARE_FILTRABLE_FIELD(qvl{})
+    QORM_DECLARE_FILTRABLE_FIELD({})
 
 public:
     //!
@@ -55,7 +60,7 @@ public:
     //! \brief clear
     //! \return
     //!
-    virtual Model&clear();
+    virtual Model &clear();
 
     //!
     //! \brief makeUuid
@@ -79,7 +84,7 @@ public:
     //! \param vMap
     //! \return
     //!
-    virtual bool isModifier(const QVariantHash&vMap);
+    virtual bool isModifier(const QVariantHash &vMap);
 
     //!
     //! \brief toList
@@ -152,7 +157,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantList toWrapper(const QString &wrapperName, const QVariantHash&v)const;
+    virtual QVariantList toWrapper(const QString &wrapperName, const QVariantHash &v)const;
 
     //!
     //! \brief toWrapper
@@ -174,7 +179,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantList toWrapper(const QVariantHash&v)const;
+    virtual QVariantList toWrapper(const QVariantHash &v)const;
 
     //!
     //! \brief toWrapper
@@ -197,14 +202,14 @@ public:
     //! \param wrapper
     //! \return
     //!
-    virtual bool writeToWrapper(QVariantHash&wrapper) const;
+    virtual bool writeToWrapper(QVariantHash &wrapper) const;
 
     //!
     //! \brief appendToWrapper
     //! \param wrapper
     //! \return
     //!
-    virtual bool appendToWrapper(QVariantHash&wrapper) const;
+    virtual bool appendToWrapper(QVariantHash &wrapper) const;
 
     //!
     //! \brief appendToWrapper
@@ -212,7 +217,7 @@ public:
     //! \param fromWrapper
     //! \return
     //!
-    virtual bool appendToWrapper(QVariantHash&wrapper, const QString &fromWrapper) const;
+    virtual bool appendToWrapper(QVariantHash &wrapper, const QString &fromWrapper) const;
 
     //!
     //! \brief appendToWrapper
@@ -221,7 +226,7 @@ public:
     //! \param toWrapper
     //! \return
     //!
-    virtual bool appendToWrapper(QVariantHash&wrapper, const QString &fromWrapper, const QString &toWrapper) const;
+    virtual bool appendToWrapper(QVariantHash &wrapper, const QString &fromWrapper, const QString &toWrapper) const;
 
     //!
     //! \brief isWrapperModifier
@@ -252,7 +257,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual bool propertyBeforeSet(const QByteArray&property, const QVariant &value) const;
+    virtual bool propertyBeforeSet(const QByteArray &property, const QVariant &value) const;
 
     //!
     //! \brief propertyAfterSet
@@ -260,7 +265,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual bool propertyAfterSet(const QByteArray&property, const QVariant &value) const;
+    virtual bool propertyAfterSet(const QByteArray &property, const QVariant &value) const;
 
     //!
     //! \brief readFrom
@@ -274,14 +279,14 @@ public:
     //! \param record
     //! \return
     //!
-    virtual ResultValue &readFrom(QSqlQuery &record);
+    virtual ResultValue &readFrom(const QSqlQuery *record);
 
     //!
     //! \brief readFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue &readFrom(Query &record);
+    virtual ResultValue &readFrom(const Query *record);
 
     //!
     //! \brief readFrom
@@ -332,14 +337,14 @@ public:
     //! \param record
     //! \return
     //!
-    virtual ResultValue &mergeFrom(const QByteArray&record);
+    virtual ResultValue &mergeFrom(const QByteArray &record);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue &mergeFrom(const QVariantHash&record);
+    virtual ResultValue &mergeFrom(const QVariantHash &record);
 
     //!
     //! \brief mergeFrom
@@ -353,7 +358,7 @@ public:
     //! \param record
     //! \return
     //!
-    virtual ResultValue &mergeFrom(QSqlQuery &record);
+    virtual ResultValue &mergeFrom(const QSqlQuery *record);
 
     //!
     //! \brief mergeFrom
@@ -431,7 +436,7 @@ public:
     //! \param v
     //! \return
     //!
-    Model&operator=(const QVariant &v);
+    Model &operator=(const QVariant &v);
 
 private:
     ModelPvt *p=nullptr;

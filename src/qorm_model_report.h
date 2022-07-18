@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./private/p_qorm_model_report.h"
+#include "./qorm_model_dao.h"
 
 namespace QOrm {
 
@@ -126,10 +127,10 @@ protected:
                 auto header = this->p_dto.headers().get(i.key());
                 if (header != nullptr) {
                     auto vHash = header->filtrableStrategy();
-                    auto keywordOperator = vHash.value(qsl("operator"));
-                    QString format = vHash.value(qsl("format")).toString().trimmed();
+                    auto keywordOperator = vHash.value(QStringLiteral("operator"));
+                    QString format = vHash.value(QStringLiteral("format")).toString().trimmed();
                     QVariant v_value;
-                    if (format.contains(qsl("%1")))
+                    if (format.contains(QStringLiteral("%1")))
                         v_value = format.arg(i.value().toString());
                     else
                         v_value = i.value();

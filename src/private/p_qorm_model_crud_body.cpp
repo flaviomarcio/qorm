@@ -3,18 +3,18 @@
 CRUDBody::CRUDBody(const QVariant &other) : QVariantHash(other.toHash()) {}
 
 CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &source)
-    : QVariantHash{{qsl("strategy"), strategy}, {qsl("source"), source}}
+    : QVariantHash{{QStringLiteral("strategy"), strategy}, {QStringLiteral("source"), source}}
 {}
 
 CRUDBody::CRUDBody(const QOrm::CRUDStrategy strategy, const QVariant &source)
-    : QVariantHash{{qsl("strategy"), strategy}, {qsl("source"), source}}
+    : QVariantHash{{QStringLiteral("strategy"), strategy}, {QStringLiteral("source"), source}}
 {}
 
 CRUDBody::~CRUDBody() {}
 
 QOrm::CRUDStrategy CRUDBody::strategy() const
 {
-    static auto varName = QStringList{__func__, qsl("method")};
+    static auto varName = QStringList{__func__, QStringLiteral("method")};
     auto &vHash = *this;
     for (auto &vName : varName) {
         const QVariant &v = vHash[vName];

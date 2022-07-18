@@ -1,19 +1,16 @@
 #pragma once
 
-#include "../../qstm/src/qstm_object.h"
-#include "../../qstm/src/qstm_result.h"
-#include "../../qstm/src/qstm_util_date.h"
-#include "../../qstm/src/qstm_util_double.h"
-#include "../../qstm/src/qstm_util_variant.h"
+#include <QSqlDatabase>
 #include "./qorm_global.h"
-#include "./qorm_types.h"
+#include "./qorm_object.h"
+//#include "./qorm_types.h"
 
 namespace QOrm {
 class ObjectDbPvt;
 //!
 //! \brief The ObjectDb class
 //!
-class Q_ORM_EXPORT ObjectDb : public QStm::Object
+class Q_ORM_EXPORT ObjectDb : public QOrm::Object
 {
     Q_OBJECT
 public:
@@ -51,31 +48,31 @@ public:
     //!
     Q_INVOKABLE virtual QByteArray connectionId() const;
 
-    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
-    Q_INVOKABLE virtual VariantUtil &vu();
-    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
-    Q_INVOKABLE virtual VariantUtil &vu(const QVariant &v);
-    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
-    Q_INVOKABLE virtual VariantUtil &vUtil();
-    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
-    Q_INVOKABLE virtual VariantUtil &vUtil(const QVariant &v);
-    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
-    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
-    Q_INVOKABLE virtual DateUtil &dtUtil();
-    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
-    Q_INVOKABLE virtual DateUtil &dtUtil(const QVariant &v);
-    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
-    Q_INVOKABLE virtual DateUtil &dtu();
-    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
-    Q_INVOKABLE virtual DateUtil &dtu(const QVariant &v);
-    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
-    Q_INVOKABLE virtual DoubleUtil &dbUtil();
-    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
-    Q_INVOKABLE virtual DoubleUtil &dbUtil(const QVariant &v);
-    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
-    Q_INVOKABLE virtual DoubleUtil &dbu();
-    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
-    Q_INVOKABLE virtual DoubleUtil &dbu(const QVariant &v);
+//    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
+//    Q_INVOKABLE virtual VariantUtil &vu();
+//    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
+//    Q_INVOKABLE virtual VariantUtil &vu(const QVariant &v);
+//    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
+//    Q_INVOKABLE virtual VariantUtil &vUtil();
+//    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
+//    Q_INVOKABLE virtual VariantUtil &vUtil(const QVariant &v);
+//    QT_DEPRECATED_X("Use Q_DECLARE_VU;")
+//    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
+//    Q_INVOKABLE virtual DateUtil &dtUtil();
+//    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
+//    Q_INVOKABLE virtual DateUtil &dtUtil(const QVariant &v);
+//    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
+//    Q_INVOKABLE virtual DateUtil &dtu();
+//    QT_DEPRECATED_X("Use Q_DECLARE_DU;")
+//    Q_INVOKABLE virtual DateUtil &dtu(const QVariant &v);
+//    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
+//    Q_INVOKABLE virtual DoubleUtil &dbUtil();
+//    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
+//    Q_INVOKABLE virtual DoubleUtil &dbUtil(const QVariant &v);
+//    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
+//    Q_INVOKABLE virtual DoubleUtil &dbu();
+//    QT_DEPRECATED_X("Use Q_DECLARE_DBU;")
+//    Q_INVOKABLE virtual DoubleUtil &dbu(const QVariant &v);
 
 private:
     ObjectDbPvt *p = nullptr;

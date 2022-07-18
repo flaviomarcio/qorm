@@ -2,12 +2,11 @@
 
 #include <QVariant>
 #include <QVariantHash>
-#include "../qorm_model_dao.h"
+#include "./p_qorm_model_action_method.h"
+#include "./p_qorm_model_info.h"
 #include "../qorm_model_dto.h"
 #include "../qorm_model_dto_options.h"
-#include "../qorm_model_crud_request.h"
-#include "./p_qorm_model_report_body.h"
-#include "./p_qorm_model_action_method.h"
+
 
 namespace PrivateQOrm{
 class ModelReportBasePvt;
@@ -21,10 +20,10 @@ public:
     QORM_DECLARE_DTO_TYPE(FormType::CustomForm)
     QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
-    /**
-         * @brief ModelReportBase
-         * @param parent
-         */
+    //!
+    //! \brief ModelReportBase
+    //! \param parent
+    //!
     Q_INVOKABLE explicit ModelReportBase(QObject *parent = nullptr);
 
     //!
@@ -33,11 +32,6 @@ public:
     //! \param parent
     //!
     explicit ModelReportBase(const QVariant &reportBody, QObject *parent = nullptr);
-
-
-    //!
-    //!
-    ~ModelReportBase();
 
     //!
     //! \brief options

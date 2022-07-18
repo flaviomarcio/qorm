@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../qorm_connection_pool.h"
-#include "../qorm_global.h"
 #include <QDateTime>
 #include <QObject>
 #include <QString>
@@ -10,7 +8,8 @@
 #include <QUrl>
 #include <QUuid>
 #include <QVariant>
-#include <QtSql/QSqlDatabase>
+#include <QSqlDatabase>
+#include "../qorm_global.h"
 
 namespace QOrm {
 class TaskSlotPvt;

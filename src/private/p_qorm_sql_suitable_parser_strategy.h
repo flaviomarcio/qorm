@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./p_qorm_sql_suitable_parser_strategy_options.h"
+#include "./p_qorm_sql_suitable_parser_field.h"
 
 namespace QOrm {
 
@@ -14,7 +15,7 @@ public:
     //! \brief SqlParserSelect
     //! \param v
     //!
-    explicit SqlParserSelect(const QVariant &v=QVariant()):SqlParserFrom<SqlParserSelect>(v)
+    explicit SqlParserSelect(const QVariant &v={}):SqlParserFrom<SqlParserSelect>(v)
     {
     }
 
@@ -156,7 +157,7 @@ public:
     //!
     auto &fromExists(const QVariant &parserbject)
     {
-        this->fields().f(qsl("1 as c"));
+        this->fields().f(QStringLiteral("1 as c"));
         this->limit(1);
         this->from(parserbject);
         return*this;
@@ -187,18 +188,18 @@ public:
         const auto groupingTypes=QOrm::TypeUtil::keywordGroupingTypes();
 
         auto mapObject=this->toMap();
-        auto parser_distinct=getVariantStartsWith(qsl("distinct"),mapObject);
-        auto parser_limit=getVariantStartsWith(qsl("limit"),mapObject);
-        auto parser_offset=getVariantStartsWith(qsl("offset"),mapObject);
-        auto parser_lockSkip=getVariantStartsWith(qsl("lockSkip"),mapObject).toBool();
-        auto parser_lock=getVariantStartsWith(qsl("lock"),mapObject).toBool();
+        auto parser_distinct=getVariantStartsWith(QStringLiteral("distinct"),mapObject);
+        auto parser_limit=getVariantStartsWith(QStringLiteral("limit"),mapObject);
+        auto parser_offset=getVariantStartsWith(QStringLiteral("offset"),mapObject);
+        auto parser_lockSkip=getVariantStartsWith(QStringLiteral("lockSkip"),mapObject).toBool();
+        auto parser_lock=getVariantStartsWith(QStringLiteral("lock"),mapObject).toBool();
 
-        auto parser_fields=SqlParserFields<SqlParserSelect>(unionMapStartsWith(qsl("fields"), mapObject));
-        auto parser_orderby=SqlParserFields<SqlParserSelect>(unionMapStartsWith(qsl("orderby"), mapObject));
+        auto parser_fields=SqlParserFields<SqlParserSelect>(unionMapStartsWith(QStringLiteral("fields"), mapObject));
+        auto parser_orderby=SqlParserFields<SqlParserSelect>(unionMapStartsWith(QStringLiteral("orderby"), mapObject));
 
         QStringList parser_groupby;
 
-        static auto local_keys=qvsl{qsl("from"), qsl("join"), qsl("where")};
+        static auto local_keys=QStringList{QStringLiteral("from"), QStringLiteral("join"), QStringLiteral("where")};
         auto parser_combination=appendMapStartsWith(local_keys , mapObject);
 
 
@@ -209,7 +210,7 @@ public:
         }
         else if(parser_limit.isValid()){
             auto cmd=parser.parserCommand(parser_distinct.isValid()?kgcSelectDistinctTop:kgcSelectTop);
-            output<<(cmd.contains(qsl("%1"))?cmd.arg(parser_limit.toInt()):cmd);
+            output<<(cmd.contains(QStringLiteral("%1"))?cmd.arg(parser_limit.toInt()):cmd);
         }
         else{
             output<<parser.parserCommand(parser_distinct.isValid()?kgcSelectDistinct:kgcSelect);
@@ -237,23 +238,23 @@ public:
                     continue;
                 }
 
-                switch (qTypeId(parser_fields)){
-                case QMetaType_QVariantMap:
-                case QMetaType_QVariantHash:
-                case QMetaType_QVariantList:
-                case QMetaType_QStringList:
+                switch (parser_fields.typeId()){
+                case QMetaType::QVariantMap:
+                case QMetaType::QVariantHash:
+                case QMetaType::QVariantList:
+                case QMetaType::QStringList:
                 {
                     auto map=parser_fields.toMap();
-                    auto grouping=map.value(qsl("grouping")).toInt();
-                    auto value=map.value(qsl("value")).toString().trimmed();
+                    auto grouping=map.value(QStringLiteral("grouping")).toInt();
+                    auto value=map.value(QStringLiteral("value")).toString().trimmed();
                     auto isGroup=(groupingTypes.contains(grouping));
                     isGrouping = isGrouping || isGroup;
                     if(isGroup){
                         fields<<parser.parserCommand(KeywordGenericCommand(grouping),nullptr, map);
                     }
                     else if(!value.isEmpty()){
-                        group<<value;
-                        fields<<value;
+                        group.append(value);
+                        fields.append(value);
                     }
                     break;
                 }
@@ -261,9 +262,9 @@ public:
                     fields<<parser_fields.toString();
                 }
                 if(isGrouping)
-                    parser_groupby<<group;
+                    parser_groupby.append(group);
             }
-            output<<(fields.isEmpty()?qsl_null:fields.join(','));
+            output<<(fields.isEmpty()?"":fields.join(','));
         }
 
 
@@ -287,14 +288,14 @@ public:
                         QHashIterator<QString, QString> i(modelInfo.propertyTableVsShort());
                         while (i.hasNext()) {
                             i.next();
-                            fields<<i.key();
+                            fields.append(i.key());
                         }
                         continue;
                     }
 
-                    switch (qTypeId(parser_order)) {
-                    case QMetaType_QVariantMap:
-                    case QMetaType_QVariantHash:
+                    switch (parser_order.typeId()) {
+                    case QMetaType::QVariantMap:
+                    case QMetaType::QVariantHash:
                     {
                         auto item = SqlParserItem::from(parser_order);
                         QString name;
@@ -306,43 +307,43 @@ public:
                             fields<<name;
                         break;
                     }
-                    case QMetaType_QVariantList:
-                    case QMetaType_QStringList:
+                    case QMetaType::QVariantList:
+                    case QMetaType::QStringList:
                     {
                         for(auto &v:parser_order.toList()){
                             auto name=v.toByteArray().trimmed();
                             if(!fields.contains(name))
-                                fields<<name;
+                                fields.append(name);
                         }
                         break;
                     }
                     default:
                         auto name=parser_order.toByteArray().trimmed();
                         if(!fields.contains(name))
-                            fields<<name;
+                            fields.append(name);
                     }
                 }
                 if(!fields.isEmpty()){
-                    output<<parser.parserCommand(kgcOrderBy);
-                    output<<(fields.isEmpty()?qsl_null:fields.join(','));
+                    output.append(parser.parserCommand(kgcOrderBy));
+                    output.append(fields.isEmpty()?"":fields.join(','));
                 }
             }
         }
 
         if(parser_limit.isValid()){
             auto cmd=parser.parserCommand(kgcLimit);
-            output<<cmd.arg(parser_limit.toInt());
+            output.append(cmd.arg(parser_limit.toInt()));
         }
 
         if(parser_offset.isValid()){
             auto cmd=parser.parserCommand(kgcOffset);
-            output<<cmd.arg(parser_offset.toInt());
+            output.append(cmd.arg(parser_offset.toInt()));
         }
 
         if(parser_lockSkip)
-            output<<parser.parserCommand(kgcForSkipLockedFinishScript);
+            output.append(parser.parserCommand(kgcForSkipLockedFinishScript));
         else if(parser_lock)
-            output<<parser.parserCommand(kgcForUpdateFinishScript);
+            output.append(parser.parserCommand(kgcForUpdateFinishScript));
 
         //FOR UPDATE SKIP LOCKED
 
@@ -353,11 +354,11 @@ public:
 
 class Q_ORM_EXPORT SqlParserInsert:public SqlParserCommand{
 public:
-    explicit SqlParserInsert():SqlParserCommand()
+    explicit SqlParserInsert():SqlParserCommand{}
     {
     }
 
-    explicit SqlParserInsert(const QVariant &v):SqlParserCommand(v)
+    explicit SqlParserInsert(const QVariant &v):SqlParserCommand{v}
     {
     }
 
@@ -365,7 +366,7 @@ public:
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
-            object=new SqlParserCommand(v);
+            object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
         return*this;
@@ -383,8 +384,8 @@ public:
     virtual QStringList toScript(SqlSuitableKeyWord&parser)
     {
         auto map=this->toMap();
-        auto destine=getVariantStartsWith(qsl("destine"),map);
-        auto values=getVariantStartsWith(qsl("values"),map);
+        auto destine=getVariantStartsWith(QStringLiteral("destine"),map);
+        auto values=getVariantStartsWith(QStringLiteral("values"),map);
         const auto &modelInfo=QOrm::ModelInfo::from(destine);
         auto command=parser.parserCommand(kgcInsertInto, &modelInfo, values);
         return command;
@@ -398,7 +399,7 @@ public:
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
-            object=new SqlParserCommand(v);
+            object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
         return*this;
@@ -408,25 +409,25 @@ public:
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
-            object=new SqlParserCommand(v);
+            object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
         return*this;
     }
 
-    explicit SqlParserUpdate():SqlParserCommand()
+    explicit SqlParserUpdate():SqlParserCommand{}
     {
     }
 
-    explicit SqlParserUpdate(const QVariant &v):SqlParserCommand(v)
+    explicit SqlParserUpdate(const QVariant &v):SqlParserCommand{v}
     {
     }
 
     virtual QStringList toScript(SqlSuitableKeyWord&parser)
     {
         auto map=this->toMap();
-        auto destine=getVariantStartsWith(qsl("destine"),map);
-        auto values=getVariantStartsWith(qsl("values"), map);
+        auto destine=getVariantStartsWith(QStringLiteral("destine"),map);
+        auto values=getVariantStartsWith(QStringLiteral("values"), map);
         const auto &modelInfo=QOrm::ModelInfo::from(destine);
         auto command=parser.parserCommand(kgcUpdateSet, &modelInfo, values);
         return command;
@@ -440,7 +441,7 @@ public:
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
-            object=new SqlParserCommand(v);
+            object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
         return*this;
@@ -450,25 +451,25 @@ public:
     {
         auto object=this->oPointer<SqlParserCommand*>(__func__);
         if(object==nullptr){
-            object=new SqlParserCommand(v);
+            object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
         return*this;
     }
 
-    explicit SqlParserUpsert():SqlParserCommand()
+    explicit SqlParserUpsert():SqlParserCommand{}
     {
     }
 
-    explicit SqlParserUpsert(const QVariant &v):SqlParserCommand(v)
+    explicit SqlParserUpsert(const QVariant &v):SqlParserCommand{v}
     {
     }
 
     virtual QStringList toScript(SqlSuitableKeyWord&parser)
     {
         auto map=this->toMap();
-        auto destine=getVariantStartsWith(qsl("destine"),map);
-        auto values=getVariantStartsWith(qsl("values"),map);
+        auto destine=getVariantStartsWith(QStringLiteral("destine"),map);
+        auto values=getVariantStartsWith(QStringLiteral("values"),map);
         const auto &modelInfo=QOrm::ModelInfo::from(destine);
         auto command=parser.parserCommand(kgcUpsertSet, &modelInfo, values);
         return command;
@@ -505,7 +506,7 @@ public:
     virtual QStringList toScript(SqlSuitableKeyWord&parser)
     {
         auto mapObject=this->toMap();
-        static auto local_keys=qvsl{qsl("from"), qsl("join"), qsl("where"), qsl("using")};
+        static auto local_keys=QStringList{QStringLiteral("from"), QStringLiteral("join"), QStringLiteral("where"), QStringLiteral("using")};
         auto parser_combination=appendMapStartsWith(local_keys, mapObject);
         QStringList output;
         if(!parser_combination.isEmpty()){
@@ -547,8 +548,8 @@ public:
         auto object=new SqlParserCommand();
         object->makeUuid();
         QVariantMap map;
-        map[qsl("type")]=kgcNextValSelect;
-        map[qsl("object")]=v;
+        map[QStringLiteral("type")]=kgcNextValSelect;
+        map[QStringLiteral("object")]=v;
         object->setValue(map);
         this->setPointer(this->suuid(), object);
         return*this;
@@ -562,9 +563,9 @@ public:
         while (i.hasNext()) {
             i.next();
             auto vValue=i.value().toMap();
-            auto type=vValue.value(qsl("type")).toInt();
-            auto object=vValue.value(qsl("object"));
-            auto value=vValue.value(qsl("value"));
+            auto type=vValue.value(QStringLiteral("type")).toInt();
+            auto object=vValue.value(QStringLiteral("object"));
+            auto value=vValue.value(QStringLiteral("value"));
             QStringList command;
             const auto &modelInfo=QOrm::ModelInfo::from(object);
             if(modelInfo.isValid())
@@ -595,8 +596,8 @@ public:
         auto object=new SqlParserCommand();
         object->makeUuid();
         QVariantMap map;
-        map[qsl("type")]=kgcTruncateTable;
-        map[qsl("object")]=v;
+        map[QStringLiteral("type")]=kgcTruncateTable;
+        map[QStringLiteral("object")]=v;
         object->setValue(map);
         this->setPointer(this->suuid(), object);
         return*this;
@@ -607,8 +608,8 @@ public:
         auto object=new SqlParserCommand();
         object->makeUuid();
         QVariantMap map;
-        map[qsl("type")]=kgcTruncateTableCacade;
-        map[qsl("object")]=v;
+        map[QStringLiteral("type")]=kgcTruncateTableCacade;
+        map[QStringLiteral("object")]=v;
         object->setValue(map);
         this->setPointer(this->suuid(), object);
         return*this;
@@ -622,9 +623,9 @@ public:
         while (i.hasNext()) {
             i.next();
             auto vValue=i.value().toMap();
-            auto type=vValue.value(qsl("type")).toInt();
-            auto object=vValue.value(qsl("object"));
-            auto value=vValue.value(qsl("value"));
+            auto type=vValue.value(QStringLiteral("type")).toInt();
+            auto object=vValue.value(QStringLiteral("object"));
+            auto value=vValue.value(QStringLiteral("value"));
             QStringList command;
             const auto &modelInfo=QOrm::ModelInfo::from(object);
             if(modelInfo.isValid())

@@ -1,13 +1,14 @@
 #pragma once
 
 #include "../../../qstm/src/qstm_result_info.h"
-#include "../qorm_sql_suitable_types.h"
 #include "./p_qorm_model_dto_host.h"
-#include "./p_qorm_model_dto_endpoint.h"
 #include "./p_qorm_model_dto_endpoints.h"
 #include "./p_qorm_model_dto_items.h"
 #include "./p_qorm_model_dto_header.h"
 #include "./p_qorm_model_dto_filter.h"
+#include "../qorm_types.h"
+//#include "../qorm_sql_suitable_types.h"
+//#include "./p_qorm_model_dto_endpoint.h"
 
 namespace QOrm {
 class ModelDtoControlsPvt;
@@ -26,7 +27,6 @@ public:
     //! \param parent
     //!
     Q_INVOKABLE explicit ModelDtoControls(QObject *parent = nullptr);
-    ~ModelDtoControls();
 
     //!
     //! \brief resultInfo

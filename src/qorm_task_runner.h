@@ -1,6 +1,9 @@
 #pragma once
 
+#include "./qorm_global.h"
 #include "./qorm_object.h"
+#include <QSqlDatabase>
+#include <QVariant>
 
 namespace QOrm {
 class TaskRunnerPvt;
@@ -9,7 +12,7 @@ typedef std::function<QVariant(QSqlDatabase &db, const QVariant &task)> TaskRunn
 //!
 //! \brief The TaskRunner class
 //!
-class Q_ORM_EXPORT TaskRunner : public QStm::Object
+class Q_ORM_EXPORT TaskRunner : public QOrm::Object
 {
     Q_OBJECT
 public:
@@ -19,10 +22,6 @@ public:
     //!
     Q_INVOKABLE explicit TaskRunner(QObject *parent = nullptr);
 
-    //!
-    //! \brief ~TaskRunner
-    //!
-    ~TaskRunner();
 
     //!
     //! \brief print

@@ -1,8 +1,9 @@
 #include "./p_qorm_model_crud.h"
-#include "../qorm_query.h"
 #include "../qorm_model_dto.h"
-#include "../qorm_transaction_scope.h"
 #include <QJsonDocument>
+#include "./p_qorm_model_crud_body.h"
+//#include "../qorm_query.h"
+//#include "../qorm_transaction_scope.h"
 
 namespace PrivateQOrm {
 
@@ -51,29 +52,29 @@ public:
         auto vCrud=CRUDBody(crud);
         auto vStrategy=[&vCrud](){
             QVariant v;
-            if(vCrud.contains(qsl("method")))
-                v=vCrud[qsl("method")];
-            else if(vCrud.contains(qsl("strategy")))
-                v=vCrud[qsl("strategy")];
+            if(vCrud.contains(QStringLiteral("method")))
+                v=vCrud[QStringLiteral("method")];
+            else if(vCrud.contains(QStringLiteral("strategy")))
+                v=vCrud[QStringLiteral("strategy")];
             return v;
         };
 
         auto vSource=[&vCrud](){
             QVariant v;
-            if(vCrud.contains(qsl("source")))
-                v=vCrud[qsl("source")];
+            if(vCrud.contains(QStringLiteral("source")))
+                v=vCrud[QStringLiteral("source")];
             return v;
         };
         this->strategy_set(vStrategy());
         this->source_set(vSource());
-        this->parent->lr().resultInfo().fromVar(vCrud.value(qsl("resultInfo")));
+        this->parent->lr().resultInfo().fromVar(vCrud.value(QStringLiteral("resultInfo")));
     }
 
     void source_set(const QVariant &source)
     {
-        switch (qTypeId(source)) {
-        case QMetaType_QString:
-        case QMetaType_QByteArray:
+        switch (source.typeId()) {
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
         {
             auto vSource=QJsonDocument::fromJson(source.toByteArray()).toVariant();
             this->source=vSource;
@@ -91,7 +92,7 @@ public:
             return;
         }
         QVariant vFy=strategy;
-        if(QMetaTypeUtilString.contains(qTypeId(vFy))){
+        if(QMetaTypeUtilString.contains(vFy.typeId())){
             vFy=vFy.toString().toLower();
             vFy=QOrm::__stringToStrategy.value(vFy.toString());
         }
@@ -376,19 +377,19 @@ ResultValue &CRUDBase::deactivate(const QVariant &value)
 
 CRUDBase &CRUDBase::onBefore(QOrm::CRUDBodyActionMethod method)
 {
-    p->actionMethod[qbl("bofore")]=method;
+    p->actionMethod[QByteArrayLiteral("bofore")]=method;
     return*this;
 }
 
 CRUDBase &CRUDBase::onSuccess(QOrm::CRUDBodyActionMethod method)
 {
-    p->actionMethod[qbl("success")]=method;
+    p->actionMethod[QByteArrayLiteral("success")]=method;
     return*this;
 }
 
 CRUDBase &CRUDBase::onFailed(QOrm::CRUDBodyActionMethod method)
 {
-    p->actionMethod[qbl("failed")]=method;
+    p->actionMethod[QByteArrayLiteral("failed")]=method;
     return*this;
 }
 
@@ -396,7 +397,7 @@ ResultValue &CRUDBase::canActionSearch()
 {
     Q_DECLARE_VU;
 
-    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
     QVariant v;
     if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(this->source())){
         auto &act=p->actions[name];
@@ -413,7 +414,7 @@ ResultValue &CRUDBase::canActionSearch()
 
 ResultValue &CRUDBase::canActionInsert()
 {
-    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
     auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->insert():act->action(this->source());
     return this->lr(lr);
@@ -421,7 +422,7 @@ ResultValue &CRUDBase::canActionInsert()
 
 ResultValue &CRUDBase::canActionUpsert()
 {
-    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
     auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
     return this->lr(lr);
@@ -429,7 +430,7 @@ ResultValue &CRUDBase::canActionUpsert()
 
 ResultValue &CRUDBase::canActionUpdate()
 {
-    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
     auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->update():act->action(this->source());
     return this->lr(lr);
@@ -437,7 +438,7 @@ ResultValue &CRUDBase::canActionUpdate()
 
 ResultValue &CRUDBase::canActionRemove()
 {
-    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
     auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->remove():act->action(this->source());
     return this->lr(lr);
@@ -445,7 +446,7 @@ ResultValue &CRUDBase::canActionRemove()
 
 ResultValue &CRUDBase::canActionDeactivate()
 {
-    static auto name=QByteArray{__func__}.replace(qbl("canAction"), qbl("action"));
+    static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
     auto &act=p->actions[name];
     auto &lr=(act==nullptr)?this->deactivate():act->action(this->source());
     return this->lr(lr);

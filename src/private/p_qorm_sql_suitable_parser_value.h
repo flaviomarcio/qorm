@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./p_qorm_sql_suitable_parser_item.h"
+#include <QVariant>
 
 namespace QOrm {
 
@@ -12,11 +13,11 @@ public:
 
 class SqlParserValues:public SqlParserCommand{
 public:
-    explicit SqlParserValues(const QVariant &v=QVariant());
+    explicit SqlParserValues(const QVariant &v={});
 
-    SqlParserValues&value(const QVariant &v);
+    SqlParserValues &value(const QVariant &v);
 
-    SqlParserValues&v(const QVariant &v);
+    SqlParserValues &v(const QVariant &v);
 
     QStringList toScript(SqlSuitableKeyWord &parser);
 };

@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QVariantHash>
+#include <QVariantMap>
 #include "../qorm_global.h"
 
 namespace QOrm {

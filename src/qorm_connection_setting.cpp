@@ -1,6 +1,5 @@
 #include "./qorm_connection_setting.h"
 #include "./qorm_macro.h"
-
 #include <QDebug>
 #include <QFile>
 #include <QJsonDocument>
@@ -38,7 +37,7 @@ public:
         QHashIterator<QString, QVariant> i(this->_variables);
         while (i.hasNext()) {
             i.next();
-            auto iK = qsl("{$%1}").arg(i.key()).toUtf8();
+            auto iK = QStringLiteral("{$%1}").arg(i.key()).toUtf8();
             auto vV = i.value().toByteArray();
             v = v.replace(iK, vV);
         }
@@ -81,7 +80,7 @@ ConnectionSetting::ConnectionSetting(const QByteArray &name,
     if (_name.isEmpty()) {
         srand(time(NULL));
         auto r = rand() % 100000000 + 1000;
-        _name = qsl("connection%1").arg(r).toUtf8();
+        _name = QStringLiteral("connection%1").arg(r).toUtf8();
     }
 
     p->_name = _name;
@@ -107,16 +106,16 @@ ConnectionSetting &ConnectionSetting::printLog()
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
         auto p = this->metaObject()->property(row);
         auto v = p.read(this);
-        auto s = qsl("%1:%2").arg(QString::fromUtf8(p.name()), v.toString()).trimmed();
+        auto s = QStringLiteral("%1:%2").arg(QString::fromUtf8(p.name()), v.toString()).trimmed();
         lst << s;
         len = s.length() > len ? s.length() : len;
     }
     len += 10;
-    sWarning() << qsl("=").leftJustified(len, '=');
+    oWarning() << QStringLiteral("=").leftJustified(len, '=');
     for (auto &s : lst) {
-        sWarning() << qsl("+%1+").arg(s.leftJustified(len - 2, ' '));
+        oWarning() << QStringLiteral("+%1+").arg(s.leftJustified(len - 2, ' '));
     }
-    sWarning() << qsl("=").leftJustified(len, '=');
+    oWarning() << QStringLiteral("=").leftJustified(len, '=');
     return *this;
 }
 
@@ -131,17 +130,17 @@ bool ConnectionSetting::isValid() const
         if (!vGet.isValid())
             continue;
         //TODO switch () {}
-        auto t = qTypeId(vGet);
-        if ((t == QMetaType_QString || t == QMetaType_QByteArray)
+        auto t = vGet.typeId();
+        if ((t == QMetaType::QString || t == QMetaType::QByteArray)
             && vGet.toString().trimmed().isEmpty())
             continue;
-        if ((t == QMetaType_Double || t == QMetaType_Int || t == QMetaType_UInt
-             || t == QMetaType_LongLong || t == QMetaType_ULongLong)
+        if ((t == QMetaType::Double || t == QMetaType::Int || t == QMetaType::UInt
+             || t == QMetaType::LongLong || t == QMetaType::ULongLong)
             && vGet.toLongLong() > 0)
             continue;
-        if ((t == QMetaType_QVariantHash || t == QMetaType_QVariantMap) && vGet.toHash().isEmpty())
+        if ((t == QMetaType::QVariantHash || t == QMetaType::QVariantMap) && vGet.toHash().isEmpty())
             continue;
-        if ((t == QMetaType_QVariantList || t == QMetaType_QStringList) && vGet.toList().isEmpty())
+        if ((t == QMetaType::QVariantList || t == QMetaType::QStringList) && vGet.toList().isEmpty())
             continue;
 
         return true;
@@ -199,39 +198,42 @@ ConnectionSetting &ConnectionSetting::fromMap(const QVariantHash &map)
         if (property.write(this, value))
             continue;
 
-        auto type = qTypeId(property);
-        switch (type) {
-        case QMetaType_Int:
+        switch (property.typeId()) {
+        case QMetaType::Int:
             property.write(this, value.toInt());
             break;
-        case QMetaType_UInt:
+        case QMetaType::UInt:
             property.write(this, value.toInt());
             break;
-        case QMetaType_LongLong:
+        case QMetaType::LongLong:
             property.write(this, value.toLongLong());
             break;
-        case QMetaType_ULongLong:
+        case QMetaType::ULongLong:
             property.write(this, value.toLongLong());
             break;
-        case QMetaType_Double:
+        case QMetaType::Double:
             property.write(this, value.toDouble());
             break;
-        case QMetaType_QVariantHash: {
+        case QMetaType::QVariantHash:{
             auto v = QJsonDocument::fromJson(value.toByteArray()).toVariant();
             property.write(this, v.toHash());
-        } break;
-        case QMetaType_QVariantMap: {
+            break;
+        }
+        case QMetaType::QVariantMap: {
             auto v = QJsonDocument::fromJson(value.toByteArray()).toVariant();
-            property.write(this, v.toHash());
-        } break;
-        case QMetaType_QVariantList: {
-            auto v = QJsonDocument::fromJson(value.toByteArray()).toVariant();
-            property.write(this, v.toList());
-        } break;
-        case QMetaType_QStringList: {
-            auto v = QJsonDocument::fromJson(value.toByteArray()).toVariant();
-            property.write(this, v.toString());
-        } break;
+            property.write(this, v.toMap());
+            break;
+        }
+        case QMetaType::QVariantList:{
+            auto v = QJsonDocument::fromJson(value.toByteArray()).toVariant().toList();
+            property.write(this, v);
+            break;
+        }
+        case QMetaType::QStringList: {
+            auto v = QJsonDocument::fromJson(value.toByteArray()).toVariant().toStringList();
+            property.write(this, v);
+            break;
+        }
         default:
             break;
         }
@@ -242,13 +244,13 @@ ConnectionSetting &ConnectionSetting::fromMap(const QVariantHash &map)
 ConnectionSetting &ConnectionSetting::fromConnection(const QSqlDatabase &connection)
 {
     QVariantHash map;
-    map[qsl("driver")] = connection.driverName();
-    map[qsl("dataBaseName")] = connection.databaseName();
-    map[qsl("userName")] = connection.userName();
-    map[qsl("password")] = connection.password();
-    map[qsl("hostName")] = connection.hostName();
-    map[qsl("port")] = connection.port();
-    map[qsl("connectOptions")] = connection.connectOptions();
+    map[QStringLiteral("driver")] = connection.driverName();
+    map[QStringLiteral("dataBaseName")] = connection.databaseName();
+    map[QStringLiteral("userName")] = connection.userName();
+    map[QStringLiteral("password")] = connection.password();
+    map[QStringLiteral("hostName")] = connection.hostName();
+    map[QStringLiteral("port")] = connection.port();
+    map[QStringLiteral("connectOptions")] = connection.connectOptions();
     return this->fromMap(map);
 }
 

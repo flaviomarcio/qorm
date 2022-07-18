@@ -2,13 +2,15 @@
 
 #include <QVariant>
 #include <QVariantHash>
-#include "./p_qorm_model_crud_body.h"
+#include "./p_qorm_model_info.h"
 #include "./p_qorm_model_action_method.h"
 #include "./p_qorm_model_dto_host.h"
 #include "../qorm_model_dto_options.h"
-#include "../qorm_model_crud_request.h"
-#include "../qorm_model_dao.h"
 #include "../qorm_model_dto.h"
+#include "../qorm_model_crud_types.h"
+//#include "./p_qorm_model_crud_body.h"
+//#include "../qorm_model_crud_request.h"
+//#include "../qorm_model_dao.h"
 
 namespace QOrm {
 typedef std::function<ResultValue &(QOrm::ObjectDb*controller, const QVariant &vBody)> CRUDBodyActionMethod;

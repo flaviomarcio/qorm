@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./private/p_qorm_model_controls.h"
+#include "./qorm_macro.h"
 
 namespace QOrm {
 class ModelDtoPvt;

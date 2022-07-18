@@ -1,4 +1,9 @@
 #include "./p_qorm_task_pool.h"
+#include "./p_qorm_task_slot.h"
+#include "../qorm_connection_setting.h"
+#include "../qorm_task_runner.h"
+#include "../qorm_const.h"
+#include "../qorm_macro.h"
 
 static QVariant __methodExecute(QSqlDatabase&db, const QVariant &task){Q_UNUSED(task) Q_UNUSED(db) return {};};
 static QVariant __methodSuccess(QSqlDatabase&db, const QVariant &task){Q_UNUSED(task) Q_UNUSED(db) return task;};
@@ -82,7 +87,7 @@ void TaskPool::run()
 void TaskPool::clear()
 {
 
-    QMutexLOCKER locker(&p->running);
+    QMutexLocker<QMutex> locker(&p->running);
     p->methodExecute=__methodExecute;
     p->methodSuccess=__methodSuccess;
     p->methodFailed=__methodFailed;
@@ -105,7 +110,7 @@ void TaskPool::threadInit()
 
     if(p->taskQueueStarted.isEmpty()){
 #if Q_ORM_LOG_VERBOSE
-        sWarning()<<"no tasks";
+        oWarning()<<"no tasks";
 #endif
         p->running.unlock();
         return;
@@ -113,7 +118,7 @@ void TaskPool::threadInit()
 
     if(slotCount<=0){
 #if Q_ORM_LOG
-        sWarning()<<"slotCount is zero";
+        oWarning()<<"slotCount is zero";
 #endif
         p->running.unlock();
         return;
@@ -125,7 +130,7 @@ void TaskPool::threadInit()
         if(taskSlot==nullptr){
             taskSlot=new TaskSlot(this, p->connectionSetting, p->methodExecute, p->methodSuccess, p->methodFailed);
             lst.insert(slot, taskSlot);
-            auto poolName=qsl("Pool%1-%2").arg(slot).arg(QString::number(qlonglong(taskSlot->currentThreadId())));
+            auto poolName=QStringLiteral("Pool%1-%2").arg(slot).arg(QString::number(qlonglong(taskSlot->currentThreadId())));
             taskSlot->setObjectName(poolName);
         }
         taskSlot->init();
@@ -162,7 +167,7 @@ void TaskPool::taskRequest(TaskSlot *slot)
 void TaskPool::taskResponse(const QVariantHash &task)
 {
 
-    auto uuid=task[qsl("uuid")].toUuid();
+    auto uuid=task[QStringLiteral("uuid")].toUuid();
     p->taskQueueResponse.insert(uuid, task);
     double maximum=p->taskQueueValue.size();
     double minimum=0;

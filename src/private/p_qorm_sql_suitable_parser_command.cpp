@@ -1,6 +1,6 @@
 #include "p_qorm_sql_suitable_parser_command.h"
-#include "../qorm_startup.h"
 #include <QCoreApplication>
+#include "../../qstm/src/qstm_macro.h"
 
 namespace QOrm {
 
@@ -32,7 +32,7 @@ bool SqlParserCommand::ignorePrepare()
 QVariantMap SqlParserCommand::appendMapStartsWith(const QVariant &vKey, const QVariantMap &mapSrc)
 {
     QVariantMap mapDst;
-    QStringList lKey=qTypeId(vKey)==QMetaType_QStringList?vKey.toStringList():QStringList{vKey.toString()};
+    QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
     QMapIterator<QString, QVariant> i(mapSrc);
     while (i.hasNext()) {
         i.next();
@@ -49,7 +49,7 @@ QVariantMap SqlParserCommand::appendMapStartsWith(const QVariant &vKey, const QV
 
 QVariantMap SqlParserCommand::unionMapStartsWith(const QVariant &vKey, const QVariantMap &mapSrc)
 {
-    QStringList lKey=qTypeId(vKey)==QMetaType_QStringList?vKey.toStringList():QStringList{vKey.toString()};
+    QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
     QVariantMap mapDst;
     QVariantMap mapUni;
     {
@@ -82,7 +82,7 @@ QVariantMap SqlParserCommand::unionMapStartsWith(const QVariant &vKey, const QVa
 
 QVariant SqlParserCommand::getVariantStartsWith(const QVariant &vKey, const QVariantMap &mapSrc)
 {
-    QStringList lKey=qTypeId(vKey)==QMetaType_QStringList?vKey.toStringList():QStringList{vKey.toString()};
+    QStringList lKey=vKey.typeId()==QMetaType::QStringList?vKey.toStringList():QStringList{vKey.toString()};
     QMapIterator<QString, QVariant> i(mapSrc);
     while (i.hasNext()) {
         i.next();
@@ -99,7 +99,7 @@ QVariant SqlParserCommand::getVariantStartsWith(const QVariant &vKey, const QVar
 
 QString SqlParserCommand::suuid(const QString &delim) const
 {
-    return _____zzzzz_uuid==0?qsl_null:delim+QString::number(this->_____zzzzz_uuid).rightJustified(11,'0');
+    return _____zzzzz_uuid==0?"":delim+QString::number(this->_____zzzzz_uuid).rightJustified(11,'0');
 }
 
 QVariant SqlParserCommand::makeUuid()
@@ -179,13 +179,12 @@ bool SqlParserCommand::makeObject()
     if(this->mapPointer.isEmpty())
         return false;
     bool __return=false;
-    Q_DECLARE_VU;
     auto vThis=this->toMap();
     QMapIterator<QString, SqlParserCommand*> i(this->mapPointer);
     int seq=0;
     while (i.hasNext()) {
         i.next();
-        auto key=qsl("%1.%2").arg(i.key()).arg(++seq);
+        auto key=QStringLiteral("%1.%2").arg(i.key()).arg(++seq);
 
         if(i.value()==nullptr)
             continue;
@@ -196,26 +195,25 @@ bool SqlParserCommand::makeObject()
 
         if(v!=this)
             v->makeObject();
-        auto typeId=qTypeId(*v);
-        switch (typeId) {
-        case QMetaType_QVariantHash:
-        case QMetaType_QVariantMap:
+        switch (v->typeId()) {
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
         {
             auto map=v->toHash();
             vThis.insert(key, map);
             __return=true;
             break;
         }
-        case QMetaType_QString:
-        case QMetaType_QByteArray:
-        case QMetaType_QChar:
-        case QMetaType_QBitArray:
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        case QMetaType::QChar:
+        case QMetaType::QBitArray:
         {
             vThis.insert(key, v->toByteArray());
             __return=true;
             break;
         }
-        case QMetaType_User:
+        case QMetaType::User:
         {
             vThis.insert(key, qv(*v));
             __return=true;
@@ -233,11 +231,11 @@ void SqlParserCommand::___clear()
 {
     auto values=this->mapPointer.values();
     for(auto &v:values){
-        v->setValue(QVariant());
+        v->setValue({});
         delete v;
     }
     this->mapPointer.clear();
-    this->setValue(qv_null);
+    this->setValue({});
 }
 
 }

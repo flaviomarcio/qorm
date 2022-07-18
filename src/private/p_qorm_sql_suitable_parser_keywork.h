@@ -1,7 +1,10 @@
 #pragma once
 
-#include "../qorm_object_db.h"
-#include "../qorm_sql_suitable_types.h"
+//#include "../qorm_object_db.h"
+#include "../qorm_global.h"
+#include <QSqlDriver>
+#include <QSqlDatabase>
+#include <QHash>
 
 namespace QOrm {
 class SqlSuitableKeyWordPvt;
@@ -52,7 +55,7 @@ public:
     //! \brief commands
     //! \return
     //!
-    virtual KeywordCache&commands();
+    virtual KeywordCache &commands();
 
     //!
     //! \brief parse

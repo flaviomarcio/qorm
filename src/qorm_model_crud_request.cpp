@@ -18,16 +18,16 @@ CRUDRequest::~CRUDRequest()
 CRUDRequest &CRUDRequest::setBody(const QVariant &v)
 {
     auto h = v.toHash();
-    const auto &__path = h[qsl("path")].toString().trimmed().toLower();
-    const auto &__header = h[qsl("header")].toHash();
-    const auto &__method = h[qsl("method")].toString().trimmed().toLower();
-    const auto &__source = h[qsl("source")];
+    const auto &__path = h[QStringLiteral("path")].toString().trimmed().toLower();
+    const auto &__header = h[QStringLiteral("header")].toHash();
+    const auto &__method = h[QStringLiteral("method")].toString().trimmed().toLower();
+    const auto &__source = h[QStringLiteral("source")];
 
     CRUDRequest __return;
-    __return[qsl("path")] = __path;
-    __return[qsl("header")] = __header;
-    __return[qsl("method")] = __method;
-    __return[qsl("source")] = __source;
+    __return[QStringLiteral("path")] = __path;
+    __return[QStringLiteral("header")] = __header;
+    __return[QStringLiteral("method")] = __method;
+    __return[QStringLiteral("source")] = __source;
     return *this;
 }
 
@@ -40,20 +40,20 @@ CRUDRequest CRUDRequest::fromMap(const QVariant &v)
 CRUDRequest CRUDRequest::fromRequest(const QVariant &v)
 {
     auto h = v.toHash();
-    const auto &__path = h[qsl("requestPath")].toString().trimmed().toLower();
-    const auto &__header = h[qsl("requestHeader")].toHash();
-    const auto &__method = h[qsl("requestMethod")].toString().trimmed().toLower();
-    const auto &__body = h[qsl("requestBody")];
-    const auto &__parameter = h[qsl("requestParameter")].toHash();
+    const auto &__path = h[QStringLiteral("requestPath")].toString().trimmed().toLower();
+    const auto &__header = h[QStringLiteral("requestHeader")].toHash();
+    const auto &__method = h[QStringLiteral("requestMethod")].toString().trimmed().toLower();
+    const auto &__body = h[QStringLiteral("requestBody")];
+    const auto &__parameter = h[QStringLiteral("requestParameter")].toHash();
 
     CRUDRequest __return;
-    __return[qsl("header")] = __header;
-    __return[qsl("path")] = __path;
-    __return[qsl("method")] = __method;
+    __return[QStringLiteral("header")] = __header;
+    __return[QStringLiteral("path")] = __path;
+    __return[QStringLiteral("method")] = __method;
     if (!__parameter.isEmpty())
-        __return[qsl("source")] = __parameter;
+        __return[QStringLiteral("source")] = __parameter;
     else
-        __return[qsl("source")] = __body;
+        __return[QStringLiteral("source")] = __body;
     return __return;
 }
 
@@ -89,7 +89,7 @@ CRUDStrategy CRUDRequest::strategy()
     }
 
     QVariant vFy = strategy;
-    if (QMetaTypeUtilString.contains(qTypeId(vFy))) {
+    if (QMetaTypeUtilString.contains(vFy.typeId())) {
         vFy = vFy.toString().toLower();
         vFy = __stringToStrategy.value(vFy.toString());
     }

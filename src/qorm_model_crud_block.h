@@ -1,6 +1,9 @@
 #pragma once
 
-#include "./qorm_model_crud.h"
+#include "./qorm_object_db.h"
+#include "./qorm_model_dto_options.h"
+#include "./private/p_qorm_model_dto_host.h"
+#include "./private/p_qorm_model_crud.h"
 
 #define QORM_CRUD_BLOCK_MAKER(crud_block)\
 QOrm::CRUDBlock crud_block(this);\
