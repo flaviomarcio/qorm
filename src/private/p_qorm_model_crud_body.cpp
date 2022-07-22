@@ -10,8 +10,6 @@ CRUDBody::CRUDBody(const QOrm::CRUDStrategy strategy, const QVariant &source)
     : QVariantHash{{QStringLiteral("strategy"), strategy}, {QStringLiteral("source"), source}}
 {}
 
-CRUDBody::~CRUDBody() {}
-
 QOrm::CRUDStrategy CRUDBody::strategy() const
 {
     static auto varName = QStringList{__func__, QStringLiteral("method")};
@@ -31,9 +29,33 @@ QOrm::CRUDStrategy CRUDBody::strategy() const
     return QOrm::CRUDStrategy::Undefined;
 }
 
-const QVariant &CRUDBody::source()
+const QVariant CRUDBody::source() const
 {
     return (*this)[__func__];
+}
+
+const QVariant CRUDBody::items() const
+{
+    auto v=this->contains("source")?this->value("source"):*this;
+    QVariantList vList;
+    switch (v.typeId()) {
+    case QMetaType::QVariantList:
+    case QMetaType::QStringList:
+        vList=v.toList();
+        break;
+    case QMetaType::QVariantHash:
+    case QMetaType::QVariantMap:
+        vList.append(v);
+        break;
+    default:
+        break;
+    }
+    for(auto &v:vList){
+        auto vHash=v.toHash();
+        if(vHash.contains("source"))
+            v=vHash.value("source");
+    }
+    return vList;
 }
 
 bool CRUDBody::isStrategy(const QVariant &v) const

@@ -14,6 +14,7 @@ public:
     QUuid uuid;
     QByteArray name;
     QByteArray description;
+    ModelDao dao;
     QOrm::ModelDto dto;
     QHash<QByteArray, QOrm::ModelAction*> actions;
     QHash<QByteArray, QOrm::CRUDBodyActionMethod> actionMethod;
@@ -21,15 +22,11 @@ public:
     QVariant source;
     CRUDBase*parent=nullptr;
 
-    explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dto{parent}
+    explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dao{parent}, dto{parent}
     {
         this->parent=parent;
         dto.setType(QOrm::ModelDto::FormType(CRUDBase::defaultType()));
         dto.setLayout(QOrm::ModelDto::FormLayout(CRUDBase::defaultLayout()));
-    }
-
-    virtual ~CRUDBasePvt()
-    {
     }
 
     auto &doModelAction(const QString &methodName)
@@ -116,9 +113,9 @@ CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent
     p->set_crud(vBody);
 }
 
-CRUDBase::~CRUDBase()
+ModelDao &CRUDBase::dao()
 {
-
+    return p->dao;
 }
 
 QOrm::Host &CRUDBase::host()
@@ -232,8 +229,29 @@ CRUDBase &CRUDBase::strategy(const QVariant &strategy)
     return*this;
 }
 
-QVariant CRUDBase::source() const{
-
+QVariant &CRUDBase::source() const
+{
+    switch (p->source.typeId()) {
+    case QMetaType::QString:
+    case QMetaType::QByteArray:
+    case QMetaType::QChar:
+    case QMetaType::QBitArray:{
+        auto v=p->source.toString().trimmed();
+        p->source=v.isEmpty()?QVariant{}:v;
+    }
+    case QMetaType::QVariantList:
+    case QMetaType::QStringList:{
+        auto v=p->source.toList();
+        p->source=v.isEmpty()?QVariant{}:v;
+    }
+    case QMetaType::QVariantHash:
+    case QMetaType::QVariantMap:{
+        auto v=p->source.toHash();
+        p->source=v.isEmpty()?QVariant{}:v;
+    }
+    default:
+        break;
+    }
     return p->source;
 }
 
@@ -398,10 +416,33 @@ ResultValue &CRUDBase::canActionSearch()
     Q_DECLARE_VU;
 
     static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
+
+    QVariantHash vSource;
+    {
+        switch (this->source().typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+        {
+            auto vList=this->source().toList();
+            if(!vList.isEmpty())
+                vSource=vList.first().toHash();
+            break;
+        }
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+            vSource=this->source().toHash();
+            break;
+        default:
+            break;
+        }
+        if(vSource.contains(QStringLiteral("source")))
+            vSource=vSource.value(QStringLiteral("source")).toHash();
+    }
+
     QVariant v;
-    if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(this->source())){
+    if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(vSource)){
         auto &act=p->actions[name];
-        auto &lr=(act==nullptr)?this->search():act->action(this->source());
+        auto &lr=(act==nullptr)?this->search():act->action(vSource);
         v=lr.resultVariant();
     }
     return this->lr(p->dto

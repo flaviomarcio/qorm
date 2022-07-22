@@ -103,7 +103,7 @@ CRUDBlock &CRUDBlock::insert(PrivateQOrm::CRUDBase *crud)
     this->remove(crud);
     if(crud!=nullptr){
         p->crudMap.insert(crud->uuid().toString(), crud);
-        p->crudList<<crud;
+        p->crudList.append(crud);
     }
     return*this;
 }
@@ -160,97 +160,83 @@ ResultValue &CRUDBlock::crudify()
         crud->setOptions(p->options);
         crud->setResultInfo(p->resultInfo);
         crud->host().setValues(&p->host);
-        QVariantList crudList;
-        QVariant crudSource;
-        CRUDBody crudItem{crudBody};
 
-        if(!crudPages.isEmpty())
-            crudSource=crudPages.value(crudUuid);
+        CRUDBody crudItem{};
 
-        if(!crudPages.contains(crudUuid)){
-            crudList.append(crudBody);
-        }
-        else if(vu.vIsList(crudSource)){
-            for(auto &v:crudSource.toList())
-                crudList<<v;
-        }
-        else if(vu.vIsMap(crudSource)){
-            auto vHash=crudSource.toHash();
-            if(vHash.contains(QStringLiteral("uuid")) && vHash.contains(QStringLiteral("items"))){
-                auto list=vHash[QStringLiteral("items")].toList();
-                for(auto &v:list)
-                    crudList.append(CRUDBody{crudBody.strategy(), v});
-            }
-            else{
-                crudList<<crudBody;
-            }
-        }
-        else{
-            crudList<<crudBody;
-        }
+        if(crudPages.contains(crudUuid))
+            crudItem=CRUDBody{crudBody.strategy(), crudPages.value(crudUuid)};
+        else
+            crudItem=crudBody;
 
+        auto makeItem=[&__return](PrivateQOrm::CRUDBase *crud, CRUDBody crudBody){
+            auto strategy=crudBody.strategy();
 
-        auto makeItem=[&__return, &crudBody](PrivateQOrm::CRUDBase *crud, const QVariant &crudSource){
-            CRUDBody crudRecord{crudBody.strategy(), crudSource};
-
-            auto lastCrud=__return.isEmpty()?QVariantHash{}:__return.last().toHash();
-            if(lastCrud.isEmpty())
-                return crudRecord;
-
-            QVariantHash vHash;
-            auto record=lastCrud;
-            if(lastCrud.contains(QStringLiteral("pages"))){
-                auto crud=lastCrud[QStringLiteral("pages")].toList();
-                if(!crud.isEmpty()){
-                    vHash = crud.first().toHash();
-                    if(vHash.contains(QStringLiteral("items")))
-                        record=vHash;
-                    else{
-                        crud=vHash[QStringLiteral("items")].toList();
-                        record=crud.isEmpty()?QVariantHash{}:crud.first().toHash();
-                    }
+            if(!__return.isEmpty()){
+                auto lastReturn = __return.last().toHash();
+                static auto __items="items";
+                if(lastReturn.contains(__items)){
+                    auto v = lastReturn.value(__items);
+                    v=crud->dao().toPrepareForeignWrapper(crud->modelInfo(), {}, v);
+                    crudBody=CRUDBody{strategy, v};
                 }
             }
-            const auto &modelInfo=crud->modelInfo();
-            auto crudSourceFields=modelInfo.toForeign(crudRecord.source(), record);
-            return CRUDBody{crudRecord.strategy(), crudSourceFields};
+
+            switch (strategy) {
+            case QOrm::CRUDStrategy::Remove:
+            case QOrm::CRUDStrategy::Deactivate:
+            case QOrm::CRUDStrategy::Search:
+                return CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), crudBody.items())};
+            case QOrm::CRUDStrategy::Insert:
+            case QOrm::CRUDStrategy::Update:
+            case QOrm::CRUDStrategy::Upsert:
+                return crudBody;
+            default:
+                return CRUDBody{};
+            }
+
+            switch (strategy) {
+            case QOrm::CRUDStrategy::Remove:
+            case QOrm::CRUDStrategy::Deactivate:
+            case QOrm::CRUDStrategy::Search:
+            {
+                break;
+            }
+            case QOrm::CRUDStrategy::Insert:
+            case QOrm::CRUDStrategy::Update:
+            case QOrm::CRUDStrategy::Upsert:
+                return crudBody;
+            default:
+                return CRUDBody{};
+            }
+
+            switch (strategy) {
+            case QOrm::CRUDStrategy::Remove:
+            case QOrm::CRUDStrategy::Deactivate:
+            case QOrm::CRUDStrategy::Search:
+                return CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), crudBody.items())};
+            case QOrm::CRUDStrategy::Insert:
+            case QOrm::CRUDStrategy::Update:
+            case QOrm::CRUDStrategy::Upsert:
+                return crudBody;
+            default:
+                return CRUDBody{};
+            }
         };
 
-
-        switch (crudBody.strategy()) {
-        case QOrm::CRUDStrategy::Remove:
-        case QOrm::CRUDStrategy::Deactivate:
-        {
-            auto crudListCopy=crudList;
-            while(!crudListCopy.isEmpty()){
-                const auto &crudSource=crudListCopy.takeLast();
-                CRUDBody crudMaked{crudSource};
-                if(!crudListCopy.isEmpty())
-                    crudMaked=makeItem(crud, crudSource);
-
-                if(!crud->crudBody(crudMaked).crudify())
-                    return this->lr(crud->lr());
-                __return<<crud->lr().resultVariant();
-            }
-            break;
-        }
-        default:
-            for(auto &crudSource:crudList){
-                auto crudMaked=makeItem(crud, crudSource);
-                if(!crud->crudBody(crudMaked).crudify())
-                    return this->lr(crud->lr());
-
-                __return<<crud->lr().resultVariant();
-            }
-        }
+        auto crudMaked=makeItem(crud, crudItem);
+        if(!crud->crudBody(crudMaked).crudify())
+            return this->lr(crud->lr());
+        __return.append(crud->lr().resultVariant());
     }
-    switch (__return.count()) {
-    case 0:
+
+    if(__return.isEmpty())
         return this->lr().clear();
-    default:
-        auto vPage=__return.first().toHash();
-        return this->lr(QVariantHash{{QStringLiteral("type"), vPage.value(QStringLiteral("type"))}, {QStringLiteral("pages"),__return}});
-    }
+
+    auto vPage=__return.first().toHash();
+    auto type=vPage.value(QStringLiteral("type"));
+    return this->lr(QVariantHash{{QStringLiteral("type"), type}, {QStringLiteral("pages"),__return}});
 }
 
 }
+
+

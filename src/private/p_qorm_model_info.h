@@ -319,14 +319,6 @@ public:
     //!
     virtual QVariantHash toHashModel(const QObject *object) const;
 
-    //!
-    //! \brief toForeign
-    //! \param vModel
-    //! \param v
-    //! \return
-    //!
-    virtual QVariantHash toForeign(const QVariant &vModel, const QVariant &v) const;
-
 private:
     ModelInfoPvt *p=nullptr;
 };

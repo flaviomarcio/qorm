@@ -29,11 +29,6 @@ public:
     virtual ResultValue &action(const QVariant &vSource);
 
     //!
-    //! \brief ~ModelAction
-    //!
-    ~ModelAction();
-
-    //!
     //! \brief onActionBefore
     //! \param action
     //! \return

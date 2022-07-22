@@ -23,6 +23,12 @@ public:
     Q_INVOKABLE explicit ModelDao(QObject *parent = nullptr);
 
     //!
+    //! \brief suitableValue
+    //! \return
+    //!
+    QOrm::SqlSuitableValue &suitableValue();
+
+    //!
     //! \brief variantToParameters
     //! \param modelRef
     //! \param value
@@ -31,10 +37,38 @@ public:
     QVariant variantToParameters(const QOrm::ModelInfo &modelRef, const QVariant &value)const;
 
     //!
-    //! \brief suitableValue
+    //! \brief toPrepareFK
+    //! \param modelRef
+    //! \param vModelFK
     //! \return
     //!
-    QOrm::SqlSuitableValue &suitableValue();
+    QVariantHash toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const;
+
+    //!
+    //! \brief toPrepareForeignWrapper
+    //! \param vModel
+    //! \param v
+    //! \return
+    //!
+    QVariantList toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, const QVariant &vModelFK, const QVariant &vModelPK) const;
+
+    //!
+    //! \brief toPrepareForeign
+    //! \param vModel
+    //! \param v
+    //! \return
+    //!
+    QVariantHash toPrepareForeign(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const;
+
+    //!
+    //! \brief toPrepareSearch
+    //! \param modelRef
+    //! \param vModel
+    //! \return
+    //!
+    QVariantHash toPrepareSearch(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const;
+
+
 private:
     ModelDaoPvt *p=nullptr;
 };

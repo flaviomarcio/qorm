@@ -3,6 +3,7 @@
 #include <QVariant>
 #include <QVariantHash>
 #include "./p_qorm_model_info.h"
+#include "./p_qorm_model_dao.h"
 #include "./p_qorm_model_action_method.h"
 #include "./p_qorm_model_dto_host.h"
 #include "../qorm_model_dto_options.h"
@@ -45,9 +46,10 @@ public:
     explicit CRUDBase(const QVariant &vBody, QObject *parent = nullptr);
 
     //!
-    //! \brief ~CRUDBase
+    //! \brief dao
+    //! \return
     //!
-    ~CRUDBase();
+    ModelDao &dao();
 
     //!
     //! \brief host
@@ -175,7 +177,7 @@ public:
     //! \brief source
     //! \return
     //!
-    virtual QVariant source()const;
+    virtual QVariant &source()const;
 
     //!
     //! \brief source

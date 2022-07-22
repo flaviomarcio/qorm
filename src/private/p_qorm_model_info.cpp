@@ -1202,44 +1202,5 @@ QVariantHash ModelInfo::toHashModel(const QObject *object)const
     return __return;
 }
 
-QVariantHash ModelInfo::toForeign(const QVariant &vModel,const QVariant &v) const
-{
-
-    QVariantHash __return=vModel.toHash();
-    auto vRecord=v;
-    auto typeId=vRecord.typeId();
-    switch (typeId) {
-    case QMetaType::QVariantList:
-    case QMetaType::QStringList:
-    {
-        auto vList=vRecord.toList();
-        vRecord = vList.isEmpty()?v:vList;
-        break;
-    }
-    case QMetaType::QVariantHash:
-    case QMetaType::QVariantMap:
-    {
-        auto vRecordHash=vRecord.toHash();
-        Q_V_HASH_ITERATOR(p->tableForeignKey){
-            i.next();
-            auto vHash=i.value().toHash();
-            auto fkName=vHash[QStringLiteral("fk")].toString();
-            auto pkName=vHash[QStringLiteral("pk")].toString();
-            auto pkValue=vRecordHash.value(pkName);
-            __return.insert(fkName, pkValue);
-        }
-        return __return;
-    }
-    default:
-        break;
-    }
-    Q_V_HASH_ITERATOR(p->tableForeignKey){
-        i.next();
-        auto vHash=i.value().toHash();
-        auto fkName=vHash[QStringLiteral("fk")].toString();
-        __return.insert(fkName, vRecord);
-    }
-    return __return;
-}
 
 }

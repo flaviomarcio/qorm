@@ -13,11 +13,66 @@ public:
     explicit ModelDaoPvt(QObject*parent):QObject{parent}
     {
     }
+
+    static QVariantList cleanList(const QVariant &vModel)
+    {
+        if(!vModel.isValid())
+            return {};
+
+        QVariantList vList;
+        switch (vModel.typeId()) {
+        case QMetaType::QVariantList:
+        {
+            vList=vModel.toList();
+            break;
+        }
+        default:
+            if(!vModel.isValid())
+                vList.append(vModel);
+        }
+
+        if(vList.isEmpty())
+            return {};
+
+        QVariantList __return;
+
+        for(auto &v : vList){
+
+            switch (v.typeId()) {
+            case QMetaType::QVariantList:
+            case QMetaType::QStringList:{
+                auto vList=v.toList();
+                if(!vList.isEmpty())
+                    __return.append(v);
+                break;
+            }
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:{
+                auto vList=v.toHash();
+                if(!vList.isEmpty())
+                    __return.append(v);
+                break;
+            }
+            default:
+                if(v.isValid())
+                    __return.append(v);
+                break;
+            }
+        }
+        return __return;
+    }
+
 };
 
 ModelDao::ModelDao(QObject *parent) : QOrm::ObjectDb{parent}
 {
     this->p = new ModelDaoPvt{this};
+}
+
+QOrm::SqlSuitableValue &ModelDao::suitableValue()
+{
+    auto &s=p->suitableValue;
+    return s.setConnection(this->connection());
 }
 
 QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QVariant &value) const
@@ -30,8 +85,7 @@ QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QV
     if(vu.vIsEmpty(value))
         return searchParameters.buildVariant();
 
-    auto typeIdValue=value.typeId();
-    switch (typeIdValue) {
+    switch (value.typeId()) {
     case QMetaType::QVariantHash:
     case QMetaType::QVariantMap:
     {
@@ -87,12 +141,207 @@ QVariant ModelDao::variantToParameters(const QOrm::ModelInfo &modelRef, const QV
     }
 }
 
-QOrm::SqlSuitableValue &ModelDao::suitableValue()
+QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const
 {
-    auto &s=p->suitableValue;
-    return s.setConnection(this->connection());
+    Q_UNUSED(modelRef)
+    auto vModelList=p->cleanList(vModel);
+    if(vModelList.isEmpty())
+        return {};
+
+    QVariantHash __return;
+    for(auto &fieldName : modelRef.propertyPK()){
+        auto vFilter=__return.value(fieldName.name());
+        QVariantList vFilterList=p->cleanList(vFilter);
+
+        for(auto &v : vModelList){
+            auto itemHash=v.toHash();
+            auto val=itemHash.value(fieldName.name());
+            if(val.isValid())
+                vFilterList.append(val);
+        }
+        if(!vFilterList.isEmpty())
+            __return.insert(fieldName.name(), vFilterList.size()==1?vFilterList.first():vFilterList);
+    }
+    return __return;
+}
+
+QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, const QVariant &vModelFK, const QVariant &vModelPK) const
+{
+    auto vRecord=vModelPK;
+    {//tratamento do registro que fornecera a PK para FK
+        switch (vRecord.typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+        {
+            auto vList=vRecord.toList();
+            vRecord = vList.isEmpty()?vModelPK:vList.first();
+            break;
+        }
+        default:
+            break;
+        }
+
+        switch (vRecord.typeId()) {
+        case QMetaType::QVariantMap:
+        case QMetaType::QVariantHash:
+        {
+            auto vHash=vRecord.toHash();
+            if(vHash.contains(QStringLiteral("source")))
+                vRecord=vHash.value(QStringLiteral("source"));
+            break;
+        }
+        default:
+            break;
+        }
+
+        //validando ultimo valor do source
+        switch (vRecord.typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+        {
+            auto vList=vRecord.toList();
+            vRecord = vList.isEmpty()?vModelPK:vList.first().toHash();
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    QVariantList vModelList;
+    {
+        //tratamentos dos itens a que receberam o valor para FK da PK
+        switch (vModelFK.typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+            vModelList=vModelFK.toList();
+            break;
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+            vModelList.append(vModelFK);
+            break;
+        default:
+            break;
+        }
+    }
+
+    auto vRecordHash=vRecord.toHash();
+    vRecord.clear();
+    if(vModelList.isEmpty())
+        vModelList.append(QVariant{});
+    for(auto &vItem:vModelList){
+        auto vItemHash=vItem.toHash();
+        Q_V_HASH_ITERATOR(modelRef.tableForeignKey()){
+            i.next();
+            auto vHash=i.value().toHash();
+            auto fkName=vHash[QStringLiteral("fk")].toString();
+            auto pkName=vHash[QStringLiteral("pk")].toString();
+            auto pkValue=vRecordHash.value(pkName);
+            vItemHash.insert(fkName, pkValue);
+        }
+        vItem=vItemHash;
+    }
+    return vModelList;
+}
+
+QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const
+{
+    Q_UNUSED(modelRef)
+    QVariantHash __return;
+    auto vModelList=p->cleanList(vModel);
+    if(vModelList.isEmpty())
+        return {};
+
+    auto vList=modelRef.tableForeignKey().values();
+    for(auto & v:vList){
+        auto vPkFk=v.toHash();
+        auto fieldName=vPkFk.value(QStringLiteral("fk")).toString();
+        auto vFilter=__return.value(fieldName);
+        QVariantList vFilterList;
+        switch (vFilter.typeId()) {
+        case QMetaType::QVariantList:
+            vFilterList=vFilter.toList();
+            break;
+        default:
+            if(vFilter.isValid())
+                vFilterList.append(vFilter);
+            break;
+        }
+        for(auto &v : vModelList){
+            auto itemHash=v.toHash();
+            auto val=itemHash.value(fieldName);
+            if(val.isValid())
+                vFilterList.append(val);
+        }
+        if(!vFilterList.isEmpty())
+            __return.insert(fieldName, vFilterList.size()==1?vFilterList.first():vFilterList);
+    }
+    return __return;
+
 
 }
+
+QVariantHash ModelDao::toPrepareSearch(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const
+{
+    QVariantHash __return=this->toPreparePrimaryKey(modelRef, vModel);
+    if(!__return.isEmpty())
+        return __return;
+
+    __return=this->toPrepareForeign(modelRef, vModel);
+    if(!__return.isEmpty())
+        return __return;
+
+    Q_UNUSED(modelRef)
+    auto vModelList=p->cleanList(vModel);
+    if(vModelList.isEmpty())
+        return {};
+
+    for(auto &fieldName:modelRef.propertyTableList()){
+        auto vFilter=__return.value(fieldName);
+        QVariantList vFilterList;
+        switch (vFilter.typeId()) {
+        case QMetaType::QVariantList:
+            vFilterList=vFilter.toList();
+            break;
+        default:
+            if(vFilter.isValid())
+                vFilterList.append(vFilter);
+            break;
+        }
+
+        for(auto &v : vModelList){
+            auto vHash=v.toHash();
+            auto formatField=[](const QVariant &v){
+                switch (v.typeId()) {
+                case QMetaType::QString:
+                case QMetaType::QByteArray:
+                    return QVariant{v.toString()+QStringLiteral("%")};
+                default:
+                    return v;
+                }
+            };
+            auto val=vHash.value(fieldName);
+            if(!val.isValid())
+                continue;
+            switch (val.typeId()) {
+            case QMetaType::QVariantList:
+            {
+                auto vList=val.toList();
+                for(auto&v : vList)
+                    vFilterList.append(formatField(v));
+                break;
+            }
+            default:
+                vFilterList.append(formatField(val));
+                break;
+            }
+        }
+        if(!vFilterList.isEmpty())
+            __return.insert(fieldName, vFilterList.size()==1?vFilterList.first():vFilterList);
+    }
+    return __return;
+}
+
 
 }
 

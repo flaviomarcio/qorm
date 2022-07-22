@@ -18,18 +18,6 @@ public:
         if(this->parent)
             this->parentDb = dynamic_cast<ObjectDb*>(this->parent->parent());
     }
-
-    virtual ~ModelActionPvt()
-    {
-    }
-
-    QVariantList makeBodyLoop(const QVariant &v)
-    {
-        auto vHash=v.toHash();
-        if(vHash.contains(QStringLiteral("id")) && vHash.contains(QStringLiteral("items")))
-            return vHash[QStringLiteral("items")].toList();
-        return QVariantList{vHash};
-    }
 };
 
 ModelAction::ModelAction(QObject *parent) : QOrm::ObjectDb{parent}
@@ -37,35 +25,29 @@ ModelAction::ModelAction(QObject *parent) : QOrm::ObjectDb{parent}
     this->p = new ModelActionPvt{this};
 }
 
-ModelAction::~ModelAction()
-{
-}
-
 ModelAction &ModelAction::onActionBefore(ModelActionMethodPointer action)
 {
-
     p->actionBefore=action;
     return*this;
 }
 
 ModelAction &ModelAction::onAction(ModelActionMethodPointer action)
 {
-
     p->action = action;
     return*this;
 }
 
 ModelAction &ModelAction::onActionAfter(ModelActionMethodPointer action)
 {
-
     p->actionAfter = action;
     return*this;
 }
 
 ResultValue &ModelAction::action(const QVariant &vSource)
 {
-
-    auto vList=p->makeBodyLoop(vSource);
+    auto vList=vSource.toList();
+    if(vList.isEmpty())
+        vList.append(QVariant{});
     for(auto &vSource:vList){
         if(p->actionBefore!=nullptr){
             auto lr=p->actionBefore(p->parentDb, vSource);

@@ -32,11 +32,6 @@ public:
     Q_INVOKABLE explicit ModelDto(const ResultValue &rows, QObject *parent = nullptr);
 
     //!
-    //! \brief ~ModelDto
-    //!
-    ~ModelDto();
-
-    //!
     //! \brief uuid
     //! \return
     //!

@@ -101,13 +101,7 @@ ModelDto::ModelDto(QObject *parent) : QStm::Object{parent}
 ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object{parent}
 {
     this->p = new ModelDtoPvt{this};
-
     p->dtoControls.setValue(rows.resultVariant());
-}
-
-ModelDto::~ModelDto()
-{
-
 }
 
 QUuid &ModelDto::uuid() const

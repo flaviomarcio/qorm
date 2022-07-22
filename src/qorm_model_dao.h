@@ -46,15 +46,40 @@ public:
     //!
     QVariant variantToParameters(const QVariant &value) const
     {
-        auto __return = PrivateQOrm::ModelDao::variantToParameters(this->modelRef, value);
-        return __return;
+        return PrivateQOrm::ModelDao::variantToParameters(this->modelRef, value);
+    }
+
+    //!
+    //! \brief toPrepareForeignWrapper
+    //! \param vModelFK
+    //! \param vModelPK
+    //! \return
+    //!
+    QVariantList toPrepareForeignWrapper(const QVariant &vModelFK, const QVariant &vModelPK) const
+    {
+        return PrivateQOrm::ModelDao::toPrepareForeignWrapper(this->modelRef, vModelFK, vModelPK);
+    }
+
+    //!
+    //! \brief variantToParameters
+    //! \param value
+    //! \return
+    //!
+    QVariantHash toPrepareForeign(const QVariant &vModelFK) const
+    {
+        return PrivateQOrm::ModelDao::toPrepareForeign(this->modelRef, vModelFK);
+    }
+
+    QVariantHash toPrepareSearch(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const
+    {
+        return PrivateQOrm::ModelDao::toPrepareSearch(modelRef, vModel);
     }
 
     //!
     //! \brief record
     //! \return
     //!
-    auto &record() { return this->record(QVariant()); }
+    auto &record() { return this->record(QVariant{}); }
 
     //!
     //! \brief record

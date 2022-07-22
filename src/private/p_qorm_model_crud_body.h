@@ -15,7 +15,7 @@ public:
     //! \brief CRUDBody
     //! \param other
     //!
-    explicit CRUDBody(const QVariant &other=QVariant());
+    explicit CRUDBody(const QVariant &other={});
 
     //!
     //! \brief CRUDBody
@@ -32,11 +32,6 @@ public:
     explicit CRUDBody(const QOrm::CRUDStrategy strategy, const QVariant &source);
 
     //!
-    //! \brief ~CRUDBody
-    //!
-    virtual ~CRUDBody();
-
-    //!
     //! \brief strategy
     //! \return
     //!
@@ -46,7 +41,13 @@ public:
     //! \brief source
     //! \return
     //!
-    virtual const QVariant &source();
+    virtual const QVariant source()const;
+
+    //!
+    //! \brief items
+    //! \return
+    //!
+    virtual const QVariant items()const;
 
     //!
     //! \brief isStrategy
