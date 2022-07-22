@@ -1,7 +1,7 @@
 #include "./qorm_model.h"
 #include "./qorm_query.h"
 #include "./qorm_macro.h"
-#include "./private/p_qorm_query.h"
+//#include "./private/p_qorm_query.h"
 #include "./private/p_qorm_sql_suitable_parser_item.h"
 #include "./private/p_qorm_const.h"
 #include "./private/p_qorm_model_info.h"

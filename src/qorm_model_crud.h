@@ -17,8 +17,11 @@ public:
     //! \brief CRUD
     //! \param parent
     //!
-    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr) : PrivateQOrm::CRUDBase{parent}, p_dao{this}, p_model{this}
+    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr)
+        :
+          PrivateQOrm::CRUDBase{parent}
     {
+
         this->init();
     }
 
@@ -56,28 +59,10 @@ public:
         return PrivateQOrm::CRUDBase::crudify();
     }
 
-    //!
-    //! \brief dto
-    //! \return
-    //!
-    QOrm::ModelDto &dto()
-    {
-        return this->p_dto;
-    }
-
-//    //!
-//    //! \brief dao
-//    //! \return
-//    //!
-//    ModelDao<T> &dao()
-//    {
-//        return this->p_dao;
-//    }
-
 private:
     ModelDao<T> p_dao;
     T p_model;
-    QOrm::ModelDto p_dto;
+    QOrm::ModelDto &p_dto=this->dto();
 
     //!
     //! \brief init

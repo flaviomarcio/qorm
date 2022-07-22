@@ -73,8 +73,7 @@ public:
 
     void initObjects()
     {
-        const auto className
-            = QString::fromUtf8(this->parent->parent()->metaObject()->className()).toLower().trimmed();
+        const auto className=QString::fromUtf8(this->parent->parent()->metaObject()->className()).toLower().trimmed();
         auto settings = dtoSettings->value(className).toHash();
         this->dtoControls.settings(settings);
     }

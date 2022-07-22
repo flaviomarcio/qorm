@@ -62,12 +62,12 @@ public:
                 v=vCrud[QStringLiteral("source")];
             return v;
         };
-        this->strategy_set(vStrategy());
-        this->source_set(vSource());
+        this->strategySet(vStrategy());
+        this->sourceSet(vSource());
         this->parent->lr().resultInfo().fromVar(vCrud.value(QStringLiteral("resultInfo")));
     }
 
-    void source_set(const QVariant &source)
+    void sourceSet(const QVariant &source)
     {
         switch (source.typeId()) {
         case QMetaType::QString:
@@ -82,7 +82,7 @@ public:
         }
     }
 
-    void strategy_set(const QVariant &strategy)
+    void strategySet(const QVariant &strategy)
     {
         if(!strategy.isValid() || strategy.isNull()){
             this->strategy=QOrm::Undefined;
@@ -225,7 +225,7 @@ QOrm::CRUDStrategy&CRUDBase::strategy()const
 
 CRUDBase &CRUDBase::strategy(const QVariant &strategy)
 {
-    p->strategy_set(strategy);
+    p->strategySet(strategy);
     return*this;
 }
 
@@ -238,16 +238,19 @@ QVariant &CRUDBase::source() const
     case QMetaType::QBitArray:{
         auto v=p->source.toString().trimmed();
         p->source=v.isEmpty()?QVariant{}:v;
+        break;
     }
     case QMetaType::QVariantList:
     case QMetaType::QStringList:{
         auto v=p->source.toList();
         p->source=v.isEmpty()?QVariant{}:v;
+        break;
     }
     case QMetaType::QVariantHash:
     case QMetaType::QVariantMap:{
         auto v=p->source.toHash();
         p->source=v.isEmpty()?QVariant{}:v;
+        break;
     }
     default:
         break;

@@ -36,10 +36,6 @@ public:
         this->dto=parent;
     }
 
-    virtual ~ModelDtoControlsPvt()
-    {
-    }
-
     QVariantHash toOutput()
     {
         QVariantHash vHash;
