@@ -465,27 +465,33 @@ public:
         return rList;
     }
 
-    QVariantHash wrapperToModelMap(const QString &wrapperName, const QVariant &v)const
+    QVariantHash wrapperToModelHash(const QString &wrapperName, const QVariant &v)const
     {
-        auto vWrapper=v.toHash();
         QVariantHash vHash;
+        auto vWrapper=v.toHash();
         const auto name=wrapperName.toLower().trimmed().toUtf8();
         const auto &mapWrapper = this->mapWrapper.value(name);
         QHashIterator<QString,QVariant> iO(vWrapper);
         while (iO.hasNext()) {
             iO.next();
-            auto atualKey   = iO.key().toLower().toUtf8();
+            auto atualKey = iO.key().toLower().toUtf8();
             auto wrapperKey = mapWrapper.key(atualKey);
-            auto novaKey    = (!wrapperKey.isEmpty())?wrapperKey:atualKey;
+            auto novaKey = (!wrapperKey.isEmpty())?wrapperKey:atualKey;
             vHash.insert(novaKey, iO.value());
         }
         return vHash;
     }
 
+    ResultValue &mergeWrapper(const QString &wrapperName, const QVariant &vWrapper)const
+    {
+        auto vHash = this->wrapperToModelHash(wrapperName, vWrapper);
+        return this->model->mergeFrom(vHash);
+    }
+
     ResultValue &fromWrapper(const QString &wrapperName, const QVariant &vWrapper)const
     {
-        auto vMap=this->wrapperToModelMap(wrapperName, vWrapper);
-        return this->model->readFrom(vMap);
+        auto vHash=this->wrapperToModelHash(wrapperName, vWrapper);
+        return this->model->readFrom(vHash);
     }
 };
 
@@ -506,7 +512,6 @@ QVariant Model::tablePkCompuser() const
 
 Model &Model::clear()
 {
-
     p->clear();
     return*this;
 }
@@ -523,7 +528,6 @@ bool Model::autoMakeUuid()
 
 QByteArray Model::storedMd5Make() const
 {
-
     return p->storedMd5Make();
 }
 
@@ -560,26 +564,21 @@ QVariantList Model::toList(const QVariantList &vList)
 
 QVariantMap Model::toMap()const
 {
-
     return p->modelInfo().toMap(this);
 }
 
 QVariantHash Model::toHash() const
 {
-
     return p->modelInfo().toHash(this);
 }
 
 QVariantHash Model::toHashModel() const
 {
-
-    auto vHash=p->modelInfo().toHashModel(this);
-    return vHash;
+    return p->modelInfo().toHashModel(this);
 }
 
 QVariantHash Model::toMapPKValues() const
 {
-
     QVVM qvvm;
     auto &modelInfo=p->modelInfo();
     const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
@@ -645,7 +644,6 @@ QVariantHash Model::toMapPKValues() const
 
 QVariantHash Model::toMapFKValues() const
 {
-
     QVVM qvvm;
     auto &modelInfo=p->modelInfo();
     const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
@@ -672,7 +670,6 @@ QVariantHash Model::toWrapper() const
 
 QVariantHash Model::toWrapper(const QString &wrapperName) const
 {
-
     auto map=this->toHashModel();
     if(map.isEmpty())
         return map;
@@ -683,44 +680,37 @@ QVariantHash Model::toWrapper(const QString &wrapperName) const
 
 QVariantList Model::toWrapper(const QString &wrapperName, const QVariantList &v) const
 {
-
     return p->toWrapper(wrapperName, v);
 }
 
 
 QVariantList Model::toWrapper(const QString &wrapperName, const QVariantHash &v) const
 {
-
     return p->toWrapper(wrapperName, v);
 }
 
 QVariantList Model::toWrapper(const QString &wrapperName, ResultValue &v) const
 {
-
     return p->toWrapper(wrapperName.trimmed(), v.resultVariant());
 }
 
 QVariantList Model::toWrapper(const QVariantList &v) const
 {
-
     return p->toWrapper({}, v);
 }
 
 QVariantList Model::toWrapper(const QVariantHash &v) const
 {
-
     return p->toWrapper({}, v);
 }
 
 QVariantList Model::toWrapper(ResultValue &v) const
 {
-
     return p->toWrapper({}, v.resultVariant());
 }
 
 bool Model::addWrapper(const QString &wrapperName, const QString &src, const QString &dst)
 {
-
     auto name=wrapperName.toLower().trimmed().toUtf8();
     auto mapWrapper=p->mapWrapper.value(name);
     auto v1=src.toUtf8().replace(QByteArrayLiteral("\""), "").trimmed();
@@ -765,8 +755,7 @@ bool Model::appendToWrapper(QVariantHash &wrapper, const QString &fromWrapper, c
 
 bool Model::isWrapperModifier(const QVariantHash &wrapper, const QString &fromWrapper)
 {
-
-    auto tMap=p->wrapperToModelMap(fromWrapper, wrapper);
+    auto tMap=p->wrapperToModelHash(fromWrapper, wrapper);
     return this->isModifier(tMap);
 }
 
@@ -777,8 +766,7 @@ bool Model::isWrapperModifierSet(const QVariantHash &wrapper)
 
 bool Model::isWrapperModifierSet(const QVariantHash &wrapper, const QString &fromWrapper)
 {
-
-    auto tMap=p->wrapperToModelMap(fromWrapper, wrapper);
+    auto tMap=p->wrapperToModelHash(fromWrapper, wrapper);
     if(this->isModifier(tMap))
         return this->readFrom(tMap);
     return false;
@@ -798,26 +786,23 @@ bool Model::propertyAfterSet(const QByteArray &property, const QVariant &value) 
     return true;
 }
 
-ResultValue &Model::readFrom(const QVariant &record)
+ResultValue &Model::readFrom(const QVariant &values)
 {
-
-    return p->read(record);
+    return p->read(values);
 }
 
-ResultValue &Model::readFrom(const QSqlQuery *record)
+ResultValue &Model::readFrom(const QSqlQuery *values)
 {
-
-    return p->read(record);
+    return p->read(values);
 }
 
-ResultValue &Model::readFrom(const Query *record)
+ResultValue &Model::readFrom(const Query *values)
 {
-    return this->readFrom(&record->sqlQuery());
+    return this->readFrom(&values->sqlQuery());
 }
 
 ResultValue &Model::readFrom(const ResultValue &resultValue)
 {
-
     return p->read(resultValue.resultVariant());
 }
 
@@ -826,63 +811,58 @@ ResultValue &Model::readFrom(const Model &model)
     return this->readFrom(model.toHash());
 }
 
-ResultValue &Model::readWrapper(const QString &wrapper, const QVariant &vMap)
+ResultValue &Model::readWrapper(const QString &wrapper, const QVariant &values)
 {
-
-    return p->fromWrapper(wrapper, vMap.toHash());
+    return p->fromWrapper(wrapper, values.toHash());
 }
 
 ResultValue &Model::readWrapper(ResultValue &resultValue)
 {
-
     return p->fromWrapper({}, resultValue.resultHash());
 }
 
-ResultValue &Model::readWrapper(const QVariant &vMap)
+ResultValue &Model::mergeWrapper(const QVariant &values)
 {
+    return p->mergeWrapper({}, values);
+}
 
-    return p->fromWrapper({}, vMap.toHash());
+ResultValue &Model::readWrapper(const QVariant &values)
+{
+    return p->fromWrapper({}, values.toHash());
 }
 
 ResultValue &Model::readWrapper(const QString &wrapper, ResultValue &resultValue)
 {
-
     return p->fromWrapper(wrapper, resultValue.resultHash());
 }
 
-ResultValue &Model::mergeFrom(const QByteArray &record)
+ResultValue &Model::mergeFrom(const QByteArray &values)
 {
-
-    return p->merge(QJsonDocument::fromJson(record).toVariant().toHash());
+    return p->merge(QJsonDocument::fromJson(values).toVariant().toHash());
 }
 
-ResultValue &Model::mergeFrom(const QVariantHash &record)
+ResultValue &Model::mergeFrom(const QVariantHash &values)
 {
-
-    return p->merge(record);
+    return p->merge(values);
 }
 
-ResultValue &Model::mergeFrom(const QVariant &record)
+ResultValue &Model::mergeFrom(const QVariant &values)
 {
-
-    return p->merge(record.toHash());
+    return p->merge(values.toHash());
 }
 
-ResultValue &Model::mergeFrom(const QSqlQuery *record)
+ResultValue &Model::mergeFrom(const QSqlQuery *values)
 {
-
-    return p->merge(record);
+    return p->merge(values);
 }
 
 ResultValue &Model::mergeFrom(ResultValue &resultValue)
 {
-
     return p->merge(resultValue.resultHash());
 }
 
 bool Model::setProperty(const char *name, const QVariant &value)
 {
-
     auto index=this->metaObject()->indexOfProperty(name);
     if(index<0)
         return false;
@@ -896,13 +876,11 @@ bool Model::setProperty(const char *name, const QVariant &value)
 
 bool Model::setProperty(const QMetaProperty &property, const QVariant &value)
 {
-
     return p->write(property, value);
 }
 
 ResultValue &Model::uuidSet()
 {
-
     auto &modelInfo=p->modelInfo();
     Q_V_PROPERTY_ITERATOR(modelInfo.propertyPK()){
         i.next();
@@ -921,7 +899,6 @@ ResultValue &Model::uuidSet()
 
 ResultValue &Model::deactivateSetValues()
 {
-
     auto propertyDeactivateField=p->modelInfo().propertyDeactivateField();
     if(propertyDeactivateField.isEmpty())
         return this->lr()=false;
@@ -939,7 +916,6 @@ ResultValue &Model::deactivateSetValues()
 
 ResultValue &Model::datetimeSet()
 {
-
     auto &modelInfo=p->modelInfo();
     Q_V_PROPERTY_ITERATOR(modelInfo.propertyPK()){
         i.next();

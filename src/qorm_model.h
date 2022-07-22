@@ -272,21 +272,21 @@ public:
     //! \param record
     //! \return
     //!
-    virtual ResultValue &readFrom(const QVariant &record);
+    virtual ResultValue &readFrom(const QVariant &values);
 
     //!
     //! \brief readFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue &readFrom(const QSqlQuery *record);
+    virtual ResultValue &readFrom(const QSqlQuery *values);
 
     //!
     //! \brief readFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue &readFrom(const Query *record);
+    virtual ResultValue &readFrom(const Query *values);
 
     //!
     //! \brief readFrom
@@ -308,14 +308,14 @@ public:
     //! \param vMap
     //! \return
     //!
-    virtual ResultValue &readWrapper(const QString &wrapper, const QVariant &vMap);
+    virtual ResultValue &readWrapper(const QString &wrapper, const QVariant &values);
 
     //!
     //! \brief readWrapper
     //! \param vMap
     //! \return
     //!
-    virtual ResultValue &readWrapper(const QVariant &vMap);
+    virtual ResultValue &readWrapper(const QVariant &values);
 
     //!
     //! \brief readWrapper
@@ -333,32 +333,39 @@ public:
     virtual ResultValue &readWrapper(ResultValue &resultValue);
 
     //!
-    //! \brief mergeFrom
-    //! \param record
+    //! \brief mergeWrapper
+    //! \param value
     //! \return
     //!
-    virtual ResultValue &mergeFrom(const QByteArray &record);
+    virtual ResultValue &mergeWrapper(const QVariant &values);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue &mergeFrom(const QVariantHash &record);
+    virtual ResultValue &mergeFrom(const QByteArray &values);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue &mergeFrom(const QVariant &record);
+    virtual ResultValue &mergeFrom(const QVariantHash &values);
 
     //!
     //! \brief mergeFrom
     //! \param record
     //! \return
     //!
-    virtual ResultValue &mergeFrom(const QSqlQuery *record);
+    virtual ResultValue &mergeFrom(const QVariant &values);
+
+    //!
+    //! \brief mergeFrom
+    //! \param record
+    //! \return
+    //!
+    virtual ResultValue &mergeFrom(const QSqlQuery *values);
 
     //!
     //! \brief mergeFrom
