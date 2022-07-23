@@ -27,9 +27,9 @@ public:
             break;
         }
         default:
-            if(!vModel.isValid())
-                vList.append(vModel);
+            vList.append(vModel);
         }
+
 
         if(vList.isEmpty())
             return {};
@@ -149,19 +149,42 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
         return {};
 
     QVariantHash __return;
-    for(auto &fieldName : modelRef.propertyPK()){
-        auto vFilter=__return.value(fieldName.name());
+    QHashIterator<QString, QMetaProperty> i(modelRef.propertyPK());
+    while(i.hasNext()){
+        i.next();
+        auto property=i.value();
+        auto vFilter=__return.value(property.name());
         QVariantList vFilterList=p->cleanList(vFilter);
-
         for(auto &v : vModelList){
-            auto itemHash=v.toHash();
-            auto val=itemHash.value(fieldName.name());
-            if(val.isValid())
-                vFilterList.append(val);
+            if(!v.isValid())continue;
+            switch (v.typeId()) {
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:
+            {
+                auto itemHash=v.toHash();
+                auto val=itemHash.value(property.name());
+                if(val.isValid())
+                    vFilterList.append(val);
+                break;
+            }
+            case QMetaType::QVariantList:
+            case QMetaType::QStringList:
+            {
+                auto itemList=p->cleanList(v.toList());
+                for(auto&v:itemList)
+                    vFilterList.append(v);
+                break;
+            }
+
+
+            default:
+                vFilterList.append(v);
+            }
         }
         if(!vFilterList.isEmpty())
-            __return.insert(fieldName.name(), vFilterList.size()==1?vFilterList.first():vFilterList);
+            __return.insert(property.name(), vFilterList.size()==1?vFilterList.first():vFilterList);
     }
+
     return __return;
 }
 

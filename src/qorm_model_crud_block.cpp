@@ -137,7 +137,18 @@ ResultValue &CRUDBlock::crudify()
 
     {
         auto vCrudSource=crudBody.source().toHash();
-        if(vCrudSource.contains(QStringLiteral("pages"))){
+
+
+        if(vCrudSource.contains(QStringLiteral("resultInfo")))
+            this->resultInfo().setValues(vCrudSource.value("resultInfo"));
+
+        if(vCrudSource.contains(QStringLiteral("expression"))){
+            auto expression=vCrudSource.value("expression");
+            crudBody=CRUDBody{crudBody.strategy(), expression};
+            vCrudSource.clear();
+        }
+
+        if(!vCrudSource.contains(QStringLiteral("pages"))){
             auto vList=vCrudSource[QStringLiteral("pages")].toList();
             for(auto &v:vList){
                 auto vHash=v.toHash();
@@ -185,7 +196,7 @@ ResultValue &CRUDBlock::crudify()
             case QOrm::CRUDStrategy::Remove:
             case QOrm::CRUDStrategy::Deactivate:
             case QOrm::CRUDStrategy::Search:
-                return CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), crudBody.items())};
+                return CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), crudBody.source())};
             case QOrm::CRUDStrategy::Insert:
             case QOrm::CRUDStrategy::Update:
             case QOrm::CRUDStrategy::Upsert:

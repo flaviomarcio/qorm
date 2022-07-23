@@ -36,7 +36,8 @@ const QVariant CRUDBody::source() const
 
 const QVariant CRUDBody::items() const
 {
-    auto v=this->contains("source")?this->value("source"):*this;
+    static auto __source="source";
+    auto v=this->contains(__source)?this->value(__source):*this;
     QVariantList vList;
     switch (v.typeId()) {
     case QMetaType::QVariantList:
@@ -52,8 +53,8 @@ const QVariant CRUDBody::items() const
     }
     for(auto &v:vList){
         auto vHash=v.toHash();
-        if(vHash.contains("source"))
-            v=vHash.value("source");
+        if(vHash.contains(__source))
+            v=vHash.value(__source);
     }
     return vList;
 }
