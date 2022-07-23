@@ -14,20 +14,45 @@ public:
     {
     }
 
-    static QVariantList cleanList(const QVariant &vModel)
+    static bool valuesIsValid(const QVariant &values)
     {
-        if(!vModel.isValid())
+        switch (values.typeId()) {
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        case QMetaType::QChar:
+        case QMetaType::QBitArray:{
+            auto v=values.toString().trimmed();
+            if(v.isEmpty())
+                return false;
+            break;
+        }
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+            return !values.toList().isEmpty();
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+            return !values.toHash().isEmpty();
+        default:
+            break;
+        }
+        return true;
+    }
+
+    static QVariantList cleanList(const QVariant &vValues)
+    {
+
+        if(!vValues.isValid())
             return {};
 
         QVariantList vList;
-        switch (vModel.typeId()) {
+        switch (vValues.typeId()) {
         case QMetaType::QVariantList:
         {
-            vList=vModel.toList();
+            vList=vValues.toList();
             break;
         }
         default:
-            vList.append(vModel);
+            vList.append(vValues);
         }
 
 
@@ -306,6 +331,9 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
 
 QVariantHash ModelDao::toPrepareSearch(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const
 {
+    if(!p->valuesIsValid(vModel))
+        return {};
+
     QVariantHash __return=this->toPreparePrimaryKey(modelRef, vModel);
     if(!__return.isEmpty())
         return __return;
