@@ -910,7 +910,7 @@ ResultValue &Model::autoSet()
 {
     auto vList=p->autoSetFields();
     auto &modelInfo=p->modelInfo();
-    auto &propertyInfo=modelInfo.propertyInfo();
+    auto &propertyInfo=modelInfo.propertyByPropertyName();
     for(auto &v: vList){
         auto property=propertyInfo.value(v);
         if(!property.isReadable() || !property.isWritable())
@@ -951,7 +951,7 @@ ResultValue &Model::uuidSet()
 {
     auto vList=p->autoSetFields();
     auto &modelInfo=p->modelInfo();
-    auto &propertyInfo=modelInfo.propertyInfo();
+    auto &propertyInfo=modelInfo.propertyByPropertyName();
     for(auto &v: vList){
         auto property=propertyInfo.value(v);
         if(!property.isReadable() || !property.isWritable())
@@ -973,7 +973,7 @@ ResultValue &Model::datetimeSet()
 {
     auto vList=p->autoSetFields();
     auto &modelInfo=p->modelInfo();
-    auto &propertyInfo=modelInfo.propertyInfo();
+    auto &propertyInfo=modelInfo.propertyByPropertyName();
     for(auto &v: vList){
         auto property=propertyInfo.value(v);
         if(!property.isReadable() || !property.isWritable())
