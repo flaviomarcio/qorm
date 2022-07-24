@@ -31,7 +31,7 @@ public:
             map.insert(__func__, limit);
             this->setValue(map);
         }
-        return*this;
+        return *this;
     }
 
     //!
@@ -46,7 +46,7 @@ public:
             map.insert(__func__, off_set);
             this->setValue(map);
         }
-        return*this;
+        return *this;
     }
 
     //!
@@ -61,7 +61,7 @@ public:
             this->limit(limit);
         if(off_set>0)
             this->offset(off_set);
-        return*this;
+        return *this;
     }
 
     //!
@@ -72,7 +72,7 @@ public:
         auto map=this->toMap();
         map.insert(__func__,true);
         this->setValue(map);
-        return*this;
+        return *this;
     }
 
     //!
@@ -84,7 +84,7 @@ public:
         auto map=this->toMap();
         map.insert(__func__,true);
         this->setValue(map);
-        return*this;
+        return *this;
     }
 
     //!
@@ -96,7 +96,7 @@ public:
         auto map=this->toMap();
         map.insert(__func__, true);
         this->setValue(map);
-        return*this;
+        return *this;
     }
 
     //!
@@ -109,7 +109,7 @@ public:
         auto map=this->toMap();
         map.insert(__func__, value);
         this->setValue(map);
-        return*this;
+        return *this;
     }
 
     //!
@@ -135,7 +135,7 @@ public:
     {
         auto &fields=this->fields();
         fields.f(parserObject);
-        return*this;
+        return *this;
     }
 
     //!
@@ -147,7 +147,7 @@ public:
     {
         this->fields(parserbject);
         this->from(parserbject);
-        return*this;
+        return *this;
     }
 
     //!
@@ -160,7 +160,7 @@ public:
         this->fields().f(QStringLiteral("1 as c"));
         this->limit(1);
         this->from(parserbject);
-        return*this;
+        return *this;
     }
 
     //!
@@ -369,7 +369,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
     auto &values(const QVariant &values)
     {
@@ -378,7 +378,7 @@ public:
             object=new SqlParserCommand(values);
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     virtual QStringList toScript(SqlSuitableKeyWord&parser)
@@ -402,7 +402,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     auto &values(const QVariant &v)
@@ -412,7 +412,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     explicit SqlParserUpdate():SqlParserCommand{}
@@ -444,7 +444,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     auto &values(const QVariant &v)
@@ -454,7 +454,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     explicit SqlParserUpsert():SqlParserCommand{}
@@ -484,7 +484,7 @@ public:
         auto map=this->toMap();
         map.insert(__func__,v);
         this->setValue(map);
-        return*this;
+        return *this;
     }
 
     auto &values(const QVariant &values)
@@ -552,7 +552,7 @@ public:
         map[QStringLiteral("object")]=v;
         object->setValue(map);
         this->setPointer(this->suuid(), object);
-        return*this;
+        return *this;
     }
 
     virtual QStringList toScript(SqlSuitableKeyWord&parser)
@@ -600,7 +600,7 @@ public:
         map[QStringLiteral("object")]=v;
         object->setValue(map);
         this->setPointer(this->suuid(), object);
-        return*this;
+        return *this;
     }
 
     auto &truncateTableCascade(const QVariant &v)
@@ -612,7 +612,7 @@ public:
         map[QStringLiteral("object")]=v;
         object->setValue(map);
         this->setPointer(this->suuid(), object);
-        return*this;
+        return *this;
     }
 
     virtual QStringList toScript(SqlSuitableKeyWord&parser)

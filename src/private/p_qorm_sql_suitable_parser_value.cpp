@@ -35,7 +35,7 @@ SqlParserValues &SqlParserValues::value(const QVariant &v)
     {
         for(auto &i:v.toList())
             this->value(i);
-        return*this;
+        return *this;
     }
     case QMetaType::QVariantHash:
     case QMetaType::QVariantMap:
@@ -45,11 +45,11 @@ SqlParserValues &SqlParserValues::value(const QVariant &v)
             i.next();
             this->value(i.value());
         }
-        return*this;
+        return *this;
     }
     default:
         this->value(v);
-        return*this;
+        return *this;
     }
 }
 

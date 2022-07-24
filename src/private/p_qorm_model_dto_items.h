@@ -30,13 +30,13 @@ public:
     virtual ModelDtoItems&clear()
     {
         this->___objectList.clear();
-        return*this;
+        return *this;
     }
 
     virtual ModelDtoItems&fromList(const QVariant &v)
     {
         this->___objectList=v.toList();
-        return*this;
+        return *this;
     }
 
     virtual QVariant toVar()const
@@ -44,7 +44,7 @@ public:
         return this->___objectList;
     };
 
-    virtual QVariantList&list()
+    virtual QVariantList &list()
     {
         return this->___objectList;
     }

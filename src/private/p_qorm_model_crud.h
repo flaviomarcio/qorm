@@ -14,7 +14,7 @@
 //#include "../qorm_model_dao.h"
 
 namespace QOrm {
-typedef std::function<ResultValue &(QOrm::ObjectDb*controller, const QVariant &vBody)> CRUDBodyActionMethod;
+typedef std::function<ResultValue &(QOrm::ObjectDb *controller, const QVariant &vBody)> CRUDBodyActionMethod;
 typedef QOrm::ModelAction CRUDAction;
 }
 
@@ -82,6 +82,18 @@ public:
     //! \return
     //!
     CRUDBase &setResultInfo(const QStm::ResultInfo &resultInfo);
+
+    //!
+    //! \brief clear
+    //! \return
+    //!
+    CRUDBase &clear();
+
+    //!
+    //! \brief clean
+    //! \return
+    //!
+    CRUDBase &clean();
 
     //!
     //! \brief type
@@ -187,6 +199,12 @@ public:
     virtual CRUDBase &source(const QVariant &value);
 
     //!
+    //! \brief generatedRecords
+    //! \return
+    //!
+    QVariantList &generatedRecords()const;
+
+    //!
     //! \brief crudify
     //! \return
     //!
@@ -226,6 +244,13 @@ public:
     //! \return
     //!
     virtual CRUDBase &actionUpdate(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionInsertUpsertUpdate
+    //! \param action
+    //! \return
+    //!
+    virtual CRUDBase &actionInsertUpsertUpdate(QOrm::ModelAction &action);
 
     //!
     //! \brief actionRemove

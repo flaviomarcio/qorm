@@ -100,6 +100,12 @@ public:
     virtual CRUDBlock &clear();
 
     //!
+    //! \brief clean
+    //! \return
+    //!
+    virtual CRUDBlock &clean();
+
+    //!
     //! \brief insert
     //! \param crud
     //! \return
@@ -119,6 +125,26 @@ public:
     //! \return
     //!
     virtual CRUDBlock &remove(const QUuid &crudUuid);
+
+    //!
+    //! \brief generatedRecords
+    //! \return
+    //!
+    const QVariantHash &generatedRecords() const;
+
+    //!
+    //! \brief generatedRecords
+    //! \param uuid
+    //! \return
+    //!
+    const QVariantList generatedRecords(const QUuid &uuid) const;
+
+    //!
+    //! \brief generatedRecords
+    //! \param modelInfo
+    //! \return
+    //!
+    const QVariantList generatedRecords(const ModelInfo &modelInfo) const;
 
     //!
     //! \brief crudify

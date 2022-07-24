@@ -85,11 +85,15 @@ Q_INVOKABLE virtual QByteArray tablePk(const QByteArray &alias)const{return (ali
 Q_INVOKABLE virtual QByteArray tablePrimaryKey()const{static const auto ___return=QByteArrayLiteral(#propertyPk); return ___return;}\
 Q_INVOKABLE virtual QByteArray tablePrimaryKey(const QByteArray &alias)const{return (alias.trimmed().isEmpty()?"":alias.toLower().trimmed()+QByteArrayLiteral("."))+QByteArrayLiteral(#propertyPk);}
 
-
-
 #define QORM_DECLARE_TABLE_ORDERBY(name)\
 public:\
 Q_INVOKABLE virtual QByteArray tableOrderBy()const{static const auto ___return=QByteArrayLiteral(#name); return ___return;}
+
+#define QORM_DECLARE_TABLE_AUTO_SET(name)\
+public:\
+Q_INVOKABLE virtual QByteArray tableAutoSetFields()const{static const auto ___return=QByteArrayLiteral(#name); return ___return;}
+
+
 
 #define QORM_DECLARE_TABLE_PRIMARY_KEY_AUTO(name)\
 public:\

@@ -255,7 +255,7 @@ public:
     //! \param value
     //! \return
     //!
-    auto &insert(T &value) { return this->insert(value.toHashModel()); }
+    auto &insert(T &model) { return this->insert(model.toHashModel()); }
 
     //!
     //! \brief insert
@@ -273,6 +273,7 @@ public:
             for (auto &v : value.toList()) {
                 T model(v);
                 model.autoMakeUuid();
+                model.autoSet();
                 list.append(model.toHashModel());
             }
             break;
@@ -280,6 +281,7 @@ public:
         default:
             T model(value);
             model.autoMakeUuid();
+            model.autoSet();
             list.append(model.toHashModel());
         }
 
@@ -365,6 +367,7 @@ public:
             for (auto &v : value.toList()) {
                 T model(v);
                 model.autoMakeUuid();
+                model.autoSet();
                 list.append(model.toHashModel());
             }
             break;
@@ -372,6 +375,7 @@ public:
         default:
             T model(value);
             model.autoMakeUuid();
+            model.autoSet();
             list.append(model.toHashModel());
         }
 

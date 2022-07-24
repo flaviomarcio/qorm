@@ -377,35 +377,54 @@ public:
         return this->model->lr()=this->read(record);
     }
 
-    ResultValue &merge(const QSqlQuery *cursorQuery)
+    ResultValue &merge(const QSqlQuery *query)
     {
         QVariantHash record;
-        auto sqlRecord=cursorQuery->record();
+        auto sqlRecord=query->record();
         for (int col = 0; col < sqlRecord.count(); ++col)
             record.insert(sqlRecord.fieldName(col), sqlRecord.value(col));
         return this->merge(record);
     }
 
-    ResultValue &merge(const QVariantHash &record)
+    ResultValue &merge(const QVariant &values)
     {
+        QVariantList vList;
+        switch (values.typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+        {
+            auto list=values.toList();
+            for(auto&v : list){
+                auto vHash=v.toHash();
+                if(!vHash.isEmpty())
+                    vList.append(v);
+            }
+            break;
+        }
+        default:
+            vList.append(values);
+        }
 
         auto metaObject = this->model->metaObject();
         auto prefix=this->modelInfo().tablePrefix();
 
-        for(int col = 0; col < metaObject->propertyCount(); ++col) {
-            auto property = metaObject->property(col);
-            if(__propertyIgnoredList->contains(property.name()))
-                continue;
+        for(auto&v:vList){
+            auto record=v.toHash();
+            for(int col = 0; col < metaObject->propertyCount(); ++col) {
+                auto property = metaObject->property(col);
+                if(__propertyIgnoredList->contains(property.name()))
+                    continue;
 
-            //auto value=record.value(property.name());
-            auto propertyName=QByteArray{property.name()}.toLower().trimmed();
-            Q_V_HASH_ITERATOR (record){
-                i.next();
-                auto valueName=i.key().toLower().trimmed();
-                if((valueName==propertyName) || valueName==prefix+propertyName){
-                    if(!this->write(property, i.value()))
-                        return this->model->lr().setValidation(QObject::tr("Invalid data model"));
-                    break;
+                //auto value=record.value(property.name());
+                auto propertyName=QByteArray{property.name()}.toLower().trimmed();
+                Q_V_HASH_ITERATOR (record){
+                    i.next();
+                    auto valueName=i.key().toLower().trimmed();
+                    if((valueName==propertyName) || valueName==prefix+propertyName){
+                        if(!this->write(property, i.value()))
+                            return this->model->lr().setValidation(QObject::tr("Invalid data model"));
+                        break;
+                    }
                 }
             }
         }
@@ -493,6 +512,14 @@ public:
         auto vHash=this->wrapperToModelHash(wrapperName, vWrapper);
         return this->model->readFrom(vHash);
     }
+
+    QStringList autoSetFields()
+    {
+        auto __return=modelInfo().propertyPK().keys();
+        __return<<modelInfo().tableAutoSetFields();
+        return __return;
+    }
+
 };
 
 Model::Model(QObject *parent):QOrm::Object{parent}
@@ -513,7 +540,7 @@ QVariant Model::tablePkCompuser() const
 Model &Model::clear()
 {
     p->clear();
-    return*this;
+    return *this;
 }
 
 bool Model::makeUuid()
@@ -848,7 +875,7 @@ ResultValue &Model::mergeFrom(const QVariantHash &values)
 
 ResultValue &Model::mergeFrom(const QVariant &values)
 {
-    return p->merge(values.toHash());
+    return p->merge(values);
 }
 
 ResultValue &Model::mergeFrom(const QSqlQuery *values)
@@ -879,20 +906,102 @@ bool Model::setProperty(const QMetaProperty &property, const QVariant &value)
     return p->write(property, value);
 }
 
+ResultValue &Model::autoSet()
+{
+    auto vList=p->autoSetFields();
+    auto &modelInfo=p->modelInfo();
+    auto &propertyInfo=modelInfo.propertyInfo();
+    for(auto &v: vList){
+        auto property=propertyInfo.value(v);
+        if(!property.isReadable() || !property.isWritable())
+            continue;
+        auto value=property.read(this);
+
+        switch (property.typeId()) {
+        case QMetaType::QUuid:
+            if(value.toUuid().isNull())
+                property.write(this, this->uuidGenerator());
+            break;
+        case QMetaType::QDate:{
+            auto val=value.toDateTime();
+            if(val.isNull() || !val.isValid())
+                property.write(this, QDate::currentDate());
+            break;
+        }
+        case QMetaType::QTime:{
+            auto val=value.toDateTime();
+            if(val.isNull() || !val.isValid())
+                property.write(this, QTime::currentTime());
+            break;
+        }
+        case QMetaType::QDateTime:{
+            auto val=value.toDateTime();
+            if(val.isNull() || val.isValid())
+                property.write(this, QDateTime::currentDateTime());
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return this->lr()=true;
+}
+
 ResultValue &Model::uuidSet()
 {
+    auto vList=p->autoSetFields();
     auto &modelInfo=p->modelInfo();
-    Q_V_PROPERTY_ITERATOR(modelInfo.propertyPK()){
-        i.next();
-        auto &property=i.value();
-        if(property.typeId()!=QMetaType::QUuid)
+    auto &propertyInfo=modelInfo.propertyInfo();
+    for(auto &v: vList){
+        auto property=propertyInfo.value(v);
+        if(!property.isReadable() || !property.isWritable())
             continue;
+        auto value=property.read(this);
+        switch (property.typeId()) {
+        case QMetaType::QUuid:
+            if(value.toUuid().isNull())
+                property.write(this, this->uuidGenerator());
+            break;
+        default:
+            break;
+        }
+    }
+    return this->lr()=true;
+}
 
-        auto v=property.read(this).toUuid();
-        if(!v.isNull())
+ResultValue &Model::datetimeSet()
+{
+    auto vList=p->autoSetFields();
+    auto &modelInfo=p->modelInfo();
+    auto &propertyInfo=modelInfo.propertyInfo();
+    for(auto &v: vList){
+        auto property=propertyInfo.value(v);
+        if(!property.isReadable() || !property.isWritable())
             continue;
+        auto value=property.read(this);
 
-        property.write(this, this->uuidGenerator());
+        switch (property.typeId()) {
+        case QMetaType::QDate:{
+            auto val=value.toDateTime();
+            if(val.isNull() || !val.isValid())
+                property.write(this, QDate::currentDate());
+            break;
+        }
+        case QMetaType::QTime:{
+            auto val=value.toDateTime();
+            if(val.isNull() || !val.isValid())
+                property.write(this, QTime::currentTime());
+            break;
+        }
+        case QMetaType::QDateTime:{
+            auto val=value.toDateTime();
+            if(val.isNull() || val.isValid())
+                property.write(this, QDateTime::currentDateTime());
+            break;
+        }
+        default:
+            break;
+        }
     }
     return this->lr()=true;
 }
@@ -912,45 +1021,6 @@ ResultValue &Model::deactivateSetValues()
         return this->lr().setValidation(tr("Invalid data to define in the model as deleted"));
     }
     return this->lr();
-}
-
-ResultValue &Model::datetimeSet()
-{
-    auto &modelInfo=p->modelInfo();
-    Q_V_PROPERTY_ITERATOR(modelInfo.propertyPK()){
-        i.next();
-        auto &property=i.value();
-        auto v=property.read(this);
-        switch (property.typeId()) {
-        case QMetaType::QDateTime:
-        {
-            auto dt=v.toDateTime();
-            if(dt.isNull() || !v.isValid()){
-                property.write(this, QDateTime::currentDateTime());
-            }
-            break;
-        }
-        case QMetaType::QDate:
-        {
-            auto dt=v.toDate();
-            if(dt.isNull() || !v.isValid()){
-                property.write(this, QDate::currentDate());
-            }
-            break;
-        }
-        case QMetaType::QTime:
-        {
-            auto dt=v.toTime();
-            if(dt.isNull() || !v.isValid()){
-                property.write(this, QTime::currentTime());
-            }
-            break;
-        }
-        default:
-            break;
-        }
-    }
-    return this->lr()=true;
 }
 
 ResultValue &Model::isValid()
@@ -993,7 +1063,8 @@ bool Model::afterPost()const
 Model &Model::operator=(const QVariant &v)
 {
     this->readFrom(v);
-    return*this;
+    return *this;
 }
+
 
 }

@@ -253,7 +253,7 @@ SqlSuitableKeyWord &SqlSuitableKeyWord::operator =(const SqlSuitableKeyWord &o)
 
     p->drivers=o.p->drivers;
     p->staticKeywordCache=p->staticKeywordCache;
-    return*this;
+    return *this;
 }
 
 bool SqlSuitableKeyWord::isValid()

@@ -48,6 +48,11 @@ public:
         return p_dao.host();
     }
 
+    T &model()const
+    {
+        this->p_model;
+    }
+
     //!
     //! \brief crudify
     //! \return
@@ -202,6 +207,8 @@ protected:
 
         if(!this->p_dao.insert(model))
             return this->lr(this->p_dao.lr());
+        else
+            this->generatedRecords().append(model.toHash());
 
         return this->lr(model.toHash());
     }
@@ -240,6 +247,8 @@ protected:
 
         if(!this->p_dao.update(model))
             return this->lr(this->p_dao.lr());
+        else
+            this->generatedRecords().append(model.toHash());
 
         return this->lr(model.toHash());
     }
@@ -256,10 +265,6 @@ protected:
             return this->lr(this->p_dao.lr());
 
         model.mergeFrom(value);
-
-        if(!this->p_dao.update(model))
-            return this->lr(this->p_dao.lr());
-
         return this->update(model);
     }
 
@@ -290,6 +295,8 @@ protected:
 
         if(!this->p_dao.upsert(model))
             return this->lr(this->p_dao.lr());
+        else
+            this->generatedRecords().append(model.toHash());
 
         return this->lr(model.toHash());
     }
@@ -302,7 +309,7 @@ protected:
     virtual ResultValue &upsert(const QVariant &value)
     {
         T model(this, value);
-        if(!this->p_dao.reload(model))
+        if(!this->p_dao.reload(model) && this->lr().isNotOk())
             return this->lr(this->p_dao.lr());
 
         model.mergeFrom(value);

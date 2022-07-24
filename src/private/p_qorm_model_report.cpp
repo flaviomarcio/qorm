@@ -30,7 +30,7 @@ public:
         return this->parent->lr(method(this->parent, this->source));
     }
 
-    auto &actionNothing(QOrm::ObjectDb*controller, const QVariant &vBody)
+    auto &actionNothing(QOrm::ObjectDb *controller, const QVariant &vBody)
     {
         Q_UNUSED(controller)
         Q_UNUSED(vBody)
@@ -102,7 +102,7 @@ QOrm::ModelDtoOptions &ModelReportBase::options()
 ModelReportBase &ModelReportBase::setOptions(const QOrm::ModelDtoOptions &options)
 {
     p->options=options;
-    return*this;
+    return *this;
 }
 
 ModelReportBase::FormType ModelReportBase::type() const
@@ -113,7 +113,7 @@ ModelReportBase::FormType ModelReportBase::type() const
 ModelReportBase &ModelReportBase::type(const FormType &value)
 {
     p->dto.setType(QOrm::ModelDto::FormType(value));
-    return*this;
+    return *this;
 }
 
 QOrm::ModelDto::FormLayout ModelReportBase::layout() const
@@ -124,7 +124,7 @@ QOrm::ModelDto::FormLayout ModelReportBase::layout() const
 ModelReportBase &ModelReportBase::layout(const FormLayout &value)
 {
     p->dto.setLayout(QOrm::ModelDto::FormLayout(value));
-    return*this;
+    return *this;
 }
 
 QUuid &ModelReportBase::uuid() const
@@ -151,7 +151,7 @@ QByteArray ModelReportBase::name() const
 ModelReportBase &ModelReportBase::name(const QVariant &value)
 {
     p->name=value.toByteArray().trimmed();
-    return*this;
+    return *this;
 }
 
 QByteArray ModelReportBase::description() const
@@ -164,7 +164,7 @@ QByteArray ModelReportBase::description() const
 ModelReportBase &ModelReportBase::description(const QVariant &value)
 {
     p->description=value.toByteArray().trimmed();
-    return*this;
+    return *this;
 }
 
 QOrm::ModelDto &ModelReportBase::dto()
@@ -181,7 +181,7 @@ const QOrm::ModelInfo &ModelReportBase::modelInfo()
 ModelReportBase&ModelReportBase::reportBody(const QVariant &v)
 {
     p->set_report(v);
-    return*this;
+    return *this;
 }
 
 QVariant ModelReportBase::strategy()const
@@ -192,7 +192,7 @@ QVariant ModelReportBase::strategy()const
 ModelReportBase &ModelReportBase::strategy(const QVariant &strategy)
 {
     p->strategy_set(strategy);
-    return*this;
+    return *this;
 }
 
 QVariant ModelReportBase::source() const{
@@ -203,7 +203,7 @@ QVariant ModelReportBase::source() const{
 ModelReportBase &ModelReportBase::source(const QVariant &value)
 {
     p->source=value;
-    return*this;
+    return *this;
 }
 
 ResultValue &ModelReportBase::reportfy()
@@ -214,7 +214,7 @@ ResultValue &ModelReportBase::reportfy()
 ModelReportBase &ModelReportBase::actionSearch(QOrm::ModelAction &action)
 {
     p->actions[__func__]=&action;
-    return*this;
+    return *this;
 }
 
 ResultValue &ModelReportBase::search()
@@ -231,19 +231,19 @@ ResultValue &ModelReportBase::search(const QVariant &value)
 ModelReportBase &ModelReportBase::onBefore(QOrm::ModelActionMethod method)
 {
     p->actionMethod[QByteArrayLiteral("bofore")]=method;
-    return*this;
+    return *this;
 }
 
 ModelReportBase &ModelReportBase::onSuccess(QOrm::ModelActionMethod method)
 {
     p->actionMethod[QByteArrayLiteral("success")]=method;
-    return*this;
+    return *this;
 }
 
 ModelReportBase &ModelReportBase::onFailed(QOrm::ModelActionMethod method)
 {
     p->actionMethod[QByteArrayLiteral("failed")]=method;
-    return*this;
+    return *this;
 }
 
 ResultValue &ModelReportBase::canActionSearch()

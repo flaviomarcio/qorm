@@ -20,6 +20,7 @@ public:
     QHash<QByteArray, QOrm::CRUDBodyActionMethod> actionMethod;
     QOrm::CRUDStrategy strategy=QOrm::Undefined;
     QVariant source;
+    QVariantList generatedRecords;
     CRUDBase*parent=nullptr;
 
     explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dao{parent}, dto{parent}
@@ -37,7 +38,7 @@ public:
         return this->parent->lr(method(this->parent, this->source));
     }
 
-    auto &actionNothing(QOrm::ObjectDb*crudController, const QVariant &vBody)
+    auto &actionNothing(QOrm::ObjectDb *crudController, const QVariant &vBody)
     {
         Q_UNUSED(crudController)
         Q_UNUSED(vBody)
@@ -131,7 +132,7 @@ QOrm::ModelDtoOptions &CRUDBase::options()
 CRUDBase &CRUDBase::setOptions(const QOrm::ModelDtoOptions &options)
 {
     p->options=options;
-    return*this;
+    return *this;
 }
 
 QStm::ResultInfo &CRUDBase::resultInfo()
@@ -142,7 +143,19 @@ QStm::ResultInfo &CRUDBase::resultInfo()
 CRUDBase &CRUDBase::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
     this->lr().resultInfo().fromHash(resultInfo.toHash());
-    return*this;
+    return *this;
+}
+
+CRUDBase &CRUDBase::clear()
+{
+    p->generatedRecords.clear();
+    return *this;
+}
+
+CRUDBase &CRUDBase::clean()
+{
+    p->generatedRecords.clear();
+    return *this;
 }
 
 CRUDBase::FormType CRUDBase::type() const
@@ -153,7 +166,7 @@ CRUDBase::FormType CRUDBase::type() const
 CRUDBase &CRUDBase::type(const FormType &value)
 {
     p->dto.setType(QOrm::ModelDto::FormType(value));
-    return*this;
+    return *this;
 }
 
 CRUDBase::FormLayout CRUDBase::layout() const
@@ -164,7 +177,7 @@ CRUDBase::FormLayout CRUDBase::layout() const
 CRUDBase &CRUDBase::layout(const FormLayout &value)
 {
     p->dto.setLayout(QOrm::ModelDto::FormLayout(value));
-    return*this;
+    return *this;
 }
 
 const QUuid &CRUDBase::uuid()
@@ -185,7 +198,7 @@ const QByteArray &CRUDBase::name()
 CRUDBase &CRUDBase::name(const QVariant &value)
 {
     p->name=value.toByteArray().trimmed();
-    return*this;
+    return *this;
 }
 
 QByteArray &CRUDBase::description() const
@@ -198,7 +211,7 @@ QByteArray &CRUDBase::description() const
 CRUDBase &CRUDBase::description(const QVariant &value)
 {
     p->description=value.toByteArray().trimmed();
-    return*this;
+    return *this;
 }
 
 QOrm::ModelDto &CRUDBase::dto()
@@ -215,7 +228,7 @@ const QOrm::ModelInfo &CRUDBase::modelInfo()
 CRUDBase&CRUDBase::crudBody(const QVariant &v)
 {
     p->set_crud(v);
-    return*this;
+    return *this;
 }
 
 QOrm::CRUDStrategy&CRUDBase::strategy()const
@@ -226,7 +239,7 @@ QOrm::CRUDStrategy&CRUDBase::strategy()const
 CRUDBase &CRUDBase::strategy(const QVariant &strategy)
 {
     p->strategySet(strategy);
-    return*this;
+    return *this;
 }
 
 QVariant &CRUDBase::source() const
@@ -261,7 +274,12 @@ QVariant &CRUDBase::source() const
 CRUDBase &CRUDBase::source(const QVariant &value)
 {
     p->source=value;
-    return*this;
+    return *this;
+}
+
+QVariantList &CRUDBase::generatedRecords() const
+{
+    return p->generatedRecords;
 }
 
 ResultValue &CRUDBase::crudify()
@@ -290,44 +308,52 @@ CRUDBase &CRUDBase::actionNulls()
 {
     qDeleteAll(p->actions);
     p->actions.clear();
-    return*this;
+    return *this;
 }
 
 CRUDBase &CRUDBase::actionSearch(QOrm::ModelAction &action)
 {
     p->actions[__func__]=&action;
-    return*this;
+    return *this;
 }
 
 CRUDBase &CRUDBase::actionInsert(QOrm::ModelAction &action)
 {
     p->actions[__func__]=&action;
-    return*this;
+    return *this;
 }
 
 CRUDBase &CRUDBase::actionUpsert(QOrm::ModelAction &action)
 {
     p->actions[__func__]=&action;
-    return*this;
+    return *this;
 }
 
 CRUDBase &CRUDBase::actionUpdate(QOrm::ModelAction &action)
 {
     p->actions[__func__]=&action;
-    return*this;
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionInsertUpsertUpdate(QOrm::ModelAction &action)
+{
+    p->actions[QT_STRINGIFY2(actionInsert)]=&action;
+    p->actions[QT_STRINGIFY2(actionUpdate)]=&action;
+    p->actions[QT_STRINGIFY2(actionUpsert)]=&action;
+    return *this;
 }
 
 CRUDBase &CRUDBase::actionRemove(QOrm::ModelAction &action)
 {
     p->actions[__func__]=&action;
-    return*this;
+    return *this;
 }
 
 CRUDBase &CRUDBase::actionDeactivate(QOrm::ModelAction &action)
 {
 
     p->actions[__func__]=&action;
-    return*this;
+    return *this;
 }
 
 ResultValue &CRUDBase::search()
@@ -399,19 +425,19 @@ ResultValue &CRUDBase::deactivate(const QVariant &value)
 CRUDBase &CRUDBase::onBefore(QOrm::CRUDBodyActionMethod method)
 {
     p->actionMethod[QByteArrayLiteral("bofore")]=method;
-    return*this;
+    return *this;
 }
 
 CRUDBase &CRUDBase::onSuccess(QOrm::CRUDBodyActionMethod method)
 {
     p->actionMethod[QByteArrayLiteral("success")]=method;
-    return*this;
+    return *this;
 }
 
 CRUDBase &CRUDBase::onFailed(QOrm::CRUDBodyActionMethod method)
 {
     p->actionMethod[QByteArrayLiteral("failed")]=method;
-    return*this;
+    return *this;
 }
 
 ResultValue &CRUDBase::canActionSearch()

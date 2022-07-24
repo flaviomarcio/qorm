@@ -24,7 +24,7 @@ Query::Query(const QSqlDatabase &db, QObject *parent) : ObjectDb{parent}
 
 ResultValue &Query::lr() const
 {
-    auto&lr=Object::lr();
+    auto &lr=Object::lr();
     auto code = p->sqlError.nativeErrorCode().toUtf8().trimmed();
     if(!code.isEmpty()){
         auto message = p->sqlError.text().toUtf8().trimmed();

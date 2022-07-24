@@ -57,7 +57,7 @@ public:
     virtual ModelDtoFilter&setType(const QVariant &type)
     {
         this->v.insert(QStringLiteral("type"),type);
-        return*this;
+        return *this;
     }
 
     //!
@@ -75,7 +75,7 @@ public:
     virtual ModelDtoFilter&setValue(const QVariant &value)
     {
         this->v.insert(QStringLiteral("value"), value);
-        return*this;
+        return *this;
     }
 
     //!
@@ -93,7 +93,7 @@ public:
     virtual ModelDtoFilter&setDefaultValue(const QVariant &value)
     {
         this->v.insert(QStringLiteral("defaultValue"), value.toByteArray());
-        return*this;
+        return *this;
     }
 
     //!
@@ -111,7 +111,7 @@ public:
     virtual ModelDtoFilter&setComboValue(const QVariant &value)
     {
         this->v.insert(QStringLiteral("comboValue"), value.toByteArray());
-        return*this;
+        return *this;
     }
 
     //!
@@ -129,7 +129,7 @@ public:
     virtual ModelDtoFilter&setText(const QVariant &value)
     {
         this->v.insert(QStringLiteral("text"), value.toByteArray());
-        return*this;
+        return *this;
     }
 
     //!
@@ -147,7 +147,7 @@ public:
     virtual ModelDtoFilter&setAlign(const QVariant & value)
     {
         this->v.insert(QStringLiteral("align"), value);
-        return*this;
+        return *this;
     }
 
     //!
@@ -165,7 +165,7 @@ public:
     virtual ModelDtoFilter&setWidth(const QVariant & value)
     {
         this->v.insert(QStringLiteral("width"), value);
-        return*this;
+        return *this;
     }
 
     //!
@@ -183,7 +183,7 @@ public:
     virtual ModelDtoFilter&setSortable(const QVariant &value)
     {
         this->v.insert(QStringLiteral("sortable"), value);
-        return*this;
+        return *this;
     }
 
     //!
@@ -201,7 +201,7 @@ public:
     virtual ModelDtoFilter&setFiltrable(const QVariant &value)
     {
         this->v.insert(QStringLiteral("filtrable"), value);
-        return*this;
+        return *this;
     }
 
     //!
@@ -219,7 +219,7 @@ public:
     virtual ModelDtoFilter&setFilterStyle(const QVariant &value)
     {
         this->v.insert(QStringLiteral("filterStyle"), value);
-        return*this;
+        return *this;
     }
 
     //!
@@ -298,7 +298,7 @@ public:
     virtual ModelDtoFilters<T>&clear()
     {
         this->___objectList.clear();
-        return*this;
+        return *this;
     }
 
     virtual QList<ModelDtoFilter<T>*>&list()

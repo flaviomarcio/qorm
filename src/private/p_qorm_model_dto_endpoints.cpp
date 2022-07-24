@@ -179,7 +179,7 @@ const QVariantList EndPoints::toList()
     return this->items();
 }
 
-const QVariantHash EndPoints::toHash()
+const QVariantHash EndPoints::toHash()const
 {
     p->setHost();
     QVariantHash hash;

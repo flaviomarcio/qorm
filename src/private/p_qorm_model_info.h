@@ -12,7 +12,8 @@
 namespace QOrm {
 class ModelInfoPvt;
 class Model;
-class Q_ORM_EXPORT ModelInfo:public QVariant{
+class Q_ORM_EXPORT ModelInfo:public QVariant
+{
     friend class ModelInfoPvt;
 public:
     //!
@@ -35,13 +36,19 @@ public:
     //!
     //! \brief ~ModelInfo
     //!
-    virtual ~ModelInfo();
+    ~ModelInfo();
+
+    //!
+    //! \brief uuid
+    //! \return
+    //!
+    QUuid &uuid()const;
 
     //!
     //! \brief isValid
     //! \return
     //!
-    virtual bool isValid()const;
+    bool isValid()const;
 
     //!
     //! \brief from
@@ -62,17 +69,17 @@ public:
     //! \brief modelName
     //! \return
     //!
-    virtual QString &name()const;
-    virtual ModelInfo &name(const QString &value);
-    virtual ModelInfo &setName(const QString &value);
+    QString &name()const;
+    ModelInfo &name(const QString &value);
+    ModelInfo &setName(const QString &value);
 
     //!
     //! \brief modelDescription
     //! \return
     //!
-    virtual QString &description() const;
-    virtual ModelInfo &description(const QString &value);
-    virtual ModelInfo &setDescription(const QString &value);
+    QString &description() const;
+    ModelInfo &description(const QString &value);
+    ModelInfo &setDescription(const QString &value);
 
     //!
     //! \brief staticMetaObject
@@ -90,234 +97,252 @@ public:
     //! \brief property
     //! \return
     //!
-    virtual QList<QMetaProperty> &property() const;
+    QList<QMetaProperty> &property() const;
 
     //!
     //! \brief propertyByFieldName
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty> &propertyByFieldName() const;
-    virtual QMetaProperty propertyByFieldName(const QString &fieldName)const;
+    QHash<QString, QMetaProperty> &propertyByFieldName() const;
+
+    //!
+    //! \brief propertyByFieldName
+    //! \param fieldName
+    //! \return
+    //!
+    QMetaProperty propertyByFieldName(const QString &fieldName)const;
 
     //!
     //! \brief propertyFiltrable
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty> &propertyFiltrable() const;
+    QHash<QString, QMetaProperty> &propertyFiltrable() const;
 
     //!
     //! \brief propertyByPropertyName
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty> &propertyByPropertyName() const;
-    virtual QMetaProperty propertyByPropertyName(const QString &propertyName) const;
+    QHash<QString, QMetaProperty> &propertyByPropertyName() const;
+
+    //!
+    //! \brief propertyByPropertyName
+    //! \param propertyName
+    //! \return
+    //!
+    QMetaProperty propertyByPropertyName(const QString &propertyName) const;
 
     //!
     //! \brief propertyList
     //! \return
     //!
-    virtual QStringList &propertyList() const;
+    QStringList &propertyList() const;
 
     //!
     //! \brief propertyTableList
     //! \return
     //!
-    virtual QStringList &propertyTableList() const;
+    QStringList &propertyTableList() const;
 
     //!
     //! \brief propertyTableVsShort
     //! \return
     //!
-    virtual QHash<QString, QString> &propertyTableVsShort() const;
+    QHash<QString, QString> &propertyTableVsShort() const;
 
     //!
     //! \brief propertyShortVsTable
     //! \return
     //!
-    virtual QHash<QString, QString> &propertyShortVsTable() const;
+    QHash<QString, QString> &propertyShortVsTable() const;
 
     //!
     //! \brief propertyInfo
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty> &propertyInfo() const;
+    QHash<QString, QMetaProperty> &propertyInfo() const;
 
     //!
     //! \brief propertyPK
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty> &propertyPK() const;
+    QHash<QString, QMetaProperty> &propertyPK() const;
 
     //!
     //! \brief propertyFK
     //! \return
     //!
-    virtual QHash<QString, QMetaProperty> &propertyFK() const;
+    QHash<QString, QMetaProperty> &propertyFK() const;
 
     //!
     //! \brief propertyDescriptors
     //! \return
     //!
-    virtual QVariantMap propertyDescriptors() const;
+    QVariantMap propertyDescriptors() const;
 
     //!
     //! \brief propertyEndPoints
     //! \return
     //!
-    virtual QVariantList propertyEndPoints() const;
+    QVariantList propertyEndPoints() const;
 
     //!
     //! \brief propertySort
     //! \return
     //!
-    virtual QVariantHash propertySort() const;
+    QVariantHash propertySort() const;
 
     //!
     //! \brief propertyParserToTable
     //! \param v
     //! \return
     //!
-    virtual QVariantHash propertyParserToTable(const QVariant &v) const;
+    QVariantHash propertyParserToTable(const QVariant &v) const;
 
     //!
     //! \brief propertyParserToProperty
     //! \param v
     //! \return
     //!
-    virtual QVariantHash propertyParserToProperty(const QVariant &v) const;
+    QVariantHash propertyParserToProperty(const QVariant &v) const;
 
     //!
     //! \brief propertyNameConvertMap
     //! \param propertyHash
     //! \return
     //!
-    virtual bool propertyNameConvertMap(QVariantHash &propertyHash);
+    bool propertyNameConvertMap(QVariantHash &propertyHash);
 
     //!
     //! \brief propertyDeactivateField
     //! \return
     //!
-    virtual QVariantHash propertyDeactivateField() const;
+    QVariantHash propertyDeactivateField() const;
 
 
     //!
     //! \brief tableSchema
     //! \return
     //!
-    virtual QString &tableSchema() const;
+    QString &tableSchema() const;
 
     //!
     //! \brief tablePrefix
     //! \return
     //!
-    virtual QString &tablePrefix() const;
+    QString &tablePrefix() const;
 
     //!
     //! \brief tablePrefixSeparator
     //! \return
     //!
-    virtual QString tablePrefixSeparator() const;
+    QString tablePrefixSeparator() const;
 
     //!
     //! \brief tableName
     //! \return
     //!
-    virtual QString tableName() const;
+    QString tableName() const;
 
     /**
      * @brief tableName
      * @return
      */
-    virtual QString tableNameFull() const;
+    QString tableNameFull() const;
 
     //!
     //! \brief tableSequence
     //! \return
     //!
-    virtual QVariantHash tableSequence() const;
+    QVariantHash tableSequence() const;
 
     //!
     //! \brief tablePk
     //! \return
     //!
-    virtual QStringList tablePk() const;
+    QStringList tablePk() const;
 
     //!
     //! \brief tablePkField
     //! \return
     //!
-    virtual QVariantList tablePkField() const;
+    QVariantList tablePkField() const;
 
     //!
     //! \brief tableForeignKey
     //! \return
     //!
-    virtual QVariantHash tableForeignKey() const;
+    QVariantHash tableForeignKey() const;
 
     //!
     //! \brief tableFiltrableField
     //! \return
     //!
-    virtual QVariantList tableFiltrableField() const;
+    QVariantList tableFiltrableField() const;
 
     //!
     //! \brief tableOrderBy
     //! \return
     //!
-    virtual QStringList tableOrderBy() const;
+    QStringList tableOrderBy() const;
 
-    /**
-     * @brief orderByField
-     * @param v
-     * @return
-     */
-    virtual QVariantList tableOrderByField() const;
+    //!
+    //! \brief tableOrderByField
+    //! \return
+    //!
+    QVariantList tableOrderByField() const;
+
+    //!
+    //! \brief tableAutoSetFields
+    //! \return
+    //!
+    QStringList tableAutoSetFields() const;
+
 
     //!
     //! \brief tableDeactivateField
     //! \return
     //!
-    virtual QVariantHash tableDeactivateField() const;
+    QVariantHash tableDeactivateField() const;
 
     //!
     //! \brief tablePkAutoGenerate
     //! \return
     //!
-    virtual bool tablePkAutoGenerate() const;
+    bool tablePkAutoGenerate() const;
 
     //!
     //! \brief tablePkSingle
     //! \return
     //!
-    virtual QString tablePkSingle() const;
+    QString tablePkSingle() const;
 
     //!
     //! \brief toMap
     //! \param object
     //! \return
     //!
-    virtual QVariantMap toMap(const QObject *object) const;
+    QVariantMap toMap(const QObject *object) const;
 
     //!
     //! \brief toHash
     //! \param object
     //! \return
     //!
-    virtual QVariantHash toHash(const QObject *object) const;
+    QVariantHash toHash(const QObject *object) const;
 
     //!
     //! \brief toMapModel
     //! \param object
     //! \return
     //!
-    virtual QVariantMap toMapModel(const QObject *object) const;
+    QVariantMap toMapModel(const QObject *object) const;
 
     //!
     //! \brief toHashModel
     //! \param object
     //! \return
     //!
-    virtual QVariantHash toHashModel(const QObject *object) const;
+    QVariantHash toHashModel(const QObject *object) const;
 
 private:
     ModelInfoPvt *p=nullptr;

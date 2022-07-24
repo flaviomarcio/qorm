@@ -105,7 +105,7 @@ public:
     //! \brief toHash
     //! \return
     //!
-    const QVariantHash toHash();
+    const QVariantHash toHash() const;
 
     //!
     //! \brief toObjectList

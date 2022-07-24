@@ -319,7 +319,7 @@ SearchParameters &SearchParameters::operator=(const QVariant &v)
     default:
         break;
     }
-    return*this;
+    return *this;
 }
 
 SearchParameters &SearchParameters::operator+=(const QVariant &v)
@@ -355,7 +355,7 @@ SearchParameters &SearchParameters::operator+=(const QVariant &v)
     default:
         break;
     }
-    return*this;
+    return *this;
 }
 
 SearchParameters SearchParameters::from(const QVariantHash &v)
@@ -376,28 +376,28 @@ SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVarian
 {
 
     p->insert(valueA, valueB, QVariant(), QVariant(), QVariant());
-    return*this;
+    return *this;
 }
 
 SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant &keywordOperator)
 {
 
     p->insert(valueA, valueB, QVariant(), keywordOperator, QVariant());
-    return*this;
+    return *this;
 }
 
 SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant &keywordOperator, const QVariant &keywordLogical)
 {
 
     p->insert(valueA, valueB, QVariant(), keywordOperator, keywordLogical);
-    return*this;
+    return *this;
 }
 
 SearchParameters &SearchParameters::insert(const QVariant &valueA, const QVariant &valueB, const QVariant &valueC, const QVariant &keywordOperator, const QVariant &keywordLogical)
 {
 
     p->insert(valueA, valueB, valueC, keywordOperator, keywordLogical);
-    return*this;
+    return *this;
 }
 
 QList<SearchParam> SearchParameters::build() const

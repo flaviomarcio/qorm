@@ -169,7 +169,7 @@ QStm::ResultInfo &ModelDtoControls::resultInfo()
 ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
     p->resultInfo.fromHash(resultInfo.toHash());
-    return*this;
+    return *this;
 }
 
 QVariantMap &ModelDtoControls::descriptors()
@@ -232,13 +232,13 @@ ModelDtoControls::FormType ModelDtoControls::type() const
 ModelDtoControls &ModelDtoControls::type(const FormType &v)
 {
     p->type=v;
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setType(const FormType &v)
 {
     p->type=v;
-    return*this;
+    return *this;
 }
 
 ModelDtoControls::FormLayout ModelDtoControls::layout() const
@@ -250,13 +250,13 @@ ModelDtoControls::FormLayout ModelDtoControls::layout() const
 ModelDtoControls &ModelDtoControls::layout(const FormLayout &v)
 {
     p->layout=v;
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setLayout(const FormLayout &v)
 {
     p->layout=v;
-    return*this;
+    return *this;
 }
 
 QVariantHash ModelDtoControls::design() const
@@ -284,13 +284,13 @@ QVariantHash ModelDtoControls::sort() const
 ModelDtoControls &ModelDtoControls::sort(const QVariant &v)
 {
     p->sort=v.toHash();
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setSort(const QVariant &v)
 {
     p->sort=v.toHash();
-    return*this;
+    return *this;
 }
 
 QString ModelDtoControls::text() const
@@ -301,7 +301,7 @@ QString ModelDtoControls::text() const
 ModelDtoControls &ModelDtoControls::text(const QVariant &v)
 {
     p->text=v.toString();
-    return*this;
+    return *this;
 }
 
 QOrm::DtoOutPutStyle&ModelDtoControls::outPutStyle() const
@@ -312,19 +312,19 @@ QOrm::DtoOutPutStyle&ModelDtoControls::outPutStyle() const
 ModelDtoControls &ModelDtoControls::outPutStyle(const QOrm::DtoOutPutStyle &value)
 {
     p->outPutStyle = value;
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setOutPutStyle(const QOrm::DtoOutPutStyle &value)
 {
     p->outPutStyle = value;
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::settings(const QVariant &setting)
 {
     p->setSettings(setting);
-    return*this;
+    return *this;
 }
 
 ModelDtoHeaders<ModelDtoControls> &ModelDtoControls::headers()
@@ -355,31 +355,31 @@ ModelDtoItems<ModelDtoControls> &ModelDtoControls::items()
 ModelDtoControls &ModelDtoControls::items(const QVariant &v)
 {
     p->items.fromList(v);
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::items(const ResultValue &lr)
 {
     p->items.fromList(this->lr(lr).resultVariant());
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setValue(const QVariant &v)
 {
     p->items.fromList(v);
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setValue(const ResultValue &lr)
 {
     p->items.fromList(this->lr(lr).resultVariant());
-    return*this;
+    return *this;
 }
 
 ModelDtoControls &ModelDtoControls::clear()
 {
     p->clear();
-    return*this;
+    return *this;
 }
 
 ResultValue &ModelDtoControls::o()

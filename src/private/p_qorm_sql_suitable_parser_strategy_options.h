@@ -306,7 +306,7 @@ public:
                 break;
             }
         }
-        return*this;
+        return *this;
     }
     auto &equal(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
     {
@@ -451,7 +451,7 @@ private:
     {
         v->makeUuid();
         this->setPointer(v->sName(),v);
-        return*this;
+        return *this;
     }
 };
 
@@ -499,7 +499,7 @@ public:
             auto map=this->toHash();
             map.insert(QStringLiteral("alias"), alias);
             this->setValue(map);
-            return*this;
+            return *this;
         }
 
         auto &makeOperator(const KeywordOperator&keywordOperator=KeywordOperator::koEqual)
@@ -507,7 +507,7 @@ public:
             auto map=this->toHash();
             map.insert(QStringLiteral("keywordOperator"),keywordOperator);
             this->setValue(map);
-            return*this;
+            return *this;
         }
 
         auto &makeLogical(const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
@@ -515,82 +515,82 @@ public:
             auto map=this->toHash();
             map.insert(QStringLiteral("keywordLogical"),keywordLogical);
             this->setValue(map);
-            return*this;
+            return *this;
         }
 
         auto &equal(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().equal(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &equalBigger(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().equalBigger(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &equalMinor(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().equalMinor(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &bigger(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().bigger(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &minor(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().minor(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &like(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical)
         {
             this->c().like(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &in(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().in(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &in(const QVariant &valueA, const KeywordLogical&keywordLogical=KeywordLogical::klAnd){
             this->c().in(valueA, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &inOut(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().inOut(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &inOut(const QVariant &valueA,const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().inOut(valueA, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &isNull(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().isNull(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &isNull(const QVariant &valueA, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().isNull(valueA, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &notNull(const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().isNotNull(valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &notNull(const QVariant &valueA, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().isNotNull(valueA, keywordLogical);
-            return*this;
+            return *this;
         }
         auto &between(const QVariant &field, const QVariant &valueA, const QVariant &valueB, const KeywordLogical&keywordLogical=KeywordLogical::klAnd)
         {
             this->c().between(field, valueA, valueB, keywordLogical);
-            return*this;
+            return *this;
         }
 
         SqlParserConditions<SqlParserCombinations<T>>&c()
@@ -721,7 +721,7 @@ public:
             map.insert(__func__, limit);
             this->setValue(map);
         }
-        return*this;
+        return *this;
     }
 
     auto &from()
@@ -748,7 +748,7 @@ public:
             c = new SqlParserCombination(__func__, this, KeywordCombine::kcFrom, fromObject, alias);
             this->setPointer(c->sName(), c);
         }
-        return*this;
+        return *this;
     }
 
     auto &where()
@@ -931,7 +931,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     auto &schema(const QVariant &v)
@@ -941,7 +941,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     auto &object(const QVariant &v)
@@ -951,7 +951,7 @@ public:
             object=new SqlParserCommand{v};
             this->setPointer(__func__,object);
         }
-        return*this;
+        return *this;
     }
 
     SqlParserValues &values(const QVariant &values)

@@ -274,7 +274,7 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
     }
 
     auto vRecordHash=vRecord.toHash();
-    vRecord.clear();
+
     if(vModelList.isEmpty())
         vModelList.append(QVariant{});
     for(auto &vItem:vModelList){

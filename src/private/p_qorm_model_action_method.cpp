@@ -28,19 +28,19 @@ ModelAction::ModelAction(QObject *parent) : QOrm::ObjectDb{parent}
 ModelAction &ModelAction::onActionBefore(ModelActionMethodPointer action)
 {
     p->actionBefore=action;
-    return*this;
+    return *this;
 }
 
 ModelAction &ModelAction::onAction(ModelActionMethodPointer action)
 {
     p->action = action;
-    return*this;
+    return *this;
 }
 
 ModelAction &ModelAction::onActionAfter(ModelActionMethodPointer action)
 {
     p->actionAfter = action;
-    return*this;
+    return *this;
 }
 
 ResultValue &ModelAction::action(const QVariant &vSource)

@@ -33,7 +33,7 @@ public:
     auto &f(const QVariant &v)
     {
         this->insert(QStringLiteral("f.")+QUuid::createUuid().toString(),v);
-        return*this;
+        return *this;
     }
     auto &as(const QVariant &name, const QVariant &nameAs)
     {

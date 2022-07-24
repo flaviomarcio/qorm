@@ -55,7 +55,7 @@ SqlParserCombineSelect &SqlParserCombineSelect::setV(int t)
     this->setValue(v);
     dQuery;
     q.prepareCache();
-    return*this;
+    return *this;
 }
 
 

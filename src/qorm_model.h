@@ -149,7 +149,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantList toWrapper(const QString &wrapperName, const QVariantList&v)const;
+    virtual QVariantList toWrapper(const QString &wrapperName, const QVariantList &v)const;
 
     //!
     //! \brief toWrapper
@@ -172,7 +172,7 @@ public:
     //! \param v
     //! \return
     //!
-    virtual QVariantList toWrapper(const QVariantList&v)const;
+    virtual QVariantList toWrapper(const QVariantList &v)const;
 
     //!
     //! \brief toWrapper
@@ -391,22 +391,28 @@ public:
     virtual bool setProperty(const QMetaProperty&property, const QVariant &value);
 
     //!
+    //! \brief autoSet
+    //! \return
+    //!
+    virtual ResultValue &autoSet();
+
+    //!
     //! \brief uuidSet
     //! \return
     //!define new uuid in the primarykey property when it is null/invalid
     virtual ResultValue &uuidSet();
 
     //!
-    //! \brief deactivateSetValues
-    //! \return
-    //!
-    virtual ResultValue &deactivateSetValues();
-
-    //!
     //! \brief datetimeSet
     //! \return
     //!define new datetime/date/time in the primarykey property when it is null/invalid
     virtual ResultValue &datetimeSet();
+
+    //!
+    //! \brief deactivateSetValues
+    //! \return
+    //!
+    virtual ResultValue &deactivateSetValues();
 
     //!
     //! \brief isValid
