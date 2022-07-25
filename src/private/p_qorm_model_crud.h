@@ -46,6 +46,18 @@ public:
     explicit CRUDBase(const QVariant &vBody, QObject *parent = nullptr);
 
     //!
+    //! \brief isValid
+    //! \return
+    //!
+    virtual bool isValid()const;
+
+    //!
+    //! \brief modelInfo
+    //! \return
+    //!
+    virtual const QOrm::ModelInfo &modelInfo()const;
+
+    //!
     //! \brief dao
     //! \return
     //!

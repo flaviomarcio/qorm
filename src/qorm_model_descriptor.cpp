@@ -35,11 +35,6 @@ ModelDescriptor::ModelDescriptor(QObject *parent) : QObject{parent}
     this->p = new ModelDescriptorPvt{this};
 }
 
-ModelDescriptor::~ModelDescriptor()
-{
-
-}
-
 bool ModelDescriptor::isValid() const
 {
     const auto m1 = this->metaObject()->className();

@@ -4,6 +4,7 @@
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_const.h"
 #include "../qorm_model.h"
+#include "../qorm_model_descriptor.h"
 #include "../qorm_macro.h"
 #include "../qorm_model_macro.h"
 #include "../qorm_startup.h"
@@ -17,6 +18,7 @@ Q_GLOBAL_STATIC(HashModelInfo, __static_model_info)
 class ModelInfoPvt{
 public:
     QUuid uuid;
+    ModelDescriptor *descriptor=nullptr;
     QMetaObject staticMetaObjectModel;
     QMetaObject staticMetaObjectDescriptor;
     QHash<QString, QMetaMethod> methods;
@@ -333,6 +335,7 @@ public:
     {
 #define ____copy(var)\
         this->var=p->var;
+        ____copy(descriptor             );
         ____copy(tablePkAutoGenerate    );
         ____copy(property               );
         ____copy(propertyHash           );
@@ -372,6 +375,7 @@ public:
     {
 #define ____clear(var)this->var.clear()
 
+        this->descriptor=nullptr;
         ____clear(tablePkAutoGenerate    );
         ____clear(property               );
         ____clear(propertyHash           );
@@ -686,22 +690,24 @@ public:
             if(!metaObject.inherits(&ModelDescriptor::staticMetaObject))//SE HERDAR de QOrm::ModelDescriptor
                 return;
 
-            QScopedPointer<QObject> scopePointer(metaObject.newInstance(Q_ARG(QObject*, nullptr )));
-            if(!scopePointer.data())
+            auto obj=metaObject.newInstance(Q_ARG(QObject*, nullptr));
+            if(obj==nullptr)
                 return;
 
-            auto objectDescriptor=dynamic_cast<ModelDescriptor*>(scopePointer.data());
-            if(!objectDescriptor){
+            pvt->descriptor=dynamic_cast<ModelDescriptor*>(obj);
+
+            if(pvt->descriptor==nullptr){
                 pvt->propertyDescriptors.clear();
+                delete obj;
                 return;
             }
 
-            objectDescriptor->descriptorsInit();
+            pvt->descriptor->descriptorsInit();
             if(pvt->description.isEmpty())
-                pvt->description=objectDescriptor->description();
-            pvt->propertyEndPoints=objectDescriptor->endPoints().toList();
-            pvt->propertyDescriptors=objectDescriptor->descriptors();
-            pvt->propertySort=objectDescriptor->sort();
+                pvt->description=pvt->descriptor->description();
+            pvt->propertyEndPoints=pvt->descriptor->endPoints().toList();
+            pvt->propertyDescriptors=pvt->descriptor->descriptors();
+            pvt->propertySort=pvt->descriptor->sort();
         };
 
         QHashIterator <QByteArray, QOrm::ModelInfo*> i(*__static_model_info);
@@ -832,6 +838,11 @@ const ModelInfo &ModelInfo::from(const QMetaObject &metaObject)
 ModelInfo &ModelInfo::modelInfoInit(const QMetaObject &staticMetaObject)
 {
     return ModelInfoPvt::static_initMetaObject(staticMetaObject);
+}
+
+const ModelDescriptor *ModelInfo::descritor() const
+{
+    return p->descriptor;
 }
 
 QMetaObject &ModelInfo::staticMetaObject() const

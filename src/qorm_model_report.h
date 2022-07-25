@@ -55,7 +55,7 @@ private:
     void init()
     {
         this->dto().initDescriptors(&p_model);
-        const auto &modelInfo = p_dao.modelRef;
+        const auto &modelInfo = this->modelInfo();
         this->reportName(modelInfo.modelName()).reportDescription(modelInfo.modelDescription());
     }
 
@@ -119,7 +119,7 @@ protected:
         auto mapSource = this->source().toHash();
         SearchParameters map;
         if (!mapSource.isEmpty()) {
-            const QOrm::ModelInfo &modelInfo = p_dao.modelRef;
+            const QOrm::ModelInfo &modelInfo = this->modelInfo();
             const auto &propertyShortVsTable = modelInfo.propertyShortVsTable();
             QHashIterator<QString, QVariant> i(model.toHash());
             while (i.hasNext()) {

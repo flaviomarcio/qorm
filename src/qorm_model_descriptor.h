@@ -39,10 +39,11 @@
 #define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
 const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).uuid().toString();
 
-
-#define Q_ORM_DESCRIPTOR_CONSTRUCTOR(ClassName) \
+#define Q_ORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, DESCRIPTOR) \
 public: \
-    Q_INVOKABLE explicit ClassName(QObject *parent = nullptr) : QOrm::ModelDescriptor(parent){};
+    Q_INVOKABLE explicit CLASSNAME(QObject *parent = nullptr) : DESCRIPTOR(parent){};
+
+#define Q_ORM_DESCRIPTOR_CONSTRUCTOR(CLASSNAME) Q_ORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, QOrm::ModelDescriptor)
 
 namespace QOrm {
 class ModelDescriptorPvt;
@@ -59,11 +60,6 @@ public:
     //! \param parent
     //!
     Q_INVOKABLE explicit ModelDescriptor(QObject *parent = nullptr);
-
-    //!
-    //! \brief ~ModelDescriptor
-    //!
-    ~ModelDescriptor();
 
 public:
     //!

@@ -12,6 +12,7 @@
 namespace QOrm {
 class ModelInfoPvt;
 class Model;
+class ModelDescriptor;
 class Q_ORM_EXPORT ModelInfo:public QVariant
 {
     friend class ModelInfoPvt;
@@ -36,7 +37,7 @@ public:
     //!
     //! \brief ~ModelInfo
     //!
-    ~ModelInfo();
+    virtual ~ModelInfo();
 
     //!
     //! \brief uuid
@@ -64,6 +65,12 @@ public:
     //! \return
     //!
     static ModelInfo &modelInfoInit(const QMetaObject &staticMetaObject);
+
+    //!
+    //! \brief descritpr
+    //! \return
+    //!
+    const ModelDescriptor *descritor()const;
 
     //!
     //! \brief modelName

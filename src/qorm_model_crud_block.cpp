@@ -19,7 +19,8 @@ public:
         this->parent=parent;
     }
 
-    static CRUDBody reMakeCRUDBody(const QVariantList &returns, PrivateQOrm::CRUDBase *crud, CRUDBody crudBody){
+    static CRUDBody reMakeCRUDBody(const QVariantList &returns, PrivateQOrm::CRUDBase *crud, CRUDBody crudBody)
+    {
         static auto __items="items";
         auto strategy=crudBody.strategy();
         CRUDBody __return;
@@ -211,7 +212,7 @@ ResultValue &CRUDBlock::crudify()
 
     QVariantList __return;
 
-    QVariantHash modelBody;
+
     QVariantHash crudPages;
     CRUDBody crudBody{p->crudBody};
 
@@ -247,22 +248,30 @@ ResultValue &CRUDBlock::crudify()
     }
 
     for(auto &crud:p->crudList){
-        const auto crudUuid=crud->uuid().toString();
+
+        switch (crudBody.strategy()) {
+        case QOrm::CRUDStrategy::Search:{
+            if(!crud->isValid())
+                continue;
+            break;
+        }
+        default:
+            break;
+        };
+
         crud->setOptions(p->options);
         crud->setResultInfo(p->resultInfo);
         crud->host().setValues(&p->host);
 
         CRUDBody crudItem{};
 
-        if(crudPages.contains(crudUuid))
-            crudItem=CRUDBody{crudBody.strategy(), crudPages.value(crudUuid)};
+        if(crudPages.contains(crud->uuid().toString()))
+            crudItem=CRUDBody{crudBody.strategy(), crudPages.value(crud->uuid().toString())};
         else
             crudItem=crudBody;
 
         if(!crud->crudBody(p->reMakeCRUDBody(__return, crud, crudItem)).crudify())
             return this->lr(crud->lr());
-
-        modelBody.insert(crud->modelInfo().uuid().toString(), crud->generatedRecords());
 
         __return.append(crud->lr().resultVariant());
     }

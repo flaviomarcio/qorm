@@ -114,6 +114,18 @@ CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent
     p->set_crud(vBody);
 }
 
+bool CRUDBase::isValid()const
+{
+    auto descriptor=this->modelInfo().descritor();
+    return (descriptor!=nullptr);
+}
+
+const QOrm::ModelInfo &CRUDBase::modelInfo() const
+{
+    static QOrm::ModelInfo __return;
+    return __return;
+}
+
 ModelDao &CRUDBase::dao()
 {
     return p->dao;

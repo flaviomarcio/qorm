@@ -21,7 +21,6 @@ public:
         :
           PrivateQOrm::CRUDBase{parent}
     {
-
         this->init();
     }
 
@@ -37,6 +36,23 @@ public:
         , p_model(this)
     {
         this->init();
+    }
+
+    virtual const QOrm::ModelInfo &modelInfo()const
+    {
+        return p_dao.modelInfo();
+    }
+
+    //!
+    //! \brief isValid
+    //! \return
+    //!
+    virtual bool isValid()const
+    {
+        const ModelInfo &modelInfo=this->modelInfo();
+        if(modelInfo.descritor()==nullptr)
+            return {};
+        return true;
     }
 
     //!
@@ -75,19 +91,10 @@ private:
     void init()
     {
         p_dto.initDescriptors(&p_model);
-        const auto &modelInfo=p_dao.modelRef;
+        const auto &modelInfo=this->modelInfo();
         this->name(modelInfo.name()).description(modelInfo.description());
     }
 protected:
-    //!
-    //! \brief modelInfo
-    //! \return
-    //!
-    virtual const QOrm::ModelInfo &modelInfo()
-    {
-        const auto &modelInfo=this->p_model.modelInfo();
-        return modelInfo;
-    }
 
     //!
     //! \brief search
@@ -155,7 +162,7 @@ protected:
             T model(mapSource);
             SearchParameters map;
             if(!mapSource.isEmpty()){
-                const QOrm::ModelInfo &modelInfo=p_dao.modelRef;
+                const QOrm::ModelInfo &modelInfo=this->modelInfo();
                 const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
                 QHashIterator<QString, QVariant> i(model.toHash());
                 while (i.hasNext()) {

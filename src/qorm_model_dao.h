@@ -46,7 +46,7 @@ public:
     //!
     QVariant variantToParameters(const QVariant &value) const
     {
-        return PrivateQOrm::ModelDao::variantToParameters(this->modelRef, value);
+        return PrivateQOrm::ModelDao::variantToParameters(this->p_modelInfo, value);
     }
 
     //!
@@ -57,7 +57,7 @@ public:
     //!
     QVariantList toPrepareForeignWrapper(const QVariant &vModelFK, const QVariant &vModelPK) const
     {
-        return PrivateQOrm::ModelDao::toPrepareForeignWrapper(this->modelRef, vModelFK, vModelPK);
+        return PrivateQOrm::ModelDao::toPrepareForeignWrapper(this->p_modelInfo, vModelFK, vModelPK);
     }
 
     //!
@@ -67,7 +67,7 @@ public:
     //!
     QVariantHash toPrepareForeign(const QVariant &vModelFK) const
     {
-        return PrivateQOrm::ModelDao::toPrepareForeign(this->modelRef, vModelFK);
+        return PrivateQOrm::ModelDao::toPrepareForeign(this->p_modelInfo, vModelFK);
     }
 
     QVariantHash toPrepareSearch(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const
@@ -90,11 +90,11 @@ public:
     {
         Query query(this);
         auto &strategy = query.builder().select();
-        strategy.limit(1).fieldsFrom(modelRef);
+        strategy.limit(1).fieldsFrom(p_modelInfo);
         QVariant value;
         if (v.isValid()) {
             SearchParameters vv{this->variantToParameters(v)};
-            vv += this->modelRef.tableDeactivateField();
+            vv += this->p_modelInfo.tableDeactivateField();
             value = vv.buildVariant();
         }
         if (value.isValid())
@@ -105,7 +105,7 @@ public:
         if (!query.next())
             return this->lr() = false;
 
-        return this->lr(query.makeRecord(this->modelRef));
+        return this->lr(query.makeRecord(this->p_modelInfo));
     }
 
     //!
@@ -123,18 +123,18 @@ public:
     {
         Query query(this);
         auto &strategy = query.builder().select();
-        strategy.fieldsFrom(modelRef);
+        strategy.fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
         if (value.isValid()) {
             strategy.where().condition(value);
         }
-        QHashIterator<QString, QVariant> i(this->modelRef.tableDeactivateField());
+        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
         while (i.hasNext()) {
             i.next();
             strategy.where().notEqual(i.key(), i.value());
         }
 
-        for (const auto &v : this->modelRef.tableOrderByField())
+        for (const auto &v : this->p_modelInfo.tableOrderByField())
             strategy.orderby().f(v);
 
         if (!query.exec())
@@ -156,19 +156,19 @@ public:
     //!
     auto &recordMap(const QVariant &v)
     {
-        auto tablePk = this->modelRef.tablePk();
+        auto tablePk = this->p_modelInfo.tablePk();
         if (tablePk.isEmpty())
             return this->lr(QVariant()) = true;
 
         Query query(this);
         auto &strategy = query.builder().select();
-        strategy.fieldsFrom(modelRef);
+        strategy.fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
         if (value.isValid()) {
             strategy.where().condition(value);
         }
 
-        QHashIterator<QString, QVariant> i(this->modelRef.tableDeactivateField());
+        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
         while (i.hasNext()) {
             i.next();
             strategy.where().notEqual(i.key(), i.value());
@@ -183,7 +183,7 @@ public:
             QStringList key;
             QObject model;
             for (auto &pkField : tablePk) {
-                const auto property = modelRef.propertyByFieldName(pkField);
+                const auto property = p_modelInfo.propertyByFieldName(pkField);
                 const auto vMapValue = vMap.value(pkField);
                 const auto vType = property.typeId();
                 if (vType == vMapValue.Invalid || !vMapValue.isValid() || vMapValue.isNull())
@@ -228,14 +228,14 @@ public:
     {
         QOrm::Query query(this);
         auto &strategy = query.builder().select();
-        strategy.fromExists(modelRef);
+        strategy.fromExists(p_modelInfo);
 
         QVariant value = this->variantToParameters(v);
         if (value.isValid()) {
             strategy.where().condition(value);
         }
 
-        QHashIterator<QString, QVariant> i(this->modelRef.tableDeactivateField());
+        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
         while (i.hasNext()) {
             i.next();
             strategy.where().notEqual(i.key(), i.value());
@@ -287,7 +287,7 @@ public:
 
         for (auto &v : list) {
             QOrm::Query query(this);
-            query.builder().insert().destine(modelRef).values(v);
+            query.builder().insert().destine(p_modelInfo).values(v);
 
             if (!query.exec())
                 return this->lr(query.lr());
@@ -329,7 +329,7 @@ public:
         }
         for (auto &v : list) {
             QOrm::Query query(this);
-            query.builder().update().destine(modelRef).values(v);
+            query.builder().update().destine(p_modelInfo).values(v);
 
             if (!query.exec())
                 return this->lr(query.lr());
@@ -381,7 +381,7 @@ public:
 
         for (auto &v : list) {
             QOrm::Query query(this);
-            query.builder().upsert().destine(modelRef).values(v);
+            query.builder().upsert().destine(p_modelInfo).values(v);
 
             if (!query.exec())
                 return this->lr(query.lr());
@@ -460,12 +460,12 @@ public:
     {
         Query query(this);
         auto &strategy = query.builder().remove();
-        strategy.from(modelRef);
+        strategy.from(p_modelInfo);
         QVariant value(this->variantToParameters(v));
         if (value.isValid()) {
             strategy.where().condition(value);
         }
-        QHashIterator<QString, QVariant> i(this->modelRef.tableDeactivateField());
+        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
         while (i.hasNext()) {
             i.next();
             strategy.where().notEqual(i.key(), i.value());
@@ -581,14 +581,14 @@ public:
     {
         Query query(this);
         auto &strategy = query.builder().select();
-        strategy.lock().fieldsFrom(modelRef);
+        strategy.lock().fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
         if (value.isValid()) {
             strategy.where().condition(value);
         }
         if (!query.exec())
             return this->lr(query.lr());
-        auto vList = query.makeRecordList(this->modelRef);
+        auto vList = query.makeRecordList(this->p_modelInfo);
         if (vList.isEmpty())
             return this->lr() = false;
 
@@ -602,7 +602,7 @@ public:
     auto &truncateTable()
     {
         Query query(this);
-        query.builder().structure().truncateTable(this->modelRef);
+        query.builder().structure().truncateTable(this->p_modelInfo);
 
         if (!query.exec())
             return this->lr(query.lr());
@@ -620,7 +620,7 @@ public:
     auto &truncateTableCascade()
     {
         Query query(this);
-        query.builder().structure().truncateTableCascade(this->modelRef);
+        query.builder().structure().truncateTableCascade(this->p_modelInfo);
         if (!query.exec())
             return this->lr(query.lr());
 
@@ -634,7 +634,7 @@ public:
     //! \brief nextVal
     //! \return
     //!
-    auto &nextVal() { return this->nextVal(this->modelRef.tableSequence()); }
+    auto &nextVal() { return this->nextVal(this->p_modelInfo.tableSequence()); }
 
     //!
     //! \brief nextVal
@@ -663,7 +663,7 @@ public:
         if (vListRecord.isEmpty())
             return {};
 
-        auto tablePk = this->modelRef.tablePkField();
+        auto tablePk = this->p_modelInfo.tablePkField();
         if (tablePk.size() == 1)
             return this->values(tablePk.first());
 
@@ -728,8 +728,13 @@ public:
         return this->lr();
     }
 
-public:
-    const QOrm::ModelInfo &modelRef = QOrm::ModelInfo::from(T::staticMetaObject);
+    const QOrm::ModelInfo &modelInfo()const
+    {
+        return p_modelInfo;
+    }
+
+private:
+    const QOrm::ModelInfo &p_modelInfo = QOrm::ModelInfo::from(T::staticMetaObject);
 };
 
 } // namespace QOrm

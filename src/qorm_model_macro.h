@@ -27,7 +27,7 @@ public:\
     Q_PROPERTY(QByteArray tablePrimaryKey READ tablePrimaryKey)\
     Q_PROPERTY(QVariantHash tableSequence READ tableSequence)\
 
-#define QORM_DECLARE_DESCRIPTOR(name)public:Q_INVOKABLE virtual const QMetaObject&descriptor(){ return name::staticMetaObject;}
+#define QORM_DECLARE_DESCRIPTOR(name)public:Q_INVOKABLE virtual const QMetaObject &descriptor(){ return name::staticMetaObject;}
 
 #define QORM_DECLARE_TABLE_PK_COMPUSER(v1)\
 public:\
