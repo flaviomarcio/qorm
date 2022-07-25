@@ -172,12 +172,6 @@ public:
     virtual QOrm::ModelDto &dto();
 
     //!
-    //! \brief modelInfo
-    //! \return
-    //!
-    virtual const QOrm::ModelInfo &modelInfo();
-
-    //!
     //! \brief crudBody
     //! \param v
     //! \return

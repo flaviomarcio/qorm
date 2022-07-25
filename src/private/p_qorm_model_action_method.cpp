@@ -45,7 +45,16 @@ ModelAction &ModelAction::onActionAfter(ModelActionMethodPointer action)
 
 ResultValue &ModelAction::action(const QVariant &vSource)
 {
-    auto vList=vSource.toList();
+    QVariantList vList;
+    switch (vSource.typeId()) {
+    case QMetaType::QVariantList:
+    case QMetaType::QStringList:
+        vList=vSource.toList();
+        break;
+    default:
+        vList.append(vSource);
+        break;
+    }
     if(vList.isEmpty())
         vList.append(QVariant{});
     for(auto &vSource:vList){

@@ -231,12 +231,6 @@ QOrm::ModelDto &CRUDBase::dto()
     return p->dto;
 }
 
-const QOrm::ModelInfo &CRUDBase::modelInfo()
-{
-    static const QOrm::ModelInfo __return;
-    return __return;
-}
-
 CRUDBase&CRUDBase::crudBody(const QVariant &v)
 {
     p->set_crud(v);
