@@ -50,7 +50,6 @@ public:
     virtual ModelDtoControls &uuid(const QUuid &v);
     virtual ModelDtoControls &setUuid(const QUuid &v);
 
-
     //!
     //! \brief name
     //! \return
@@ -162,6 +161,12 @@ public:
     //! \return
     //!
     virtual EndPoints &endpoints();
+
+    //!
+    //! \brief endpoint
+    //! \return
+    //!
+    virtual EndPoint &endpoint();
 
     //!
     //! \brief items

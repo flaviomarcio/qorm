@@ -39,6 +39,7 @@ public:
     QHash<QString,QString> propertyShortFKVsShortPK;
     QVariantMap propertyDescriptors;
     QVariantList propertyEndPoints;
+    QVariantHash propertyEndPoint;
     QVariantHash propertySort;
     QStringList propertyList;
     QStringList propertyTableList;
@@ -345,6 +346,9 @@ public:
         ____copy(propertyInfo           );
         ____copy(propertyTableVsShort   );
         ____copy(propertyShortVsTable   );
+        ____copy(propertyEndPoints      );
+        ____copy(propertyEndPoint       );
+        ____copy(propertySort           );
         ____copy(propertyList           );
         ____copy(propertyTableList      );
         ____copy(propertyDeactivateField);
@@ -384,6 +388,9 @@ public:
         ____clear(propertyInfo           );
         ____clear(propertyTableVsShort   );
         ____clear(propertyShortVsTable   );
+        ____clear(propertyEndPoints      );
+        ____clear(propertyEndPoint       );
+        ____clear(propertySort           );
         ____clear(propertyList           );
         ____clear(propertyTableList      );
         ____clear(propertyDeactivateField);
@@ -706,6 +713,7 @@ public:
             if(pvt->description.isEmpty())
                 pvt->description=pvt->descriptor->description();
             pvt->propertyEndPoints=pvt->descriptor->endPoints().toList();
+            pvt->propertyEndPoint=pvt->descriptor->endPoint().toHash();
             pvt->propertyDescriptors=pvt->descriptor->descriptors();
             pvt->propertySort=pvt->descriptor->sort();
         };
@@ -947,6 +955,11 @@ QVariantMap ModelInfo::propertyDescriptors() const
 QVariantList ModelInfo::propertyEndPoints() const
 {
     return p->propertyEndPoints;
+}
+
+QVariantHash ModelInfo::propertyEndPoint() const
+{
+    return p->propertyEndPoint;
 }
 
 QVariantHash ModelInfo::propertySort() const

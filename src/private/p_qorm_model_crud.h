@@ -217,6 +217,12 @@ public:
     virtual ResultValue &crudify();
 
     //!
+    //! \brief crudifyFake
+    //! \return
+    //!
+    virtual ResultValue &crudifyFake();
+
+    //!
     //! \brief actionNulls
     //! \return
     //!

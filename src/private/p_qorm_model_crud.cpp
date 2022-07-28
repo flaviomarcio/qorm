@@ -310,6 +310,24 @@ ResultValue &CRUDBase::crudify()
     }
 }
 
+ResultValue &CRUDBase::crudifyFake()
+{
+    p->dto.setResultInfo(this->resultInfo());
+    auto strategy=this->strategy();
+    switch (strategy) {
+    case QOrm::Search:{
+        return this->lr(p->dto
+                        .host(p->host)
+                        .uuid(this->uuid())
+                        .name(this->name())
+                        .text(this->description())
+                        .o());
+    }
+    default:
+        return this->lr().setValidation(tr("Invalid strategy"));
+    }
+}
+
 CRUDBase &CRUDBase::actionNulls()
 {
     qDeleteAll(p->actions);

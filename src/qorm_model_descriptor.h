@@ -39,6 +39,8 @@
 #define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
 const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).uuid().toString();
 
+#define Q_ORM_MODEL_DECLARE_ENDPOINT_PRINCIPAL(ENDPOINT) this->setEndPoint(ENDPOINT);
+
 #define Q_ORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, DESCRIPTOR) \
 public: \
     Q_INVOKABLE explicit CLASSNAME(QObject *parent = nullptr) : DESCRIPTOR(parent){};
@@ -240,6 +242,14 @@ public:
     virtual void setDesign(const QVariantHash &value);
 
     //!
+    //! \brief addEndPoint
+    //! \param newEndPoint
+    //! \return
+    //!
+    virtual Host &addHost(Host *newHost);
+    virtual Host &addHost(const QVariant &newHost);
+
+    //!
     //! \brief endPoints
     //! \return
     //!
@@ -252,21 +262,34 @@ public:
     //! \param newEndPoint
     //! \return
     //!
-    virtual Host &addHost(Host *newHost);
-    virtual Host &addHost(const QVariant &newHost);
-
-    //!
-    //! \brief addEndPoint
-    //! \param newEndPoint
-    //! \return
-    //!
     virtual EndPoint &addEndPoint(EndPoint *newEndPoint);
     virtual EndPoint &addEndPoint(const QString &name, const QVariant &values);
+
+    //!
+    //! \brief endPoint
+    //! \return
+    //!
+    virtual EndPoint &endPoint() const;
+
+    //!
+    //! \brief endPoint
+    //! \param name
+    //! \return
+    //!
+    virtual EndPoint *endPoint(const QUuid &uuid) const;
+
+    //!
+    //! \brief setEndPoint
+    //! \param name
+    //! \param v
+    //!
+    virtual ModelDescriptor &setEndPoint(const EndPoint &v);
+    virtual ModelDescriptor &setEndPoint(const QVariant &v);
 
 signals:
     void cellRowsChanged();
     void endPointsChanged();
-
+    void endPointChanged();
 private:
     ModelDescriptorPvt *p = nullptr;
 };

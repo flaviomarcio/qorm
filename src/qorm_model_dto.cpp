@@ -89,6 +89,7 @@ public:
         auto descriptors = modelInfo.propertyDescriptors();
         dtoControls.setDescriptors(descriptors);
         dtoControls.endpoints().setItems(modelInfo.propertyEndPoints());
+        dtoControls.endpoint().setValues(modelInfo.propertyEndPoint());
     }
 };
 

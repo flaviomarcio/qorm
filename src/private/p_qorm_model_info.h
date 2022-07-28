@@ -193,6 +193,12 @@ public:
     QVariantList propertyEndPoints() const;
 
     //!
+    //! \brief propertyEndPoint
+    //! \return
+    //!
+    QVariantHash propertyEndPoint() const;
+
+    //!
     //! \brief propertySort
     //! \return
     //!

@@ -19,15 +19,16 @@ public:
     QVariantHash design={{vpWidth,"20%"}, {vpHeight,"20%"}, {vpRows,2}, {vpLayout, vlVertical}};
     Host host;
     EndPoints endPoints;
+    EndPoint endPoint;
     ModelDescriptor *parent=nullptr;
     explicit ModelDescriptorPvt(ModelDescriptor *parent)
         :
           QObject{parent},
-          endPoints{parent}
+          endPoints{parent},
+          endPoint{parent}
     {
 
     }
-    virtual ~ModelDescriptorPvt() {}
 };
 
 ModelDescriptor::ModelDescriptor(QObject *parent) : QObject{parent}
@@ -108,6 +109,7 @@ QVariantMap ModelDescriptor::descriptors() const
     descriptors.clear();
     descriptors[vpHeaders]=vList;
     descriptors[vpDesign]=p->design;
+    descriptors[vpEndPoint]=p->endPoint.toHash();
     return descriptors;
 }
 
@@ -120,13 +122,11 @@ void ModelDescriptor::descriptorsInit()
 
 QVariant ModelDescriptor::descriptor(const QString &name) const
 {
-
     return p->descriptors.value(name);
 }
 
 void ModelDescriptor::setDescriptor(const QString &name, const QVariantHash &v)
 {
-
     auto d = v;
     if (!p->descriptorsOrder.contains(name))
         p->descriptorsOrder.append(name);
@@ -136,7 +136,6 @@ void ModelDescriptor::setDescriptor(const QString &name, const QVariantHash &v)
 
 void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
 {
-
     if (!p->descriptorsOrder.contains(name))
         p->descriptorsOrder.append(name);
     auto d = p->descriptors.value(name).toHash();
@@ -145,7 +144,6 @@ void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
         i.next();
         d[i.key()] = i.value();
     }
-
     d[vpField] = name;
     p->descriptors[name] = d;
 }
@@ -162,25 +160,21 @@ void ModelDescriptor::setDescription(const QString &v)
 
 QVariantHash &ModelDescriptor::edit() const
 {
-
     return p->edit;
 }
 
 QVariant ModelDescriptor::edit(const QString &name) const
 {
-
     return p->edit.value(name);
 }
 
 void ModelDescriptor::setEdit(const QString &name, const QVariantHash &v)
 {
-
     p->edit[name] = v;
 }
 
 void ModelDescriptor::addEdit(const QString &name, const QVariantHash &v)
 {
-
     auto d = p->edit.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
@@ -192,25 +186,21 @@ void ModelDescriptor::addEdit(const QString &name, const QVariantHash &v)
 
 QVariantHash &ModelDescriptor::perfumerys() const
 {
-
     return p->perfumery;
 }
 
 QVariant ModelDescriptor::perfumery(const QString &name) const
 {
-
     return p->perfumery.value(name);
 }
 
 void ModelDescriptor::setPerfumery(const QString &name, const QVariantHash &v)
 {
-
     p->perfumery[name] = v;
 }
 
 void ModelDescriptor::addPerfumery(const QString &name, const QVariantHash &v)
 {
-
     auto d = p->perfumery.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
@@ -222,25 +212,21 @@ void ModelDescriptor::addPerfumery(const QString &name, const QVariantHash &v)
 
 QVariantHash &ModelDescriptor::flags() const
 {
-
     return p->flags;
 }
 
 QVariant ModelDescriptor::flag(const QString &name) const
 {
-
     return p->perfumery.value(name);
 }
 
 void ModelDescriptor::setFlag(const QString &name, const QVariantHash &v)
 {
-
     p->flags[name] = v;
 }
 
 void ModelDescriptor::addFlag(const QString &name, const QVariantHash &v)
 {
-
     auto d = p->flags.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
@@ -252,25 +238,21 @@ void ModelDescriptor::addFlag(const QString &name, const QVariantHash &v)
 
 QVariantHash &ModelDescriptor::options() const
 {
-
     return p->options;
 }
 
 QVariant ModelDescriptor::option(const QString &name) const
 {
-
     return p->options.value(name);
 }
 
 void ModelDescriptor::setOption(const QString &name, const QVariantHash &v)
 {
-
     p->options[name] = v;
 }
 
 void ModelDescriptor::addOption(const QString &name, const QVariantHash &v)
 {
-
     auto d = p->options.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
     while (i.hasNext()) {
@@ -282,25 +264,33 @@ void ModelDescriptor::addOption(const QString &name, const QVariantHash &v)
 
 QVariantHash &ModelDescriptor::sort() const
 {
-
     return p->sort;
 }
 
 void ModelDescriptor::setSort(const QVariantHash &value)
 {
-
     p->sort = value;
 }
 
 QVariantHash &ModelDescriptor::design()
 {
-
     return p->design;
+}
+
+Host &ModelDescriptor::addHost(Host *newHost)
+{
+    p->host=newHost;
+    return p->host;
+}
+
+Host &ModelDescriptor::addHost(const QVariant &newHost)
+{
+    p->host=newHost;
+    return p->host;
 }
 
 void ModelDescriptor::setDesign(const QVariantHash &value)
 {
-
     p->design=value;
 }
 
@@ -323,18 +313,6 @@ void ModelDescriptor::resetEndPoints()
     emit endPointsChanged();
 }
 
-Host &ModelDescriptor::addHost(Host *newHost)
-{
-    p->host=newHost;
-    return p->host;
-}
-
-Host &ModelDescriptor::addHost(const QVariant &newHost)
-{
-    p->host=newHost;
-    return p->host;
-}
-
 EndPoint &ModelDescriptor::addEndPoint(EndPoint *newEndPoint)
 {
     auto v=p->endPoints.value(newEndPoint->uuid());
@@ -355,6 +333,29 @@ EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &valu
     endpoint->setName(name.toUtf8());
     endpoint->host()->setValues(&p->host);
     return this->addEndPoint(endpoint);
+}
+
+EndPoint &ModelDescriptor::endPoint() const
+{
+    return p->endPoint;
+}
+
+EndPoint *ModelDescriptor::endPoint(const QUuid &uuid) const
+{
+    return p->endPoints.value(uuid);
+}
+
+ModelDescriptor &ModelDescriptor::setEndPoint(const EndPoint &v)
+{
+    p->endPoint.setValues(&v);
+    return *this;
+}
+
+ModelDescriptor &ModelDescriptor::setEndPoint(const QVariant &v)
+{
+    p->endPoint.setValues(v);
+    emit endPointChanged();
+    return *this;
 }
 
 } // namespace QOrm
