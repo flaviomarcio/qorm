@@ -1,5 +1,7 @@
 TARGET = QOrm
 TEMPLATE = lib
 
-include($$PWD/qorm.pri)
+CONFIG += silent CONFIG += c++17
+
 include($$PWD/../qstm/qstm.pri)
+include($$PWD/qorm.pri)

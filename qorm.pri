@@ -6,6 +6,7 @@ QTREFORCE_QORM=true
 DEFINES+=QTREFORCE_QORM
 
 INCLUDEPATH += $$PWD/includes
+INCLUDEPATH += $$PWD/../qstm/includes
 
 HEADERS += \
     $$PWD/src/private/p_qorm_connection_manager.h \
