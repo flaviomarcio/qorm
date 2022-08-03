@@ -178,7 +178,7 @@ const QOrm::ModelInfo &ModelReportBase::modelInfo()
     return __return;
 }
 
-ModelReportBase&ModelReportBase::reportBody(const QVariant &v)
+ModelReportBase &ModelReportBase::reportBody(const QVariant &v)
 {
     p->set_report(v);
     return *this;

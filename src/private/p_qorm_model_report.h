@@ -15,9 +15,9 @@ class Q_ORM_EXPORT ModelReportBase : public QOrm::ObjectDb
 {
     Q_OBJECT
 public:
-    QORM_DECLARE_FORM_ENUMS
+    QORM_MODEL_DECLARE_FORM_ENUMS
 
-    QORM_DECLARE_DTO_TYPE(FormType::CustomForm)
+    QORM_DECLARE_DTO_TYPE(FormType::ReportForm)
     QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
     //!
@@ -37,7 +37,7 @@ public:
     //! \brief options
     //! \return
     //!
-    QOrm::ModelDtoOptions&options();
+    QOrm::ModelDtoOptions &options();
 
     //!
     //! \brief setOptions
@@ -51,14 +51,14 @@ public:
     //! \return
     //!
     virtual FormType type()const;
-    virtual ModelReportBase&type(const FormType &value);
+    virtual ModelReportBase &type(const FormType &value);
 
     //!
     //! \brief layout
     //! \return
     //!
     virtual QOrm::ModelDto::FormLayout layout()const;
-    virtual ModelReportBase&layout(const FormLayout &value);
+    virtual ModelReportBase &layout(const FormLayout &value);
 
     //!
     //! \brief reportName
@@ -79,13 +79,13 @@ public:
     //! \return
     //!
     virtual QByteArray description()const;
-    virtual ModelReportBase&description(const QVariant &value);
+    virtual ModelReportBase &description(const QVariant &value);
 
     //!
     //! \brief dto
     //! \return
     //!
-    virtual QOrm::ModelDto&dto();
+    virtual QOrm::ModelDto &dto();
 
     //!
     //! \brief modelInfo
@@ -105,14 +105,14 @@ public:
     //! \return
     //!
     virtual QVariant strategy()const;
-    virtual ModelReportBase&strategy(const QVariant &strategy);
+    virtual ModelReportBase &strategy(const QVariant &strategy);
 
     //!
     //! \brief source
     //! \return
     //!
     virtual QVariant source()const;
-    virtual ModelReportBase&source(const QVariant &value);
+    virtual ModelReportBase &source(const QVariant &value);
 
     //!
     //! \brief reportfy
@@ -125,7 +125,7 @@ public:
     //! \param action
     //! \return
     //!
-    virtual ModelReportBase&actionSearch(QOrm::ModelAction&action);
+    virtual ModelReportBase &actionSearch(QOrm::ModelAction&action);
 
 protected:
 
@@ -141,21 +141,21 @@ protected:
     //! \param method
     //! \return
     //!
-    ModelReportBase&onBefore(QOrm::ModelActionMethod method);
+    ModelReportBase &onBefore(QOrm::ModelActionMethod method);
 
     //!
     //! \brief onSuccess
     //! \param method
     //! \return
     //!
-    ModelReportBase&onSuccess(QOrm::ModelActionMethod method);
+    ModelReportBase &onSuccess(QOrm::ModelActionMethod method);
 
     //!
     //! \brief onFailed
     //! \param method
     //! \return
     //!
-    ModelReportBase&onFailed(QOrm::ModelActionMethod method);
+    ModelReportBase &onFailed(QOrm::ModelActionMethod method);
 
     //!
     //! \brief canActionSearch

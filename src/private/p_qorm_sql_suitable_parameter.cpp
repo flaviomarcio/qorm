@@ -417,8 +417,8 @@ QVariant SearchParameters::buildVariant() const
     QVariantList vList;
     for(auto &i:p->values){
         auto v=i.toHash();
-        p->vList << SearchParam::from(v);
-        vList<<v;
+        p->vList.append(SearchParam::from(v));
+        vList.append(v);
     }
     return vList.isEmpty()?QVariant():vList;
 }

@@ -94,7 +94,6 @@ public:\
 Q_INVOKABLE virtual QByteArray tableAutoSetFields()const{static const auto ___return=QByteArrayLiteral(#name); return ___return;}
 
 
-
 #define QORM_DECLARE_TABLE_PRIMARY_KEY_AUTO(name)\
 public:\
 Q_INVOKABLE virtual bool tablePkAutoGenerate()const{return true;}

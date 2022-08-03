@@ -180,7 +180,7 @@ bool ConnectionNotifySubscribe::queueSend(const QString &channel, const QVariant
     const auto dbmsType = this->dbmsType();
     if(dbmsType==QSqlDriver::PostgreSQL){
         for(auto &channel:channelList)
-            commandList<<QStringLiteral("select pg_notify('%1', '%2');").arg(channel, payloadBytes);
+            commandList.append(QStringLiteral("select pg_notify('%1', '%2');").arg(channel, payloadBytes));
     }
 
     auto __return=false;

@@ -20,7 +20,7 @@ class Q_ORM_EXPORT ModelDtoControls : public QStm::Object
     Q_OBJECT
 public:
 
-    QORM_DECLARE_FORM_ENUMS
+    QORM_MODEL_DECLARE_FORM_ENUMS
 
     //!
     //! \brief ModelDtoControls

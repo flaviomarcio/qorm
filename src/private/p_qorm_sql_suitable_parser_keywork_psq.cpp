@@ -125,7 +125,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
         if(value.typeId()==QMetaType::QVariantList)
             list=value.toList();
         else
-            list<<value;
+            list.append(value);
 
         QVariantList listRecords;
         for(auto &v:list){

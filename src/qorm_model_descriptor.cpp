@@ -2,12 +2,14 @@
 //#include "./private/p_qorm_const.h"
 #include <QMetaProperty>
 #include <QRect>
+#include "../../../qstm/src/qstm_meta_enum.h"
 
 namespace QOrm {
 
 class ModelDescriptorPvt:public QObject
 {
 public:
+    QStm::MetaEnum<QOrm::ModelDescriptor::FormType> type=ModelDescriptor::RegisterForm;
     QStringList descriptorsOrder; //é importa ser QMap devido a ordem necessaria para exibicao
     QString description;
     QVariantMap descriptors; //é importa ser QMap devido a ordem necessaria para exibicao
@@ -107,6 +109,7 @@ QVariantMap ModelDescriptor::descriptors() const
         vList.append(descriptors[name]);
     }    
     descriptors.clear();
+    descriptors[vpType]=p->type.name();
     descriptors[vpHeaders]=vList;
     descriptors[vpDesign]=p->design;
     descriptors[vpEndPoint]=p->endPoint.toHash();
@@ -117,7 +120,24 @@ void ModelDescriptor::descriptorsInit()
 {
     p->descriptorsOrder.clear();
     p->descriptors.clear();
-    Q_ORM_MODEL_SET_DESIGN("30%", "30%", 0, 3, vlVertical)
+    static auto __30P="30%";
+    QORM_MODEL_SET_FORM_TYPE(this->RegisterForm);
+    QORM_MODEL_SET_DESIGN(__30P, __30P, 0, 3, vlVertical)
+}
+
+QOrm::ModelDescriptor::FormType ModelDescriptor::type() const
+{
+    return p->type.type();
+}
+
+void ModelDescriptor::type(const QVariant &type) const
+{
+    p->type=type;
+}
+
+void ModelDescriptor::setType(const QVariant &type) const
+{
+    p->type=type;
 }
 
 QVariant ModelDescriptor::descriptor(const QString &name) const

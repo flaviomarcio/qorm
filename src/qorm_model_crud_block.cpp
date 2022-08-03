@@ -98,7 +98,7 @@ QStm::ResultInfo &CRUDBlock::resultInfo()
 
 CRUDBlock &CRUDBlock::operator+=(PrivateQOrm::CRUDBase *crud)
 {
-    return this->insert(crud);
+    return this->append(crud);
 }
 
 CRUDBlock &CRUDBlock::operator-=(PrivateQOrm::CRUDBase *crud)
@@ -108,7 +108,7 @@ CRUDBlock &CRUDBlock::operator-=(PrivateQOrm::CRUDBase *crud)
 
 CRUDBlock &CRUDBlock::operator<<(PrivateQOrm::CRUDBase *crud)
 {
-    return this->insert(crud);
+    return this->append(crud);
 }
 
 QVariant &CRUDBlock::crudBody() const
@@ -142,7 +142,7 @@ CRUDBlock &CRUDBlock::clean()
     return *this;
 }
 
-CRUDBlock &CRUDBlock::insert(PrivateQOrm::CRUDBase *crud)
+CRUDBlock &CRUDBlock::append(PrivateQOrm::CRUDBase *crud)
 {
     this->remove(crud);
     if(crud!=nullptr){
@@ -200,7 +200,6 @@ ResultValue &CRUDBlock::crudify()
     static auto __mode=QStringLiteral("mode");
     static auto __fake=QStringLiteral("fake");
     static auto __uuid=QStringLiteral("uuid");
-    static auto __types=QStringLiteral("type");
     static auto __resultInfo=QStringLiteral("resultInfo");
     static auto __expressions=QStringLiteral("expressions");
     static auto __pages=QStringLiteral("pages");
@@ -226,21 +225,21 @@ ResultValue &CRUDBlock::crudify()
     }
 
 
-    if(vCrudSource.contains(__mode) && vCrudSource.value(__mode).toString().toLower()==__fake){
-        for(auto &crud:p->crudList){
-            switch (crudBody.strategy()) {
-            case QOrm::CRUDStrategy::Search:{
-                if(!crud->isValid())
-                    continue;
-                break;
-            }
-            default:
-                break;
-            };
-            __return.append(crud->crudifyFake().resultVariant());
-        }
-    }
-    else{
+//    if(vCrudSource.contains(__mode) && vCrudSource.value(__mode).toString().toLower()==__fake){
+//        for(auto &crud:p->crudList){
+//            switch (crudBody.strategy()) {
+//            case QOrm::CRUDStrategy::Search:{
+//                if(!crud->isValid())
+//                    continue;
+//                break;
+//            }
+//            default:
+//                break;
+//            };
+//            __return.append(crud->crudifyFake().resultVariant());
+//        }
+//    }
+//    else{
 
         if(vCrudSource.contains(__resultInfo))
             this->resultInfo().setValues(vCrudSource.value(__resultInfo));
@@ -292,16 +291,17 @@ ResultValue &CRUDBlock::crudify()
 
             __return.append(crud->lr().resultVariant());
         }
-    }
+//    }
 
 
 
     if(__return.isEmpty())
         return this->lr().clear();
 
-    auto vPage = __return.first().toHash();
-    auto type = vPage.value(__types);
-    return this->lr(QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__type, type}, {__pages,__return}});
+    static auto metaEnum = QMetaEnum::fromType<FormType>();
+    auto typeName=metaEnum.valueToKey(this->defaultType());
+
+    return this->lr(QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__type, typeName}, {__pages,__return}});
 }
 
 }

@@ -315,7 +315,7 @@ bool ConnectionManagerPvt::load(const QStringList &settingsFileName)
         }
         auto map=doc.object().toVariantHash();
         if(!map.isEmpty())
-            vList<<map;
+            vList.append(map);
     }
     Q_DECLARE_VU;
     auto vMap=vu.vMerge(vList).toHash();

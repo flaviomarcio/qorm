@@ -140,13 +140,11 @@ ModelDto &ModelDto::setName(const QVariant &value)
 
 ModelDto::FormType ModelDto::type() const
 {
-
     return FormType(p->dtoControls.type());
 }
 
 ModelDto &ModelDto::type(const FormType &v)
 {
-
     p->dtoControls.type(ModelDtoControls::FormType(v));
     return *this;
 }
@@ -187,7 +185,6 @@ ModelDtoControls &ModelDto::controls()
 
 ModelDtoHeaders<ModelDtoControls> &ModelDto::headers()
 {
-
     return p->dtoControls.headers();
 }
 

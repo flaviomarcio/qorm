@@ -3,49 +3,52 @@
 #include <QVariant>
 #include <QVariantHash>
 #include <QVariantMap>
+#include "./qorm_types.h"
 #include "./qorm_model_macro.h"
 #include "./private/p_qorm_model_dto_endpoints.h"
 //#include "../../qstm/src/qstm_types.h"
 //#include "./private/p_qorm_model_controls.h"
 
-//#define Q_ORM_MODEL_SET_VALUES(W,H,R) this->setValues(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
+#define QORM_DESCRIPTOR_CONSTRUCTOR(CLASSNAME) QORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, QOrm::ModelDescriptor)
 
-#define Q_ORM_MODEL_SET_DESIGN(W,H,C,R,L) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpColumns,C}, {vpRows,R}, {vpLayout,L}}));
+//#define QORM_MODEL_SET_VALUES(W,H,R) this->setValues(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
 
-#define Q_ORM_MODEL_SET_SORT(value) this->setSort(value);
+#define QORM_MODEL_SET_DESIGN(W,H,C,R,L) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpColumns,C}, {vpRows,R}, {vpLayout,L}}));
 
-#define Q_ORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value);
+#define QORM_MODEL_SET_SORT(value) this->setSort(value);
 
-#define Q_ORM_MODEL_SET_DESCRIPTOR(propertyName, propertyValue) addDescriptor(QStringLiteral(#propertyName), propertyValue);
+#define QORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value);
 
-#define Q_ORM_MODEL_SET_EDIT(propertyName, propertyValue) \
+#define QORM_MODEL_SET_DESCRIPTOR(propertyName, propertyValue) addDescriptor(QStringLiteral(#propertyName), propertyValue);
+
+#define QORM_MODEL_SET_FORM_TYPE(FORMTYPE) this->setType(FORMTYPE);
+
+#define QORM_MODEL_SET_EDIT(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addEdit(QStringLiteral(#propertyName), propertyValue);
 
-#define Q_ORM_MODEL_SET_PERFUMERY(propertyName, propertyValue) \
+#define QORM_MODEL_SET_PERFUMERY(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addPerfumery(QStringLiteral(#propertyName), propertyValue);
 
-#define Q_ORM_MODEL_SET_FLAGS(propertyName, propertyValue) \
+#define QORM_MODEL_SET_FLAGS(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addFlag(QStringLiteral(#propertyName), propertyValue);
 
-#define Q_ORM_MODEL_SET_OPTIONS(propertyName, propertyValue) \
+#define QORM_MODEL_SET_OPTIONS(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addOption(QStringLiteral(#propertyName), propertyValue);
 
-#define Q_ORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES);
+#define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES);
 
-#define Q_ORM_MODEL_DECLARE_ENDPOINT(NAME, VALUES)\
-const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), VALUES).uuid().toString();
+#define QORM_MODEL_DECLARE_ENDPOINT(NAME)\
+const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), QVariantHash{{vpPath, NAME}}).uuid().toString();
 
-#define Q_ORM_MODEL_DECLARE_ENDPOINT_PRINCIPAL(ENDPOINT) this->setEndPoint(ENDPOINT);
+#define QORM_MODEL_DECLARE_ENDPOINT_PRINCIPAL(ENDPOINT) this->setEndPoint(ENDPOINT);
 
-#define Q_ORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, DESCRIPTOR) \
+#define QORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, DESCRIPTOR) \
 public: \
     Q_INVOKABLE explicit CLASSNAME(QObject *parent = nullptr) : DESCRIPTOR(parent){};
-
-#define Q_ORM_DESCRIPTOR_CONSTRUCTOR(CLASSNAME) Q_ORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, QOrm::ModelDescriptor)
 
 namespace QOrm {
 class ModelDescriptorPvt;
@@ -56,6 +59,7 @@ class Q_ORM_EXPORT ModelDescriptor : public QObject
 {
     Q_OBJECT
     QORM_DESCRIPTOR_ORDERBY()
+    QORM_MODEL_DECLARE_FORM_ENUMS
 public:
     //!
     //! \brief ModelDescriptor
@@ -74,6 +78,14 @@ public:
     //! \brief descriptorsInit
     //!
     virtual void descriptorsInit();
+
+    //!
+    //! \brief type
+    //! \return
+    //!
+    virtual FormType type() const;
+    virtual void type(const QVariant &type) const;
+    virtual void setType(const QVariant &type) const;
 
     //!
     //! \brief descriptors

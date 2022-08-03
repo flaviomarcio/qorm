@@ -13,9 +13,9 @@ class Q_ORM_EXPORT ModelDto : public QStm::Object
     Q_OBJECT
 public:
 
-    QORM_DECLARE_FORM_ENUMS
+    QORM_MODEL_DECLARE_FORM_ENUMS
 
-    QORM_DECLARE_DTO_TYPE(FormType::CustomForm)
+    QORM_DECLARE_DTO_TYPE(FormType::RegisterForm)
     QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
     //!

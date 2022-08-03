@@ -265,7 +265,7 @@ public:
     {
         QVariantList vList;
         for(const auto &v:this->___objectList)
-            vList<<v->toVariant();
+            vList.append(v->toVariant());
         return vList;
     };
 
@@ -291,7 +291,7 @@ public:
         object->setSortable(v.value(vpSortable));
         object->setFiltrable(v.value(vpFiltrable));
         object->setFilterStyle(v.value(vpFilterStyle));
-        this->___objectList<<object;
+        this->___objectList.append(object);
         return*object;
     }
 

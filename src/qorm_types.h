@@ -12,17 +12,12 @@ class ObjectDb;
 typedef std::function<ResultValue &(QOrm::ObjectDb *controller, const QVariant &vBody)> ModelActionMethod;
 typedef std::function<ResultValue *(QOrm::ObjectDb *controller, const QVariant &vBody)> ModelActionMethodPointer;
 
-
-#define ____QORM_DECLARE_FORM_ENUMS \
-enum FormType { CustomForm = 0, RegisterForm=2, AddressForm = 3, ReportForm = 4 };\
-enum FormLayout { Vertical = 0, Horizontal = 1 };
-
-#define QORM_DECLARE_FORM_ENUMS \
-____QORM_DECLARE_FORM_ENUMS \
+#define QORM_MODEL_DECLARE_FORM_ENUMS \
+enum FormType { ReportForm , RegisterForm, EditFields, EditAddress, EditDualList };\
+enum FormLayout { Vertical, Horizontal };\
 Q_ENUM(FormType)\
-Q_ENUM(FormLayout)\
+Q_ENUM(FormLayout)
 
-//____QORM_DECLARE_FORM_ENUMS
 
 } // namespace QOrm
 
