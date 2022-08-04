@@ -3,7 +3,13 @@
 #include "../qorm_types.h"
 #include "../qorm_object_db.h"
 //#include "../qorm_model_dao.h"
-//#include "./p_qorm_model_crud_body.h"
+
+
+
+namespace PrivateQOrm{
+class CRUDBase;
+}
+
 
 namespace QOrm {
 class ModelActionPvt;
@@ -49,8 +55,17 @@ public:
     //!
     virtual ModelAction &onActionAfter(ModelActionMethodPointer action);
 
+    //!
+    //! \brief crudBase
+    //! \return
+    //!
+    virtual PrivateQOrm::CRUDBase *crudBase() const;
+    virtual void setCrudBase(PrivateQOrm::CRUDBase *newCrudBase);
+    virtual void resetCrudBase();
+
 private:
     ModelActionPvt *p=nullptr;
+
 signals:
     void strategyChanged();
 };

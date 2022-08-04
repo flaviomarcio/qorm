@@ -22,6 +22,8 @@ public:
     Host host;
     EndPoints endPoints;
     EndPoint endPoint;
+    bool obrigatory=false;
+    bool readonly=false;
     ModelDescriptor *parent=nullptr;
     explicit ModelDescriptorPvt(ModelDescriptor *parent)
         :
@@ -122,7 +124,7 @@ void ModelDescriptor::descriptorsInit()
     p->descriptors.clear();
     static auto __30P="30%";
     QORM_MODEL_SET_FORM_TYPE(this->RegisterForm);
-    QORM_MODEL_SET_DESIGN(__30P, __30P, 0, 3, vlVertical)
+    QORM_MODEL_SET_DESIGN(__30P, __30P, 0, 3, vlVertical);
 }
 
 QOrm::ModelDescriptor::FormType ModelDescriptor::type() const
@@ -376,6 +378,42 @@ ModelDescriptor &ModelDescriptor::setEndPoint(const QVariant &v)
     p->endPoint.setValues(v);
     emit endPointChanged();
     return *this;
+}
+
+bool ModelDescriptor::obrigatory() const
+{
+    return p->obrigatory;
+}
+
+void ModelDescriptor::setObrigatory(bool newObrigatory)
+{
+    if (p->obrigatory == newObrigatory)
+        return;
+    p->obrigatory = newObrigatory;
+    emit obrigatoryChanged();
+}
+
+void ModelDescriptor::resetObrigatory()
+{
+    setObrigatory({}); 
+}
+
+bool ModelDescriptor::readonly() const
+{
+    return p->readonly;
+}
+
+void ModelDescriptor::setReadonly(bool newReadonly)
+{
+    if (p->readonly == newReadonly)
+        return;
+    p->readonly = newReadonly;
+    emit readonlyChanged();
+}
+
+void ModelDescriptor::resetReadonly()
+{
+    setReadonly({}); 
 }
 
 } // namespace QOrm

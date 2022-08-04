@@ -175,10 +175,16 @@ public:
     QHash<QString, QMetaProperty> &propertyPK() const;
 
     //!
-    //! \brief propertyFK
+    //! \brief propertyForeignKeysPK
     //! \return
     //!
-    QHash<QString, QMetaProperty> &propertyFK() const;
+    QHash<QString, QMetaProperty> &propertyForeignKeysPK() const;
+
+    //!
+    //! \brief propertyForeignKeys
+    //! \return
+    //!
+    QHash<QString, QMetaProperty> &propertyForeignKeys() const;
 
     //!
     //! \brief propertyDescriptors
@@ -281,10 +287,16 @@ public:
     QVariantList tablePkField() const;
 
     //!
-    //! \brief tableForeignKey
+    //! \brief tableForeignPk
     //! \return
     //!
-    QVariantHash tableForeignKey() const;
+    QStringList tableForeignKeysPK() const;
+
+    //!
+    //! \brief tableForeignKeys
+    //! \return
+    //!
+    QVariantHash tableForeignKeys() const;
 
     //!
     //! \brief tableFiltrableField

@@ -1,6 +1,7 @@
 #include "./p_qorm_model_action_method.h"
 //#include "../qorm_query.h"
 //#include "../qorm_transaction_scope.h"
+#include "./p_qorm_model_crud.h"
 #include <QJsonDocument>
 
 namespace QOrm {
@@ -12,6 +13,7 @@ public:
     ModelActionMethodPointer actionBefore=nullptr;
     ModelActionMethodPointer action=nullptr;
     ModelActionMethodPointer actionAfter=nullptr;
+    PrivateQOrm::CRUDBase *crudBase=nullptr;
     explicit ModelActionPvt(ModelAction*parent):QObject{parent}
     {
         this->parent=parent;
@@ -43,6 +45,23 @@ ModelAction &ModelAction::onActionAfter(ModelActionMethodPointer action)
     return *this;
 }
 
+PrivateQOrm::CRUDBase *ModelAction::crudBase() const
+{
+    return p->crudBase;
+}
+
+void ModelAction::setCrudBase(PrivateQOrm::CRUDBase *newCrudBase)
+{
+    if (p->crudBase == newCrudBase)
+        return;
+    p->crudBase = newCrudBase;
+}
+
+void ModelAction::resetCrudBase()
+{
+    setCrudBase({});
+}
+
 ResultValue &ModelAction::action(const QVariant &vSource)
 {
     QVariantList vList;
@@ -55,9 +74,11 @@ ResultValue &ModelAction::action(const QVariant &vSource)
         vList.append(vSource);
         break;
     }
-    if(vList.isEmpty())
-        vList.append(QVariant{});
-    for(auto &vSource:vList){
+
+    auto crudBase=this->crudBase();
+    CRUDStrategy strategy=crudBase?crudBase->strategy():CRUDStrategy::Undefined;
+
+    auto exec=[this](const QVariant &vSource){
         if(p->actionBefore!=nullptr){
             auto lr=p->actionBefore(p->parentDb, vSource);
             this->lr(*lr);
@@ -72,6 +93,21 @@ ResultValue &ModelAction::action(const QVariant &vSource)
             auto lr=p->actionAfter(p->parentDb, vSource);
             this->lr(*lr);
         }
+    };
+
+
+
+    switch (strategy) {
+    case CRUDStrategy::Search:
+    {
+        if(vList.isEmpty())
+            vList.append(QVariant{});
+        for(auto &vSource:vList)
+            exec(vSource);
+        break;
+    }
+    default:
+        exec(vList);
     }
     return this->lr();
 }

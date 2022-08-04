@@ -674,7 +674,7 @@ QVariantHash Model::toMapFKValues() const
     QVVM qvvm;
     auto &modelInfo=p->modelInfo();
     const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
-    auto pList=modelInfo.propertyFK().values();
+    auto pList=modelInfo.propertyForeignKeys().values();
     for(auto &property:pList){
         if(!property.isValid())
             continue;

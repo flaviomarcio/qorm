@@ -173,11 +173,19 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
     if(vModelList.isEmpty())
         return {};
 
+    const auto&propertyFK=modelRef.propertyForeignKeysPK();
+    const auto&propertyPK=modelRef.propertyPK();
+
+
     QVariantHash __return;
-    QHashIterator<QString, QMetaProperty> i(modelRef.propertyPK());
+    QHashIterator<QString, QMetaProperty> i(propertyPK);
     while(i.hasNext()){
         i.next();
         auto property=i.value();
+        //se a PK principal externa
+        //e se nao estiver na lista das PK's documentadas não permitiremos leitura
+        if(!propertyFK.isEmpty() && !propertyFK.contains(property.name()))
+            continue;
         auto vFilter=__return.value(property.name());
         QVariantList vFilterList=p->cleanList(vFilter);
         for(auto &v : vModelList){
@@ -277,13 +285,16 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
 
     if(vModelList.isEmpty())
         vModelList.append(QVariant{});
+    auto tableForeignKeysPK=modelRef.tableForeignKeysPK();
     for(auto &vItem:vModelList){
         auto vItemHash=vItem.toHash();
-        Q_V_HASH_ITERATOR(modelRef.tableForeignKey()){
+        Q_V_HASH_ITERATOR(modelRef.tableForeignKeys()){
             i.next();
             auto vHash=i.value().toHash();
             auto fkName=vHash[QStringLiteral("fk")].toString();
             auto pkName=vHash[QStringLiteral("pk")].toString();
+            if(!tableForeignKeysPK.contains(fkName))//se nao for uma FK/PK contiuaremos
+                continue;
             auto pkValue=vRecordHash.value(pkName);
             vItemHash.insert(fkName, pkValue);
         }
@@ -300,11 +311,20 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
     if(vModelList.isEmpty())
         return {};
 
-    auto vList=modelRef.tableForeignKey().values();
+    auto tableForeignPK=modelRef.propertyForeignKeysPK();
+    if(tableForeignPK.isEmpty())
+        return {};
+
+    auto vList=modelRef.tableForeignKeys().values();
     for(auto & v:vList){
         auto vPkFk=v.toHash();
-        auto fieldName=vPkFk.value(QStringLiteral("fk")).toString();
-        auto vFilter=__return.value(fieldName);
+        auto fieldNamePK=vPkFk.value(QStringLiteral("pk")).toString();
+        auto fieldNameFK=vPkFk.value(QStringLiteral("fk")).toString();
+        auto vFilter=__return.value(fieldNameFK);
+
+        if(!tableForeignPK.contains(fieldNameFK))
+            continue;
+
         QVariantList vFilterList;
         switch (vFilter.typeId()) {
         case QMetaType::QVariantList:
@@ -317,12 +337,12 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
         }
         for(auto &v : vModelList){
             auto itemHash=v.toHash();
-            auto val=itemHash.value(fieldName);
+            auto val=itemHash.value(fieldNamePK);
             if(val.isValid())
                 vFilterList.append(val);
         }
         if(!vFilterList.isEmpty())
-            __return.insert(fieldName, vFilterList.size()==1?vFilterList.first():vFilterList);
+            __return.insert(fieldNameFK, vFilterList.size()==1?vFilterList.first():vFilterList);
     }
     return __return;
 

@@ -29,7 +29,19 @@ public:
         case QOrm::CRUDStrategy::Deactivate:
         case QOrm::CRUDStrategy::Search:{
             if(!returns.isEmpty()){
-                QVariantHash lastReturn=returns.last().toHash();
+                QVariantHash lastReturn;
+                switch (returns.last().typeId()) {
+                case QMetaType::QVariantList:
+                {
+                    auto l=returns.last().toList();
+                    if(!l.isEmpty())
+                        lastReturn=l.first().toHash();
+                    break;
+                }
+                default:
+                    lastReturn=returns.last().toHash();
+                    break;
+                }
                 QVariant vPK=lastReturn.contains(__items)?lastReturn.value(__items):lastReturn;
                 __return=CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), vPK)};
                 break;
@@ -41,7 +53,18 @@ public:
         case QOrm::CRUDStrategy::Update:
         case QOrm::CRUDStrategy::Upsert:{
             if(!returns.isEmpty()){
-                QVariantHash lastReturn=returns.last().toHash();
+                QVariantHash lastReturn;
+                switch (returns.last().typeId()) {
+                case QMetaType::QVariantList:
+                {
+                    auto l=returns.last().toList();
+                    if(!l.isEmpty())
+                        lastReturn=l.first().toHash();
+                    break;
+                }
+                default:
+                    break;
+                }
                 QVariant vPK=lastReturn.contains(__items)?lastReturn.value(__items):lastReturn;
                 __return = CRUDBody{strategy, crud->dao().toPrepareForeignWrapper(crud->modelInfo(), crudBody.items(), vPK)};
                 break;
@@ -197,11 +220,11 @@ const QVariantList CRUDBlock::generatedRecords(const ModelInfo &modelInfo) const
 
 ResultValue &CRUDBlock::crudify()
 {
-    static auto __mode=QStringLiteral("mode");
-    static auto __fake=QStringLiteral("fake");
+//    static auto __mode=QStringLiteral("mode");
+//    static auto __fake=QStringLiteral("fake");
     static auto __uuid=QStringLiteral("uuid");
     static auto __resultInfo=QStringLiteral("resultInfo");
-    static auto __expressions=QStringLiteral("expressions");
+    static auto __expressions=QStringLiteral("expression");
     static auto __pages=QStringLiteral("pages");
     static auto __items=QStringLiteral("items");
     static auto __type=QStringLiteral("type");

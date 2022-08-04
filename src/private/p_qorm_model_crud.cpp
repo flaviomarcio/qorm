@@ -231,13 +231,13 @@ QOrm::ModelDto &CRUDBase::dto()
     return p->dto;
 }
 
-CRUDBase&CRUDBase::crudBody(const QVariant &v)
+CRUDBase &CRUDBase::crudBody(const QVariant &v)
 {
     p->set_crud(v);
     return *this;
 }
 
-QOrm::CRUDStrategy&CRUDBase::strategy()const
+QOrm::CRUDStrategy &CRUDBase::strategy()const
 {
     return p->strategy;
 }

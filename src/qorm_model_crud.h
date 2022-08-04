@@ -304,12 +304,26 @@ protected:
     //!
     virtual ResultValue &upsert(const QVariant &value)
     {
-        T model(this, value);
-        if(!this->p_dao.reload(model) && this->lr().isNotOk())
-            return this->lr(this->p_dao.lr());
-
-        model.mergeFrom(value);
-        return this->upsert(model);
+        QVariantList vList;
+        switch (value.typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+            vList=value.toList();
+            break;
+        default:
+            vList.append(value);
+            break;
+        }
+        for(auto&v:vList){
+            T model(this, v);
+            if(!this->p_dao.reload(model) && this->lr().isNotOk())
+                return this->lr(this->p_dao.lr());
+            model.mergeFrom(v);
+            if(!this->upsert(model))
+                return this->lr();
+            v=model.toHash();
+        }
+        return this->lr(vList);
     }
 
     //!
