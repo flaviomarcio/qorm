@@ -2,6 +2,7 @@
 //#include "./private/p_qorm_const.h"
 #include <QMetaProperty>
 #include <QRect>
+#include "./qorm_model_consts.h"
 #include "../../../qstm/src/qstm_meta_enum.h"
 
 namespace QOrm {
