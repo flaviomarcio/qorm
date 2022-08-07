@@ -11,7 +11,7 @@
 
 #define QORM_DESCRIPTOR_CONSTRUCTOR(CLASSNAME) QORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, QOrm::ModelDescriptor)
 
-//#define QORM_MODEL_SET_VALUES(W,H,R) this->setValues(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
+//#define QORM_MODEL_SET_VALUES(W,H,R) this->setValues(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}))
 
 #define QORM_MODEL_SET_FORM_DESIGN(W,H,C,R,L) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpColumns,C}, {vpRows,R}, {vpLayout,L}}))
 
@@ -19,32 +19,32 @@
 
 #define QORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value)
 
-#define QORM_MODEL_SET_DESCRIPTOR(propertyName, propertyValue) addDescriptor(QStringLiteral(#propertyName), propertyValue);
+#define QORM_MODEL_SET_DESCRIPTOR(propertyName, propertyValue) addDescriptor(QStringLiteral(#propertyName), propertyValue)
 
 #define QORM_MODEL_SET_FORM_TYPE(FORMTYPE) this->setType(FORMTYPE)
 
 #define QORM_MODEL_SET_EDIT(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addEdit(QStringLiteral(#propertyName), propertyValue);
+    this->addEdit(QStringLiteral(#propertyName), propertyValue)
 
 #define QORM_MODEL_SET_DESIGN(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addPerfumery(QStringLiteral(#propertyName), propertyValue);
+    this->addPerfumery(QStringLiteral(#propertyName), propertyValue)
 
 #define QORM_MODEL_SET_FLAGS(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addFlag(QStringLiteral(#propertyName), propertyValue);
+    this->addFlag(QStringLiteral(#propertyName), propertyValue)
 
 #define QORM_MODEL_SET_OPTIONS(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addOption(QStringLiteral(#propertyName), propertyValue);
+    this->addOption(QStringLiteral(#propertyName), propertyValue)
 
-#define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES);
+#define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES)
 
 #define QORM_MODEL_DECLARE_ENDPOINT(NAME)\
 const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), QVariantHash{{vpPath, NAME}}).uuid().toString()
 
-#define QORM_MODEL_DECLARE_ENDPOINT_PRINCIPAL(ENDPOINT) this->setEndPoint(ENDPOINT);
+#define QORM_MODEL_DECLARE_ENDPOINT_PRINCIPAL(ENDPOINT) this->setEndPoint(ENDPOINT)
 
 #define QORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, DESCRIPTOR) \
 public: \
