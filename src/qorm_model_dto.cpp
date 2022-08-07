@@ -86,6 +86,11 @@ public:
         if (model == nullptr)
             return;
         const auto &modelInfo = ModelInfo::from(model->metaObject()->className());
+        initDescriptors(modelInfo);
+    }
+
+    void initDescriptors(const ModelInfo &modelInfo)
+    {
         auto descriptors = modelInfo.propertyDescriptors();
         dtoControls.setDescriptors(descriptors);
         dtoControls.endpoints().setItems(modelInfo.propertyEndPoints());
@@ -102,6 +107,12 @@ ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object{pare
 {
     this->p = new ModelDtoPvt{this};
     p->dtoControls.setValue(rows.resultVariant());
+}
+
+ModelDto::ModelDto(const ModelInfo *modelInfo, QObject *parent) : QStm::Object{parent}
+{
+    this->p = new ModelDtoPvt{this};
+    p->initDescriptors(*modelInfo);
 }
 
 QUuid &ModelDto::uuid() const

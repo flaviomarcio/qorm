@@ -5,6 +5,7 @@
 #include <QVariantMap>
 #include "./qorm_types.h"
 #include "./qorm_model_macro.h"
+#include "./qorm_model_costs.h"
 #include "./private/p_qorm_model_dto_endpoints.h"
 //#include "../../qstm/src/qstm_types.h"
 //#include "./private/p_qorm_model_controls.h"

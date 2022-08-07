@@ -4,6 +4,7 @@
 #include "./qorm_macro.h"
 
 namespace QOrm {
+class ModelInfo;
 class ModelDtoPvt;
 //!
 //! \brief The ModelDto class
@@ -29,7 +30,14 @@ public:
     //! \param rows
     //! \param parent
     //!
-    Q_INVOKABLE explicit ModelDto(const ResultValue &rows, QObject *parent = nullptr);
+    explicit ModelDto(const ResultValue &rows, QObject *parent = nullptr);
+
+    //!
+    //! \brief ModelDto
+    //! \param rows
+    //! \param parent
+    //!
+    explicit ModelDto(const ModelInfo *modelInfo, QObject *parent = nullptr);
 
     //!
     //! \brief uuid
