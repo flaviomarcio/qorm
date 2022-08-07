@@ -13,7 +13,7 @@
 
 //#define QORM_MODEL_SET_VALUES(W,H,R) this->setValues(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpRows,R}}));
 
-#define QORM_MODEL_SET_DESIGN(W,H,C,R,L) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpColumns,C}, {vpRows,R}, {vpLayout,L}}))
+#define QORM_MODEL_SET_FORM_DESIGN(W,H,C,R,L) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpColumns,C}, {vpRows,R}, {vpLayout,L}}))
 
 #define QORM_MODEL_SET_SORT(value) this->setSort(value)
 
@@ -27,7 +27,7 @@
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addEdit(QStringLiteral(#propertyName), propertyValue);
 
-#define QORM_MODEL_SET_PERFUMERY(propertyName, propertyValue) \
+#define QORM_MODEL_SET_DESIGN(propertyName, propertyValue) \
     this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
     this->addPerfumery(QStringLiteral(#propertyName), propertyValue);
 
