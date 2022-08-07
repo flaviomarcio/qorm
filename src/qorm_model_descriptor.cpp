@@ -125,7 +125,7 @@ void ModelDescriptor::descriptorsInit()
     p->descriptors.clear();
     static auto __30P="30%";
     QORM_MODEL_SET_FORM_TYPE(this->RegisterForm);
-    QORM_MODEL_SET_DESIGN(__30P, __30P, 0, 3, vlVertical);
+    QORM_MODEL_SET_FORM_DESIGN(__30P, __30P, 0, 3, vlVertical);
 }
 
 QOrm::ModelDescriptor::FormType ModelDescriptor::type() const
