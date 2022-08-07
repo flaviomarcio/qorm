@@ -53,7 +53,7 @@ HEADERS += \
     $$PWD/src/qorm_connection_notify.h \
     $$PWD/src/qorm_connection_pool.h \
     $$PWD/src/qorm_connection_setting.h \
-    $$PWD/src/qorm_model_costs.h \
+    $$PWD/src/qorm_model_consts.h \
     $$PWD/src/qorm_model_dto_options.h \
     $$PWD/src/qorm.h \
     $$PWD/src/qorm_const.h \

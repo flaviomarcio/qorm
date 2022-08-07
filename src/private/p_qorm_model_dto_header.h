@@ -1,7 +1,7 @@
 #pragma once
 
 #include "./p_qorm_model_dto_types.h"
-#include "../qorm_model_costs.h"
+#include "../qorm_model_consts.h"
 #include "../../qstm/src/qstm_object.h"
 
 namespace QOrm {
