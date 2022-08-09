@@ -374,7 +374,7 @@ public:
     //! \param vvm
     //! \return
     //!
-    QVVM parserVVM(const QVVM &vvm)const;
+    QVVM parserVVM(const QVariantHash &vvm)const;
 
 private:
     ModelInfoPvt *p=nullptr;

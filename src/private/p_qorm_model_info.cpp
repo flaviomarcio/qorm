@@ -1212,12 +1212,20 @@ QVariantHash ModelInfo::toHashModel(const QObject *object)const
     return __return;
 }
 
-QVVM ModelInfo::parserVVM(const QVVM &vvm) const
+QVVM ModelInfo::parserVVM(const QVariantHash &vvm) const
 {
-    QVVM __return;
-    Q_DECLARE_VU;
+    if(vvm.isEmpty())
+        return QVVM{};
 
-    auto&propertyByFieldName=p->propertyByFieldName;
+    QVVM __return;
+
+    //auto&propertyByFieldName=p->propertyByFieldName;
+
+    Q_DECLARE_VU;
+    const auto &propertyByFieldName=p->propertyByFieldName;
+    const auto &propertyShortVsTable=p->propertyShortVsTable;
+    const auto &propertyTableVsShort=p->propertyTableVsShort;
+
     QHashIterator<QString, QVariant> i(vvm);
     while(i.hasNext()){
         i.next();
@@ -1231,6 +1239,10 @@ QVVM ModelInfo::parserVVM(const QVVM &vvm) const
             auto s=v1.toString().trimmed().toLower();
             if(propertyByFieldName.contains(s))
                 v1=SqlParserItem::createObject(s);
+            else if(propertyShortVsTable.contains(s))
+                v1=SqlParserItem::createObject(propertyShortVsTable.value(s));
+            else if(propertyTableVsShort.contains(s))
+                v1=SqlParserItem::createObject(propertyTableVsShort.value(s));
             break;
         }
         default:
@@ -1244,6 +1256,10 @@ QVVM ModelInfo::parserVVM(const QVVM &vvm) const
             auto s=v2.toString().trimmed().toLower();
             if(propertyByFieldName.contains(s))
                 v2=SqlParserItem::createObject(s);
+            else if(propertyShortVsTable.contains(s))
+                v2=SqlParserItem::createObject(propertyShortVsTable.value(s));
+            else if(propertyTableVsShort.contains(s))
+                v2=SqlParserItem::createObject(propertyTableVsShort.value(s));
             break;
         }
         default:
@@ -1251,6 +1267,7 @@ QVVM ModelInfo::parserVVM(const QVVM &vvm) const
         }
         __return.insert(v1,v2);
     }
+
     return __return;
 }
 
