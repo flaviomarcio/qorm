@@ -125,9 +125,9 @@ public:
         auto &strategy = query.builder().select();
         strategy.fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
-        if (value.isValid()) {
-            strategy.where().condition(value);
-        }
+        if (value.isValid())
+            strategy.where(value);
+
         QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
         while (i.hasNext()) {
             i.next();
