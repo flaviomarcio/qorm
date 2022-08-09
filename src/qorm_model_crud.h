@@ -153,7 +153,8 @@ protected:
             if(!mapSource.isEmpty()){
                 const QOrm::ModelInfo &modelInfo=this->modelInfo();
                 const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
-                QHashIterator<QString, QVariant> i(model.toHash());
+                auto vHash=model.toHash();
+                QHashIterator<QString, QVariant> i(vHash);
                 while (i.hasNext()) {
                     i.next();
                     auto header=this->p_dto.headers().get(i.key());

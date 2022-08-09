@@ -173,7 +173,7 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
     if(vModelList.isEmpty())
         return {};
 
-    const auto&propertyFK=modelRef.propertyForeignKeysPK();
+    //const auto&propertyFK=modelRef.propertyForeignKeysPK();
     const auto&propertyPK=modelRef.propertyPK();
 
 
@@ -184,7 +184,7 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
         auto property=i.value();
         //se a PK principal externa
         //e se nao estiver na lista das PK's documentadas não permitiremos leitura
-        if(!propertyFK.isEmpty() && !propertyFK.contains(property.name()))
+        if(!propertyPK.isEmpty() && !propertyPK.contains(property.name()))
             continue;
         auto vFilter=__return.value(property.name());
         QVariantList vFilterList=p->cleanList(vFilter);
