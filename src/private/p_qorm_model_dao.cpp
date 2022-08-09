@@ -285,7 +285,7 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
 
     if(vModelList.isEmpty())
         vModelList.append(QVariant{});
-    auto tableForeignKeysPK=modelRef.tableForeignKeysPK();
+    auto tableForeignKeysPK=modelRef.propertyForeignKeys();
     for(auto &vItem:vModelList){
         auto vItemHash=vItem.toHash();
         Q_V_HASH_ITERATOR(modelRef.tableForeignKeys()){

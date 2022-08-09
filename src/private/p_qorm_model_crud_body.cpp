@@ -1,5 +1,8 @@
 #include "./p_qorm_model_crud_body.h"
 
+static auto __expression="expression";
+static auto __source="source";
+
 CRUDBody::CRUDBody(const QVariant &other) : QVariantHash(other.toHash()) {}
 
 CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &source)
@@ -28,6 +31,16 @@ QOrm::CRUDStrategy CRUDBody::strategy() const
     }
     return QOrm::CRUDStrategy::Undefined;
 }
+
+const QVariant CRUDBody::expression() const
+{
+    auto v=this->value(__source);
+    if(!v.isValid())
+        return this->value(__expression);
+    auto vHash=v.toHash();
+    return vHash.value(__expression);
+}
+
 
 const QVariant CRUDBody::source() const
 {

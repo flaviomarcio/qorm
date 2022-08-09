@@ -37,10 +37,6 @@ public:
     explicit EndPoint(QObject *parent = nullptr);
 
     //!
-    //!
-    ~EndPoint();
-
-    //!
     //! \brief isValid
     //! \return
     //!

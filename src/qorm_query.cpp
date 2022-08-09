@@ -29,7 +29,7 @@ ResultValue &Query::lr() const
     if(!code.isEmpty()){
         auto message = p->sqlError.text().toUtf8().trimmed();
         if(code.isEmpty() && message.isEmpty())
-            return lr.clear().setCritical(code, message);
+            return lr.clear();
         lr.setCritical(code, message);
     }
     return lr;

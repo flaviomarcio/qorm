@@ -4,7 +4,7 @@
 
 namespace QOrm {
 
-class EndPointPvt{
+class EndPointPvt:public QObject{
 public:
     QUuid uuid;
     Host host;
@@ -12,7 +12,7 @@ public:
     QByteArray path;
     QByteArray url;
     QByteArray name;
-    explicit EndPointPvt(){
+    explicit EndPointPvt(QObject *parent):QObject{parent}{
 
     }
     virtual ~EndPointPvt(){
@@ -22,12 +22,7 @@ private:
 
 EndPoint::EndPoint(QObject *parent) : QStm::ObjectWrapper{parent}
 {
-    this->p=new EndPointPvt{};
-}
-
-EndPoint::~EndPoint()
-{
-    delete p;
+    this->p=new EndPointPvt{this};
 }
 
 bool EndPoint::isValid() const

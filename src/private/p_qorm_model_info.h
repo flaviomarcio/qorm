@@ -8,6 +8,7 @@
 #include <QVariantHash>
 #include <QVariantMap>
 #include "../qorm_global.h"
+#include "../../qstm/src/qstm_vvm.h"
 
 namespace QOrm {
 class ModelInfoPvt;
@@ -237,7 +238,6 @@ public:
     //!
     QVariantHash propertyDeactivateField() const;
 
-
     //!
     //! \brief tableSchema
     //! \return
@@ -262,10 +262,10 @@ public:
     //!
     QString tableName() const;
 
-    /**
-     * @brief tableName
-     * @return
-     */
+    //!
+    //! \brief tableNameFull
+    //! \return
+    //!
     QString tableNameFull() const;
 
     //!
@@ -368,6 +368,13 @@ public:
     //! \return
     //!
     QVariantHash toHashModel(const QObject *object) const;
+
+    //!
+    //! \brief parserVVM
+    //! \param vvm
+    //! \return
+    //!
+    QVVM parserVVM(const QVVM &vvm)const;
 
 private:
     ModelInfoPvt *p=nullptr;

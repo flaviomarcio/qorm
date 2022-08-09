@@ -41,8 +41,8 @@
 
 #define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES)
 
-#define QORM_MODEL_DECLARE_ENDPOINT(NAME)\
-const auto NAME##EndPoint=this->addEndPoint(QStringLiteral(#NAME), QVariantHash{{vpPath, NAME}}).uuid().toString()
+#define QORM_MODEL_DECLARE_ENDPOINT(ENDPOINT)\
+static const auto ENDPOINT##EndPoint=this->addEndPoint(#ENDPOINT, ENDPOINT).uuid();
 
 #define QORM_MODEL_DECLARE_ENDPOINT_PRINCIPAL(ENDPOINT) this->setEndPoint(ENDPOINT)
 

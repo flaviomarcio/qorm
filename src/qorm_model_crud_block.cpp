@@ -292,15 +292,15 @@ ResultValue &CRUDBlock::crudify()
 
         for(auto &crud:p->crudList){
 
-            switch (crudBody.strategy()) {
-            case QOrm::CRUDStrategy::Search:{
-                if(!crud->isValid())
-                    continue;
-                break;
-            }
-            default:
-                break;
-            };
+//            switch (crudBody.strategy()) {
+//            case QOrm::CRUDStrategy::Search:{
+//                if(!crud->isValid())
+//                    continue;
+//                break;
+//            }
+//            default:
+//                break;
+//            };
 
             CRUDBody crudItem{};
 

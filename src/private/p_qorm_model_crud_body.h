@@ -38,6 +38,12 @@ public:
     virtual QOrm::CRUDStrategy strategy() const;
 
     //!
+    //! \brief expression
+    //! \return
+    //!
+    virtual const QVariant expression()const;
+
+    //!
     //! \brief source
     //! \return
     //!

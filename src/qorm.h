@@ -1,4 +1,5 @@
 #include "./src/private/p_qorm_sql_suitable_parser_keywork.h"
+#include "./src/private/p_qorm_model_crud_body.h"
 #include "./src/qorm_connection_manager.h"
 #include "./src/qorm_connection_notify.h"
 #include "./src/qorm_connection_pool.h"

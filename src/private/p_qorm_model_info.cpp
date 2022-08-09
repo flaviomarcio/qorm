@@ -978,7 +978,6 @@ QVariantHash ModelInfo::propertySort() const
 
 QVariantHash ModelInfo::propertyParserToTable(const QVariant &v) const
 {
-
     QVVM vvm;
     const auto &propertyList=p->propertyShortVsTable;
     auto vHash=v.toHash();
@@ -1213,5 +1212,46 @@ QVariantHash ModelInfo::toHashModel(const QObject *object)const
     return __return;
 }
 
+QVVM ModelInfo::parserVVM(const QVVM &vvm) const
+{
+    QVVM __return;
+    Q_DECLARE_VU;
+
+    auto&propertyByFieldName=p->propertyByFieldName;
+    QHashIterator<QString, QVariant> i(vvm);
+    while(i.hasNext()){
+        i.next();
+        auto v1=vu.toVariant(i.key());
+        auto v2=vu.toVariant(i.value());
+
+        switch (v1.typeId()) {
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        {
+            auto s=v1.toString().trimmed().toLower();
+            if(propertyByFieldName.contains(s))
+                v1=SqlParserItem::createObject(s);
+            break;
+        }
+        default:
+            break;
+        }
+
+        switch (v2.typeId()) {
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        {
+            auto s=v2.toString().trimmed().toLower();
+            if(propertyByFieldName.contains(s))
+                v2=SqlParserItem::createObject(s);
+            break;
+        }
+        default:
+            break;
+        }
+        __return.insert(v1,v2);
+    }
+    return __return;
+}
 
 }

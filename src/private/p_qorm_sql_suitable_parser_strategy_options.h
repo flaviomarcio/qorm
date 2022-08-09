@@ -227,17 +227,17 @@ public:
     };
 
 public:
-    void*parent=nullptr;
+    void *parent=nullptr;
     explicit SqlParserConditions(const QVariant &v):SqlParserCommand{v}
     {
     }
-    explicit SqlParserConditions(void*parent, const QString &name, const QVariant &v={}):SqlParserCommand{v}
+    explicit SqlParserConditions(void *parent, const QString &name, const QVariant &v={}):SqlParserCommand{v}
     {
         this->parent=parent;
         Q_UNUSED(name)
     }
 
-    auto &condition(const QVVM&v)
+    auto &condition(const QVVM &v)
     {
         SearchParameters searchParameters;
         searchParameters+=v;
@@ -742,6 +742,7 @@ public:
             i.next();
             if(i.key().startsWith(__func__)){
                 c=static_cast<SqlParserCombination*>(i.value());
+                break;
             }
         }
         if(c==nullptr){
@@ -763,10 +764,11 @@ public:
             i.next();
             if(i.key().startsWith(__func__)){
                 c=static_cast<SqlParserCombination*>(i.value());
+                break;
             }
         }
         if(c==nullptr){
-            c= new SqlParserCombination(__func__, this, KeywordCombine::kcWhere, whereObject);
+            c=new SqlParserCombination(__func__, this, KeywordCombine::kcWhere, whereObject);
             this->setPointer(c->sName(), c);
         }
         return c->condition();

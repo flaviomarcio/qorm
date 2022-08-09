@@ -175,6 +175,10 @@ public:
 
 #define QORM_DECLARE_PROPERTY(propertyType, propertyName, propertyDefault)public:QORM_DECLARE_PROPERTY_HEADER(propertyType, propertyName, propertyDefault,)
 
+#define QORM_DECLARE_MODEL(ModelName)\
+    static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
+    static const auto &ModelName##M = ModelName::m();
+
 #define QORM_DECLARE_DAO(ModelName)\
 class ModelName##GDao : public QOrm::ModelDao<ModelName>{\
 public:\

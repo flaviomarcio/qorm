@@ -352,7 +352,18 @@ EndPoint &ModelDescriptor::addEndPoint(EndPoint *newEndPoint)
 EndPoint &ModelDescriptor::addEndPoint(const QString &name, const QVariant &values)
 {
     auto endpoint=new EndPoint{this};
-    endpoint->setValues(values);
+    switch (values.typeId()) {
+    case QMetaType::QString:
+    case QMetaType::QByteArray:
+        endpoint->setPath(values.toByteArray());
+        break;
+    case QMetaType::QVariantHash:
+    case QMetaType::QVariantMap:
+        endpoint->setValues(values);
+        break;
+    default:
+        break;
+    }
     endpoint->setName(name.toUtf8());
     endpoint->host()->setValues(&p->host);
     return this->addEndPoint(endpoint);
@@ -376,7 +387,25 @@ ModelDescriptor &ModelDescriptor::setEndPoint(const EndPoint &v)
 
 ModelDescriptor &ModelDescriptor::setEndPoint(const QVariant &v)
 {
-    p->endPoint.setValues(v);
+    switch (v.typeId()) {
+    case QMetaType::QString:
+    case QMetaType::QByteArray:
+    case QMetaType::QUuid:{
+        auto obj=p->endPoints.value(v.toUuid());
+        if(obj)
+            p->endPoint.setValues(obj);
+        else
+            p->endPoint.clear();
+        break;
+    }
+    case QMetaType::QVariantHash:
+    case QMetaType::QVariantMap:
+        p->endPoint.setValues(v);
+        break;
+    default:
+        break;
+    }
+
     emit endPointChanged();
     return *this;
 }
