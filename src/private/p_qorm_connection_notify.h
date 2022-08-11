@@ -22,7 +22,7 @@ public:
     //! \brief ConnectionNotifyPvt
     //! \param parent
     //!
-    Q_INVOKABLE explicit ConnectionNotifyPvt(QObject*parent=nullptr);
+    Q_INVOKABLE explicit ConnectionNotifyPvt(QObject *parent=nullptr);
 
     //!
     //!

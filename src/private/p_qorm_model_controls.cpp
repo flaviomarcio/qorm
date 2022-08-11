@@ -182,12 +182,15 @@ void ModelDtoControls::setDescriptors(const QVariantMap &descriptors)
 {
     p->descriptors=descriptors;
     auto vHeaders=descriptors.value(vpHeaders).toList();
+    auto vFilters=descriptors.value(vpFilters).toList();
     p->type=descriptors.value(vpType);
     p->layout=descriptors.value(vpLayout);
     p->design=descriptors.value(vpDesign).toHash();
     p->headers.clear();
     for (auto &v : vHeaders)
         p->headers.value(v.toHash());
+    for (auto &v : vFilters)
+        p->filters.value(v.toHash());
 }
 
 QUuid &ModelDtoControls::uuid() const
@@ -306,7 +309,7 @@ ModelDtoControls &ModelDtoControls::text(const QVariant &v)
     return *this;
 }
 
-QOrm::DtoOutPutStyle&ModelDtoControls::outPutStyle() const
+QOrm::DtoOutPutStyle &ModelDtoControls::outPutStyle() const
 {
     return p->outPutStyle;
 }

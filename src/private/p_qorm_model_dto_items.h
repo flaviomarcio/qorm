@@ -8,11 +8,11 @@ template <class T>
 class ModelDtoItems:public QStm::Object
 {
 public:
-    explicit ModelDtoItems(QObject*parent=nullptr):QStm::Object{parent}
+    explicit ModelDtoItems(QObject *parent=nullptr):QStm::Object{parent}
     {
     }
 
-    explicit ModelDtoItems(QObject*dtoParent, QObject*parent=nullptr):QStm::Object{parent}
+    explicit ModelDtoItems(QObject*dtoParent, QObject *parent=nullptr):QStm::Object{parent}
     {
         this->___d=dtoParent;
     }

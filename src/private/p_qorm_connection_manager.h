@@ -22,7 +22,7 @@ public:
     QHash<QString, ConnectionSetting*> settings;
     QMap<QString, ConnectionPool*> pools;
     ConnectionManager*parent=nullptr;
-    QObject*parentParent=nullptr;
+    QObject *parentParent=nullptr;
     ConnectionPool defaultPool;
     //!
     //! \brief ConnectionManagerPvt

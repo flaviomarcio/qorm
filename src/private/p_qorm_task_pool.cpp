@@ -26,7 +26,7 @@ public:
     QVariantList resultList;
     bool resultBool=false;
     QVariantHash connectionSetting;
-    explicit TaskPoolPvt(QObject*parent):QObject{parent}
+    explicit TaskPoolPvt(QObject *parent):QObject{parent}
     {
     }
     virtual ~TaskPoolPvt()

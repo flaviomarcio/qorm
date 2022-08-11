@@ -28,7 +28,7 @@ public:
     //! \param dto
     //! \param parent
     //!
-    Q_INVOKABLE explicit ModelDtoFilter(T*dto, QObject*parent=nullptr):QStm::Object{parent}
+    Q_INVOKABLE explicit ModelDtoFilter(T *dto, QObject *parent=nullptr):QStm::Object{parent}
     {
         this->___d=dto;
     }
@@ -37,7 +37,7 @@ public:
     //! \brief d
     //! \return
     //!
-    virtual T&d()
+    virtual T &d()
     {
         return*this->___d;
     }
@@ -252,7 +252,7 @@ class ModelDtoFilters:public QStm::Object
 {
 public:
 
-    explicit ModelDtoFilters(T*dto, QObject*parent=nullptr):QStm::Object{parent}
+    explicit ModelDtoFilters(T*dto, QObject *parent=nullptr):QStm::Object{parent}
     {
         this->___d=dto;
     }
@@ -269,7 +269,7 @@ public:
         return vList;
     };
 
-    virtual T&d()
+    virtual T &d()
     {
         return*this->___d;
     }

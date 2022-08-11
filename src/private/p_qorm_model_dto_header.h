@@ -50,7 +50,7 @@ public:
     //! \param dto
     //! \param parent
     //!
-    Q_INVOKABLE explicit ModelDtoHeader(T*dto, QObject*parent=nullptr):QStm::Object{parent}
+    Q_INVOKABLE explicit ModelDtoHeader(T*dto, QObject *parent=nullptr):QStm::Object{parent}
     {
         this->___d=dto;
     }
@@ -500,7 +500,7 @@ public:
     //! \param dto
     //! \param parent
     //!
-    explicit ModelDtoHeaders(T*dto, QObject*parent=nullptr):QStm::Object{parent}
+    explicit ModelDtoHeaders(T*dto, QObject *parent=nullptr):QStm::Object{parent}
     {
         this->___d=dto;
     }
@@ -511,7 +511,7 @@ public:
     //! \param v
     //! \param parent
     //!
-    explicit ModelDtoHeaders(T*dto, const QVariantHash &v, QObject*parent=nullptr):QStm::Object{parent}
+    explicit ModelDtoHeaders(T*dto, const QVariantHash &v, QObject *parent=nullptr):QStm::Object{parent}
     {
         Q_UNUSED(v)
         this->___d=dto;
