@@ -5,6 +5,7 @@
 #include <QVariantMap>
 #include "./qorm_types.h"
 #include "./qorm_model_macro.h"
+#include "./qorm_model_descriptor_field.h"
 #include "./private/p_qorm_model_dto_endpoints.h"
 //#include "../../qstm/src/qstm_types.h"
 //#include "./private/p_qorm_model_controls.h"
@@ -19,25 +20,25 @@
 
 #define QORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value)
 
-#define QORM_MODEL_SET_DESCRIPTOR(propertyName, propertyValue) addDescriptor(QStringLiteral(#propertyName), propertyValue)
+#define QORM_MODEL_FIELD_SET_DESCRIPTOR(propertyName, propertyValue) addFieldDescriptor(QStringLiteral(#propertyName), propertyValue)
 
 #define QORM_MODEL_SET_FORM_TYPE(FORMTYPE) this->setType(FORMTYPE)
 
-#define QORM_MODEL_SET_EDIT(propertyName, propertyValue) \
-    this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addEdit(QStringLiteral(#propertyName), propertyValue)
+#define QORM_MODEL_FIELD_SET_EDIT(propertyName, propertyValue) \
+    this->addFieldDescriptor(QStringLiteral(#propertyName), propertyValue); \
+    this->addFieldEdit(QStringLiteral(#propertyName), propertyValue)
 
-#define QORM_MODEL_SET_DESIGN(propertyName, propertyValue) \
-    this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addPerfumery(QStringLiteral(#propertyName), propertyValue)
+#define QORM_MODEL_FIELD_SET_DESIGN(propertyName, propertyValue) \
+    this->addFieldDescriptor(QStringLiteral(#propertyName), propertyValue); \
+    this->addFieldPerfumery(QStringLiteral(#propertyName), propertyValue)
 
-#define QORM_MODEL_SET_FLAGS(propertyName, propertyValue) \
-    this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addFlag(QStringLiteral(#propertyName), propertyValue)
+#define QORM_MODEL_FIELD_SET_FLAGS(propertyName, propertyValue) \
+    this->addFieldDescriptor(QStringLiteral(#propertyName), propertyValue); \
+    this->addFieldFlag(QStringLiteral(#propertyName), propertyValue)
 
-#define QORM_MODEL_SET_OPTIONS(propertyName, propertyValue) \
-    this->addDescriptor(QStringLiteral(#propertyName), propertyValue); \
-    this->addOption(QStringLiteral(#propertyName), propertyValue)
+#define QORM_MODEL_FIELD_SET_OPTIONS(propertyName, propertyValue) \
+    this->addFieldDescriptor(QStringLiteral(#propertyName), propertyValue); \
+    this->addFieldOption(QStringLiteral(#propertyName), propertyValue)
 
 #define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES)
 
@@ -61,6 +62,7 @@ class Q_ORM_EXPORT ModelDescriptor : public QObject
     QORM_DESCRIPTOR_ORDERBY()
     QORM_MODEL_DECLARE_FORM_ENUMS
 public:
+
     //!
     //! \brief ModelDescriptor
     //! \param parent
@@ -72,247 +74,261 @@ public:
     //! \brief isValid
     //! \return
     //!
-    virtual bool isValid() const;
+    bool isValid() const;
 
     //!
     //! \brief descriptorsInit
     //!
-    virtual void descriptorsInit();
+    void descriptorsInit();
 
     //!
     //! \brief type
     //! \return
     //!
-    virtual FormType type() const;
-    virtual void type(const QVariant &type) const;
-    virtual void setType(const QVariant &type) const;
+    FormType type() const;
+    void type(const QVariant &type) const;
+    void setType(const QVariant &type) const;
 
     //!
     //! \brief descriptors
     //! \return
     //!
-    virtual QVariantMap descriptors() const;
+    QVariantMap descriptors() const;
 
     //!
     //! \brief descriptor
     //! \param name
     //! \return
     //!
-    virtual QVariant descriptor(const QString &name) const;
+    QVariant descriptor(const QString &name) const;
 
     //!
-    //! \brief setDescriptor
+    //! \brief addDescriptor
+    //! \param fieldName
+    //! \return
+    //!
+    ModelDescriptorField &addDescriptor(const QVariant &fieldName);
+
+    //!
+    //! \brief addFilter
+    //! \param fieldName
+    //! \return
+    //!
+    ModelDescriptorField &addFilter(const QVariant &fieldName);
+
+    //!
+    //! \brief setFieldDescriptor
     //! \param name
     //! \param v
     //!
-    virtual void setDescriptor(const QString &name, const QVariantHash &v);
+    void setFieldDescriptor(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief addDescriptor
     //! \param name
     //! \param v
     //!
-   virtual  void addDescriptor(const QString &name, const QVariantHash &v);
+    void addFieldDescriptor(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief description
     //! \return
     //!
-    Q_INVOKABLE virtual QString description();
+    Q_INVOKABLE QString description();
 
     //!
     //! \brief setDescription
     //! \param v
     //!
-    virtual void setDescription(const QString &v);
+    void setDescription(const QString &v);
 
     //!
-    //! \brief edit
+    //! \brief fieldEdit
     //! \return
     //!
-    virtual QVariantHash &edit() const;
+    QVariantHash &fieldEdit() const;
 
     //!
-    //! \brief edit
+    //! \brief fieldEdit
     //! \param name
     //! \return
     //!
-    virtual QVariant edit(const QString &name) const;
+    QVariant fieldEdit(const QString &name) const;
 
     //!
-    //! \brief setEdit
+    //! \brief setFieldEdit
     //! \param name
     //! \param v
     //!
-    virtual void setEdit(const QString &name, const QVariantHash &v);
+    void setFieldEdit(const QString &name, const QVariantHash &v);
 
     //!
-    //! \brief addEdit
+    //! \brief addFieldEdit
     //! \param name
     //! \param v
     //!
-    virtual void addEdit(const QString &name, const QVariantHash &v);
+    void addFieldEdit(const QString &name, const QVariantHash &v);
 
     //!
-    //! \brief perfumerys
+    //! \brief fieldPerfumerys
     //! \return
     //!
-    virtual QVariantHash &perfumerys() const;
+    QVariantHash &fieldPerfumerys() const;
 
     //!
-    //! \brief perfumery
+    //! \brief fieldPerfumery
     //! \param name
     //! \return
     //!
-    virtual QVariant perfumery(const QString &name) const;
+    QVariant fieldPerfumery(const QString &name) const;
 
     //!
-    //! \brief setPerfumery
+    //! \brief setFieldPerfumery
     //! \param name
     //! \param v
     //!
-    virtual void setPerfumery(const QString &name, const QVariantHash &v);
+    void setFieldPerfumery(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief addPerfumery
     //! \param name
     //! \param v
     //!
-    virtual void addPerfumery(const QString &name, const QVariantHash &v);
+    void addFieldPerfumery(const QString &name, const QVariantHash &v);
 
     //!
-    //! \brief flags
+    //! \brief fieldFlags
     //! \return
     //!
-    virtual QVariantHash &flags() const;
+    QVariantHash &fieldFlags() const;
 
     //!
-    //! \brief flag
+    //! \brief fieldFlag
     //! \param name
     //! \return
     //!
-    virtual QVariant flag(const QString &name) const;
+    QVariant fieldFlag(const QString &name) const;
 
     //!
-    //! \brief setFlag
+    //! \brief setFieldFlag
     //! \param name
     //! \param v
     //!
-    virtual void setFlag(const QString &name, const QVariantHash &v);
+    void setFieldFlag(const QString &name, const QVariantHash &v);
 
     //!
-    //! \brief addFlag
+    //! \brief addFieldFlag
     //! \param name
     //! \param v
     //!
-    virtual void addFlag(const QString &name, const QVariantHash &v);
+    void addFieldFlag(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief options
     //! \return
     //!
-    virtual QVariantHash &options() const;
+    QVariantHash &fieldOptions() const;
 
     //!
     //! \brief option
     //! \param name
     //! \return
     //!
-    virtual QVariant option(const QString &name) const;
+    QVariant fieldOption(const QString &name) const;
 
     //!
-    //! \brief setOption
+    //! \brief setFieldOption
     //! \param name
     //! \param v
     //!
-    virtual void setOption(const QString &name, const QVariantHash &v);
+    void setFieldOption(const QString &name, const QVariantHash &v);
 
     //!
-    //! \brief addOption
+    //! \brief addFieldOption
     //! \param name
     //! \param v
     //!
-    virtual void addOption(const QString &name, const QVariantHash &v);
+    void addFieldOption(const QString &name, const QVariantHash &v);
 
     //!
     //! \brief sort
     //! \return
     //!
-    virtual QVariantHash &sort() const;
+    QVariantHash &sort() const;
 
     //!
     //! \brief setSort
     //! \param value
     //!
-    virtual void setSort(const QVariantHash &value);
+    void setSort(const QVariantHash &value);
 
     //!
     //! \brief design
     //! \return
     //!
-    virtual QVariantHash &design();
-    virtual void setDesign(const QVariantHash &value);
+    QVariantHash &design();
+    void setDesign(const QVariantHash &value);
 
     //!
     //! \brief addEndPoint
     //! \param newEndPoint
     //! \return
     //!
-    virtual Host &addHost(Host *newHost);
-    virtual Host &addHost(const QVariant &newHost);
+    Host &addHost(Host *newHost);
+    Host &addHost(const QVariant &newHost);
 
     //!
     //! \brief endPoints
     //! \return
     //!
-    virtual EndPoints &endPoints() const;
-    virtual void setEndPoints(const EndPoints &newEndPoints);
-    virtual void resetEndPoints();
+    EndPoints &endPoints() const;
+    void setEndPoints(const EndPoints &newEndPoints);
+    void resetEndPoints();
 
     //!
     //! \brief addEndPoint
     //! \param newEndPoint
     //! \return
     //!
-    virtual EndPoint &addEndPoint(EndPoint *newEndPoint);
-    virtual EndPoint &addEndPoint(const QString &name, const QVariant &values);
+    EndPoint &addEndPoint(EndPoint *newEndPoint);
+    EndPoint &addEndPoint(const QString &name, const QVariant &values);
 
     //!
     //! \brief endPoint
     //! \return
     //!
-    virtual EndPoint &endPoint() const;
+    EndPoint &endPoint() const;
 
     //!
     //! \brief endPoint
     //! \param name
     //! \return
     //!
-    virtual EndPoint *endPoint(const QUuid &uuid) const;
+    EndPoint *endPoint(const QUuid &uuid) const;
 
     //!
     //! \brief setEndPoint
     //! \param name
     //! \param v
     //!
-    virtual ModelDescriptor &setEndPoint(const EndPoint &v);
-    virtual ModelDescriptor &setEndPoint(const QVariant &v);
+    ModelDescriptor &setEndPoint(const EndPoint &v);
+    ModelDescriptor &setEndPoint(const QVariant &v);
 
     //!
     //! \brief obrigatory
     //! \return
     //!
-    virtual bool obrigatory() const;
-    virtual void setObrigatory(bool newObrigatory);
-    virtual void resetObrigatory();
+    bool obrigatory() const;
+    void setObrigatory(bool newObrigatory);
+    void resetObrigatory();
 
     //!
     //! \brief readonly
     //! \return
     //!
-    virtual bool readonly() const;
-    virtual void setReadonly(bool newReadonly);
-    virtual void resetReadonly();
+    bool readonly() const;
+    void setReadonly(bool newReadonly);
+    void resetReadonly();
 
 signals:
     void cellRowsChanged();

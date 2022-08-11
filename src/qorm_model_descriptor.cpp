@@ -7,6 +7,8 @@
 
 namespace QOrm {
 
+typedef QHash<QString, ModelDescriptorField*> DescriptorHash;
+
 class ModelDescriptorPvt:public QObject
 {
 public:
@@ -20,6 +22,8 @@ public:
     QVariantHash options;
     QVariantHash sort;
     QVariantHash design={{vpWidth,"20%"}, {vpHeight,"20%"}, {vpRows,2}, {vpLayout, vlVertical}};
+    DescriptorHash hashDescriptors;
+    DescriptorHash hashFilters;
     Host host;
     EndPoints endPoints;
     EndPoint endPoint;
@@ -33,6 +37,17 @@ public:
           endPoint{parent}
     {
 
+    }
+
+    ModelDescriptorField &addField(DescriptorHash &hash, const QVariant &fieldName)
+    {
+        auto name=fieldName.toString().trimmed().toLower();
+        auto &field=hash[name];
+        if(!field){
+            field=new ModelDescriptorField{this->parent};
+            field->name(name);
+        }
+        return *field;
     }
 };
 
@@ -148,7 +163,17 @@ QVariant ModelDescriptor::descriptor(const QString &name) const
     return p->descriptors.value(name);
 }
 
-void ModelDescriptor::setDescriptor(const QString &name, const QVariantHash &v)
+ModelDescriptorField &ModelDescriptor::addDescriptor(const QVariant &fieldName)
+{
+    return p->addField(p->hashDescriptors,fieldName);
+}
+
+ModelDescriptorField &ModelDescriptor::addFilter(const QVariant &fieldName)
+{
+    return p->addField(p->hashFilters, fieldName);
+}
+
+void ModelDescriptor::setFieldDescriptor(const QString &name, const QVariantHash &v)
 {
     auto d = v;
     if (!p->descriptorsOrder.contains(name))
@@ -157,7 +182,7 @@ void ModelDescriptor::setDescriptor(const QString &name, const QVariantHash &v)
     p->descriptors[name] = d;
 }
 
-void ModelDescriptor::addDescriptor(const QString &name, const QVariantHash &v)
+void ModelDescriptor::addFieldDescriptor(const QString &name, const QVariantHash &v)
 {
     if (!p->descriptorsOrder.contains(name))
         p->descriptorsOrder.append(name);
@@ -181,22 +206,22 @@ void ModelDescriptor::setDescription(const QString &v)
     p->description = v.trimmed();
 }
 
-QVariantHash &ModelDescriptor::edit() const
+QVariantHash &ModelDescriptor::fieldEdit() const
 {
     return p->edit;
 }
 
-QVariant ModelDescriptor::edit(const QString &name) const
+QVariant ModelDescriptor::fieldEdit(const QString &name) const
 {
     return p->edit.value(name);
 }
 
-void ModelDescriptor::setEdit(const QString &name, const QVariantHash &v)
+void ModelDescriptor::setFieldEdit(const QString &name, const QVariantHash &v)
 {
     p->edit[name] = v;
 }
 
-void ModelDescriptor::addEdit(const QString &name, const QVariantHash &v)
+void ModelDescriptor::addFieldEdit(const QString &name, const QVariantHash &v)
 {
     auto d = p->edit.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
@@ -207,22 +232,22 @@ void ModelDescriptor::addEdit(const QString &name, const QVariantHash &v)
     p->edit[name] = d;
 }
 
-QVariantHash &ModelDescriptor::perfumerys() const
+QVariantHash &ModelDescriptor::fieldPerfumerys() const
 {
     return p->perfumery;
 }
 
-QVariant ModelDescriptor::perfumery(const QString &name) const
+QVariant ModelDescriptor::fieldPerfumery(const QString &name) const
 {
     return p->perfumery.value(name);
 }
 
-void ModelDescriptor::setPerfumery(const QString &name, const QVariantHash &v)
+void ModelDescriptor::setFieldPerfumery(const QString &name, const QVariantHash &v)
 {
     p->perfumery[name] = v;
 }
 
-void ModelDescriptor::addPerfumery(const QString &name, const QVariantHash &v)
+void ModelDescriptor::addFieldPerfumery(const QString &name, const QVariantHash &v)
 {
     auto d = p->perfumery.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
@@ -233,22 +258,22 @@ void ModelDescriptor::addPerfumery(const QString &name, const QVariantHash &v)
     p->perfumery[name] = d;
 }
 
-QVariantHash &ModelDescriptor::flags() const
+QVariantHash &ModelDescriptor::fieldFlags() const
 {
     return p->flags;
 }
 
-QVariant ModelDescriptor::flag(const QString &name) const
+QVariant ModelDescriptor::fieldFlag(const QString &name) const
 {
     return p->perfumery.value(name);
 }
 
-void ModelDescriptor::setFlag(const QString &name, const QVariantHash &v)
+void ModelDescriptor::setFieldFlag(const QString &name, const QVariantHash &v)
 {
     p->flags[name] = v;
 }
 
-void ModelDescriptor::addFlag(const QString &name, const QVariantHash &v)
+void ModelDescriptor::addFieldFlag(const QString &name, const QVariantHash &v)
 {
     auto d = p->flags.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
@@ -259,22 +284,22 @@ void ModelDescriptor::addFlag(const QString &name, const QVariantHash &v)
     p->flags[name] = d;
 }
 
-QVariantHash &ModelDescriptor::options() const
+QVariantHash &ModelDescriptor::fieldOptions() const
 {
     return p->options;
 }
 
-QVariant ModelDescriptor::option(const QString &name) const
+QVariant ModelDescriptor::fieldOption(const QString &name) const
 {
     return p->options.value(name);
 }
 
-void ModelDescriptor::setOption(const QString &name, const QVariantHash &v)
+void ModelDescriptor::setFieldOption(const QString &name, const QVariantHash &v)
 {
     p->options[name] = v;
 }
 
-void ModelDescriptor::addOption(const QString &name, const QVariantHash &v)
+void ModelDescriptor::addFieldOption(const QString &name, const QVariantHash &v)
 {
     auto d = p->options.value(name).toHash();
     QHashIterator<QString, QVariant> i(v);
