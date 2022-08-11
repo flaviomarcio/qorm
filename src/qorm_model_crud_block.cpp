@@ -55,6 +55,10 @@ public:
             if(!returns.isEmpty()){
                 QVariantHash lastReturn;
                 switch (returns.last().typeId()) {
+                case QMetaType::QVariantMap:
+                case QMetaType::QVariantHash:
+                    lastReturn=returns.last().toHash();
+                    break;
                 case QMetaType::QVariantList:
                 {
                     auto l=returns.last().toList();
