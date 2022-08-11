@@ -74,12 +74,12 @@ public:
     //! \brief isValid
     //! \return
     //!
-    bool isValid() const;
+    virtual bool isValid() const;
 
     //!
     //! \brief descriptorsInit
     //!
-    void descriptorsInit();
+    virtual void descriptorsInit();
 
     //!
     //! \brief type
