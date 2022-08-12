@@ -289,8 +289,6 @@ public:
         object->setAlign(v.value(vpAlign));
         object->setWidth(v.value(vpWidth));
         object->setSortable(v.value(vpSortable));
-        object->setFiltrable(v.value(vpFiltrable));
-        object->setFilterStyle(v.value(vpFilterStyle));
         this->___objectList.append(object);
         return*object;
     }

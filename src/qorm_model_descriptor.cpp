@@ -121,14 +121,14 @@ QVariantMap ModelDescriptor::descriptors() const
         }
     }
 
-    QVariantList vList;
+    QVariantList vHeadersList;
     p->descriptors.clear();
-    for (auto &name : p->descriptorsOrder) {
-        vList.append(descriptors[name]);
-    }    
+    for (auto &name : p->descriptorsOrder)
+        vHeadersList.append(descriptors[name]);
+
     descriptors.clear();
     descriptors[vpType]=p->type.name();
-    descriptors[vpHeaders]=vList;
+    descriptors[vpHeaders]=vHeadersList;
     descriptors[vpDesign]=p->design;
     descriptors[vpEndPoint]=p->endPoint.toHash();
     return descriptors;

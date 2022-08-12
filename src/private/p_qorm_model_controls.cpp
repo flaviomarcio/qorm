@@ -42,10 +42,9 @@ public:
     QVariantHash toOutput()
     {
         QVariantHash vHash;
-        QVector<QString> cacheHeader;
 
         const auto &vHeaderList=this->headers.list();
-        const auto vFilter=this->filters.toVar().toList();
+        const auto &vFilterList=this->filters.list();
         const auto vEndPoints=this->endpoints.toList();
         const auto vEndPoint=this->endpoint.toHash();
         auto vItems=this->items.toVar().toList();
@@ -60,44 +59,26 @@ public:
             vList.append(vRecord);
         }
 
+        QVector<QString> cacheHeader;
         for(auto &v:vList){
-            const auto vMap=v.toHash();
-            for(const auto &header:vHeaderList){
-                auto headerName=header->value();
-                if(vMap.contains(headerName))
-                    cacheHeader.append(headerName);
+            const auto vHash=v.toHash();
+            for(auto &field:vHeaderList){
+                auto name=field->value();
+                if(vHash.contains(name))
+                    cacheHeader.append(name);
             }
             break;
         }
 
-        if(this->outPutStyle==QOrm::doRowArray){
-            QVariantList arItems;
-            for(auto &v:this->items.list()){
-                const auto vMap=v.toHash();
-                QVariantList aRow;
-                for(auto &headerName:cacheHeader){
-                    auto value=vMap.value(headerName);
-                    aRow.append(value);
-                }
-                if(!aRow.isEmpty())
-                    arItems.append(aRow);
-            }
-            vHash.insert(vpItems, vItems );
-            vItems=arItems;
-        }
+        QVariantList vFilters;
+        for(const auto &field:vFilterList)
+            vFilters.append(field->toVar());
 
-
-
-        QVariantList vHeader;
-        for(const auto &header:vHeaderList){
-            auto headerName=header->value();
-            auto var=header->toVar();
-
-            if(headerName==vActions)
-                vHeader.append(var);
-            else if(cacheHeader.contains(headerName))//se o cachec contiver a header entao lancaremos
-                vHeader.append(var);
-
+        QVariantList vHeaders;
+        for(const auto &field:vHeaderList){
+            auto name=field->value();
+            if(cacheHeader.contains(name))//se o cachec contiver a header entao lancaremos
+                vHeaders.append(field->toVar());
         }
 
         vHash[vpUuid]=this->dto->uuid();
@@ -106,8 +87,8 @@ public:
         vHash[vpDesign]=this->dto->design();
         vHash[vpType]=this->type.name();
         vHash[vpLayout]=this->layout.name();
-        vHash[vpHeaders]=vHeader;
-        vHash[vpFilters]=vFilter;
+        vHash[vpHeaders]=vHeaders;
+        vHash[vpFilters]=vFilters;
         vHash[vpItems]=vItems;
         vHash[vpEndPoints]=vEndPoints;
         vHash[vpEndPoint]=vEndPoint;
