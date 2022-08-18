@@ -88,7 +88,7 @@ public:
     //!
     auto &record(const QVariant &v)
     {
-        Query query(this);
+        Query query{this};
         auto &strategy = query.builder().select();
         strategy.limit(1).fieldsFrom(p_modelInfo);
         QVariant value;
@@ -121,7 +121,7 @@ public:
     //!
     auto &recordList(const QVariant &v)
     {
-        Query query(this);
+        Query query{this};
         auto &strategy = query.builder().select();
         strategy.fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
@@ -160,7 +160,7 @@ public:
         if (tablePk.isEmpty())
             return this->lr(QVariant()) = true;
 
-        Query query(this);
+        Query query{this};
         auto &strategy = query.builder().select();
         strategy.fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
@@ -213,9 +213,9 @@ public:
     //!
     auto &exists(T &model)
     {
-        auto vHash = model.toMapPKValues();
+        auto vHash = model.toPKValues();
         if (vHash.isEmpty())
-            vHash = model.toMapFKValues();
+            vHash = model.toFKValues();
         return this->exists(vHash);
     }
 
@@ -226,7 +226,7 @@ public:
     //!
     auto &exists(const QVariant &v)
     {
-        QOrm::Query query(this);
+        QOrm::Query query{this};
         auto &strategy = query.builder().select();
         strategy.fromExists(p_modelInfo);
 
@@ -271,7 +271,7 @@ public:
         switch (value.typeId()) {
         case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
-                T model(v);
+                T model{v};
                 model.autoMakeUuid();
                 model.autoSet();
                 list.append(model.toHashModel());
@@ -279,14 +279,14 @@ public:
             break;
         }
         default:
-            T model(value);
+            T model{value};
             model.autoMakeUuid();
             model.autoSet();
             list.append(model.toHashModel());
         }
 
         for (auto &v : list) {
-            QOrm::Query query(this);
+            QOrm::Query query{this};
             query.builder().insert().destine(p_modelInfo).values(v);
 
             if (!query.exec())
@@ -319,7 +319,7 @@ public:
         switch (value.typeId()) {
         case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
-                T model(v);
+                T model{v};
                 list.append(model.toHashModel());
             }
             break;
@@ -328,7 +328,7 @@ public:
             list.append(value);
         }
         for (auto &v : list) {
-            QOrm::Query query(this);
+            QOrm::Query query{this};
             query.builder().update().destine(p_modelInfo).values(v);
 
             if (!query.exec())
@@ -365,7 +365,7 @@ public:
         switch (value.typeId()) {
         case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
-                T model(v);
+                T model{v};
                 model.autoMakeUuid();
                 model.autoSet();
                 list.append(model.toHashModel());
@@ -373,14 +373,14 @@ public:
             break;
         }
         default:
-            T model(value);
+            T model{value};
             model.autoMakeUuid();
             model.autoSet();
             list.append(model.toHashModel());
         }
 
         for (auto &v : list) {
-            QOrm::Query query(this);
+            QOrm::Query query{this};
             query.builder().upsert().destine(p_modelInfo).values(v);
 
             if (!query.exec())
@@ -396,13 +396,13 @@ public:
     //!
     auto &deactivate(T &value)
     {
-        auto map = value.toHashModel();
-        if (!value.deactivateSetValues()) {
+        if (!value.deactivateSetValues())
             return this->lr(value.lr()) = false;
-        }
 
-        if (this->upsert(map)) {
-            value.readFrom(map);
+        auto vHash = value.toHashModel();
+
+        if (this->upsert(vHash)) {
+            value.readFrom(vHash);
             return this->lr() = true;
         }
 
@@ -420,7 +420,7 @@ public:
         switch (value.typeId()) {
         case QMetaType::QVariantList: {
             for (auto &v : value.toList()) {
-                T model(v);
+                T model{v};
                 list.append(model.toHashModel());
             }
             break;
@@ -429,9 +429,27 @@ public:
             list.append(value);
         }
         for (auto &v : list) {
-            T model(this, v);
+            T model{this, v};
             if (!this->deactivate(model))
                 return this->lr();
+        }
+        return this->lr() = true;
+    }
+
+    //!
+    //! \brief deactivate
+    //! \return
+    //!
+    auto &deactivate()
+    {
+        auto list = this->lr().resultList();
+        if (list.isEmpty())
+            return this->lr() = true;
+
+        for (auto &v : list) {
+            T model{this, v};
+            if (!this->deactivate(model))
+                return this->lr() = false;
         }
         return this->lr() = true;
     }
@@ -443,9 +461,9 @@ public:
     //!
     auto &remove(T &model)
     {
-        auto vHash = model.toMapPKValues();
+        auto vHash = model.toPKValues();
         if (vHash.isEmpty())
-            vHash = model.toMapFKValues();
+            vHash = model.toFKValues();
         if (vHash.isEmpty())
             return this->lr() = false;
         return this->remove(vHash);
@@ -458,7 +476,7 @@ public:
     //!
     auto &remove(const QVariant &v)
     {
-        Query query(this);
+        Query query{this};
         auto &strategy = query.builder().remove();
         strategy.from(p_modelInfo);
         QVariant value(this->variantToParameters(v));
@@ -488,7 +506,7 @@ public:
             return this->lr() = true;
 
         for (auto &v : list) {
-            T model(this, v);
+            T model{this, v};
             if (!this->remove(model))
                 return this->lr() = false;
         }
@@ -502,9 +520,9 @@ public:
     //!
     auto &reload(T &model)
     {
-        auto vHash = model.toMapPKValues();
+        auto vHash = model.toPKValues();
         if (vHash.isEmpty())
-            vHash = model.toMapFKValues();
+            vHash = model.toFKValues();
         if (vHash.isEmpty())
             return this->lr() = false;
         return this->reload(model, vHash);
@@ -537,9 +555,9 @@ public:
     //!
     auto &lock(T &model)
     {
-        auto vHash = model.toMapPKValues();
+        auto vHash = model.toPKValues();
         if (vHash.isEmpty())
-            vHash = model.toMapFKValues();
+            vHash = model.toFKValues();
         if (!this->lock(vHash))
             return this->lr() = false;
 
@@ -579,7 +597,7 @@ public:
     //!
     auto &lock(const QVariant &v)
     {
-        Query query(this);
+        Query query{this};
         auto &strategy = query.builder().select();
         strategy.lock().fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
@@ -601,7 +619,7 @@ public:
     //!
     auto &truncateTable()
     {
-        Query query(this);
+        Query query{this};
         query.builder().structure().truncateTable(this->p_modelInfo);
 
         if (!query.exec())
@@ -619,7 +637,7 @@ public:
     //!
     auto &truncateTableCascade()
     {
-        Query query(this);
+        Query query{this};
         query.builder().structure().truncateTableCascade(this->p_modelInfo);
         if (!query.exec())
             return this->lr(query.lr());
@@ -643,7 +661,7 @@ public:
     //!
     auto &nextVal(const QVariant &v)
     {
-        Query query(this);
+        Query query{this};
         query.builder().function().nextVal(v);
         if (!query.exec())
             return this->lr().clear() = query.lr();

@@ -2,13 +2,14 @@
 
 #include "./private/p_qorm_model_report.h"
 #include "./qorm_model_dao.h"
+#include "./qorm_model.h"
 
 namespace QOrm {
 
 //!
 //! \brief The ModelReport class
 //!
-template<class T = QOrm::Model>
+template<class T = Model>
 class ModelReport : public PrivateQOrm::ModelReportBase
 {
 public:
@@ -39,15 +40,15 @@ public:
     //!
     virtual ResultValue &reportfy()
     {
-        this->p_dto.type(QOrm::ModelDto::FormType(this->type()));
-        this->p_dto.layout(QOrm::ModelDto::FormLayout(this->layout()));
+        this->p_dto.type(ModelDto::FormType(this->type()));
+        this->p_dto.layout(ModelDto::FormLayout(this->layout()));
         return PrivateQOrm::ModelReportBase::reportfy();
     }
 
 private:
     ModelDao<T> p_dao;
     T p_model;
-    QOrm::ModelDto &p_dto = this->dto();
+    ModelDto &p_dto = this->dto();
 
     //!
     //! \brief init
@@ -64,7 +65,7 @@ protected:
     //! \brief modelInfo
     //! \return
     //!
-    virtual const QOrm::ModelInfo &modelInfo()
+    virtual const ModelInfo &modelInfo()
     {
         const auto &modelInfo = this->p_model.modelInfo();
         return modelInfo;
@@ -77,7 +78,7 @@ protected:
     //!
     virtual ResultValue &search(const T &model)
     {
-        auto value = model.toMapPKValues();
+        auto value = model.toPKValues();
         VariantUtil util;
         if (!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
             return this->lr();
@@ -119,7 +120,7 @@ protected:
         auto mapSource = this->source().toHash();
         SearchParameters map;
         if (!mapSource.isEmpty()) {
-            const QOrm::ModelInfo &modelInfo = this->modelInfo();
+            const ModelInfo &modelInfo = this->modelInfo();
             const auto &propertyShortVsTable = modelInfo.propertyShortVsTable();
             QHashIterator<QString, QVariant> i(model.toHash());
             while (i.hasNext()) {
@@ -152,7 +153,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto &onBefore(QOrm::ModelActionMethod method)
+    auto &onBefore(ModelActionMethod method)
     {
         auto obj = PrivateQOrm::ModelReportBase::onBefore(method);
         return *(dynamic_cast<ModelReport<T> *>(obj));
@@ -163,7 +164,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto &onSuccess(QOrm::ModelActionMethod method)
+    auto &onSuccess(ModelActionMethod method)
     {
         auto obj = PrivateQOrm::ModelReportBase::onSuccess(method);
         return *(dynamic_cast<ModelReport<T> *>(obj));
@@ -174,7 +175,7 @@ protected:
     //! \param method
     //! \return
     //!
-    auto &onFailed(QOrm::ModelActionMethod method)
+    auto &onFailed(ModelActionMethod method)
     {
         auto obj = PrivateQOrm::ModelReportBase::onFailed(method);
         return *(dynamic_cast<ModelReport<T> *>(obj));

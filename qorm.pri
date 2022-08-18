@@ -63,7 +63,6 @@ HEADERS += \
     $$PWD/src/qorm_global.h \
     $$PWD/src/qorm_model_descriptor.h \
     $$PWD/src/qorm_model.h \
-    $$PWD/src/qorm_model_crud_request.h \
     $$PWD/src/qorm_model_crud_block.h \
     $$PWD/src/qorm_model_crud_types.h \
     $$PWD/src/qorm_model_crud.h \
@@ -127,7 +126,6 @@ SOURCES += \
     $$PWD/src/qorm_controller.cpp \
     $$PWD/src/qorm_dao.cpp \
     $$PWD/src/qorm_model_descriptor.cpp \
-    $$PWD/src/qorm_model_crud_request.cpp \
     $$PWD/src/qorm_model_crud_block.cpp \
     $$PWD/src/qorm_model.cpp \
     $$PWD/src/qorm_model_dto.cpp \

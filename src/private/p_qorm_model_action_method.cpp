@@ -76,7 +76,7 @@ ResultValue &ModelAction::action(const QVariant &vSource)
     }
 
     auto crudBase=this->crudBase();
-    CRUDStrategy strategy=crudBase?crudBase->strategy():CRUDStrategy::Undefined;
+    CRUDTypes::Strategy strategy=crudBase?crudBase->strategy():CRUDTypes::Strategy::Search;
 
     auto exec=[this](const QVariant &vSource){
         if(p->actionBefore!=nullptr){
@@ -98,7 +98,7 @@ ResultValue &ModelAction::action(const QVariant &vSource)
 
 
     switch (strategy) {
-    case CRUDStrategy::Search:
+    case CRUDTypes::Strategy::Search:
     {
         if(vList.isEmpty())
             vList.append(QVariant{});

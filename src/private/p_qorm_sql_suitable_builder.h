@@ -28,7 +28,7 @@ public:
     QSqlDriver::DbmsType sqlDriver()const;
     ~SqlSuitableBuilderPvt();
     QByteArray makeQuery();
-    SqlSuitableKeyWord&parser();
+    SqlSuitableKeyWord &parser();
     QList<SqlParserCommand*> strategyList();
 
     void clear();

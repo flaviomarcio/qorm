@@ -45,7 +45,7 @@ public:
 
     QVariant makeUuid();
 
-    virtual QStringList toScript(SqlSuitableKeyWord&parser);
+    virtual QStringList toScript(SqlSuitableKeyWord &parser);
 
     virtual void setPropertys();
 

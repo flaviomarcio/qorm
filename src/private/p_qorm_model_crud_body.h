@@ -5,12 +5,15 @@
 #include "../qorm_global.h"
 #include "../qorm_model_crud_types.h"
 
+namespace QOrm {
 //!
 //! \brief The CRUDBody class
 //!
 class Q_ORM_EXPORT CRUDBody:public QVariantHash
 {
+
 public:
+
     //!
     //! \brief CRUDBody
     //! \param other
@@ -24,44 +27,73 @@ public:
     //!
     explicit CRUDBody(const QVariant &strategy, const QVariant &source);
 
-    //!
-    //! \brief CRUDBody
-    //! \param strategy
-    //! \param source
-    //!
-    explicit CRUDBody(const QOrm::CRUDStrategy strategy, const QVariant &source);
+    explicit CRUDBody(const QVariant &strategy, const QVariant &expressions, const QVariant &source);
 
     //!
     //! \brief strategy
     //! \return
     //!
-    virtual QOrm::CRUDStrategy strategy() const;
+    CRUDTypes::Strategy strategy() const;
 
     //!
-    //! \brief expression
+    //! \brief expressions
     //! \return
     //!
-    virtual const QVariant expression()const;
+    QVariant expressions()const;
 
     //!
     //! \brief source
     //! \return
     //!
-    virtual const QVariant source()const;
+    QVariant source()const;
 
     //!
     //! \brief items
     //! \return
     //!
-    virtual const QVariant items()const;
+    QVariantList items()const;
+
+    //!
+    //! \brief data
+    //! \return
+    //!
+    QVariant data()const;
+
+    //!
+    //! \brief pageList
+    //! \return
+    //!
+    QVariantList pagesList()const;
+
+    //!
+    //! \brief pagesHash
+    //! \return
+    //!
+    QVariantHash pagesHash()const;
+
+    //!
+    //! \brief itemsList
+    //! \return
+    //!
+    QVariantList itemsList()const;
 
     //!
     //! \brief isStrategy
     //! \param v
     //! \return
     //!
-    virtual bool isStrategy(const QVariant &v) const;
+    virtual bool isStrategy(const QVariant &v);
+
+    //!
+    //! \brief resultInfo
+    //! \return
+    //!
+    QVariant resultInfo() const;
 };
 
-Q_DECLARE_METATYPE(CRUDBody)
-Q_DECLARE_METATYPE(CRUDBody*)
+}
+
+typedef QOrm::CRUDBody CRUDBody;
+
+//Q_DECLARE_METATYPE(CRUDBody)
+//Q_DECLARE_METATYPE(CRUDBody*)

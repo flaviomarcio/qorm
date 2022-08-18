@@ -18,11 +18,6 @@ public:
     explicit Transaction(QObject *parent);
 
     //!
-    //! \brief ~Transaction
-    //!
-    ~Transaction();
-
-    //!
     //! \brief transaction
     //! \return
     //!return value true when transction is inactive and transaction is success

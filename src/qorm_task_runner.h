@@ -119,9 +119,9 @@ public:
     //!
     virtual ResultValue &start();
 
-    /**
-     * @brief stop
-     */
+    //!
+    //! \brief stop
+    //!
     virtual void stop();
 
     //!

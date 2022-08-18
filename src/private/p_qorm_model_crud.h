@@ -182,7 +182,7 @@ public:
     //! \brief strategy
     //! \return
     //!
-    virtual QOrm::CRUDStrategy &strategy()const;
+    virtual QOrm::CRUDTypes::Strategy strategy()const;
 
     //!
     //! \brief strategy
@@ -217,17 +217,17 @@ public:
     virtual ResultValue &crudify();
 
     //!
-    //! \brief crudifyFake
-    //! \return
-    //!
-    virtual ResultValue &crudifyFake();
-
-    //!
-    //! \brief actionNulls
+    //! \brief actionsNulls
     //! \return
     //!
     //! remove actions
-    virtual CRUDBase &actionNulls();
+    virtual CRUDBase &actionsNulls();
+
+    //!
+    //! \brief actionsSearch
+    //! \return
+    //!
+    virtual CRUDBase &actionsSearch();
 
     //!
     //! \brief actionSearch
@@ -235,6 +235,13 @@ public:
     //! \return
     //!
     virtual CRUDBase &actionSearch(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionCreate
+    //! \param action
+    //! \return
+    //!
+    virtual CRUDBase &actionCreate(QOrm::ModelAction &action);
 
     //!
     //! \brief actionInsert
@@ -279,6 +286,19 @@ public:
     virtual CRUDBase &actionDeactivate(QOrm::ModelAction &action);
 
 protected:
+
+    //!
+    //! \brief create
+    //! \return
+    //!
+    virtual ResultValue &create();
+
+    //!
+    //! \brief create
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &create(const QVariant &value);
 
     //!
     //! \brief search
@@ -378,6 +398,12 @@ protected:
     //! \return
     //!
     CRUDBase &onFailed(QOrm::CRUDBodyActionMethod method);
+
+    //!
+    //! \brief canActionCreate
+    //! \return
+    //!
+    virtual ResultValue &canActionCreate();
 
     //!
     //! \brief canActionSearch

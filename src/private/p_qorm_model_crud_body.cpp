@@ -1,56 +1,59 @@
 #include "./p_qorm_model_crud_body.h"
+#include "../qorm_model_crud_types.h"
+#include <QStm>
 
-static auto __expression="expression";
-static auto __source="source";
+
+
+namespace QOrm {
+
+static const auto __pages="pages";
+static const auto __items="items";
+static const auto __uuid="uuid";
+static const auto __expressions="expressions";
+static const auto __source="source";
+static const auto __strategy="strategy";
+static const auto __resultInfo="resultInfo";
 
 CRUDBody::CRUDBody(const QVariant &other) : QVariantHash(other.toHash()) {}
 
-CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &source)
-    : QVariantHash{{QStringLiteral("strategy"), strategy}, {QStringLiteral("source"), source}}
-{}
+CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &source): QVariantHash{{__strategy, strategy}, {__source, source}}{}
 
-CRUDBody::CRUDBody(const QOrm::CRUDStrategy strategy, const QVariant &source)
-    : QVariantHash{{QStringLiteral("strategy"), strategy}, {QStringLiteral("source"), source}}
-{}
-
-QOrm::CRUDStrategy CRUDBody::strategy() const
+CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &expressions, const QVariant &source)
+: QVariantHash{
+                {__strategy, strategy},
+                {__expressions, expressions},
+                {__source, source}
+              }
 {
-    static auto varName = QStringList{__func__, QStringLiteral("method")};
-    auto &vHash = *this;
-    for (auto &vName : varName) {
-        const QVariant &v = vHash[vName];
-        if (v.isNull() || !v.isValid())
-            continue;
-        auto name = v.toString().toLower();
-        if (!QOrm::__stringToStrategy.contains(name))
-            continue;
 
-        auto vStrategy = QOrm::__stringToStrategy.value(name);
-        auto tStrategy = QOrm::CRUDStrategy(vStrategy.toUInt());
-        return tStrategy;
-    }
-    return QOrm::CRUDStrategy::Undefined;
 }
 
-const QVariant CRUDBody::expression() const
+CRUDTypes::Strategy CRUDBody::strategy()const
 {
-    auto v=this->value(__source);
-    if(!v.isValid())
-        return this->value(__expression);
-    auto vHash=v.toHash();
-    return vHash.value(__expression);
+    QStm::MetaEnum<QOrm::CRUDTypes::Strategy> e(this->value(__strategy));
+    return e.type();
 }
 
-
-const QVariant CRUDBody::source() const
+QVariant CRUDBody::expressions() const
 {
-    return (*this)[__func__];
+    if(!this->contains(__expressions))
+        return {};
+    return this->value(__expressions);
 }
 
-const QVariant CRUDBody::items() const
+QVariant CRUDBody::source() const
 {
-    static auto __source="source";
-    auto v=this->contains(__source)?this->value(__source):*this;
+    if(!this->contains(__source))
+        return {};
+    return this->value(__source);
+}
+
+QVariantList CRUDBody::items() const
+{
+    auto v=this->contains(__source)?this->value(__source):QVariant{};
+    if(!v.isValid() || v.isNull())
+        return {};
+
     QVariantList vList;
     switch (v.typeId()) {
     case QMetaType::QVariantList:
@@ -72,8 +75,71 @@ const QVariant CRUDBody::items() const
     return vList;
 }
 
-bool CRUDBody::isStrategy(const QVariant &v) const
+QVariant CRUDBody::data() const
 {
-    const qlonglong strategy = this->strategy();
+    QStm::VariantUtil vu;
+    auto v=this->value(__expressions);
+    if(!vu.vIsEmpty(v))
+        return v;
+
+    v=this->value(__source);
+    if(!vu.vIsEmpty(v))
+        return v;
+
+    return {};
+}
+
+QVariantList CRUDBody::pagesList() const
+{
+    auto vCrudSource=this->source().toHash();
+    if(vCrudSource.contains(__pages))
+        return vCrudSource.value(__pages).toList();
+    return {};
+}
+
+QVariantHash CRUDBody::pagesHash() const
+{
+    QVariantHash __return;
+    auto pagesList=this->pagesList();
+    for(auto &v:pagesList){
+        auto vHash=v.toHash();
+        QVariant vCrudBody;
+        if(vHash.contains(__items))
+            vCrudBody=vHash.value(__items).toList();
+        else
+            vCrudBody=vHash;
+        auto crudUuid=vHash.value(__uuid).toUuid().toString();
+        __return.insert(crudUuid, vCrudBody);
+    }
+    return __return;
+}
+
+QVariantList CRUDBody::itemsList() const
+{
+    QVariantList __return;
+
+    auto pagesList=this->pagesList();
+    for(auto &v:pagesList){
+        auto vHash=v.toHash();
+        QVariant vCrudBody;
+        if(vHash.contains(__items))
+            vCrudBody=vHash.value(__items).toList();
+        else
+            vCrudBody=vHash;
+        __return.append(vCrudBody);
+    }
+    return __return;
+}
+
+bool CRUDBody::isStrategy(const QVariant &v)
+{
+    const auto strategy = this->strategy();
     return (strategy == v.toInt());
+}
+
+QVariant CRUDBody::resultInfo() const
+{
+    return this->value(__resultInfo);
+}
+
 }

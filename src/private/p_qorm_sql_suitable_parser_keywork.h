@@ -35,7 +35,7 @@ public:
     //! \param o
     //! \return
     //!
-    SqlSuitableKeyWord&operator=(const SqlSuitableKeyWord&o);
+    SqlSuitableKeyWord &operator=(const SqlSuitableKeyWord &o);
 
     //!
     //! \brief isValid
@@ -70,9 +70,9 @@ public:
     //! \param db
     //! \return
     //!
-    static SqlSuitableKeyWord&parser(const QSqlDatabase&db);
-    static SqlSuitableKeyWord&parser(const QSqlDriver*driver);
-    static SqlSuitableKeyWord&parser(const QSqlDriver::DbmsType&driver);
+    static SqlSuitableKeyWord &parser(const QSqlDatabase&db);
+    static SqlSuitableKeyWord &parser(const QSqlDriver*driver);
+    static SqlSuitableKeyWord &parser(const QSqlDriver::DbmsType&driver);
 
     /**
      * @brief parserMaker

@@ -603,7 +603,7 @@ public:
         {
         }
 
-        virtual QStringList toScript(SqlSuitableKeyWord&parser)
+        virtual QStringList toScript(SqlSuitableKeyWord &parser)
         {
 
             QVariantMap map;

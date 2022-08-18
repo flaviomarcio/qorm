@@ -604,7 +604,7 @@ QVariantHash Model::toHashModel() const
     return p->modelInfo().toHashModel(this);
 }
 
-QVariantHash Model::toMapPKValues() const
+QVariantHash Model::toPKValues() const
 {
     QVVM qvvm;
     auto &modelInfo=p->modelInfo();
@@ -669,7 +669,7 @@ QVariantHash Model::toMapPKValues() const
     return QVariant{qvvm}.toHash();
 }
 
-QVariantHash Model::toMapFKValues() const
+QVariantHash Model::toFKValues() const
 {
     QVVM qvvm;
     auto &modelInfo=p->modelInfo();
@@ -1015,7 +1015,7 @@ ResultValue &Model::deactivateSetValues()
     Q_V_HASH_ITERATOR(propertyDeactivateField){
         i.next();
         const auto k=i.key().toUtf8();
-        const auto &v=i.value();
+        const auto v=i.value().toHash().value(__value);
         if(this->setProperty(k, v))
             continue;
         return this->lr().setValidation(tr("Invalid data to define in the model as deleted"));

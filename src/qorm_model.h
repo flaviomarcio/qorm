@@ -119,16 +119,16 @@ public:
     virtual QVariantHash toHashModel() const;
 
     //!
-    //! \brief toMapPKValues
+    //! \brief toPKValues
     //! \return
     //!
-    virtual QVariantHash toMapPKValues() const;
+    virtual QVariantHash toPKValues() const;
 
     //!
-    //! \brief toMapFKValues
+    //! \brief toFKValues
     //! \return
     //!
-    virtual QVariantHash toMapFKValues() const;
+    virtual QVariantHash toFKValues() const;
 
     //!
     //! \brief toWrapper

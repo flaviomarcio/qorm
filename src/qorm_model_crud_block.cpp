@@ -25,43 +25,51 @@ public:
         auto strategy=crudBody.strategy();
         CRUDBody __return;
         switch (strategy) {
-        case QOrm::CRUDStrategy::Remove:
-        case QOrm::CRUDStrategy::Deactivate:
-        case QOrm::CRUDStrategy::Search:{
-            if(!returns.isEmpty()){
+        case QOrm::CRUDTypes::Strategy::Create:
+        case QOrm::CRUDTypes::Strategy::Remove:
+        case QOrm::CRUDTypes::Strategy::Deactivate:
+        case QOrm::CRUDTypes::Strategy::Search:{
+            if(returns.isEmpty()){//prepara primeira consulta
+                __return=CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), crudBody.data())};
+            }
+            else{
                 QVariantHash lastReturn;
-                switch (returns.last().typeId()) {
+                auto pkRecord=returns.first();//primeiro registro que contem a PK principal
+                switch (pkRecord.typeId()) {
                 case QMetaType::QVariantList:
                 {
-                    auto l=returns.last().toList();
+                    auto l=pkRecord.toList();
                     if(!l.isEmpty())
-                        lastReturn=l.first().toHash();
+                        lastReturn=pkRecord.toHash();
                     break;
                 }
                 default:
-                    lastReturn=returns.last().toHash();
+                    lastReturn=pkRecord.toHash();
                     break;
                 }
+                //por não ser a primeira consulta utilizaremos o replace da FK extraida do ultimo registro
                 QVariant vPK=lastReturn.contains(__items)?lastReturn.value(__items):lastReturn;
-                __return=CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), vPK)};
-                break;
+                __return=CRUDBody{strategy, crud->dao().toPrepareForeign(crud->modelInfo(), vPK)};
             }
-            __return=CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), crudBody.source())};
             break;
         }
-        case QOrm::CRUDStrategy::Insert:
-        case QOrm::CRUDStrategy::Update:
-        case QOrm::CRUDStrategy::Upsert:{
-            if(!returns.isEmpty()){
+        case QOrm::CRUDTypes::Strategy::Insert:
+        case QOrm::CRUDTypes::Strategy::Update:
+        case QOrm::CRUDTypes::Strategy::Upsert:{
+            if(returns.isEmpty()){
+                __return = crudBody;//primeiro registro não deve sofrer modificacao
+            }
+            else{
                 QVariantHash lastReturn;
-                switch (returns.last().typeId()) {
+                auto pkRecord=returns.first();//primeiro registro que contem a PK principal
+                switch (pkRecord.typeId()) {
                 case QMetaType::QVariantMap:
                 case QMetaType::QVariantHash:
-                    lastReturn=returns.last().toHash();
+                    lastReturn=pkRecord.toHash();
                     break;
                 case QMetaType::QVariantList:
                 {
-                    auto l=returns.last().toList();
+                    auto l=pkRecord.toList();
                     if(!l.isEmpty())
                         lastReturn=l.first().toHash();
                     break;
@@ -73,7 +81,6 @@ public:
                 __return = CRUDBody{strategy, crud->dao().toPrepareForeignWrapper(crud->modelInfo(), crudBody.items(), vPK)};
                 break;
             }
-            __return = crudBody;
             break;
         }
         default:
@@ -224,13 +231,11 @@ const QVariantList CRUDBlock::generatedRecords(const ModelInfo &modelInfo) const
 
 ResultValue &CRUDBlock::crudify()
 {
-//    static auto __mode=QStringLiteral("mode");
-//    static auto __fake=QStringLiteral("fake");
-    static auto __uuid=QStringLiteral("uuid");
+//    static auto __uuid=QStringLiteral("uuid");
+//    static auto __expressions=QStringLiteral("expression");
+//    static auto __items=QStringLiteral("items");
     static auto __resultInfo=QStringLiteral("resultInfo");
-    static auto __expressions=QStringLiteral("expression");
     static auto __pages=QStringLiteral("pages");
-    static auto __items=QStringLiteral("items");
     static auto __type=QStringLiteral("type");
 
     this->clean();
@@ -239,11 +244,10 @@ ResultValue &CRUDBlock::crudify()
         return this->lr().setBadRequest(tr("crud block is empty"));
 
     QVariantList __return;
+    const CRUDBody crudBody{p->crudBody};
 
-
-    QVariantHash crudPages;
-    CRUDBody crudBody{p->crudBody};
-    auto vCrudSource=crudBody.source().toHash();
+    this->resultInfo().setValues(crudBody.resultInfo());
+    auto crudPages=crudBody.pagesHash();
 
     for(auto &crud:p->crudList){
         crud->setOptions(p->options);
@@ -251,76 +255,20 @@ ResultValue &CRUDBlock::crudify()
         crud->host().setValues(&p->host);
     }
 
+    for(auto &crud:p->crudList){
 
-//    if(vCrudSource.contains(__mode) && vCrudSource.value(__mode).toString().toLower()==__fake){
-//        for(auto &crud:p->crudList){
-//            switch (crudBody.strategy()) {
-//            case QOrm::CRUDStrategy::Search:{
-//                if(!crud->isValid())
-//                    continue;
-//                break;
-//            }
-//            default:
-//                break;
-//            };
-//            __return.append(crud->crudifyFake().resultVariant());
-//        }
-//    }
-//    else{
+        CRUDBody crudItem{};
 
-        if(vCrudSource.contains(__resultInfo))
-            this->resultInfo().setValues(vCrudSource.value(__resultInfo));
+        if(crudPages.contains(crud->uuid().toString()))
+            crudItem=CRUDBody{crudBody.strategy(), crudPages.value(crud->uuid().toString())};
+        else
+            crudItem=crudBody;
 
-        if(vCrudSource.contains(__expressions)){
-            auto expression=vCrudSource.value(__expressions);
-            crudBody=CRUDBody{crudBody.strategy(), expression};
-            vCrudSource.clear();
-        }
+        if(!crud->crudBody(p->reMakeCRUDBody(__return, crud, crudItem)).crudify())
+            return this->lr(crud->lr());
 
-        if(vCrudSource.contains(__pages)){
-            auto vList=vCrudSource[__pages].toList();
-            for(auto &v:vList){
-                auto vHash=v.toHash();
-                QVariant vCrudBody;
-                if(vHash.contains(__items)){
-                    auto vItems=vHash.value(__items).toList();
-                    vCrudBody=vItems;
-                }
-                else{
-                    vCrudBody=vHash;
-                }
-                auto crudUuid=vHash[__uuid].toUuid().toString();
-                crudPages.insert(crudUuid, vCrudBody);
-            }
-        }
-
-        for(auto &crud:p->crudList){
-
-//            switch (crudBody.strategy()) {
-//            case QOrm::CRUDStrategy::Search:{
-//                if(!crud->isValid())
-//                    continue;
-//                break;
-//            }
-//            default:
-//                break;
-//            };
-
-            CRUDBody crudItem{};
-
-            if(crudPages.contains(crud->uuid().toString()))
-                crudItem=CRUDBody{crudBody.strategy(), crudPages.value(crud->uuid().toString())};
-            else
-                crudItem=crudBody;
-
-            if(!crud->crudBody(p->reMakeCRUDBody(__return, crud, crudItem)).crudify())
-                return this->lr(crud->lr());
-
-            __return.append(crud->lr().resultVariant());
-        }
-//    }
-
-
+        __return.append(crud->lr().resultVariant());
+    }
 
     if(__return.isEmpty())
         return this->lr().clear();

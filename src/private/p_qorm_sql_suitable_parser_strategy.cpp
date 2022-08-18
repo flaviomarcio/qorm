@@ -1,5 +1,5 @@
 #include "./p_qorm_sql_suitable_parser_strategy.h"
-#include "../qorm_sql_suitable_builder.h"
+//#include "../qorm_sql_suitable_builder.h"
 #include "../qorm_query.h"
 
 #define dQuery\
@@ -12,10 +12,6 @@ SqlParserCombineSelect::SqlParserCombineSelect(const QVariant &v):SqlParserComma
 }
 
 SqlParserCombineSelect::SqlParserCombineSelect():SqlParserCommand{}
-{
-}
-
-SqlParserCombineSelect::~SqlParserCombineSelect()
 {
 }
 
@@ -51,7 +47,7 @@ SqlParserCombineSelect &SqlParserCombineSelect::exceptAll()
 
 SqlParserCombineSelect &SqlParserCombineSelect::setV(int t)
 {
-    auto v=SqlParserCommand(t);
+    auto v=SqlParserCommand{t};
     this->setValue(v);
     dQuery;
     q.prepareCache();

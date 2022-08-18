@@ -4,8 +4,6 @@
 #include "../qorm_object_db.h"
 //#include "../qorm_model_dao.h"
 
-
-
 namespace PrivateQOrm{
 class CRUDBase;
 }

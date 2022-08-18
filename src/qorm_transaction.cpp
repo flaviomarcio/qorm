@@ -5,9 +5,9 @@
 
 namespace QOrm {
 
-typedef QMap<Transaction *, QString> TransactionStringMap;
+typedef QHash<Transaction *, QString> TransactionCollection;
 Q_GLOBAL_STATIC(QMutex, ___mutex_cache)
-Q_GLOBAL_STATIC(TransactionStringMap, ___connections)
+Q_GLOBAL_STATIC(TransactionCollection, staticTransactionCollection)
 
 class TransactionPvt:public QObject
 {
@@ -19,12 +19,10 @@ public:
     Transaction *parent = nullptr;
     explicit TransactionPvt(Transaction *parent):QObject{parent} { this->parent = parent; }
 
-    virtual ~TransactionPvt() {}
-
     void objReg()
     {
         auto cnn = this->parent->connection().connectionName();
-        auto obj = ___connections->key(cnn);
+        auto obj = staticTransactionCollection->key(cnn);
 
         if (cnn.isEmpty()) {
             this->failTryException(QStringLiteral("Fail:Invalid connection on transaction"));
@@ -42,7 +40,7 @@ public:
         }
 
         QMutexLocker<QMutex> locker(___mutex_cache);
-        ___connections->insert(this->parent, cnn);
+        staticTransactionCollection->insert(this->parent, cnn);
         this->objTran = this->parent;
     }
 
@@ -50,9 +48,9 @@ public:
     {
         QMutexLocker<QMutex> locker(___mutex_cache);
         auto cnn = this->parent->connection().connectionName();
-        auto obj = ___connections->key(cnn);
+        auto obj = staticTransactionCollection->key(cnn);
         if (obj == this->parent) {
-            ___connections->take(this->parent);
+            staticTransactionCollection->take(this->parent);
         }
         this->objTran = nullptr;
     }
@@ -82,9 +80,9 @@ public:
 
         QMutexLocker<QMutex> locker(___mutex_cache);
         auto cnn = this->parent->connectionId();
-        if (!cnn.isEmpty()) {
-            this->objTran = ___connections->key(cnn);
-        }
+        if (!cnn.isEmpty())
+            this->objTran = staticTransactionCollection->key(cnn);
+
         return this->objTran;
     }
 };
@@ -92,11 +90,6 @@ public:
 Transaction::Transaction(QObject *parent) : ObjectDb{parent}
 {
     this->p = new TransactionPvt{this};
-}
-
-Transaction::~Transaction()
-{
-
 }
 
 ResultValue &Transaction::transaction()

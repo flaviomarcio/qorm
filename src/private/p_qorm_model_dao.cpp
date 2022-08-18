@@ -6,6 +6,9 @@
 #include "../../../qstm/src/qstm_macro.h"
 
 namespace PrivateQOrm {
+static const auto __source="source";
+static const auto __fk="fk";
+static const auto __pk="pk";
 
 class ModelDaoPvt : public QObject{
 public:
@@ -41,7 +44,7 @@ public:
     static QVariantList cleanList(const QVariant &vValues)
     {
 
-        if(!vValues.isValid())
+        if(!vValues.isValid() || vValues.isNull())
             return {};
 
         QVariantList vList;
@@ -223,27 +226,27 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
 
 QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, const QVariant &vModelFK, const QVariant &vModelPK) const
 {
-    auto vRecord=vModelPK;
+    auto vRecordPK=vModelPK;
     {//tratamento do registro que fornecera a PK para FK
-        switch (vRecord.typeId()) {
+        switch (vRecordPK.typeId()) {
         case QMetaType::QVariantList:
         case QMetaType::QStringList:
         {
-            auto vList=vRecord.toList();
-            vRecord = vList.isEmpty()?vModelPK:vList.first();
+            auto vList=vRecordPK.toList();
+            vRecordPK = vList.isEmpty()?vModelPK:vList.first();
             break;
         }
         default:
             break;
         }
 
-        switch (vRecord.typeId()) {
+        switch (vRecordPK.typeId()) {
         case QMetaType::QVariantMap:
         case QMetaType::QVariantHash:
         {
-            auto vHash=vRecord.toHash();
-            if(vHash.contains(QStringLiteral("source")))
-                vRecord=vHash.value(QStringLiteral("source"));
+            auto vHash=vRecordPK.toHash();
+            if(vHash.contains(__source))
+                vRecordPK=vHash.value(__source);
             break;
         }
         default:
@@ -251,12 +254,12 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
         }
 
         //validando ultimo valor do source
-        switch (vRecord.typeId()) {
+        switch (vRecordPK.typeId()) {
         case QMetaType::QVariantList:
         case QMetaType::QStringList:
         {
-            auto vList=vRecord.toList();
-            vRecord = vList.isEmpty()?vModelPK:vList.first().toHash();
+            auto vList=vRecordPK.toList();
+            vRecordPK = vList.isEmpty()?vModelPK:vList.first().toHash();
             break;
         }
         default:
@@ -281,7 +284,7 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
         }
     }
 
-    auto vRecordHash=vRecord.toHash();
+    auto vRecordHash=vRecordPK.toHash();
 
     if(vModelList.isEmpty())
         vModelList.append(QVariant{});
@@ -291,8 +294,8 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
         Q_V_HASH_ITERATOR(modelRef.tableForeignKeys()){
             i.next();
             auto vHash=i.value().toHash();
-            auto fkName=vHash[QStringLiteral("fk")].toString();
-            auto pkName=vHash[QStringLiteral("pk")].toString();
+            auto fkName=vHash.value(__fk).toString().trimmed().toLower();
+            auto pkName=vHash.value(__pk).toString().trimmed().toLower();
             if(!tableForeignKeysPK.contains(fkName))//se nao for uma FK/PK contiuaremos
                 continue;
             auto pkValue=vRecordHash.value(pkName);
@@ -315,11 +318,14 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
     if(tableForeignPK.isEmpty())
         return {};
 
+//    static auto __pk=QStringLiteral("pk");
+//    static auto __fk=QStringLiteral("fk");
+
     auto vList=modelRef.tableForeignKeys().values();
     for(auto & v:vList){
         auto vPkFk=v.toHash();
-        auto fieldNamePK=vPkFk.value(QStringLiteral("pk")).toString();
-        auto fieldNameFK=vPkFk.value(QStringLiteral("fk")).toString();
+        auto fieldNamePK=vPkFk.value(__pk).toString();
+        auto fieldNameFK=vPkFk.value(__fk).toString();
         auto vFilter=__return.value(fieldNameFK);
 
         if(!tableForeignPK.contains(fieldNameFK))

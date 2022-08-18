@@ -6,6 +6,8 @@
 
 namespace QOrm{
 
+const auto __operator="operator";
+
 //!
 //! \brief The CRUD class
 //!
@@ -86,13 +88,44 @@ private:
 protected:
 
     //!
+    //! \brief insert
+    //! \param model
+    //! \return
+    //!
+    virtual ResultValue &create(T &model)
+    {
+        Q_UNUSED(model)
+        return this->lr();
+    }
+
+    //!
+    //! \brief insert
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &create(const QVariant &value)
+    {
+        T model(this, value);
+        return this->create(model);
+    }
+
+    //!
+    //! \brief insert
+    //! \return
+    //!
+    virtual ResultValue &create()
+    {
+        return this->create(this->source());
+    }
+
+    //!
     //! \brief search
     //! \param model
     //! \return
     //!
     virtual ResultValue &search(const T &model)
     {
-        auto value=model.toMapPKValues();
+        auto value=model.toPKValues();
         VariantUtil util;
         if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
             return this->lr();
@@ -130,6 +163,9 @@ protected:
     //!
     virtual ResultValue &search()
     {
+        static const auto __operator="operator";
+        static const auto __format="format";
+
         QVariantList vList;
         switch (this->source().typeId()) {
         case QMetaType::QVariantList:
@@ -161,8 +197,8 @@ protected:
                     if(header==nullptr)
                         continue;
                     auto vHash=header->filtrableStrategy();
-                    auto keywordOperator=vHash.value(QStringLiteral("operator"));
-                    QString format=vHash.value(QStringLiteral("format")).toString().trimmed();
+                    auto keywordOperator=vHash.value(__operator);
+                    QString format=vHash.value(__format).toString().trimmed();
                     QVariant v_value;
                     if(format.contains(QStringLiteral("%1")))
                         v_value=format.arg(i.value().toString());
