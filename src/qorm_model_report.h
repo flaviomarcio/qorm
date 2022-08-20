@@ -40,8 +40,7 @@ public:
     //!
     virtual ResultValue &reportfy()
     {
-        this->p_dto.type(ModelDto::FormType(this->type()));
-        this->p_dto.layout(ModelDto::FormLayout(this->layout()));
+        this->p_dto.type(this->type());
         return PrivateQOrm::ModelReportBase::reportfy();
     }
 

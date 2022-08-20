@@ -41,7 +41,8 @@ public:
         if(!modelInfo.isValid())
             return;
         auto &fields=dtoControls.fields();
-        fields.setValues(modelInfo.propertyDescriptors());
+        auto vDescriptores=modelInfo.propertyDescriptors();
+        fields.setValues(vDescriptores);
     }
 };
 
@@ -101,32 +102,15 @@ ModelDto::FormType ModelDto::type() const
     return FormType(p->dtoControls.type());
 }
 
-ModelDto &ModelDto::type(const FormType &v)
+ModelDto &ModelDto::type(const QVariant &v)
 {
-    p->dtoControls.type(ModelDtoControls::FormType(v));
+    p->dtoControls.type(v);
     return *this;
 }
 
-ModelDto &ModelDto::setType(const FormType &v)
+ModelDto &ModelDto::setType(const QVariant &v)
 {
-    p->dtoControls.type(ModelDtoControls::FormType(v));
-    return *this;
-}
-
-ModelDto::FormLayout ModelDto::layout() const
-{
-    return FormLayout(p->dtoControls.layout());
-}
-
-ModelDto &ModelDto::layout(const FormLayout &v)
-{
-    p->dtoControls.layout(ModelDtoControls::FormLayout(v));
-    return *this;
-}
-
-ModelDto &ModelDto::setLayout(const FormLayout &v)
-{
-    p->dtoControls.layout(ModelDtoControls::FormLayout(v));
+    p->dtoControls.type(v);
     return *this;
 }
 

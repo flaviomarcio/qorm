@@ -16,9 +16,7 @@ class Q_ORM_EXPORT ModelReportBase : public QOrm::ObjectDb
     Q_OBJECT
 public:
     QORM_MODEL_DECLARE_FORM_ENUMS
-
     QORM_DECLARE_DTO_TYPE(FormType::ReportForm)
-    QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
     //!
     //! \brief ModelReportBase
@@ -52,13 +50,6 @@ public:
     //!
     virtual FormType type()const;
     virtual ModelReportBase &type(const FormType &value);
-
-    //!
-    //! \brief layout
-    //! \return
-    //!
-    virtual QOrm::ModelDto::FormLayout layout()const;
-    virtual ModelReportBase &layout(const FormLayout &value);
 
     //!
     //! \brief reportName

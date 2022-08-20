@@ -23,17 +23,7 @@ namespace QOrm {\
         return ___return;\
     }
 
-#define QORM_DECLARE_DTO_LAYOUT(_MACRO_VALUE_)\
-    static FormLayout defaultLayout(){\
-        static const FormLayout ___return=_MACRO_VALUE_;\
-        return ___return;\
-    }
-
-#define QORM_DECLARE_CRU_TYPE(_MACRO_VALUE_)\
-    QORM_DECLARE_DTO_TYPE(_MACRO_VALUE_)
-
-#define QORM_DECLARE_CRUD_LAYOUT(_MACRO_VALUE_)\
-    QORM_DECLARE_DTO_LAYOUT(_MACRO_VALUE_)
+#define QORM_DECLARE_CRU_TYPE(_MACRO_VALUE_) QORM_DECLARE_DTO_TYPE(_MACRO_VALUE_)
 
 #define QORM_DECLARE_KEY_WORD(SSKClass)\
     static SqlSuitableKeyWord*SSKClass##Parser = nullptr;\
@@ -43,23 +33,21 @@ namespace QOrm {\
             keywork=SqlSuitableKeyWord::parserMaker(new SSKClass());\
     }
 
-#define QORM_CHECK_CONNECTION()                                                 \
-{                                                                               \
-    auto __db=this->connection();                                               \
-    if(!__db.isValid()){                                                        \
-        auto msg=QStringLiteral("Invalid QSqlDatabase");                        \
-        oWarning()<< msg;                                                       \
-        this->rq().co().setInternalServerError();                               \
-        return QVariant(msg);                                                   \
-    }                                                                           \
-                                                                                \
-    if(!__db.isOpen()){                                                         \
-        auto msg=QStringLiteral("Connection %1 is not open").arg(__db.connectionName());   \
-        oWarning()<< msg;                                                       \
-        this->rq().co().setInternalServerError();                               \
-        return QVariant(msg);                                                   \
-    }                                                                           \
-}                                                                               \
+#define QORM_CHECK_CONNECTION(){ \
+    auto __db=this->connection(); \
+    if(!__db.isValid()){ \
+        auto msg=QStringLiteral("Invalid QSqlDatabase"); \
+        oWarning()<< msg; \
+        this->rq().co().setInternalServerError(); \
+        return QVariant(msg); \
+    } \
+    if(!__db.isOpen()){ \
+        auto msg=QStringLiteral("Connection %1 is not open").arg(__db.connectionName()); \
+        oWarning()<< msg; \
+        this->rq().co().setInternalServerError(); \
+        return QVariant(msg); \
+    } \
+} \
 
 #define QORM_CONNECTION_SUPPORT() \
 private:\

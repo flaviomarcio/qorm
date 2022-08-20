@@ -30,7 +30,6 @@ public:
     QORM_MODEL_DECLARE_FORM_ENUMS
 
     QORM_DECLARE_DTO_TYPE(FormType::RegisterForm)
-    QORM_DECLARE_DTO_LAYOUT(FormLayout::Vertical)
 
     //!
     //! \brief CRUDBase
@@ -118,20 +117,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual CRUDBase &type(const FormType &value);
-
-    //!
-    //! \brief layout
-    //! \return
-    //!
-    virtual FormLayout layout()const;
-
-    //!
-    //! \brief layout
-    //! \param value
-    //! \return
-    //!
-    virtual CRUDBase &layout(const FormLayout &value);
+    virtual CRUDBase &type(const QVariant &value);
 
     //!
     //! \brief uuid

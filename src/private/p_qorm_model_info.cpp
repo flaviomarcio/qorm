@@ -709,7 +709,10 @@ public:
             pvt->descriptor->descriptorsInit();
             if(pvt->description.isEmpty())
                 pvt->description=pvt->descriptor->description();
-            pvt->propertyDescriptors=pvt->descriptor->toHash();
+
+            auto vDescriptors=pvt->descriptor->toHash();
+            if(!vDescriptors.isEmpty())
+                pvt->propertyDescriptors=vDescriptors;
         };
 
         QHashIterator <QByteArray, QOrm::ModelInfo*> i(*__static_model_info);

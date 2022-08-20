@@ -65,12 +65,12 @@ const ModelFieldCollection &ModelFieldCollection::item(const QString &fieldName,
 const QList<ModelFieldDescriptor *> &ModelFieldCollection::list() const
 {
     p->list.clear();
-    int order=0;
+    //int order=0;
     for(auto &name : p->order){
         auto field=p->collection.value(name);
         if(!field)
             continue;
-        field->order(order++);
+        //field->order(order++);
         p->list.append(field);
     }
     return p->list;

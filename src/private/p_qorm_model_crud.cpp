@@ -37,8 +37,7 @@ public:
     explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dao{parent}, dto{parent}
     {
         this->parent=parent;
-        dto.setType(QOrm::ModelDto::FormType(CRUDBase::defaultType()));
-        dto.setLayout(QOrm::ModelDto::FormLayout(CRUDBase::defaultLayout()));
+        dto.setType(CRUDBase::defaultType());
     }
 
     QVariant parserSearch(const QVariant &v)
@@ -218,20 +217,9 @@ CRUDBase::FormType CRUDBase::type() const
     return FormType(p->dto.type());
 }
 
-CRUDBase &CRUDBase::type(const FormType &value)
+CRUDBase &CRUDBase::type(const QVariant &value)
 {
-    p->dto.setType(QOrm::ModelDto::FormType(value));
-    return *this;
-}
-
-CRUDBase::FormLayout CRUDBase::layout() const
-{
-    return FormLayout(p->dto.layout());
-}
-
-CRUDBase &CRUDBase::layout(const FormLayout &value)
-{
-    p->dto.setLayout(QOrm::ModelDto::FormLayout(value));
+    p->dto.setType(value);
     return *this;
 }
 

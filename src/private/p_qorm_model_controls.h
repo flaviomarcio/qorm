@@ -3,13 +3,9 @@
 #include "../../../qstm/src/qstm_result_info.h"
 #include "./p_qorm_model_dto_host.h"
 #include "./p_qorm_model_dto_endpoints.h"
-#include "./p_qorm_model_dto_items.h"
-#include "./p_qorm_model_dto_header.h"
-#include "./p_qorm_model_dto_filter.h"
+#include "./p_qorm_model_dto_types.h"
 #include "../qorm_model_field_descriptors.h"
 #include "../qorm_types.h"
-//#include "../qorm_sql_suitable_types.h"
-//#include "./p_qorm_model_dto_endpoint.h"
 
 namespace QOrm {
 class ModelDtoControlsPvt;
@@ -41,13 +37,6 @@ public:
     //!
     virtual QStm::ResultInfo &resultInfo();
     virtual ModelDtoControls &setResultInfo(const QStm::ResultInfo&resultInfo);
-
-//    //!
-//    //! \brief descriptors
-//    //! \return
-//    //!
-//    virtual QVariantHash &descriptors();
-//    virtual ModelDtoControls &setDescriptors(const QVariantHash &values);
 
     //!
     //! \brief uuid
@@ -83,17 +72,8 @@ public:
     //! \return
     //!
     virtual FormType type() const;
-    virtual ModelDtoControls &type(const FormType &v);
-    virtual ModelDtoControls &setType(const FormType &v);
-
-
-    //!
-    //! \brief layout
-    //! \return
-    //!
-    virtual FormLayout layout() const;
-    virtual ModelDtoControls &layout(const FormLayout &v);
-    virtual ModelDtoControls &setLayout(const FormLayout &v);
+    virtual ModelDtoControls &type(const QVariant &v);
+    virtual ModelDtoControls &setType(const QVariant &v);
 
     //!
     //! \brief design

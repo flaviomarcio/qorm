@@ -174,7 +174,7 @@ void EndPoints::resetItems()
     setItems({});
 }
 
-const QVariantList EndPoints::toList()
+const QVariantList &EndPoints::toList()
 {
     return this->items();
 }

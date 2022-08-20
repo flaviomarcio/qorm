@@ -116,17 +116,6 @@ ModelReportBase &ModelReportBase::type(const FormType &value)
     return *this;
 }
 
-QOrm::ModelDto::FormLayout ModelReportBase::layout() const
-{
-    return QOrm::ModelDto::FormLayout(p->dto.layout());
-}
-
-ModelReportBase &ModelReportBase::layout(const FormLayout &value)
-{
-    p->dto.setLayout(QOrm::ModelDto::FormLayout(value));
-    return *this;
-}
-
 QUuid &ModelReportBase::uuid() const
 {
     Q_DECLARE_VU;

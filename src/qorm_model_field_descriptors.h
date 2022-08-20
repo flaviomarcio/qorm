@@ -49,6 +49,7 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     QORM_DESCRIPTOR_ORDERBY()
     QORM_MODEL_DECLARE_FORM_ENUMS
 
+    Q_PROPERTY(QByteArray className READ className CONSTANT)
     Q_PROPERTY(QString description READ description RESET resetDescription WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(ModelFieldCollection *descriptors READ descriptors WRITE setDescriptors RESET resetDescriptors NOTIFY descriptorsChanged)
     Q_PROPERTY(ModelFieldCollection *filters READ filters WRITE setFilters RESET resetFilters NOTIFY filtersChanged)
@@ -85,6 +86,12 @@ public:
     //! \brief makeDescriptorToFilters
     //!
     virtual ModelFieldDescriptors &makeDescriptorToFilters();
+
+    //!
+    //! \brief className
+    //! \return
+    //!
+    QByteArray className()const;
 
     //!
     //! \brief descriptors
@@ -169,7 +176,7 @@ public:
     EndPoints *endPoints() const;
     ModelFieldDescriptors &setEndPoints(const EndPoints *newEndPoints);
     ModelFieldDescriptors &resetEndPoints();
-    ModelFieldDescriptors &addEndPoint(const EndPoint *newEndPoint);
+    ModelFieldDescriptors &addEndPoint(EndPoint *newEndPoint);
     EndPoint &addEndPoint(const QString &name, const QVariant &values);
 
     //!

@@ -23,9 +23,6 @@ HEADERS += \
     $$PWD/src/private/p_qorm_model_dto_host.h \
     $$PWD/src/private/p_qorm_model_dto_endpoints.h \
     $$PWD/src/private/p_qorm_model_dto_endpoint.h \
-    $$PWD/src/private/p_qorm_model_dto_filter.h \
-    $$PWD/src/private/p_qorm_model_dto_header.h \
-    $$PWD/src/private/p_qorm_model_dto_items.h \
     $$PWD/src/private/p_qorm_model_dto_types.h \
     $$PWD/src/private/p_qorm_model_info.h \
     $$PWD/src/private/p_qorm_query.h \

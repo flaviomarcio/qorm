@@ -128,6 +128,11 @@ ModelFieldDescriptors &ModelFieldDescriptors::makeDescriptorToFilters()
     return *this;
 }
 
+QByteArray ModelFieldDescriptors::className() const
+{
+    return this->metaObject()->className();
+}
+
 ModelFieldDescriptor &ModelFieldDescriptors::addDescriptor(const QString &fieldName)
 {
     return p->descriptorsCollection.item(fieldName);
@@ -269,7 +274,7 @@ ModelFieldDescriptors &ModelFieldDescriptors::resetEndPoints()
     return *this;
 }
 
-ModelFieldDescriptors &ModelFieldDescriptors::addEndPoint(const EndPoint *newEndPoint)
+ModelFieldDescriptors &ModelFieldDescriptors::addEndPoint(EndPoint *newEndPoint)
 {
     auto v=p->endPoints.value(newEndPoint->uuid());
     if(v){
@@ -278,6 +283,7 @@ ModelFieldDescriptors &ModelFieldDescriptors::addEndPoint(const EndPoint *newEnd
         delete v;
     }
     newEndPoint->host()->setValues(&p->host);
+    newEndPoint->setParent(this);
     p->endPoints.insert(newEndPoint);
     emit endPointsChanged();
     return *this;
@@ -300,6 +306,7 @@ EndPoint &ModelFieldDescriptors::addEndPoint(const QString &name, const QVariant
     }
     endpoint->setName(name.toUtf8());
     endpoint->host()->setValues(&p->host);
+    p->endPoints.insert(endpoint);
     emit endPointsChanged();
     return *endpoint;
 }

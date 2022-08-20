@@ -1,6 +1,7 @@
 #include "./p_qorm_model_controls.h"
 #include "../../qstm/src/qstm_macro.h"
-#include "../../../qstm/src/qstm_meta_enum.h"
+#include "../../qstm/src/qstm_meta_enum.h"
+#include "../qorm_model_consts.h"
 #include <QStm>
 #include <QVariantHash>
 #include <QCoreApplication>
@@ -12,8 +13,6 @@ public:
     QUuid uuid;
     QString name;
     QString text;
-    QStm::MetaEnum<ModelDtoControls::FormType> type=ModelDtoControls::FormType::RegisterForm;
-    QStm::MetaEnum<ModelDtoControls::FormLayout> layout=ModelDtoControls::FormLayout::Vertical;
     QVariantHash design;
     QVariantHash sort;
     QString settingName;
@@ -38,7 +37,7 @@ public:
 
         const auto &vHeaderList=fieldDescriptors.descriptors()->list();
         const auto &vFilterList=fieldDescriptors.filters()->list();
-        const auto vEndPoints=fieldDescriptors.endPoints()->toList();
+        const auto &vEndPoints=fieldDescriptors.endPoints()->toList();
         const auto vEndPoint=fieldDescriptors.endPoint()->toHash();
 
         if(this->items.isEmpty()){
@@ -72,18 +71,17 @@ public:
                 vHeaders.append(field->toHash());
         }
 
-        vHash[vpUuid]=this->dto->uuid();
-        vHash[vpName]=this->dto->name();
-        vHash[vpTitle]=this->text;
-        vHash[vpDesign]=this->dto->design();
-        vHash[vpType]=this->type.name();
-        vHash[vpLayout]=this->layout.name();
-        vHash[vpHeaders]=vHeaders;
-        vHash[vpFilters]=vFilters;
-        vHash[vpItems]=this->items;
-        vHash[vpEndPoints]=vEndPoints;
-        vHash[vpEndPoint]=vEndPoint;
-        vHash[vpResultInfo]=this->resultInfo.toHash();
+        vHash.insert(vpUuid, this->dto->uuid());
+        vHash.insert(vpName, this->dto->name());
+        vHash.insert(vpTitle, this->text);
+        vHash.insert(vpDesign, this->dto->design());
+        vHash.insert(vpType, this->fieldDescriptors.type());
+        vHash.insert(vpHeaders, vHeaders);
+        vHash.insert(vpFilters, vFilters);
+        vHash.insert(vpItems, this->items);
+        vHash.insert(vpEndPoints, vEndPoints);
+        vHash.insert(vpEndPoint, vEndPoint);
+        vHash.insert(vpResultInfo, this->resultInfo.toHash());
 
         {
             Q_V_HASH_ITERATOR(this->sort){
@@ -93,31 +91,6 @@ public:
         }
         return vHash;
     }
-
-
-//    void setSettings(const QVariant &value)
-//    {
-//        auto dtoMap=value.toHash();
-//        QVariantHash v;
-//        if(!dtoMap.isEmpty()){
-//            auto id=this->uuid.toString().trimmed();
-//            if(!id.isEmpty() || dtoMap.contains(id)){
-//                v=dtoMap.value(id).toHash();
-//            }
-//            else if(dtoMap.contains({}) || dtoMap.contains(vpDefault)){
-//                v=dtoMap.value(vpDefault).toHash();
-//                if(v.isEmpty())
-//                    v=dtoMap.value({}).toHash();
-//            }
-//        }
-
-//        if(!v.isEmpty()){
-//            this->headers.fromHash(v.value(vpHeaders).toHash());
-//            this->filters.fromHash(v.value(vpFilters).toHash());
-//            this->items.fromList(v.value(vpItems));
-//            this->design=v.value(vpDesign).toHash();
-//        }
-//    }
 
     void clear()
     {
@@ -148,29 +121,6 @@ ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &result
     p->resultInfo.fromHash(resultInfo.toHash());
     return *this;
 }
-
-//QVariantHash &ModelDtoControls::descriptors()
-//{
-//    return p->descriptors;
-//}
-
-//ModelDtoControls &ModelDtoControls::setDescriptors(const QVariantHash &values)
-//{
-//    auto descriptors=values.value(__descriptors).toHash();
-//    auto filters=values.value(__filters).toHash();
-//    p->descriptors=descriptors;
-//    auto vHeaders=descriptors.value(vpHeaders).toList();
-//    auto vFilters=descriptors.value(vpFilters).toList();
-//    p->type=descriptors.value(vpType);
-//    p->layout=descriptors.value(vpLayout);
-//    p->design=descriptors.value(vpDesign).toHash();
-//    p->headers.clear();
-//    for (auto &v : vHeaders)
-//        p->headers.value(v.toHash());
-//    for (auto &v : vFilters)
-//        p->filters.value(v.toHash());
-//    return *this;
-//}
 
 QUuid &ModelDtoControls::uuid() const
 {
@@ -211,35 +161,20 @@ ModelDtoControls &ModelDtoControls::setName(const QVariant &v)
 
 ModelDtoControls::FormType ModelDtoControls::type() const
 {
-    return p->type.type();
+    QStm::MetaEnum<ModelDtoControls::FormType> e;
+    e=p->fieldDescriptors.type();
+    return e.type();
 }
 
-ModelDtoControls &ModelDtoControls::type(const FormType &v)
+ModelDtoControls &ModelDtoControls::type(const QVariant &v)
 {
-    p->type=v;
+    p->fieldDescriptors.setType(v);
     return *this;
 }
 
-ModelDtoControls &ModelDtoControls::setType(const FormType &v)
+ModelDtoControls &ModelDtoControls::setType(const QVariant &v)
 {
-    p->type=v;
-    return *this;
-}
-
-ModelDtoControls::FormLayout ModelDtoControls::layout() const
-{
-    return p->layout.type();
-}
-
-ModelDtoControls &ModelDtoControls::layout(const FormLayout &v)
-{
-    p->layout=v;
-    return *this;
-}
-
-ModelDtoControls &ModelDtoControls::setLayout(const FormLayout &v)
-{
-    p->layout=v;
+    p->fieldDescriptors.setType(v);
     return *this;
 }
 

@@ -100,7 +100,7 @@ public:
     //! \brief toList
     //! \return
     //!
-    const QVariantList toList();
+    const QVariantList &toList();
 
     //!
     //! \brief toHash
