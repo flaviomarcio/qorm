@@ -63,7 +63,7 @@ public:
     //! \brief name
     //! \return
     //!
-    virtual QString name() const;
+    virtual QString &name() const;
 
     //!
     //! \brief name
@@ -160,13 +160,6 @@ public:
     virtual ModelDto &setSort(const QVariant &v);
 
     //!
-    //! \brief settings
-    //! \param setting
-    //! \return
-    //!
-    virtual ModelDto &settings(const QVariant &setting);
-
-    //!
     //! \brief controls
     //! \return
     //!
@@ -176,19 +169,19 @@ public:
     //! \brief headers
     //! \return
     //!
-    virtual ModelDtoHeaders<ModelDtoControls> &headers();
+    virtual ModelFieldCollection &headers();
 
     //!
     //! \brief filters
     //! \return
     //!
-    virtual ModelDtoFilters<ModelDtoControls> &filters();
+    virtual ModelFieldCollection &filters();
 
     //!
     //! \brief Host
     //! \return
     //!
-    virtual Host &host();
+    virtual Host &host()const;
 
     //!
     //! \brief Host
@@ -201,13 +194,13 @@ public:
     //! \brief EndPoints
     //! \return
     //!
-    virtual EndPoints &endPoints();
+    virtual EndPoints &endPoints()const;
 
     //!
     //! \brief items
     //! \return
     //!
-    virtual ModelDtoItems<ModelDtoControls> &items();
+    virtual const QVariantList &items() const;
 
     //!
     //! \brief items

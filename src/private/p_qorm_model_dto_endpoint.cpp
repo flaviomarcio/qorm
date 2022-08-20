@@ -117,7 +117,7 @@ void EndPoint::addAuthBearer(const QByteArray &credentials) const
     p->host.headers().insert(n.HEADER_AUTHORIZATION, auth.join(','));
 }
 
-const QUuid &EndPoint::uuid()
+const QUuid &EndPoint::uuid()const
 {
     if(p->uuid.isNull()){
         Q_DECLARE_VU;
@@ -140,7 +140,7 @@ void EndPoint::resetUuid()
     setUuid({});
 }
 
-Host *EndPoint::host()
+Host *EndPoint::host()const
 {
     return &p->host;
 }

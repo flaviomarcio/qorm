@@ -54,18 +54,19 @@ HEADERS += \
     $$PWD/src/qorm_connection_pool.h \
     $$PWD/src/qorm_connection_setting.h \
     $$PWD/src/qorm_model_consts.h \
-    $$PWD/src/qorm_model_descriptor_field.h \
     $$PWD/src/qorm_model_dto_options.h \
     $$PWD/src/qorm.h \
     $$PWD/src/qorm_const.h \
     $$PWD/src/qorm_controller.h \
     $$PWD/src/qorm_dao.h \
     $$PWD/src/qorm_global.h \
-    $$PWD/src/qorm_model_descriptor.h \
     $$PWD/src/qorm_model.h \
     $$PWD/src/qorm_model_crud_block.h \
     $$PWD/src/qorm_model_crud_types.h \
     $$PWD/src/qorm_model_crud.h \
+    $$PWD/src/qorm_model_field_collection.h \
+    $$PWD/src/qorm_model_field_descriptor.h \
+    $$PWD/src/qorm_model_field_descriptors.h \
     $$PWD/src/qorm_model_macro.h \
     $$PWD/src/qorm_model_report.h \
     $$PWD/src/qorm_model_dao.h \
@@ -121,14 +122,15 @@ SOURCES += \
     $$PWD/src/qorm_connection_notify.cpp \
     $$PWD/src/qorm_connection_pool.cpp \
     $$PWD/src/qorm_connection_setting.cpp \
-    $$PWD/src/qorm_model_descriptor_field.cpp \
     $$PWD/src/qorm_model_dto_options.cpp \
     $$PWD/src/qorm_controller.cpp \
     $$PWD/src/qorm_dao.cpp \
-    $$PWD/src/qorm_model_descriptor.cpp \
     $$PWD/src/qorm_model_crud_block.cpp \
     $$PWD/src/qorm_model.cpp \
     $$PWD/src/qorm_model_dto.cpp \
+    $$PWD/src/qorm_model_field_collection.cpp \
+    $$PWD/src/qorm_model_field_descriptor.cpp \
+    $$PWD/src/qorm_model_field_descriptors.cpp \
     $$PWD/src/qorm_object_db.cpp \
     $$PWD/src/qorm_query.cpp \
     $$PWD/src/qorm_script_exec.cpp \

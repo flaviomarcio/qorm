@@ -4,7 +4,7 @@
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_const.h"
 #include "../qorm_model.h"
-#include "../qorm_model_descriptor.h"
+#include "../qorm_model_field_descriptors.h"
 #include "../qorm_macro.h"
 #include "../qorm_model_macro.h"
 #include "../qorm_startup.h"
@@ -18,7 +18,7 @@ Q_GLOBAL_STATIC(HashModelInfo, __static_model_info)
 class ModelInfoPvt{
 public:
     QUuid uuid;
-    ModelDescriptor *descriptor=nullptr;
+    ModelFieldDescriptors *descriptor=nullptr;
     QMetaObject staticMetaObjectModel;
     QMetaObject staticMetaObjectDescriptor;
     QHash<QString, QMetaMethod> methods;
@@ -29,6 +29,7 @@ public:
     QHash<QString, QMetaProperty> propertyByFieldName;
     QHash<QString, QMetaProperty> propertyByPropertyName;
     QHash<QString, QMetaProperty> propertyFiltrable;
+    QHash<QString, QMetaProperty> propertyFiltrableByLike;
     QHash<QString, QMetaProperty> propertyInfo;
     QHash<QString, QMetaProperty> propertyPK;
     QHash<QString, QMetaProperty> propertyForeignKeysPK;
@@ -38,10 +39,7 @@ public:
     QHash<QString,QString> propertyTableVsShort;
     QHash<QString,QString> propertyShortVsTable;
     QHash<QString,QString> propertyShortFKVsShortPK;
-    QVariantMap propertyDescriptors;
-    QVariantList propertyEndPoints;
-    QVariantHash propertyEndPoint;
-    QVariantHash propertySort;
+    QVariantHash propertyDescriptors;
     QStringList propertyList;
     QStringList propertyTableList;
     QVariantHash propertyDeactivateField;
@@ -344,12 +342,10 @@ public:
         ____copy(propertyByFieldName    );
         ____copy(propertyByPropertyName );
         ____copy(propertyFiltrable      );
+        ____copy(propertyFiltrableByLike);
         ____copy(propertyInfo           );
         ____copy(propertyTableVsShort   );
         ____copy(propertyShortVsTable   );
-        ____copy(propertyEndPoints      );
-        ____copy(propertyEndPoint       );
-        ____copy(propertySort           );
         ____copy(propertyList           );
         ____copy(propertyTableList      );
         ____copy(propertyDeactivateField);
@@ -390,9 +386,6 @@ public:
         ____clear(propertyInfo           );
         ____clear(propertyTableVsShort   );
         ____clear(propertyShortVsTable   );
-        ____clear(propertyEndPoints      );
-        ____clear(propertyEndPoint       );
-        ____clear(propertySort           );
         ____clear(propertyList           );
         ____clear(propertyTableList      );
         ____clear(propertyDeactivateField);
@@ -698,14 +691,14 @@ public:
             auto pvt=modelInfo->p;
 
             auto metaObject=pvt->staticMetaObjectDescriptor;
-            if(!metaObject.inherits(&ModelDescriptor::staticMetaObject))//SE HERDAR de QOrm::ModelDescriptor
+            if(!metaObject.inherits(&ModelFieldDescriptors::staticMetaObject))//SE HERDAR de QOrm::ModelFieldDescriptors
                 return;
 
             auto obj=metaObject.newInstance(Q_ARG(QObject*, nullptr));
             if(obj==nullptr)
                 return;
 
-            pvt->descriptor=dynamic_cast<ModelDescriptor*>(obj);
+            pvt->descriptor=dynamic_cast<ModelFieldDescriptors*>(obj);
 
             if(pvt->descriptor==nullptr){
                 pvt->propertyDescriptors.clear();
@@ -716,10 +709,7 @@ public:
             pvt->descriptor->descriptorsInit();
             if(pvt->description.isEmpty())
                 pvt->description=pvt->descriptor->description();
-            pvt->propertyEndPoints=pvt->descriptor->endPoints().toList();
-            pvt->propertyEndPoint=pvt->descriptor->endPoint().toHash();
-            pvt->propertyDescriptors=pvt->descriptor->descriptors();
-            pvt->propertySort=pvt->descriptor->sort();
+            pvt->propertyDescriptors=pvt->descriptor->toHash();
         };
 
         QHashIterator <QByteArray, QOrm::ModelInfo*> i(*__static_model_info);
@@ -852,7 +842,7 @@ ModelInfo &ModelInfo::modelInfoInit(const QMetaObject &staticMetaObject)
     return ModelInfoPvt::static_initMetaObject(staticMetaObject);
 }
 
-const ModelDescriptor *ModelInfo::descritor() const
+const ModelFieldDescriptors *ModelInfo::descritor() const
 {
     return p->descriptor;
 }
@@ -892,6 +882,11 @@ QMetaProperty ModelInfo::propertyByFieldName(const QString &fieldName) const
 QHash<QString, QMetaProperty> &ModelInfo::propertyFiltrable() const
 {
     return p->propertyFiltrable;
+}
+
+QHash<QString, QMetaProperty> &ModelInfo::propertyFiltrableByLike() const
+{
+    return p->propertyFiltrableByLike;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyByPropertyName() const
@@ -956,24 +951,9 @@ QHash<QString, QMetaProperty> &ModelInfo::propertyForeignKeys() const
     return p->propertyForeignKeys;
 }
 
-QVariantMap ModelInfo::propertyDescriptors() const
+QVariantHash ModelInfo::propertyDescriptors() const
 {
     return p->propertyDescriptors;
-}
-
-QVariantList ModelInfo::propertyEndPoints() const
-{
-    return p->propertyEndPoints;
-}
-
-QVariantHash ModelInfo::propertyEndPoint() const
-{
-    return p->propertyEndPoint;
-}
-
-QVariantHash ModelInfo::propertySort() const
-{
-    return p->propertySort;
 }
 
 QVariantHash ModelInfo::propertyParserToTable(const QVariant &v) const

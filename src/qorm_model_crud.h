@@ -34,8 +34,8 @@ public:
     explicit CRUD(const QVariant &crudBody, QObject *parent = nullptr)
         :
           PrivateQOrm::CRUDBase{crudBody, parent}
-        , p_dao(this)
-        , p_model(this)
+        , p_dao{this}
+        , p_model{this}
     {
         this->init();
     }
@@ -193,10 +193,10 @@ protected:
                 QHashIterator<QString, QVariant> i(vHash);
                 while (i.hasNext()) {
                     i.next();
-                    auto header=this->p_dto.headers().get(i.key());
-                    if(header==nullptr)
+                    const auto header=&this->p_dto.headers().item(i.key());
+                    if(header)
                         continue;
-                    auto vHash=header->filtrableStrategy();
+                    auto vHash=header->filtrableStrategy().toHash();
                     auto keywordOperator=vHash.value(__operator);
                     QString format=vHash.value(__format).toString().trimmed();
                     QVariant v_value;

@@ -13,7 +13,7 @@
 namespace QOrm {
 class ModelInfoPvt;
 class Model;
-class ModelDescriptor;
+class ModelFieldDescriptors;
 class Q_ORM_EXPORT ModelInfo:public QVariant
 {
     friend class ModelInfoPvt;
@@ -71,7 +71,7 @@ public:
     //! \brief descritpr
     //! \return
     //!
-    const ModelDescriptor *descritor()const;
+    const ModelFieldDescriptors *descritor()const;
 
     //!
     //! \brief modelName
@@ -125,6 +125,12 @@ public:
     //! \return
     //!
     QHash<QString, QMetaProperty> &propertyFiltrable() const;
+
+    //!
+    //! \brief propertyFiltrableByLike
+    //! \return
+    //!
+    QHash<QString, QMetaProperty> &propertyFiltrableByLike() const;
 
     //!
     //! \brief propertyByPropertyName
@@ -191,25 +197,7 @@ public:
     //! \brief propertyDescriptors
     //! \return
     //!
-    QVariantMap propertyDescriptors() const;
-
-    //!
-    //! \brief propertyEndPoints
-    //! \return
-    //!
-    QVariantList propertyEndPoints() const;
-
-    //!
-    //! \brief propertyEndPoint
-    //! \return
-    //!
-    QVariantHash propertyEndPoint() const;
-
-    //!
-    //! \brief propertySort
-    //! \return
-    //!
-    QVariantHash propertySort() const;
+    QVariantHash propertyDescriptors() const;
 
     //!
     //! \brief propertyParserToTable

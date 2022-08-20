@@ -16,7 +16,7 @@
 #include "./src/qorm_model_crud_block.h"
 #include "./src/qorm_model_crud_types.h"
 #include "./src/qorm_model_dao.h"
-#include "./src/qorm_model_descriptor.h"
+#include "./src/qorm_model_field_descriptors.h"
 #include "./src/qorm_model_dto.h"
 #include "./src/qorm_model_dto_options.h"
 #include "./src/qorm_model_macro.h"

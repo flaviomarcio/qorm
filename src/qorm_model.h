@@ -10,7 +10,7 @@
 #include "./qorm_global.h"
 #include "./qorm_object.h"
 #include "./qorm_model_macro.h"
-#include "./qorm_model_descriptor.h"
+#include "./qorm_model_field_descriptors.h"
 #include "./qorm_sql_suitable_types.h"
 #include "./private/p_qorm_model_info.h"
 
@@ -27,7 +27,7 @@ class Q_ORM_EXPORT Model:public QOrm::Object
     Q_OBJECT
 public:
     QORM_MODEL(QOrm::Model)
-    QORM_DECLARE_DESCRIPTOR(ModelDescriptor)
+    QORM_DECLARE_DESCRIPTOR(ModelFieldDescriptors)
     QORM_DECLARE_MODEL_DESCRIPTION()
     QORM_DECLARE_TABLE_SCHEMA()
     QORM_DECLARE_TABLE(,_,)

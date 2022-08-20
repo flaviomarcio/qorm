@@ -2,6 +2,7 @@
 #include "../qorm_model_dto.h"
 #include <QJsonDocument>
 #include "./p_qorm_model_crud_body.h"
+#include "./p_qorm_sql_suitable_parser_item.h"
 //#include "../qorm_query.h"
 //#include "../qorm_transaction_scope.h"
 
@@ -38,6 +39,48 @@ public:
         this->parent=parent;
         dto.setType(QOrm::ModelDto::FormType(CRUDBase::defaultType()));
         dto.setLayout(QOrm::ModelDto::FormLayout(CRUDBase::defaultLayout()));
+    }
+
+    QVariant parserSearch(const QVariant &v)
+    {
+        if(!v.isValid() || v.isNull())
+            return {};
+
+        QVariantList vList;
+        switch (v.typeId()) {
+        case QMetaType::QVariantList:
+            vList=v.toList();
+            break;
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+            vList.append(v);
+            break;
+        default:
+            return v;
+        }
+        if(vList.isEmpty())
+            return {};
+
+        //this.parent->dao()
+
+        //const auto &modelInfo = this->parent->modelInfo();
+        for(auto&v:vList){
+            auto vHash=v.toHash();
+            QHashIterator <QString, QVariant> i(vHash);
+            while(i.hasNext()){
+                i.next();
+                auto vA=QOrm::SqlParserItem::from(i.key());
+                auto vB=QOrm::SqlParserItem::from(i.value());
+
+                if(vA.isValue()){
+
+                }
+
+            }
+        }
+
+        return vList.size()==1?vList.first():vList;
+
     }
 
     auto &doModelAction(const QString &methodName)

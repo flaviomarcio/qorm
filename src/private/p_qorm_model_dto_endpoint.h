@@ -80,7 +80,7 @@ public:
     //! \brief uuid
     //! \return
     //!
-    const QUuid &uuid();
+    const QUuid &uuid() const;
     void setUuid(const QUuid &newUuid);
     void resetUuid();
 
@@ -88,7 +88,7 @@ public:
     //! \brief host
     //! \return
     //!
-    Host *host();
+    Host *host() const;
     void setHost(Host *newHost);
     void resetHost();
 

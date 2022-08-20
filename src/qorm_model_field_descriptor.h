@@ -4,14 +4,15 @@
 #include "./qorm_global.h"
 
 namespace QOrm {
-class ModelDescriptorFieldPvt;
-class Q_ORM_EXPORT ModelDescriptorField : public QStm::ObjectWrapper
+class ModelFieldDescriptorPvt;
+class Q_ORM_EXPORT ModelFieldDescriptor : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    Q_PROPERTY(QVariant name READ name WRITE name RESET resetName NOTIFY nameChanged)
-    Q_PROPERTY(QVariant title READ title WRITE title RESET resetTitle NOTIFY titleChanged)
-    Q_PROPERTY(QVariant inputMask READ inputMask WRITE inputMask RESET resetInputMask NOTIFY inputMaskChanged)
-    Q_PROPERTY(QVariant primaryKey READ primaryKey WRITE primaryKey RESET resetPrimaryKey NOTIFY primaryKeyChanged)
+    QSTM_OBJECT_WRAPPER(ModelFieldDescriptor)
+    Q_PROPERTY(QString field READ field WRITE field RESET resetField NOTIFY fieldChanged)
+    Q_PROPERTY(QString title READ title WRITE title RESET resetTitle NOTIFY titleChanged)
+    Q_PROPERTY(QString inputMask READ inputMask WRITE inputMask RESET resetInputMask NOTIFY inputMaskChanged)
+    Q_PROPERTY(bool primaryKey READ primaryKey WRITE primaryKey RESET resetPrimaryKey NOTIFY primaryKeyChanged)
     Q_PROPERTY(QVariant inputType READ inputType WRITE inputType RESET resetInputType NOTIFY inputTypeChanged)
     Q_PROPERTY(QVariant inputTextSearch READ inputTextSearch WRITE inputTextSearch RESET resetInputTextSearch NOTIFY inputTextSearchChanged)
     Q_PROPERTY(QVariant length READ length WRITE length RESET resetLength NOTIFY lengthChanged)
@@ -36,226 +37,226 @@ class Q_ORM_EXPORT ModelDescriptorField : public QStm::ObjectWrapper
     Q_PROPERTY(QVariant items READ items WRITE items RESET resetItems NOTIFY itemsChanged)
     Q_PROPERTY(QVariant inputLink READ inputLink WRITE inputLink RESET resetInputLink NOTIFY inputLinkChanged)
 public:
-    explicit ModelDescriptorField(QObject *parent = nullptr);
+    explicit ModelFieldDescriptor(QObject *parent = nullptr);
 
     //!
-    //! \brief name
+    //! \brief field
     //! \return
     //!
-    const QVariant &name() const;
-    ModelDescriptorField &name(const QVariant &newName);
-    ModelDescriptorField &resetName();
+    const QString &field() const;
+    ModelFieldDescriptor &field(const QString &newField);
+    ModelFieldDescriptor &resetField();
 
     //!
     //! \brief title
     //! \return
     //!
-    const QVariant &title() const;
-    ModelDescriptorField &title(const QVariant &newTitle);
-    ModelDescriptorField &resetTitle();
+    const QString &title() const;
+    ModelFieldDescriptor &title(const QString &newTitle);
+    ModelFieldDescriptor &resetTitle();
 
     //!
     //! \brief inputMask
     //! \return
     //!
-    const QVariant &inputMask() const;
-    ModelDescriptorField &inputMask(const QVariant &newInputMask);
-    ModelDescriptorField &resetInputMask();
+    const QString &inputMask() const;
+    ModelFieldDescriptor &inputMask(const QString &newInputMask);
+    ModelFieldDescriptor &resetInputMask();
 
     //!
     //! \brief primaryKey
     //! \return
     //!
-    const QVariant &primaryKey() const;
-    ModelDescriptorField &primaryKey(const QVariant &newPrimaryKey);
-    ModelDescriptorField &resetPrimaryKey();
+    bool primaryKey() const;
+    ModelFieldDescriptor &primaryKey(const bool newPrimaryKey);
+    ModelFieldDescriptor &resetPrimaryKey();
 
     //!
     //! \brief inputType
     //! \return
     //!
     const QVariant &inputType() const;
-    ModelDescriptorField &inputType(const QVariant &newInputType);
-    ModelDescriptorField &resetInputType();
+    ModelFieldDescriptor &inputType(const QVariant &newInputType);
+    ModelFieldDescriptor &resetInputType();
 
     //!
     //! \brief inputTextSearch
     //! \return
     //!
     const QVariant &inputTextSearch() const;
-    ModelDescriptorField &inputTextSearch(const QVariant &newInputTextSearch);
-    ModelDescriptorField &resetInputTextSearch();
+    ModelFieldDescriptor &inputTextSearch(const QVariant &newInputTextSearch);
+    ModelFieldDescriptor &resetInputTextSearch();
 
     //!
     //! \brief length
     //! \return
     //!
     const QVariant &length() const;
-    ModelDescriptorField &length(const QVariant &newLength);
-    ModelDescriptorField &resetLength();
+    ModelFieldDescriptor &length(const QVariant &newLength);
+    ModelFieldDescriptor &resetLength();
 
     //!
     //! \brief dataType
     //! \return
     //!
     const QVariant &dataType() const;
-    ModelDescriptorField &dataType(const QVariant &newDataType);
-    ModelDescriptorField &resetDataType();
+    ModelFieldDescriptor &dataType(const QVariant &newDataType);
+    ModelFieldDescriptor &resetDataType();
 
     //!
     //! \brief defaultValue
     //! \return
     //!
     const QVariant &defaultValue() const;
-    ModelDescriptorField &defaultValue(const QVariant &newDefaultValue);
-    ModelDescriptorField &resetDefaultValue();
+    ModelFieldDescriptor &defaultValue(const QVariant &newDefaultValue);
+    ModelFieldDescriptor &resetDefaultValue();
 
     //!
     //! \brief defaultSelect
     //! \return
     //!
     const QVariant &defaultSelect() const;
-    ModelDescriptorField &defaultSelect(const QVariant &newDefaultSelect);
-    ModelDescriptorField &resetDefaultSelect();
+    ModelFieldDescriptor &defaultSelect(const QVariant &newDefaultSelect);
+    ModelFieldDescriptor &resetDefaultSelect();
 
     //!
     //! \brief obrigatory
     //! \return
     //!
     bool obrigatory() const;
-    ModelDescriptorField &obrigatory(bool newObrigatory);
-    ModelDescriptorField &resetObrigatory();
+    ModelFieldDescriptor &obrigatory(bool newObrigatory);
+    ModelFieldDescriptor &resetObrigatory();
 
     //!
     //! \brief align
     //! \return
     //!
     const QVariant &align() const;
-    ModelDescriptorField &align(const QVariant &newAlign);
-    ModelDescriptorField &resetAlign();
+    ModelFieldDescriptor &align(const QVariant &newAlign);
+    ModelFieldDescriptor &resetAlign();
 
     //!
     //! \brief order
     //! \return
     //!
     int order() const;
-    ModelDescriptorField &order(int newOrder);
-    ModelDescriptorField &resetOrder();
+    ModelFieldDescriptor &order(int newOrder);
+    ModelFieldDescriptor &resetOrder();
 
     //!
     //! \brief displayer
     //! \return
     //!
     bool displayer() const;
-    ModelDescriptorField &displayer(bool newDisplayer);
-    ModelDescriptorField &resetDisplayer();
+    ModelFieldDescriptor &displayer(bool newDisplayer);
+    ModelFieldDescriptor &resetDisplayer();
 
     //!
     //! \brief displayText
     //! \return
     //!
     bool displayText() const;
-    ModelDescriptorField &displayText(bool newDisplayText);
-    ModelDescriptorField &resetDisplayText();
+    ModelFieldDescriptor &displayText(bool newDisplayText);
+    ModelFieldDescriptor &resetDisplayText();
 
     //!
     //! \brief width
     //! \return
     //!
     const QVariant &width() const;
-    ModelDescriptorField &width(const QVariant &newWidth);
-    ModelDescriptorField &resetWidth();
+    ModelFieldDescriptor &width(const QVariant &newWidth);
+    ModelFieldDescriptor &resetWidth();
 
     //!
     //! \brief color
     //! \return
     //!
     const QVariant &color() const;
-    ModelDescriptorField &color(const QVariant &newColor);
-    ModelDescriptorField &resetColor();
+    ModelFieldDescriptor &color(const QVariant &newColor);
+    ModelFieldDescriptor &resetColor();
 
     //!
     //! \brief font
     //! \return
     //!
     const QVariant &font() const;
-    ModelDescriptorField &font(const QVariant &newFont);
-    ModelDescriptorField &resetFont();
+    ModelFieldDescriptor &font(const QVariant &newFont);
+    ModelFieldDescriptor &resetFont();
 
     //!
     //! \brief filtrable
     //! \return
     //!
     bool filtrable() const;
-    ModelDescriptorField &filtrable(bool newFiltrable);
-    ModelDescriptorField &resetFiltrable();
+    ModelFieldDescriptor &filtrable(bool newFiltrable);
+    ModelFieldDescriptor &resetFiltrable();
 
     //!
     //! \brief filtrableStrategy
     //! \return
     //!
-    const QVariant &filtrableStrategy() const;
-    ModelDescriptorField &filtrableStrategy(const QVariant &newFiltrableStrategy);
-    ModelDescriptorField &resetFiltrableStrategy();
+    QVariant &filtrableStrategy() const;
+    ModelFieldDescriptor &filtrableStrategy(const QVariant &newFiltrableStrategy);
+    ModelFieldDescriptor &resetFiltrableStrategy();
 
     //!
     //! \brief editable
     //! \return
     //!
     bool editable() const;
-    ModelDescriptorField &editable(bool newEditable);
-    ModelDescriptorField &resetEditable();
+    ModelFieldDescriptor &editable(bool newEditable);
+    ModelFieldDescriptor &resetEditable();
 
     //!
     //! \brief visible
     //! \return
     //!
     bool visible() const;
-    ModelDescriptorField &visible(bool newVisible);
-    ModelDescriptorField &resetVisible();
+    ModelFieldDescriptor &visible(bool newVisible);
+    ModelFieldDescriptor &resetVisible();
 
     //!
     //! \brief sortable
     //! \return
     //!
     bool sortable() const;
-    ModelDescriptorField &sortable(bool newSortable);
-    ModelDescriptorField &resetSortable();
+    ModelFieldDescriptor &sortable(bool newSortable);
+    ModelFieldDescriptor &resetSortable();
 
     //!
     //! \brief readOnly
     //! \return
     //!
     bool readOnly() const;
-    ModelDescriptorField &readOnly(bool newReadOnly);
-    ModelDescriptorField &resetReadOnly();
+    ModelFieldDescriptor &readOnly(bool newReadOnly);
+    ModelFieldDescriptor &resetReadOnly();
 
     //!
     //! \brief output
     //! \return
     //!
     const QVariant &output() const;
-    ModelDescriptorField &output(const QVariant &newOutput);
-    ModelDescriptorField &resetOutput();
+    ModelFieldDescriptor &output(const QVariant &newOutput);
+    ModelFieldDescriptor &resetOutput();
 
     //!
     //! \brief items
     //! \return
     //!
     const QVariant &items() const;
-    ModelDescriptorField &items(const QVariant &newItems);
-    ModelDescriptorField &resetItems();
+    ModelFieldDescriptor &items(const QVariant &newItems);
+    ModelFieldDescriptor &resetItems();
 
     //!
     //! \brief inputLink
     //! \return
     //!
     const QVariant &inputLink() const;
-    ModelDescriptorField &inputLink(const QVariant &newInputLink);
-    ModelDescriptorField &resetInputLink();
+    ModelFieldDescriptor &inputLink(const QVariant &newInputLink);
+    ModelFieldDescriptor &resetInputLink();
 
 signals:
-    void nameChanged();
+    void fieldChanged();
 
     void titleChanged();
 
@@ -312,34 +313,7 @@ signals:
     void inputLinkChanged();
 
 private:
-    QVariant _name;
-    QVariant _title;
-    QVariant _inputMask;
-    QVariant _primaryKey;
-    QVariant _inputType;
-    QVariant _inputTextSearch;
-    QVariant _length;
-    QVariant _dataType;
-    QVariant _defaultValue;
-    QVariant _defaultSelect;
-    bool _obrigatory;
-    QVariant _align;
-    int _order=0;
-    bool _displayer;
-    bool _displayText;
-    QVariant _width;
-    QVariant _color;
-    QVariant _font;
-    bool _filtrable;
-    QVariant _filtrableStrategy;
-    bool _editable;
-    bool _visible;
-    bool _sortable;
-    bool _readOnly;
-    QVariant _output;
-    QVariant _items;
-    QVariant _inputLink;
-
+    ModelFieldDescriptorPvt *p=nullptr;
 };
 
 } // namespace QOrm

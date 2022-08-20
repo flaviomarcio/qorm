@@ -6,6 +6,7 @@
 #include "./p_qorm_model_dto_items.h"
 #include "./p_qorm_model_dto_header.h"
 #include "./p_qorm_model_dto_filter.h"
+#include "../qorm_model_field_descriptors.h"
 #include "../qorm_types.h"
 //#include "../qorm_sql_suitable_types.h"
 //#include "./p_qorm_model_dto_endpoint.h"
@@ -29,18 +30,24 @@ public:
     Q_INVOKABLE explicit ModelDtoControls(QObject *parent = nullptr);
 
     //!
+    //! \brief fields
+    //! \return
+    //!
+    ModelFieldDescriptors &fields();
+
+    //!
     //! \brief resultInfo
     //! \return
     //!
     virtual QStm::ResultInfo &resultInfo();
     virtual ModelDtoControls &setResultInfo(const QStm::ResultInfo&resultInfo);
 
-    //!
-    //! \brief descriptors
-    //! \return
-    //!
-    virtual QVariantMap &descriptors();
-    virtual void setDescriptors(const QVariantMap &descriptors);
+//    //!
+//    //! \brief descriptors
+//    //! \return
+//    //!
+//    virtual QVariantHash &descriptors();
+//    virtual ModelDtoControls &setDescriptors(const QVariantHash &values);
 
     //!
     //! \brief uuid
@@ -54,7 +61,7 @@ public:
     //! \brief name
     //! \return
     //!
-    virtual QString name() const;
+    virtual QString &name() const;
 
     //!
     //! \brief name
@@ -92,7 +99,7 @@ public:
     //! \brief design
     //! \return
     //!
-    virtual QVariantHash design()const;
+    virtual QVariantHash &design()const;
     virtual ModelDtoControls &design(const QVariant &v);
     virtual ModelDtoControls &setDesign(const QVariant &v);
 
@@ -100,7 +107,7 @@ public:
     //! \brief sort
     //! \return
     //!
-    virtual QVariantHash sort() const;
+    virtual QVariantHash &sort() const;
     virtual ModelDtoControls &sort(const QVariant &v);
     virtual ModelDtoControls &setSort(const QVariant &v);
 
@@ -108,15 +115,8 @@ public:
     //! \brief text
     //! \return
     //!
-    virtual QString text()const;
+    virtual QString &text()const;
     virtual ModelDtoControls &text(const QVariant &v);
-
-    //!
-    //! \brief settings
-    //! \param setting
-    //! \return
-    //!
-    virtual ModelDtoControls &settings(const QVariant &setting);
 
     //!
     //! \brief outPutStyle
@@ -142,13 +142,13 @@ public:
     //! \brief headers
     //! \return
     //!
-    virtual ModelDtoHeaders<ModelDtoControls> &headers();
+    virtual ModelFieldCollection &headers();
 
     //!
     //! \brief filters
     //! \return
     //!
-    virtual ModelDtoFilters<ModelDtoControls> &filters();
+    virtual ModelFieldCollection &filters();
 
     //!
     //! \brief host
@@ -166,13 +166,13 @@ public:
     //! \brief endpoint
     //! \return
     //!
-    virtual EndPoint &endpoint();
+    virtual EndPoint &endPoint();
 
     //!
     //! \brief items
     //! \return
     //!
-    virtual ModelDtoItems<ModelDtoControls> &items();
+    virtual const QVariantList &items() const;
     virtual ModelDtoControls &items(const QVariant &v);
     virtual ModelDtoControls &items(const ResultValue &lr);
 

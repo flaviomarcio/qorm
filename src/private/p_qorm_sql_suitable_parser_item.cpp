@@ -3,42 +3,50 @@
 
 namespace QOrm{
 
+static const auto __value="value";
+static const auto __info="info";
+static const auto __title="title";
+static const auto __uuid="uuid";
+static const auto __defaultValue="defaultValue";
+static const auto __typeId="typeId";
+
+
 SqlParserItem::SqlParserItem():SqlParserCommand{}
 {
     auto map=this->toHash();
-    map.insert(QStringLiteral("info"),KeywordObjectInfo::koiObject);
+    map.insert(__info,KeywordObjectInfo::koiObject);
     this->init(map);
 }
 
 SqlParserItem::SqlParserItem(const QVariant &value):SqlParserCommand{}
 {
     auto map=this->toHash();
-    map.insert(QStringLiteral("info"),KeywordObjectInfo::koiObject);
-    map.insert(QStringLiteral("value"),value);
+    map.insert(__info,KeywordObjectInfo::koiObject);
+    map.insert(__value,value);
     this->init(map);
 }
 
 SqlParserItem::SqlParserItem(const QVariant &value, const QVariant &title, const KeywordObjectInfo &info):SqlParserCommand{}
 {
     auto map=this->toHash();
-    map.insert(QStringLiteral("info"),info);
-    map.insert(QStringLiteral("value"),value);
+    map.insert(__info,info);
+    map.insert(__value,value);
     if(title.isValid() && !title.isNull())
-        map.insert(QStringLiteral("title"),title);
+        map.insert(__title,title);
     this->init(map);
 }
 
 void SqlParserItem::init(QVariantHash &map)
 {
     this->_____zzzzz_uuid=this->sequence_zzzz();//QUuid::createUuidV5(QUuid::createUuid(),QString::number(++staticInit).toUtf8());
-    map.insert(QStringLiteral("uuid"), this->_____zzzzz_uuid);
+    map.insert(__uuid, this->_____zzzzz_uuid);
     this->setValue(map);
 }
 
 SqlParserItem SqlParserItem::setDefaultValue(const QVariant &defaultValue) const
 {//nao deve passar referencia[&] ou vai alterar objeto em memoria
     auto map=this->toMap();
-    map.insert(QStringLiteral("defaultValue"), defaultValue);
+    map.insert(__defaultValue, defaultValue);
     auto v=QVariant(map);
     auto item=SqlParserItem::from(v);
     return item;
@@ -53,7 +61,7 @@ QVariantMap SqlParserItem::toMap() const
 {
     auto map=QVariant::toMap();
     if(this->_____zzzzz_uuid>0)
-        map.insert(QStringLiteral("uuid"),QString::number(this->_____zzzzz_uuid).rightJustified(11,'0'));
+        map.insert(__uuid,QString::number(this->_____zzzzz_uuid).rightJustified(11,'0'));
     return map;
 }
 
@@ -61,7 +69,7 @@ QString SqlParserItem::toFormatParameter(SqlSuitableKeyWord &parser) const
 {
     auto map=this->toMap();
     auto v=this->value();
-    auto defValue=map.value(QStringLiteral("defaultValue"));
+    auto defValue=map.value(__defaultValue);
     if(this->info()==KeywordObjectInfo::koiValue){
         if(defValue.isValid() && !defValue.isNull() && v.isNull())
             return parser.formatValue(defValue);
@@ -98,9 +106,9 @@ const SqlParserItem SqlParserItem::from(const QVariant &v)
     case QMetaType::QVariantMap:
     {
         auto vMap=vValue.toMap();
-        auto typeId=vMap.value(QStringLiteral("typeId")).toInt();
-        auto &value=vMap[QStringLiteral("value")];
-        vMap.insert(QStringLiteral("uuid"), rMap.value(QStringLiteral("uuid")));
+        auto typeId=vMap.value(__typeId).toInt();
+        auto &value=vMap[__value];
+        vMap.insert(__uuid, rMap.value(__uuid));
         value=vu.convertTo(value, typeId);
         r.setValue(vMap);
         return r;
@@ -108,10 +116,10 @@ const SqlParserItem SqlParserItem::from(const QVariant &v)
     default:
         vValue=vu.convertTo(vValue, vValue.typeId());
         QVariantHash vHash;
-        vHash.insert(QStringLiteral("uuid"), rMap.value(QStringLiteral("uuid")));
-        vHash.insert(QStringLiteral("info"), KeywordObjectInfo::koiValue);
-        vHash.insert(QStringLiteral("value"), vValue);
-        vHash.insert(QStringLiteral("typeId"), vValue.typeId());
+        vHash.insert(__uuid, rMap.value(__uuid));
+        vHash.insert(__info, KeywordObjectInfo::koiValue);
+        vHash.insert(__value, vValue);
+        vHash.insert(__typeId, vValue.typeId());
         r.setValue(vHash);
         return r;
     }
@@ -130,18 +138,18 @@ SqlParserItem SqlParserItem::createObject(const QVariant &v)
     case QMetaType::QVariantMap:
     {
         auto vHash=vValue.toHash();
-        if(!vHash.contains(QStringLiteral("uuid"))){
-            vHash.insert(QStringLiteral("uuid"),rMap.value(QStringLiteral("uuid")));
+        if(!vHash.contains(__uuid)){
+            vHash.insert(__uuid,rMap.value(__uuid));
         }
-        vHash.insert(QStringLiteral("info"),KeywordObjectInfo::koiObject);
+        vHash.insert(__info,KeywordObjectInfo::koiObject);
         return r;
     }
     default:
         QVariantHash vHash;
-        vHash.insert(QStringLiteral("uuid"), rMap.value(QStringLiteral("uuid")));
-        vHash.insert(QStringLiteral("info"), KeywordObjectInfo::koiObject);
-        vHash.insert(QStringLiteral("value"), vValue);
-        vHash.insert(QStringLiteral("typeId"), vValue.typeId());
+        vHash.insert(__uuid, rMap.value(__uuid));
+        vHash.insert(__info, KeywordObjectInfo::koiObject);
+        vHash.insert(__value, vValue);
+        vHash.insert(__typeId, vValue.typeId());
         r.setValue(vHash);
         return r;
     }
@@ -154,10 +162,10 @@ SqlParserItem SqlParserItem::createValue(const QVariant &v)
     auto vValue=vu.toVariant(v);
     auto rMap=r.toHash();
     QVariantHash vHash;
-    vHash.insert(QStringLiteral("uuid"),rMap.value(QStringLiteral("uuid")));
-    vHash.insert(QStringLiteral("info"),KeywordObjectInfo::koiValue);
-    vHash.insert(QStringLiteral("value"),vValue);
-    vHash.insert(QStringLiteral("typeId"),vValue.typeId());
+    vHash.insert(__uuid,rMap.value(__uuid));
+    vHash.insert(__info,KeywordObjectInfo::koiValue);
+    vHash.insert(__value,vValue);
+    vHash.insert(__typeId,vValue.typeId());
     r.setValue(vHash);
     return r;
 }
@@ -168,15 +176,15 @@ void SqlParserItem::operator=(const QVariant &value)
 }
 
 KeywordObjectInfo SqlParserItem::info() const{
-    auto v=this->toHash().value(QStringLiteral("info"));
+    auto v=this->toHash().value(__info);
     return KeywordObjectInfo(v.toInt());
 }
 
 QVariant SqlParserItem::value() const
 {
     auto vHash=this->toHash();
-    auto v=vHash.value(QStringLiteral("value"));
-    auto d=vHash.value(QStringLiteral("defaultValue"));
+    auto v=vHash.value(__value);
+    auto d=vHash.value(__defaultValue);
     v=v.isValid() && !v.isNull()?v:d;
     return v;
 }
@@ -184,8 +192,8 @@ QVariant SqlParserItem::value() const
 QVariant SqlParserItem::valueTypeId() const
 {
     auto vHash=this->toHash();
-    auto v=vHash.value(QStringLiteral("value"));
-    auto d=vHash.value(QStringLiteral("defaultValue"));
+    auto v=vHash.value(__value);
+    auto d=vHash.value(__defaultValue);
     v=v.isValid() && !v.isNull()?v:d;
     return v.typeId();
 }
@@ -215,7 +223,7 @@ bool SqlParserItem::isMap() const
 QVariant SqlParserItem::name() const
 {
     if(this->info()==KeywordObjectInfo::koiObject){
-        auto v=this->toHash().value(QStringLiteral("value"));
+        auto v=this->toHash().value(__value);
         return v;
     }
     return {};
@@ -234,7 +242,7 @@ bool SqlParserItem::isValue() const
 QVariant SqlParserItem::title() const
 {
     if(this->info()==KeywordObjectInfo::koiObject){
-        auto v=this->toHash().value(QStringLiteral("title"));
+        auto v=this->toHash().value(__title);
         return v;
     }
     return {};

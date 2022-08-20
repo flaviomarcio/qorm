@@ -18,23 +18,16 @@ public:
     QVariantHash sort;
     QString settingName;
     QOrm::DtoOutPutStyle outPutStyle=QOrm::doRowObject;
-    ModelDtoHeaders<ModelDtoControls> headers;
-    ModelDtoFilters<ModelDtoControls> filters;
-    ModelDtoItems<ModelDtoControls> items;
+    ModelFieldDescriptors fieldDescriptors;
+    QVariantList items;
     QStm::ResultInfo resultInfo;
-    EndPoints endpoints;
-    EndPoint endpoint;
-    QVariantMap descriptors;
+    QVariantHash descriptors;
     ModelDtoControls *dto=nullptr;
 
     explicit ModelDtoControlsPvt(ModelDtoControls *parent)
         :QObject{parent},
-        headers{parent, parent},
-        filters{parent, parent},
-        items{parent, parent},
-        resultInfo{parent},
-        endpoints{parent},
-        endpoint{parent}
+          fieldDescriptors{parent},
+          resultInfo{parent}
     {
         this->dto=parent;
     }
@@ -43,27 +36,25 @@ public:
     {
         QVariantHash vHash;
 
-        const auto &vHeaderList=this->headers.list();
-        const auto &vFilterList=this->filters.list();
-        const auto vEndPoints=this->endpoints.toList();
-        const auto vEndPoint=this->endpoint.toHash();
-        auto vItems=this->items.toVar().toList();
+        const auto &vHeaderList=fieldDescriptors.descriptors()->list();
+        const auto &vFilterList=fieldDescriptors.filters()->list();
+        const auto vEndPoints=fieldDescriptors.endPoints()->toList();
+        const auto vEndPoint=fieldDescriptors.endPoint()->toHash();
 
-        auto &vList=this->items.list();
-        if(vList.isEmpty()){
+        if(this->items.isEmpty()){
             QVariantMap vRecord;
-            for(const auto &header:vHeaderList){
-                auto headerName=header->value();
-                vRecord[headerName]={};
+            for(const auto &field:vHeaderList){
+                auto name=field->field();
+                vRecord.insert(name, {});
             }
-            vList.append(vRecord);
+            this->items.append(vRecord);
         }
 
         QVector<QString> cacheHeader;
-        for(auto &v:vList){
+        for(auto &v:this->items){
             const auto vHash=v.toHash();
             for(auto &field:vHeaderList){
-                auto name=field->value();
+                auto name=field->field();
                 if(vHash.contains(name))
                     cacheHeader.append(name);
             }
@@ -72,13 +63,13 @@ public:
 
         QVariantList vFilters;
         for(const auto &field:vFilterList)
-            vFilters.append(field->toVar());
+            vFilters.append(field->toHash());
 
         QVariantList vHeaders;
         for(const auto &field:vHeaderList){
-            auto name=field->value();
+            auto name=field->field();
             if(cacheHeader.contains(name))//se o cachec contiver a header entao lancaremos
-                vHeaders.append(field->toVar());
+                vHeaders.append(field->toHash());
         }
 
         vHash[vpUuid]=this->dto->uuid();
@@ -89,7 +80,7 @@ public:
         vHash[vpLayout]=this->layout.name();
         vHash[vpHeaders]=vHeaders;
         vHash[vpFilters]=vFilters;
-        vHash[vpItems]=vItems;
+        vHash[vpItems]=this->items;
         vHash[vpEndPoints]=vEndPoints;
         vHash[vpEndPoint]=vEndPoint;
         vHash[vpResultInfo]=this->resultInfo.toHash();
@@ -104,34 +95,33 @@ public:
     }
 
 
-    void setSettings(const QVariant &value)
-    {
-        auto dtoMap=value.toHash();
-        QVariantHash v;
-        if(!dtoMap.isEmpty()){
-            auto id=this->uuid.toString().trimmed();
-            if(!id.isEmpty() || dtoMap.contains(id)){
-                v=dtoMap.value(id).toHash();
-            }
-            else if(dtoMap.contains({}) || dtoMap.contains(vpDefault)){
-                v=dtoMap.value(vpDefault).toHash();
-                if(v.isEmpty())
-                    v=dtoMap.value({}).toHash();
-            }
-        }
+//    void setSettings(const QVariant &value)
+//    {
+//        auto dtoMap=value.toHash();
+//        QVariantHash v;
+//        if(!dtoMap.isEmpty()){
+//            auto id=this->uuid.toString().trimmed();
+//            if(!id.isEmpty() || dtoMap.contains(id)){
+//                v=dtoMap.value(id).toHash();
+//            }
+//            else if(dtoMap.contains({}) || dtoMap.contains(vpDefault)){
+//                v=dtoMap.value(vpDefault).toHash();
+//                if(v.isEmpty())
+//                    v=dtoMap.value({}).toHash();
+//            }
+//        }
 
-        if(!v.isEmpty()){
-            this->headers.fromHash(v.value(vpHeaders).toHash());
-            this->filters.fromHash(v.value(vpFilters).toHash());
-            this->items.fromList(v.value(vpItems));
-            this->design=v.value(vpDesign).toHash();
-        }
-    }
+//        if(!v.isEmpty()){
+//            this->headers.fromHash(v.value(vpHeaders).toHash());
+//            this->filters.fromHash(v.value(vpFilters).toHash());
+//            this->items.fromList(v.value(vpItems));
+//            this->design=v.value(vpDesign).toHash();
+//        }
+//    }
 
     void clear()
     {
-        this->headers.clear();
-        this->filters.clear();
+        this->fieldDescriptors.clear();
         this->items.clear();
         this->design.clear();
         this->resultInfo.clear();
@@ -141,6 +131,11 @@ public:
 ModelDtoControls::ModelDtoControls(QObject *parent) : QStm::Object{parent}
 {
     this->p = new ModelDtoControlsPvt{this};
+}
+
+ModelFieldDescriptors &ModelDtoControls::fields()
+{
+    return p->fieldDescriptors;
 }
 
 QStm::ResultInfo &ModelDtoControls::resultInfo()
@@ -154,25 +149,28 @@ ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &result
     return *this;
 }
 
-QVariantMap &ModelDtoControls::descriptors()
-{
-    return p->descriptors;
-}
+//QVariantHash &ModelDtoControls::descriptors()
+//{
+//    return p->descriptors;
+//}
 
-void ModelDtoControls::setDescriptors(const QVariantMap &descriptors)
-{
-    p->descriptors=descriptors;
-    auto vHeaders=descriptors.value(vpHeaders).toList();
-    auto vFilters=descriptors.value(vpFilters).toList();
-    p->type=descriptors.value(vpType);
-    p->layout=descriptors.value(vpLayout);
-    p->design=descriptors.value(vpDesign).toHash();
-    p->headers.clear();
-    for (auto &v : vHeaders)
-        p->headers.value(v.toHash());
-    for (auto &v : vFilters)
-        p->filters.value(v.toHash());
-}
+//ModelDtoControls &ModelDtoControls::setDescriptors(const QVariantHash &values)
+//{
+//    auto descriptors=values.value(__descriptors).toHash();
+//    auto filters=values.value(__filters).toHash();
+//    p->descriptors=descriptors;
+//    auto vHeaders=descriptors.value(vpHeaders).toList();
+//    auto vFilters=descriptors.value(vpFilters).toList();
+//    p->type=descriptors.value(vpType);
+//    p->layout=descriptors.value(vpLayout);
+//    p->design=descriptors.value(vpDesign).toHash();
+//    p->headers.clear();
+//    for (auto &v : vHeaders)
+//        p->headers.value(v.toHash());
+//    for (auto &v : vFilters)
+//        p->filters.value(v.toHash());
+//    return *this;
+//}
 
 QUuid &ModelDtoControls::uuid() const
 {
@@ -194,7 +192,7 @@ ModelDtoControls &ModelDtoControls::setUuid(const QUuid &v)
     return *this;
 }
 
-QString ModelDtoControls::name() const
+QString &ModelDtoControls::name() const
 {
     return p->name;
 }
@@ -245,7 +243,7 @@ ModelDtoControls &ModelDtoControls::setLayout(const FormLayout &v)
     return *this;
 }
 
-QVariantHash ModelDtoControls::design() const
+QVariantHash &ModelDtoControls::design() const
 {
     return p->design;
 }
@@ -262,7 +260,7 @@ ModelDtoControls &ModelDtoControls::setDesign(const QVariant &v)
     return *this;
 }
 
-QVariantHash ModelDtoControls::sort() const
+QVariantHash &ModelDtoControls::sort() const
 {
     return p->sort;
 }
@@ -279,7 +277,7 @@ ModelDtoControls &ModelDtoControls::setSort(const QVariant &v)
     return *this;
 }
 
-QString ModelDtoControls::text() const
+QString &ModelDtoControls::text() const
 {
     return p->text;
 }
@@ -307,63 +305,57 @@ ModelDtoControls &ModelDtoControls::setOutPutStyle(const QOrm::DtoOutPutStyle &v
     return *this;
 }
 
-ModelDtoControls &ModelDtoControls::settings(const QVariant &setting)
+ModelFieldCollection &ModelDtoControls::headers()
 {
-    p->setSettings(setting);
-    return *this;
+    return *p->fieldDescriptors.descriptors();
 }
 
-ModelDtoHeaders<ModelDtoControls> &ModelDtoControls::headers()
+ModelFieldCollection &ModelDtoControls::filters()
 {
-    return p->headers;
-}
-
-ModelDtoFilters<ModelDtoControls> &ModelDtoControls::filters()
-{
-    return p->filters;
+    return *p->fieldDescriptors.filters();
 }
 
 Host &ModelDtoControls::host()
 {
-    return p->endpoints.host();
+    return *p->fieldDescriptors.endPoints()->host();
 }
 
 EndPoints &ModelDtoControls::endpoints()
 {
-    return p->endpoints;
+    return *p->fieldDescriptors.endPoints();
 }
 
-EndPoint &ModelDtoControls::endpoint()
+EndPoint &ModelDtoControls::endPoint()
 {
-    return p->endpoint;
+    return *p->fieldDescriptors.endPoint();
 }
 
-ModelDtoItems<ModelDtoControls> &ModelDtoControls::items()
+const QVariantList &ModelDtoControls::items()const
 {
     return p->items;
 }
 
 ModelDtoControls &ModelDtoControls::items(const QVariant &v)
 {
-    p->items.fromList(v);
+    p->items=v.toList();
     return *this;
 }
 
 ModelDtoControls &ModelDtoControls::items(const ResultValue &lr)
 {
-    p->items.fromList(this->lr(lr).resultVariant());
+    p->items=lr.resultList();
     return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setValue(const QVariant &v)
 {
-    p->items.fromList(v);
+    p->items=v.toList();
     return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setValue(const ResultValue &lr)
 {
-    p->items.fromList(this->lr(lr).resultVariant());
+    p->items=lr.resultList();
     return *this;
 }
 

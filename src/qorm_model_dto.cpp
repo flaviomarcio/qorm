@@ -1,62 +1,16 @@
 #include "./qorm_model_dto.h"
 #include "./qorm_model.h"
-#include "./qorm_startup.h"
-#include "./qorm_const.h"
-#include "./qorm_macro.h"
+//#include "./qorm_startup.h"
+//#include "./qorm_const.h"
+//#include "./qorm_macro.h"
+#include "./qorm_model_field_descriptors.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 
-namespace PrivateOrm {
-}
-
 namespace QOrm {
-
-Q_GLOBAL_STATIC(QVariantHash, dtoSettings)
-
-static void initDtoSettingsCache()
-{
-    QVariantHash __dtoSettings;
-    QDir dir(QStringLiteral(":"));
-    dir.setNameFilters(QStringList{QStringLiteral("settings.qorm.dto.json")});
-    for (auto &info : dir.entryInfoList()) {
-        QFile fileSrc(info.filePath());
-        if (!fileSrc.open(fileSrc.ReadOnly))
-#if Q_ORM_LOG
-            oWarning() << QStringLiteral("No open file:") << fileSrc.fileName() << QStringLiteral(", error: ")
-                       << fileSrc.errorString();
-#endif
-        continue;
-
-        auto bytes = fileSrc.readAll();
-        fileSrc.close();
-        QVariantList vList;
-        auto vDoc = QJsonDocument::fromJson(bytes).toVariant();
-        switch (vDoc.typeId()) {
-        case QMetaType::QVariantHash:
-        case QMetaType::QVariantMap:
-        case QMetaType::QVariantList:
-        case QMetaType::QStringList:
-            vList << vDoc;
-            break;
-        default:
-            break;
-        }
-        for (auto &v : vList) {
-            auto vDoc = v.toHash();
-            QHashIterator<QString, QVariant> i(vDoc);
-            while (i.hasNext()) {
-                i.next();
-                __dtoSettings.insert(i.key(), i.value());
-            }
-        }
-    }
-    *dtoSettings = __dtoSettings;
-}
-
-Q_ORM_STARTUP_FUNCTION(initDtoSettingsCache);
 
 class ModelDtoPvt:public QObject
 {
@@ -69,13 +23,6 @@ public:
         auto pParent = parent->parent();
         if (pParent != nullptr)
             this->initDescriptors(pParent);
-    }
-
-    void initObjects()
-    {
-        const auto className=QString::fromUtf8(this->parent->parent()->metaObject()->className()).toLower().trimmed();
-        auto settings = dtoSettings->value(className).toHash();
-        this->dtoControls.settings(settings);
     }
 
     void clear() { this->dtoControls.clear(); }
@@ -91,10 +38,10 @@ public:
 
     void initDescriptors(const ModelInfo &modelInfo)
     {
-        auto descriptors = modelInfo.propertyDescriptors();
-        dtoControls.setDescriptors(descriptors);
-        dtoControls.endpoints().setItems(modelInfo.propertyEndPoints());
-        dtoControls.endpoint().setValues(modelInfo.propertyEndPoint());
+        if(!modelInfo.isValid())
+            return;
+        auto &fields=dtoControls.fields();
+        fields.setValues(modelInfo.propertyDescriptors());
     }
 };
 
@@ -132,7 +79,7 @@ ModelDto &ModelDto::setUuid(const QUuid &value)
     return *this;
 }
 
-QString ModelDto::name() const
+QString &ModelDto::name() const
 {
     return p->dtoControls.name();
 }
@@ -183,35 +130,29 @@ ModelDto &ModelDto::setLayout(const FormLayout &v)
     return *this;
 }
 
-ModelDto &ModelDto::settings(const QVariant &setting)
-{
-    p->dtoControls.settings(setting.toHash());
-    return *this;
-}
-
 ModelDtoControls &ModelDto::controls()
 {
     return p->dtoControls;
 }
 
-ModelDtoHeaders<ModelDtoControls> &ModelDto::headers()
+ModelFieldCollection &ModelDto::headers()
 {
     return p->dtoControls.headers();
 }
 
-ModelDtoFilters<ModelDtoControls> &ModelDto::filters()
+ModelFieldCollection &ModelDto::filters()
 {
     return p->dtoControls.filters();
 }
 
-Host &ModelDto::host()
+Host &ModelDto::host() const
 {
-    return p->dtoControls.endpoints().host();
+    return *p->dtoControls.endpoints().host();
 }
 
 ModelDto &ModelDto::host(const Host &host)
 {
-    p->dtoControls.endpoints().host(host);
+    p->dtoControls.endpoints().host(&host);
     return *this;
 }
 
@@ -221,12 +162,12 @@ ModelDto &ModelDto::host(const QVariant &host)
     return *this;
 }
 
-EndPoints &ModelDto::endPoints()
+EndPoints &ModelDto::endPoints() const
 {
     return p->dtoControls.endpoints();
 }
 
-ModelDtoItems<ModelDtoControls> &ModelDto::items()
+const QVariantList &ModelDto::items()const
 {
     return p->dtoControls.items();
 }

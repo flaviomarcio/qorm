@@ -65,14 +65,14 @@ int EndPoints::count()const
     return p->objectHash.count();
 }
 
-Host &EndPoints::host()
+Host *EndPoints::host() const
 {
-    return p->host;
+    return &p->host;
 }
 
-void EndPoints::host(const Host &newHost)
+void EndPoints::host(const Host *newHost)
 {
-    p->host = &newHost;
+    p->host = newHost;
     emit hostChanged();
 }
 
@@ -82,9 +82,9 @@ void EndPoints::host(const QVariant &newHost)
     emit hostChanged();
 }
 
-void EndPoints::setHost(const Host &newHost)
+void EndPoints::setHost(const Host *newHost)
 {
-    p->host = &newHost;
+    p->host = newHost;
     emit hostChanged();
 }
 

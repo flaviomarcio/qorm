@@ -18,7 +18,7 @@ public:
     //! \param parent
     //!
     Q_INVOKABLE explicit ModelReport(QObject *parent = nullptr)
-        : PrivateQOrm::ModelReportBase(parent), p_dao(this), p_model(this)
+        : PrivateQOrm::ModelReportBase(parent), p_dao{this}, p_model{this}
     {
         this->init();
     }
@@ -29,7 +29,7 @@ public:
     //! \param parent
     //!
     explicit ModelReport(const QVariant &reportBody, QObject *parent = nullptr)
-        : PrivateQOrm::ModelReportBase(reportBody, parent), p_dao(this), p_model(this)
+        : PrivateQOrm::ModelReportBase(reportBody, parent), p_dao{this}, p_model{this}
     {
         this->init();
     }
@@ -116,6 +116,10 @@ protected:
     //!
     virtual ResultValue &search()
     {
+        static const auto __operator=QStringLiteral("operator");
+        static const auto __format=QStringLiteral("format");
+        static const auto __arg1=QStringLiteral("%1");
+
         T model(this->source());
         auto mapSource = this->source().toHash();
         SearchParameters map;
@@ -125,13 +129,13 @@ protected:
             QHashIterator<QString, QVariant> i(model.toHash());
             while (i.hasNext()) {
                 i.next();
-                auto header = this->p_dto.headers().get(i.key());
-                if (header != nullptr) {
-                    auto vHash = header->filtrableStrategy();
-                    auto keywordOperator = vHash.value(QStringLiteral("operator"));
-                    QString format = vHash.value(QStringLiteral("format")).toString().trimmed();
+                auto header = &this->p_dto.headers().item(i.key());
+                if (header) {
+                    const auto vHash = header->filtrableStrategy().toHash();
+                    const auto keywordOperator = vHash.value(__operator);
+                    QString format = vHash.value(__format).toString().trimmed();
                     QVariant v_value;
-                    if (format.contains(QStringLiteral("%1")))
+                    if (format.contains(__arg1))
                         v_value = format.arg(i.value().toString());
                     else
                         v_value = i.value();

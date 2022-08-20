@@ -17,7 +17,8 @@ class Q_STM_EXPORT EndPoints : public QStm::ObjectWrapper
 {
     Q_OBJECT
     QSTM_OBJECT_WRAPPER(EndPoints)
-    Q_PROPERTY(QVariant items READ items WRITE setItems RESET resetItems NOTIFY itemsChanged)
+    Q_PROPERTY(Host *host READ host WRITE setHost RESET resetHost NOTIFY hostChanged)
+    Q_PROPERTY(QVariantList items READ items WRITE setItems RESET resetItems NOTIFY hostChanged)
 public:
     //!
     //! \brief EndPoints
@@ -47,10 +48,10 @@ public:
     //! \brief host
     //! \return
     //!
-    Host &host();
-    void host(const Host &newHost);
+    Host *host()const;
+    void host(const Host *newHost);
     void host(const QVariant &newHost);
-    void setHost(const Host &newHost);
+    void setHost(const Host *newHost);
     void resetHost();
 
     //!
