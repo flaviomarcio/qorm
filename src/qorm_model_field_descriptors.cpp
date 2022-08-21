@@ -13,6 +13,7 @@ class ModelDescriptorPvt:public QObject
 {
 public:
     QStm::MetaEnum<QOrm::ModelFieldDescriptors::FormType> type = ModelFieldDescriptors::RegisterForm;
+    QByteArray className;
     QUuid uuid;
     QString description;
     ModelFieldCollection descriptorsCollection, filtersCollection;
@@ -37,6 +38,8 @@ public:
     void clear()
     {
         this->type=ModelFieldDescriptors::RegisterForm;
+        this->className.clear();
+        this->uuid={};
         this->description.clear();
         this->descriptorsCollection.clear();
         this->filtersCollection.clear();
@@ -135,7 +138,20 @@ ModelFieldDescriptors &ModelFieldDescriptors::makeDescriptorToFilters()
 
 QByteArray ModelFieldDescriptors::className() const
 {
-    return this->metaObject()->className();
+    if(p->className.isEmpty())
+        return this->metaObject()->className();
+    return p->className;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::setClassName(const QByteArray &value)
+{
+    p->className=value;
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::resetClassName()
+{
+    return this->setClassName({});
 }
 
 QUuid &ModelFieldDescriptors::uuid() const
@@ -145,6 +161,17 @@ QUuid &ModelFieldDescriptors::uuid() const
         p->uuid=vu.toUuid(this->className());
     }
     return p->uuid;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::setUuid(const QUuid &value)
+{
+    p->uuid=value;
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::resetUuid()
+{
+    return this->setUuid({});
 }
 
 ModelFieldDescriptor &ModelFieldDescriptors::addDescriptor(const QString &fieldName)

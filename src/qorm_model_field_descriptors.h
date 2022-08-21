@@ -46,9 +46,9 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     QORM_DESCRIPTOR_ORDERBY()
     QORM_MODEL_DECLARE_FORM_ENUMS
 
-    Q_PROPERTY(QByteArray className READ className CONSTANT)
-    Q_PROPERTY(QUuid uuid READ uuid CONSTANT)
-    Q_PROPERTY(QString description READ description RESET resetDescription WRITE setDescription NOTIFY descriptionChanged)
+    Q_PROPERTY(QByteArray className READ className WRITE setClassName  RESET resetClassName NOTIFY classNameChanged)
+    Q_PROPERTY(QUuid uuid READ uuid WRITE setUuid  RESET resetUuid NOTIFY uuidChanged)
+    Q_PROPERTY(QString description READ description RESET resetDescription WRITE setDescription RESET resetDescription NOTIFY descriptionChanged)
     Q_PROPERTY(ModelFieldCollection *descriptors READ descriptors WRITE setDescriptors RESET resetDescriptors NOTIFY descriptorsChanged)
     Q_PROPERTY(ModelFieldCollection *filters READ filters WRITE setFilters RESET resetFilters NOTIFY filtersChanged)
     Q_PROPERTY(Design *design READ design WRITE setDesign RESET resetDesign NOTIFY designChanged)
@@ -88,12 +88,16 @@ public:
     //! \return
     //!
     QByteArray className()const;
+    ModelFieldDescriptors &setClassName(const QByteArray &value);
+    ModelFieldDescriptors &resetClassName();
 
     //!
     //! \brief uuid
     //! \return
     //!
     QUuid &uuid()const;
+    ModelFieldDescriptors &setUuid(const QUuid &value);
+    ModelFieldDescriptors &resetUuid();
 
     //!
     //! \brief descriptors
@@ -211,6 +215,8 @@ public:
     ModelFieldDescriptors &resetReadOnly();
 
 signals:
+    void classNameChanged();
+    void uuidChanged();
     void descriptionChanged();
     void descriptorsChanged();
     void filtersChanged();
