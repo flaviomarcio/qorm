@@ -1,11 +1,18 @@
 #include "./qorm_model_crud_block.h"
 #include "../../qstm/src/qstm_util_variant.h"
+#include "../../qstm/src/qstm_meta_enum.h"
 #include "./private/p_qorm_model_crud_body.h"
 
 namespace QOrm {
 
+static auto __resultInfo=QStringLiteral("resultInfo");
+static auto __pages=QStringLiteral("pages");
+static auto __type=QStringLiteral("type");
+static auto __items="items";
+
 class CRUDBlockPvt:public QObject{
 public:
+    QStm::MetaEnum<CRUDBlock::FormType> type=CRUDBlock::RegisterForm;
     ModelDtoOptions options;
     QStm::ResultInfo resultInfo;
     CRUDBlock *parent=nullptr;
@@ -21,7 +28,6 @@ public:
 
     static CRUDBody reMakeCRUDBody(const QVariantList &returns, PrivateQOrm::CRUDBase *crud, CRUDBody crudBody)
     {
-        static auto __items="items";
         auto strategy=crudBody.strategy();
         CRUDBody __return;
         switch (strategy) {
@@ -101,6 +107,24 @@ CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb{p
     this->p = new CRUDBlockPvt{this};
 
     p->crudBody=crudBody;
+}
+
+QVariant CRUDBlock::type() const
+{
+    return p->type.name();
+}
+
+CRUDBlock &CRUDBlock::setType(const FormType &newType)
+{
+    if (p->type == newType)
+        return *this;
+    p->type = newType;
+    return *this;
+}
+
+CRUDBlock &CRUDBlock::resetType()
+{
+    return setType(RegisterForm);
 }
 
 Host &CRUDBlock::host()
@@ -231,17 +255,15 @@ const QVariantList CRUDBlock::generatedRecords(const ModelInfo &modelInfo) const
 
 ResultValue &CRUDBlock::crudify()
 {
-//    static auto __uuid=QStringLiteral("uuid");
-//    static auto __expressions=QStringLiteral("expression");
-//    static auto __items=QStringLiteral("items");
-    static auto __resultInfo=QStringLiteral("resultInfo");
-    static auto __pages=QStringLiteral("pages");
-    static auto __type=QStringLiteral("type");
-
     this->clean();
-    Q_DECLARE_VU;
+
     if(p->crudMap.isEmpty())
         return this->lr().setBadRequest(tr("crud block is empty"));
+
+    if(p->crudList.isEmpty())
+        return this->lr().setBadRequest(tr("crud list is empty"));
+
+    Q_DECLARE_VU;
 
     QVariantList __return;
     const CRUDBody crudBody{p->crudBody};
@@ -273,10 +295,7 @@ ResultValue &CRUDBlock::crudify()
     if(__return.isEmpty())
         return this->lr().clear();
 
-    static auto metaEnum = QMetaEnum::fromType<FormType>();
-    auto typeName=metaEnum.valueToKey(this->defaultType());
-
-    return this->lr(QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__type, typeName}, {__pages,__return}});
+    return this->lr(QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__pages, __return}, {__type, this->type()}});
 }
 
 }

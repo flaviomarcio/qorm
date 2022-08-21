@@ -1,15 +1,15 @@
 #pragma once
 
-#include <QStm>
+#include "../../../qstm/src/qstm_object_wrapper.h"
+#include "../qorm_global.h"
 #include "./p_qorm_model_dto_host.h"
-#include <QUuid>
 
 namespace QOrm {
 class EndPointPvt;
 //!
 //! \brief The EndPoint class
 //!
-class Q_STM_EXPORT EndPoint : public QStm::ObjectWrapper
+class Q_ORM_EXPORT EndPoint : public QStm::ObjectWrapper
 {
     Q_OBJECT
 

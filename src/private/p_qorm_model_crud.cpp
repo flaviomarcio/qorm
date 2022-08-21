@@ -20,7 +20,8 @@ static const auto __failed = "failed";
 
 class CRUDBasePvt:public QObject{
 public:
-    QOrm::ModelDtoOptions options;
+    QStm::MetaEnum<CRUDBase::FormType> type=CRUDBase::RegisterForm;
+    QOrm::ModelDtoOptions options;    
     QOrm::Host host;
     QUuid uuid;
     QByteArray name;
@@ -37,7 +38,6 @@ public:
     explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dao{parent}, dto{parent}
     {
         this->parent=parent;
-        dto.setType(CRUDBase::defaultType());
     }
 
     QVariant parserSearch(const QVariant &v)
@@ -178,6 +178,25 @@ QOrm::Host &CRUDBase::host()
     return p->host;
 }
 
+const QVariant CRUDBase::type() const
+{
+    return p->type.name();
+}
+
+CRUDBase &CRUDBase::setType(const FormType &newType)
+{
+    if (p->type == newType)
+        return *this;
+    p->type = newType;
+    emit typeChanged();
+    return *this;
+}
+
+CRUDBase &CRUDBase::resetType()
+{
+    return setType({});
+}
+
 QOrm::ModelDtoOptions &CRUDBase::options()
 {
     return p->options;
@@ -209,17 +228,6 @@ CRUDBase &CRUDBase::clear()
 CRUDBase &CRUDBase::clean()
 {
     p->generatedRecords.clear();
-    return *this;
-}
-
-CRUDBase::FormType CRUDBase::type() const
-{
-    return FormType(p->dto.type());
-}
-
-CRUDBase &CRUDBase::type(const QVariant &value)
-{
-    p->dto.setType(value);
     return *this;
 }
 
@@ -654,6 +662,5 @@ ResultValue &CRUDBase::doFailed()
 {
     return p->doModelAction(__failed);
 }
-
 
 }

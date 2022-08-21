@@ -1,6 +1,5 @@
 #include "./p_qorm_model_controls.h"
 #include "../../qstm/src/qstm_macro.h"
-#include "../../qstm/src/qstm_meta_enum.h"
 #include "../qorm_model_consts.h"
 #include <QStm>
 #include <QVariantHash>
@@ -16,7 +15,6 @@ public:
     QVariantHash design;
     QVariantHash sort;
     QString settingName;
-    QOrm::DtoOutPutStyle outPutStyle=QOrm::doRowObject;
     ModelFieldDescriptors fieldDescriptors;
     QVariantList items;
     QStm::ResultInfo resultInfo;
@@ -75,7 +73,7 @@ public:
         vHash.insert(vpName, this->dto->name());
         vHash.insert(vpTitle, this->text);
         vHash.insert(vpDesign, this->dto->design());
-        vHash.insert(vpType, this->fieldDescriptors.type());
+        vHash.insert(vpType, this->fieldDescriptors.design()->type());
         vHash.insert(vpHeaders, vHeaders);
         vHash.insert(vpFilters, vFilters);
         vHash.insert(vpItems, this->items);
@@ -159,25 +157,6 @@ ModelDtoControls &ModelDtoControls::setName(const QVariant &v)
     return *this;
 }
 
-ModelDtoControls::FormType ModelDtoControls::type() const
-{
-    QStm::MetaEnum<ModelDtoControls::FormType> e;
-    e=p->fieldDescriptors.type();
-    return e.type();
-}
-
-ModelDtoControls &ModelDtoControls::type(const QVariant &v)
-{
-    p->fieldDescriptors.setType(v);
-    return *this;
-}
-
-ModelDtoControls &ModelDtoControls::setType(const QVariant &v)
-{
-    p->fieldDescriptors.setType(v);
-    return *this;
-}
-
 QVariantHash &ModelDtoControls::design() const
 {
     return p->design;
@@ -220,23 +199,6 @@ QString &ModelDtoControls::text() const
 ModelDtoControls &ModelDtoControls::text(const QVariant &v)
 {
     p->text=v.toString();
-    return *this;
-}
-
-QOrm::DtoOutPutStyle &ModelDtoControls::outPutStyle() const
-{
-    return p->outPutStyle;
-}
-
-ModelDtoControls &ModelDtoControls::outPutStyle(const QOrm::DtoOutPutStyle &value)
-{
-    p->outPutStyle = value;
-    return *this;
-}
-
-ModelDtoControls &ModelDtoControls::setOutPutStyle(const QOrm::DtoOutPutStyle &value)
-{
-    p->outPutStyle = value;
     return *this;
 }
 

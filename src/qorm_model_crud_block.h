@@ -19,8 +19,6 @@ class Q_ORM_EXPORT CRUDBlock:public QOrm::ObjectDb
     Q_OBJECT
 public:
     QORM_MODEL_DECLARE_FORM_ENUMS
-    QORM_DECLARE_DTO_TYPE(FormType::RegisterForm)
-public:
     //!
     //! \brief CRUDBlock
     //! \param parent
@@ -33,6 +31,14 @@ public:
     //! \param parent
     //!
     explicit CRUDBlock(const QVariant &crudBody, QObject *parent=nullptr);
+
+    //!
+    //! \brief type
+    //! \return
+    //!
+    QVariant type() const;
+    CRUDBlock &setType(const FormType &newType);
+    CRUDBlock &resetType();
 
     //!
     //! \brief host

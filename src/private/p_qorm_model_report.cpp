@@ -4,6 +4,15 @@
 
 namespace PrivateQOrm {
 
+static const auto __success="success";
+static const auto __bofore="bofore";
+static const auto __failed="failed";
+static const auto __canAction="canAction";
+static const auto __action="action";
+static const auto __method="method";
+static const auto __strategy="strategy";
+static const auto __source="source";
+
 class ModelReportBasePvt:public QObject{
 public:
     QOrm::ModelDtoOptions options;
@@ -42,17 +51,17 @@ public:
         auto vObject=ReportBody{v};
         auto vStrategy=[&vObject](){
             QVariant v;
-            if(vObject.contains(QStringLiteral("method")))
-                v=vObject[QStringLiteral("method")];
-            else if(vObject.contains(QStringLiteral("strategy")))
-                v=vObject[QStringLiteral("strategy")];
+            if(vObject.contains(__method))
+                v=vObject[__method];
+            else if(vObject.contains(__strategy))
+                v=vObject[__strategy];
             return v;
         };
 
         auto vSource=[&vObject](){
             QVariant v;
-            if(vObject.contains(QStringLiteral("source")))
-                v=vObject[QStringLiteral("source")];
+            if(vObject.contains(__source))
+                v=vObject[__source];
             return v;
         };
         this->strategy_set(vStrategy());
@@ -105,17 +114,6 @@ ModelReportBase &ModelReportBase::setOptions(const QOrm::ModelDtoOptions &option
     return *this;
 }
 
-ModelReportBase::FormType ModelReportBase::type() const
-{
-    return FormType(p->dto.type());
-}
-
-ModelReportBase &ModelReportBase::type(const FormType &value)
-{
-    p->dto.setType(QOrm::ModelDto::FormType(value));
-    return *this;
-}
-
 QUuid &ModelReportBase::uuid() const
 {
     Q_DECLARE_VU;
@@ -130,10 +128,10 @@ ModelReportBase &ModelReportBase::uuid(const QUuid &value)
     return *this;
 }
 
-QByteArray ModelReportBase::name() const
+QByteArray &ModelReportBase::name() const
 {
     if(p->name.trimmed().isEmpty())
-        return this->metaObject()->className();
+        p->name=this->metaObject()->className();
     return p->name;
 }
 
@@ -143,10 +141,10 @@ ModelReportBase &ModelReportBase::name(const QVariant &value)
     return *this;
 }
 
-QByteArray ModelReportBase::description() const
+QByteArray &ModelReportBase::description() const
 {
     if(p->description.trimmed().isEmpty())
-        return this->metaObject()->className();
+        p->description=this->metaObject()->className();
     return p->description;
 }
 
@@ -202,7 +200,7 @@ ResultValue &ModelReportBase::reportfy()
 
 ModelReportBase &ModelReportBase::actionSearch(QOrm::ModelAction &action)
 {
-    p->actions[__func__]=&action;
+    p->actions.insert(__func__, &action);
     return *this;
 }
 
@@ -219,19 +217,19 @@ ResultValue &ModelReportBase::search(const QVariant &value)
 
 ModelReportBase &ModelReportBase::onBefore(QOrm::ModelActionMethod method)
 {
-    p->actionMethod[QByteArrayLiteral("bofore")]=method;
+    p->actionMethod.insert(__bofore, method);
     return *this;
 }
 
 ModelReportBase &ModelReportBase::onSuccess(QOrm::ModelActionMethod method)
 {
-    p->actionMethod[QByteArrayLiteral("success")]=method;
+    p->actionMethod.insert(__success, method);
     return *this;
 }
 
 ModelReportBase &ModelReportBase::onFailed(QOrm::ModelActionMethod method)
 {
-    p->actionMethod[QByteArrayLiteral("failed")]=method;
+    p->actionMethod.insert(__failed, method);
     return *this;
 }
 
@@ -239,7 +237,7 @@ ResultValue &ModelReportBase::canActionSearch()
 {
     VariantUtil vu;
 
-    static auto name=QByteArray{__func__}.replace(QByteArrayLiteral("canAction"), QByteArrayLiteral("action"));
+    static auto name=QByteArray{__func__}.replace(__canAction, __action);
     QVariant v;
     if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(this->source())){
         auto &act=p->actions[name];
@@ -253,22 +251,21 @@ ResultValue &ModelReportBase::canActionSearch()
                     .items(v)
                     .o()
                     );
-
 }
 
 ResultValue &ModelReportBase::doBofore()
 {
-    return p->doModelAction(QStringLiteral("bofore"));
+    return p->doModelAction(__bofore);
 }
 
 ResultValue &ModelReportBase::doSuccess()
 {
-    return p->doModelAction(QStringLiteral("success"));
+    return p->doModelAction(__success);
 }
 
 ResultValue &ModelReportBase::doFailed()
 {
-    return p->doModelAction(QStringLiteral("failed"));
+    return p->doModelAction(__failed);
 }
 
 

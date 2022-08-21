@@ -1,23 +1,22 @@
 #include "./qorm_model_field_descriptors.h"
 #include "./qorm_model_field_descriptor.h"
-//#include "./private/p_qorm_const.h"
 #include <QMetaProperty>
 #include <QRect>
-#include "./qorm_model_consts.h"
 #include "../../../qstm/src/qstm_meta_enum.h"
 
 namespace QOrm {
 
 static const auto __30P="30%";
+static const auto __40P="40%";
 
 class ModelDescriptorPvt:public QObject
 {
 public:
-    QStm::MetaEnum<QOrm::ModelFieldDescriptors::FormType> type=ModelFieldDescriptors::RegisterForm;
+    QStm::MetaEnum<QOrm::ModelFieldDescriptors::FormType> type = ModelFieldDescriptors::RegisterForm;
     QString description;
     ModelFieldCollection descriptorsCollection, filtersCollection;
     QVariantHash sort;
-    QVariantHash design={{vpWidth,"20%"}, {vpHeight,"20%"}, {vpRows,2}, {vpLayout, vlVertical}};
+    Design design;
     Host host;
     EndPoints endPoints;
     EndPoint endPoint;
@@ -27,10 +26,11 @@ public:
     explicit ModelDescriptorPvt(ModelFieldDescriptors *parent)
         :
           QObject{parent},
+          design{parent},
+          host{parent},
           endPoints{parent},
           endPoint{parent}
     {
-
     }
 
     void clear()
@@ -39,13 +39,19 @@ public:
         this->description.clear();
         this->descriptorsCollection.clear();
         this->filtersCollection.clear();
-        this->design={{vpWidth,"20%"}, {vpHeight,"20%"}, {vpRows,2}, {vpLayout, vlVertical}};
         this->sort.clear();
+        this->design.clear();
+        this->design
+                .width(__30P)
+                .height(__40P)
+                .columns(0)
+                .rows(3)
+                .layout(Design::Vertical)
+                .type(Design::RegisterForm);
         this->host.clear();
         this->endPoint.clear();
         this->endPoints.clear();
     }
-
 };
 
 ModelFieldDescriptors::ModelFieldDescriptors(QObject *parent) : QStm::ObjectWrapper{parent}
@@ -109,8 +115,6 @@ ModelFieldDescriptors &ModelFieldDescriptors::resetFilters()
 void ModelFieldDescriptors::descriptorsInit()
 {
     p->clear();
-    QORM_MODEL_SET_FORM_TYPE(this->RegisterForm);
-    QORM_MODEL_SET_FORM_DESIGN(__30P, __30P, 0, 3, vlVertical);
 }
 
 ModelFieldDescriptors &ModelFieldDescriptors::makeDescriptorToFilters()
@@ -155,30 +159,6 @@ ModelFieldDescriptors &ModelFieldDescriptors::addFilter(const QString &fieldName
     return *this;
 }
 
-QOrm::ModelFieldDescriptors::FormType ModelFieldDescriptors::type() const
-{
-    return p->type.type();
-}
-
-ModelFieldDescriptors &ModelFieldDescriptors::type(const QVariant &type)
-{
-    p->type=type;
-    emit typeChanged();
-    return *this;
-}
-
-ModelFieldDescriptors &ModelFieldDescriptors::setType(const QVariant &type)
-{
-    p->type=type;
-    emit typeChanged();
-    return *this;
-}
-
-ModelFieldDescriptors &ModelFieldDescriptors::resetType()
-{
-    return this->setType({});
-}
-
 QString &ModelFieldDescriptors::description()
 {
     return p->description;
@@ -213,9 +193,22 @@ ModelFieldDescriptors &ModelFieldDescriptors::resetSort()
     return this->setSort({});
 }
 
-QVariantHash &ModelFieldDescriptors::design()
+Design *ModelFieldDescriptors::design()
 {
-    return p->design;
+    return &p->design;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::setDesign(const Design *value)
+{
+    p->design=value;
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::setDesign(const QVariantHash &value)
+{
+    p->design=value;
+    emit designChanged();
+    return *this;
 }
 
 Host *ModelFieldDescriptors::host()
@@ -240,13 +233,6 @@ ModelFieldDescriptors &ModelFieldDescriptors::resetHost()
 {
     p->host.clear();
     emit hostChanged();
-    return *this;
-}
-
-ModelFieldDescriptors &ModelFieldDescriptors::setDesign(const QVariantHash &value)
-{
-    p->design=value;
-    emit designChanged();
     return *this;
 }
 

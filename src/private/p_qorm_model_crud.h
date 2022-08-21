@@ -9,9 +9,6 @@
 #include "../qorm_model_dto_options.h"
 #include "../qorm_model_dto.h"
 #include "../qorm_model_crud_types.h"
-//#include "./p_qorm_model_crud_body.h"
-//#include "../qorm_model_crud_request.h"
-//#include "../qorm_model_dao.h"
 
 namespace QOrm {
 typedef std::function<ResultValue &(QOrm::ObjectDb *controller, const QVariant &vBody)> CRUDBodyActionMethod;
@@ -28,8 +25,6 @@ class Q_ORM_EXPORT CRUDBase : public QOrm::ObjectDb
     Q_OBJECT
 public:
     QORM_MODEL_DECLARE_FORM_ENUMS
-
-    QORM_DECLARE_DTO_TYPE(FormType::RegisterForm)
 
     //!
     //! \brief CRUDBase
@@ -69,6 +64,15 @@ public:
     QOrm::Host &host();
 
     //!
+    //! \brief type
+    //! \return
+    //!
+    const QVariant type() const;
+    CRUDBase &type(const FormType &newType){ return this->setType(newType);}
+    CRUDBase &setType(const FormType &newType);
+    CRUDBase &resetType();
+
+    //!
     //! \brief options
     //! \return
     //!
@@ -105,19 +109,6 @@ public:
     //! \return
     //!
     CRUDBase &clean();
-
-    //!
-    //! \brief type
-    //! \return
-    //!
-    virtual FormType type()const;
-
-    //!
-    //! \brief type
-    //! \param value
-    //! \return
-    //!
-    virtual CRUDBase &type(const QVariant &value);
 
     //!
     //! \brief uuid
@@ -270,6 +261,9 @@ public:
     //! \return
     //!
     virtual CRUDBase &actionDeactivate(QOrm::ModelAction &action);
+
+signals:
+    void typeChanged();
 
 protected:
 

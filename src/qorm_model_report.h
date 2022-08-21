@@ -40,7 +40,6 @@ public:
     //!
     virtual ResultValue &reportfy()
     {
-        this->p_dto.type(this->type());
         return PrivateQOrm::ModelReportBase::reportfy();
     }
 

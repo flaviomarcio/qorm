@@ -8,14 +8,11 @@
 #include "./qorm_model_field_descriptor.h"
 #include "./qorm_model_field_collection.h"
 #include "./private/p_qorm_model_dto_endpoints.h"
-
-#define QORM_MODEL_SET_FORM_DESIGN(W,H,C,R,L) this->setDesign(QVariantHash({{vpWidth,W}, {vpHeight,H}, {vpColumns,C}, {vpRows,R}, {vpLayout,L}}))
+#include "./private/p_qorm_model_dto_design.h"
 
 #define QORM_MODEL_SET_SORT(value) this->setSort(value)
 
 #define QORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value)
-
-#define QORM_MODEL_SET_FORM_TYPE(FORMTYPE) this->setType(FORMTYPE)
 
 #define QORM_MODEL_FIELD_SET_DESCRIPTOR(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES)
 
@@ -53,15 +50,13 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     Q_PROPERTY(QString description READ description RESET resetDescription WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(ModelFieldCollection *descriptors READ descriptors WRITE setDescriptors RESET resetDescriptors NOTIFY descriptorsChanged)
     Q_PROPERTY(ModelFieldCollection *filters READ filters WRITE setFilters RESET resetFilters NOTIFY filtersChanged)
-    Q_PROPERTY(QVariantHash design READ design WRITE setDesign RESET resetDesign NOTIFY designChanged)
+    Q_PROPERTY(Design *design READ design WRITE setDesign RESET resetDesign NOTIFY designChanged)
     Q_PROPERTY(EndPoint *endPoint READ endPoint WRITE setEndPoint NOTIFY endPointChanged)
     Q_PROPERTY(EndPoints *endPoints READ endPoints WRITE setEndPoints RESET resetEndPoints NOTIFY endPointsChanged)
     Q_PROPERTY(Host *host READ host WRITE setHost RESET resetHost NOTIFY hostChanged)
     Q_PROPERTY(bool obrigatory READ obrigatory WRITE setObrigatory NOTIFY obrigatoryChanged)
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
     Q_PROPERTY(QVariantHash sort READ sort WRITE setSort RESET resetSort NOTIFY sortChanged)
-    Q_PROPERTY(QVariant type READ type WRITE setType RESET resetType NOTIFY typeChanged)
-
 public:
 
     //!
@@ -128,15 +123,6 @@ public:
     ModelFieldDescriptors &addFilter(const QString &fieldName, const QVariant &values);
 
     //!
-    //! \brief type
-    //! \return
-    //!
-    FormType type() const;
-    ModelFieldDescriptors &type(const QVariant &type);
-    ModelFieldDescriptors &setType(const QVariant &type);
-    ModelFieldDescriptors &resetType();
-
-    //!
     //! \brief description
     //! \return
     //!
@@ -156,7 +142,8 @@ public:
     //! \brief design
     //! \return
     //!
-    QVariantHash &design();
+    Design *design();
+    ModelFieldDescriptors &setDesign(const Design *value);
     ModelFieldDescriptors &setDesign(const QVariantHash &value);
     ModelFieldDescriptors &resetDesign();
 

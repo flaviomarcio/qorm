@@ -13,7 +13,7 @@ class EndPointsPvt;
 //!
 //! \brief The EndPoints class
 //!
-class Q_STM_EXPORT EndPoints : public QStm::ObjectWrapper
+class Q_ORM_EXPORT EndPoints : public QStm::ObjectWrapper
 {
     Q_OBJECT
     QSTM_OBJECT_WRAPPER(EndPoints)

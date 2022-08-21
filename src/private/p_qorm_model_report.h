@@ -10,13 +10,14 @@
 
 namespace PrivateQOrm{
 class ModelReportBasePvt;
-//TODO CREATE DOCUMENTATION
+
+//!
+//! \brief The ModelReportBase class
+//!
 class Q_ORM_EXPORT ModelReportBase : public QOrm::ObjectDb
 {
     Q_OBJECT
 public:
-    QORM_MODEL_DECLARE_FORM_ENUMS
-    QORM_DECLARE_DTO_TYPE(FormType::ReportForm)
 
     //!
     //! \brief ModelReportBase
@@ -45,13 +46,6 @@ public:
     ModelReportBase &setOptions(const QOrm::ModelDtoOptions &options);
 
     //!
-    //! \brief type
-    //! \return
-    //!
-    virtual FormType type()const;
-    virtual ModelReportBase &type(const FormType &value);
-
-    //!
     //! \brief reportName
     //! \return
     //!
@@ -62,14 +56,14 @@ public:
     //! \brief reportName
     //! \return
     //!
-    virtual QByteArray name()const;
+    virtual QByteArray &name()const;
     virtual ModelReportBase &name(const QVariant &value);
 
     //!
     //! \brief reportDescription
     //! \return
     //!
-    virtual QByteArray description()const;
+    virtual QByteArray &description()const;
     virtual ModelReportBase &description(const QVariant &value);
 
     //!

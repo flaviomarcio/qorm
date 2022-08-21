@@ -3,9 +3,7 @@
 #include "../../../qstm/src/qstm_result_info.h"
 #include "./p_qorm_model_dto_host.h"
 #include "./p_qorm_model_dto_endpoints.h"
-#include "./p_qorm_model_dto_types.h"
 #include "../qorm_model_field_descriptors.h"
-#include "../qorm_types.h"
 
 namespace QOrm {
 class ModelDtoControlsPvt;
@@ -66,15 +64,6 @@ public:
     //!
     virtual ModelDtoControls &setName(const QVariant &v);
 
-
-    //!
-    //! \brief type
-    //! \return
-    //!
-    virtual FormType type() const;
-    virtual ModelDtoControls &type(const QVariant &v);
-    virtual ModelDtoControls &setType(const QVariant &v);
-
     //!
     //! \brief design
     //! \return
@@ -97,26 +86,6 @@ public:
     //!
     virtual QString &text()const;
     virtual ModelDtoControls &text(const QVariant &v);
-
-    //!
-    //! \brief outPutStyle
-    //! \return
-    //!
-    virtual DtoOutPutStyle &outPutStyle() const;
-
-    //!
-    //! \brief outPutStyle
-    //! \param value
-    //! \return
-    //!
-    virtual ModelDtoControls &outPutStyle(const DtoOutPutStyle &value);
-
-    //!
-    //! \brief setOutPutStyle
-    //! \param value
-    //! \return
-    //!
-    virtual ModelDtoControls &setOutPutStyle(const DtoOutPutStyle &value);
 
     //!
     //! \brief headers
@@ -181,7 +150,6 @@ public:
     //! \return
     //!
     virtual ResultValue &toOutput();
-
 private:
     ModelDtoControlsPvt *p=nullptr;
 };

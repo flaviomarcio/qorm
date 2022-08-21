@@ -1,7 +1,6 @@
 #pragma once
 
 #include "./private/p_qorm_model_controls.h"
-#include "./qorm_macro.h"
 
 namespace QOrm {
 class ModelInfo;
@@ -13,10 +12,7 @@ class Q_ORM_EXPORT ModelDto : public QStm::Object
 {
     Q_OBJECT
 public:
-
     QORM_MODEL_DECLARE_FORM_ENUMS
-    QORM_DECLARE_DTO_TYPE(FormType::RegisterForm)
-
     //!
     //! \brief ModelDto
     //! \param parent
@@ -36,6 +32,14 @@ public:
     //! \param parent
     //!
     explicit ModelDto(const ModelInfo *modelInfo, QObject *parent = nullptr);
+
+    //!
+    //! \brief type
+    //! \return
+    //!
+    QVariant type() const;
+    ModelDto &setType(const QVariant &newType);
+    ModelDto &resetType();
 
     //!
     //! \brief uuid
@@ -78,30 +82,10 @@ public:
     virtual ModelDto &setName(const QVariant &value);
 
     //!
-    //! \brief type
-    //! \return
-    //!
-    virtual FormType type() const;
-
-    //!
-    //! \brief type
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &type(const QVariant &v);
-
-    //!
-    //! \brief setType
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &setType(const QVariant &v);
-
-    //!
     //! \brief text
     //! \return
     //!
-    virtual QString text() const;
+    virtual QString &text() const;
 
     //!
     //! \brief text
@@ -121,7 +105,7 @@ public:
     //! \brief sort
     //! \return
     //!
-    virtual QVariantHash sort() const;
+    virtual QVariantHash &sort() const;
 
     //!
     //! \brief sort
@@ -252,6 +236,10 @@ public:
     //! \return
     //!
     virtual ModelDto &initDescriptors(QObject *object);
+
+
+signals:
+    void typeChanged();
 
 private:
     ModelDtoPvt *p = nullptr;

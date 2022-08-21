@@ -30,13 +30,6 @@ enum DtoCompatibleValues{
 };
 
 //!
-//! \brief The DtoOutPutStyle enum
-//!
-enum DtoOutPutStyle{
-    doRowObject=1, doRowArray=2, doSimpleVariant=4
-};
-
-//!
 //! \brief The DtoFilterStyle enum
 //!
 enum DtoFilterStyle{

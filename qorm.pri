@@ -16,6 +16,7 @@ HEADERS += \
     $$PWD/src/private/p_qorm_const.h \
     $$PWD/src/private/p_qorm_model_controls.h \
     $$PWD/src/private/p_qorm_model_crud_body.h \
+    $$PWD/src/private/p_qorm_model_dto_design.h \
     $$PWD/src/private/p_qorm_model_report_body.h \
     $$PWD/src/private/p_qorm_model_crud.h \
     $$PWD/src/private/p_qorm_model_report.h \
@@ -89,6 +90,7 @@ SOURCES += \
     $$PWD/src/private/p_qorm_model_action_method.cpp \
     $$PWD/src/private/p_qorm_model_controls.cpp \
     $$PWD/src/private/p_qorm_model_crud_body.cpp \
+    $$PWD/src/private/p_qorm_model_dto_design.cpp \
     $$PWD/src/private/p_qorm_model_report_body.cpp \
     $$PWD/src/private/p_qorm_model_dao.cpp \
     $$PWD/src/private/p_qorm_model_dto_host.cpp \
