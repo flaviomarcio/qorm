@@ -12,7 +12,6 @@ public:
     QUuid uuid;
     QString name;
     QString text;
-    QVariantHash design;
     QVariantHash sort;
     QString settingName;
     ModelFieldDescriptors fieldDescriptors;
@@ -72,8 +71,8 @@ public:
         vHash.insert(vpUuid, this->dto->uuid());
         vHash.insert(vpName, this->dto->name());
         vHash.insert(vpTitle, this->text);
-        vHash.insert(vpDesign, this->dto->design());
-        vHash.insert(vpType, this->fieldDescriptors.design()->type());
+        vHash.insert(vpDesign, this->dto->fields().design()->toHash());
+        vHash.insert(vpType, this->dto->fields().design()->type());
         vHash.insert(vpHeaders, vHeaders);
         vHash.insert(vpFilters, vFilters);
         vHash.insert(vpItems, this->items);
@@ -94,7 +93,6 @@ public:
     {
         this->fieldDescriptors.clear();
         this->items.clear();
-        this->design.clear();
         this->resultInfo.clear();
     }
 };
@@ -154,23 +152,6 @@ ModelDtoControls &ModelDtoControls::name(const QVariant &value)
 ModelDtoControls &ModelDtoControls::setName(const QVariant &v)
 {
     p->name=v.toString().trimmed();
-    return *this;
-}
-
-QVariantHash &ModelDtoControls::design() const
-{
-    return p->design;
-}
-
-ModelDtoControls &ModelDtoControls::design(const QVariant &v)
-{
-    p->design=v.toHash();
-    return *this;
-}
-
-ModelDtoControls &ModelDtoControls::setDesign(const QVariant &v)
-{
-    p->design=v.toHash();
     return *this;
 }
 

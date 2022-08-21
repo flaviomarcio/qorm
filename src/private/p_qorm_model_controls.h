@@ -65,14 +65,6 @@ public:
     virtual ModelDtoControls &setName(const QVariant &v);
 
     //!
-    //! \brief design
-    //! \return
-    //!
-    virtual QVariantHash &design()const;
-    virtual ModelDtoControls &design(const QVariant &v);
-    virtual ModelDtoControls &setDesign(const QVariant &v);
-
-    //!
     //! \brief sort
     //! \return
     //!
