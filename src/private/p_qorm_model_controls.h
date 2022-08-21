@@ -41,43 +41,18 @@ public:
     //! \return
     //!
     virtual QUuid &uuid() const;
-    virtual ModelDtoControls &uuid(const QUuid &v);
-    virtual ModelDtoControls &setUuid(const QUuid &v);
 
     //!
-    //! \brief name
+    //! \brief description
     //! \return
     //!
-    virtual QString &name() const;
-
-    //!
-    //! \brief name
-    //! \param value
-    //! \return
-    //!
-    virtual ModelDtoControls &name(const QVariant &value);
-
-    //!
-    //! \brief setName
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDtoControls &setName(const QVariant &v);
+    virtual QString &description() const;
 
     //!
     //! \brief sort
     //! \return
     //!
     virtual QVariantHash &sort() const;
-    virtual ModelDtoControls &sort(const QVariant &v);
-    virtual ModelDtoControls &setSort(const QVariant &v);
-
-    //!
-    //! \brief text
-    //! \return
-    //!
-    virtual QString &text()const;
-    virtual ModelDtoControls &text(const QVariant &v);
 
     //!
     //! \brief headers

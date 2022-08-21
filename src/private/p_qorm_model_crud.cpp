@@ -558,9 +558,6 @@ ResultValue &CRUDBase::canActionCreate()
     auto v=lr.resultVariant();
     return this->lr(p->dto
                     .host(p->host)
-                    .uuid(this->uuid())
-                    .name(this->name())
-                    .text(this->description())
                     .items(v).o());
 }
 
@@ -602,9 +599,6 @@ ResultValue &CRUDBase::canActionSearch()
     }
     return this->lr(p->dto
                     .host(p->host)
-                    .uuid(this->uuid())
-                    .name(this->name())
-                    .text(this->description())
                     .items(v).o());
 }
 

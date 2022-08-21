@@ -10,9 +10,6 @@ namespace QOrm {
 class ModelDtoControlsPvt:public QObject{
 public:
     QUuid uuid;
-    QString name;
-    QString text;
-    QVariantHash sort;
     QString settingName;
     ModelFieldDescriptors fieldDescriptors;
     QVariantList items;
@@ -69,8 +66,8 @@ public:
         }
 
         vHash.insert(vpUuid, this->dto->uuid());
-        vHash.insert(vpName, this->dto->name());
-        vHash.insert(vpTitle, this->text);
+        vHash.insert(vpName, this->dto->description());
+        vHash.insert(vpTitle, this->dto->description());
         vHash.insert(vpDesign, this->dto->fields().design()->toHash());
         vHash.insert(vpType, this->dto->fields().design()->type());
         vHash.insert(vpHeaders, vHeaders);
@@ -81,7 +78,7 @@ public:
         vHash.insert(vpResultInfo, this->resultInfo.toHash());
 
         {
-            Q_V_HASH_ITERATOR(this->sort){
+            Q_V_HASH_ITERATOR(this->dto->sort()){
                 i.next();
                 vHash.insert(i.key(), i.value());
             }
@@ -120,67 +117,17 @@ ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &result
 
 QUuid &ModelDtoControls::uuid() const
 {
-    Q_DECLARE_VU;
-    if(p->uuid.isNull() && !p->name.isEmpty())
-        p->uuid=vu.toMd5Uuid(p->name);
-    return p->uuid;
+    return p->fieldDescriptors.uuid();
 }
 
-ModelDtoControls &ModelDtoControls::uuid(const QUuid &v)
+QString &ModelDtoControls::description() const
 {
-    p->uuid=v;
-    return *this;
-}
-
-ModelDtoControls &ModelDtoControls::setUuid(const QUuid &v)
-{
-    p->uuid=v;
-    return *this;
-}
-
-QString &ModelDtoControls::name() const
-{
-    return p->name;
-}
-
-ModelDtoControls &ModelDtoControls::name(const QVariant &value)
-{
-    p->name=value.toString().trimmed();
-    return *this;
-}
-
-ModelDtoControls &ModelDtoControls::setName(const QVariant &v)
-{
-    p->name=v.toString().trimmed();
-    return *this;
+    return p->fieldDescriptors.description();
 }
 
 QVariantHash &ModelDtoControls::sort() const
 {
-    return p->sort;
-}
-
-ModelDtoControls &ModelDtoControls::sort(const QVariant &v)
-{
-    p->sort=v.toHash();
-    return *this;
-}
-
-ModelDtoControls &ModelDtoControls::setSort(const QVariant &v)
-{
-    p->sort=v.toHash();
-    return *this;
-}
-
-QString &ModelDtoControls::text() const
-{
-    return p->text;
-}
-
-ModelDtoControls &ModelDtoControls::text(const QVariant &v)
-{
-    p->text=v.toString();
-    return *this;
+    return p->fieldDescriptors.sort();
 }
 
 ModelFieldCollection &ModelDtoControls::headers()

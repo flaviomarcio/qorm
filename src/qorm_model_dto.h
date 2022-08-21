@@ -37,9 +37,7 @@ public:
     //! \brief type
     //! \return
     //!
-    QVariant type() const;
-    ModelDto &setType(const QVariant &newType);
-    ModelDto &resetType();
+    QVariant &type() const;
 
     //!
     //! \brief uuid
@@ -48,78 +46,16 @@ public:
     virtual QUuid &uuid() const;
 
     //!
-    //! \brief uuid
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &uuid(const QUuid &value);
-
-    //!
-    //! \brief setId
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &setUuid(const QUuid &v);
-
-    //!
     //! \brief name
     //! \return
     //!
-    virtual QString &name() const;
-
-    //!
-    //! \brief name
-    //! \param value
-    //! \return
-    //!
-    virtual ModelDto &name(const QVariant &value);
-
-    //!
-    //! \brief setName
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &setName(const QVariant &value);
-
-    //!
-    //! \brief text
-    //! \return
-    //!
-    virtual QString &text() const;
-
-    //!
-    //! \brief text
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &text(const QVariant &v);
-
-    //!
-    //! \brief setText
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &setText(const QVariant &v);
+    virtual QString &description() const;
 
     //!
     //! \brief sort
     //! \return
     //!
     virtual QVariantHash &sort() const;
-
-    //!
-    //! \brief sort
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &sort(const QVariant &v);
-
-    //!
-    //! \brief setSort
-    //! \param v
-    //! \return
-    //!
-    virtual ModelDto &setSort(const QVariant &v);
 
     //!
     //! \brief controls

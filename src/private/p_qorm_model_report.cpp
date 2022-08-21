@@ -244,13 +244,7 @@ ResultValue &ModelReportBase::canActionSearch()
         auto &lr=(act==nullptr)?this->search():act->action(this->source());\
         v=lr.resultVariant();
     }
-    return this->lr(p->dto
-                    .name(this->uuid())
-                    .name(this->name())
-                    .text(this->description())
-                    .items(v)
-                    .o()
-                    );
+    return this->lr(p->dto.items(v).o());
 }
 
 ResultValue &ModelReportBase::doBofore()

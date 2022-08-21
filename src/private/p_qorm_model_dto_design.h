@@ -77,7 +77,7 @@ public:
     //! \brief formType
     //! \return
     //!
-    QVariant type() const;
+    QVariant &type() const;
     Design &type(const QVariant &value){ return this->setType(value);};
     Design &setType(const QVariant &value);
     Design &resetType();

@@ -16,6 +16,7 @@ public:
     int columns=1;
     QStm::MetaEnum<Design::Layout> layout=Design::Vertical;
     QStm::MetaEnum<Design::FormType> type=Design::RegisterForm;
+    QVariant typeName;
     explicit DesignPvt(Design *parent):QObject{parent}{ this->parent=parent; }
 };
 
@@ -120,9 +121,10 @@ Design &Design::resetLayout()
     return setLayout({});
 }
 
-QVariant Design::type() const
+QVariant &Design::type() const
 {
-    return p->type.name();
+    p->typeName=p->type.name();
+    return p->typeName;
 }
 
 Design &Design::setType(const QVariant &value)

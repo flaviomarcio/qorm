@@ -13,6 +13,7 @@ class ModelDescriptorPvt:public QObject
 {
 public:
     QStm::MetaEnum<QOrm::ModelFieldDescriptors::FormType> type = ModelFieldDescriptors::RegisterForm;
+    QUuid uuid;
     QString description;
     ModelFieldCollection descriptorsCollection, filtersCollection;
     QVariantHash sort;
@@ -135,6 +136,15 @@ ModelFieldDescriptors &ModelFieldDescriptors::makeDescriptorToFilters()
 QByteArray ModelFieldDescriptors::className() const
 {
     return this->metaObject()->className();
+}
+
+QUuid &ModelFieldDescriptors::uuid() const
+{
+    if(p->uuid.isNull()){
+        Q_DECLARE_VU;
+        p->uuid=vu.toUuid(this->className());
+    }
+    return p->uuid;
 }
 
 ModelFieldDescriptor &ModelFieldDescriptors::addDescriptor(const QString &fieldName)

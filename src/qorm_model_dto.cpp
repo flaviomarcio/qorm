@@ -63,21 +63,9 @@ ModelDto::ModelDto(const ModelInfo *modelInfo, QObject *parent) : QStm::Object{p
     p->initDescriptors(*modelInfo);
 }
 
-QVariant ModelDto::type() const
+QVariant &ModelDto::type() const
 {
     return p->dtoControls.fields().design()->type();
-}
-
-ModelDto &ModelDto::setType(const QVariant &newType)
-{
-    p->dtoControls.fields().design()->setType(newType);
-    emit typeChanged();
-    return *this;
-}
-
-ModelDto &ModelDto::resetType()
-{
-    return setType({});
 }
 
 QUuid &ModelDto::uuid() const
@@ -85,33 +73,9 @@ QUuid &ModelDto::uuid() const
     return p->dtoControls.uuid();
 }
 
-ModelDto &ModelDto::uuid(const QUuid &value)
+QString &ModelDto::description() const
 {
-    p->dtoControls.uuid(value);
-    return *this;
-}
-
-ModelDto &ModelDto::setUuid(const QUuid &value)
-{
-    p->dtoControls.uuid(value);
-    return *this;
-}
-
-QString &ModelDto::name() const
-{
-    return p->dtoControls.name();
-}
-
-ModelDto &ModelDto::name(const QVariant &value)
-{
-    p->dtoControls.name(value);
-    return *this;
-}
-
-ModelDto &ModelDto::setName(const QVariant &value)
-{
-    p->dtoControls.setName(value);
-    return *this;
+    return p->dtoControls.description();
 }
 
 ModelDtoControls &ModelDto::controls()
@@ -189,38 +153,9 @@ ModelDto &ModelDto::setValue(const QVariant &v)
     return *this;
 }
 
-QString &ModelDto::text() const
-{
-    return p->dtoControls.text();
-}
-
-ModelDto &ModelDto::text(const QVariant &v)
-{
-    p->dtoControls.text(v);
-    return *this;
-}
-
-ModelDto &ModelDto::setText(const QVariant &v)
-{
-    p->dtoControls.text(v);
-    return *this;
-}
-
 QVariantHash &ModelDto::sort() const
 {
     return p->dtoControls.sort();
-}
-
-ModelDto &ModelDto::sort(const QVariant &v)
-{
-    p->dtoControls.sort(v);
-    return *this;
-}
-
-ModelDto &ModelDto::setSort(const QVariant &v)
-{
-    p->dtoControls.setSort(v);
-    return *this;
 }
 
 ModelDto &ModelDto::setValue(const ResultValue &lr)
