@@ -5,9 +5,9 @@
 
 namespace QOrm {
 
-static auto __resultInfo=QStringLiteral("resultInfo");
-static auto __pages=QStringLiteral("pages");
-static auto __type=QStringLiteral("type");
+static auto __resultInfo="resultInfo";
+static auto __pages="pages";
+static auto __type="type";
 static auto __items="items";
 
 class CRUDBlockPvt:public QObject{
@@ -36,7 +36,12 @@ public:
         case QOrm::CRUDTypes::Strategy::Deactivate:
         case QOrm::CRUDTypes::Strategy::Search:{
             if(returns.isEmpty()){//prepara primeira consulta
-                __return=CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), crudBody.data())};
+                QVariant data;
+                if(strategy==QOrm::CRUDTypes::Strategy::Search && crudBody.expressions().isValid())
+                    data=crudBody.expressions();
+                else
+                    data=crudBody.data();
+                __return=CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), data)};
             }
             else{
                 QVariantHash lastReturn;

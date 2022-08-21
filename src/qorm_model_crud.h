@@ -194,7 +194,7 @@ protected:
                 while (i.hasNext()) {
                     i.next();
                     const auto header=&this->p_dto.headers().item(i.key());
-                    if(header)
+                    if(!header)
                         continue;
                     auto vHash=header->filtrableStrategy().toHash();
                     auto keywordOperator=vHash.value(__operator);
