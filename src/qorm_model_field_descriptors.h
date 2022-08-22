@@ -79,9 +79,9 @@ public:
     virtual void descriptorsInit();
 
     //!
-    //! \brief makeDescriptorToFilters
+    //! \brief copyDescriptorToFilters
     //!
-    virtual ModelFieldDescriptors &makeDescriptorToFilters();
+    virtual ModelFieldDescriptors &copyDescriptorToFilters();
 
     //!
     //! \brief className

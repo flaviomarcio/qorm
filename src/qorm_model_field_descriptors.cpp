@@ -121,18 +121,13 @@ void ModelFieldDescriptors::descriptorsInit()
     p->clear();
 }
 
-ModelFieldDescriptors &ModelFieldDescriptors::makeDescriptorToFilters()
+ModelFieldDescriptors &ModelFieldDescriptors::copyDescriptorToFilters()
 {
-//    QHashIterator <QString, ModelFieldDescriptor*> i(p->descriptorsCollection);
-//    qDeleteAll(p->filtersCollection);
-//    p->filtersCollection.clear();
-//    while(i.hasNext()){
-//        i.next();
-//        auto field=i.value();
-//        if(!field)
-//            continue;
-//        this->addFilter(field->name(), field->toHash());
-//    }
+    p->filtersCollection.clear();
+    for(auto&field:p->descriptorsCollection.list()){
+        if(!field->filtrable()) continue;
+        this->addFilter(field->field(), field->toHash());
+    }
     return *this;
 }
 
