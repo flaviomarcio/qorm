@@ -114,6 +114,4 @@ static const auto vtInputTextSearch="InputTextSearch";
 static const auto vtInputTime="InputTime";
 static const auto vtInputUuid="InputUuid";
 static const auto vtInputWeight="InputWeight";
-
-
-
+static const auto vtInputPassWord="InputPassWord";
