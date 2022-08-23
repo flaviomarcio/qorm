@@ -47,9 +47,9 @@ const QString &ModelFieldDescriptor::field() const
 
 ModelFieldDescriptor &ModelFieldDescriptor::field(const QString &newField)
 {
-    if (p->field == newField)
+    if (p->field == newField.trimmed())
         return *this;
-    p->field = newField;
+    p->field = newField.trimmed();
     emit fieldChanged();
     return *this;
 }
@@ -66,9 +66,9 @@ const QString &ModelFieldDescriptor::title() const
 
 ModelFieldDescriptor &ModelFieldDescriptor::title(const QString &newTitle)
 {
-    if (p->title == newTitle)
+    if (p->title == newTitle.trimmed())
         return *this;
-    p->title = newTitle;
+    p->title = newTitle.trimmed();
     emit titleChanged();
     return *this;
 }

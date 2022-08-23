@@ -52,6 +52,8 @@ ModelFieldDescriptor &ModelFieldCollection::item(const QString &fieldName)
 
 const ModelFieldCollection &ModelFieldCollection::item(const QString &fieldName, const QVariant &values) const
 {
+    if(fieldName.trimmed().isEmpty())
+        return *this;
     auto field=&p->add(fieldName);
     if(field){
         auto name=field->field().toLower();
@@ -80,8 +82,11 @@ const QVariantList &ModelFieldCollection::toList()const
 {
     p->vList.clear();
     auto&list=this->list();
-    for(auto &field : list)
+    for(auto &field : list){
+        if(field->field().isEmpty())
+            continue;
         p->vList.append(field->toHash());
+    }
     return p->vList;
 }
 
@@ -97,7 +102,7 @@ ModelFieldCollection &ModelFieldCollection::setItems(const QVariant &newItems)
     auto vList=vu.toList(newItems);
     for(auto &v : vList){
         auto item=ModelFieldDescriptor::from(v, this);
-        if(!item)continue;
+        if(!item || item->field().isEmpty())continue;
         p->collection.insert(item->field(), item);
         if(!p->order.contains(item->field()))
             p->order.append(item->field());
