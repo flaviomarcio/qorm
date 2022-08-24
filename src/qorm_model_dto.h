@@ -44,6 +44,7 @@ public:
     //! \return
     //!
     virtual QUuid &uuid() const;
+    virtual ModelDto &uuid(const QUuid &uuid);
 
     //!
     //! \brief name

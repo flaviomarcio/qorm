@@ -73,6 +73,12 @@ QUuid &ModelDto::uuid() const
     return p->dtoControls.uuid();
 }
 
+ModelDto &ModelDto::uuid(const QUuid &uuid)
+{
+    p->dtoControls.uuid(uuid);
+    return *this;
+}
+
 QString &ModelDto::description() const
 {
     return p->dtoControls.description();

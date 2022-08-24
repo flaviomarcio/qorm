@@ -598,6 +598,7 @@ ResultValue &CRUDBase::canActionSearch()
         v=lr.resultVariant();
     }
     return this->lr(p->dto
+                    .uuid(this->uuid())//crud uuid
                     .host(p->host)
                     .items(v).o());
 }

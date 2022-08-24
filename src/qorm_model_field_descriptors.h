@@ -58,6 +58,7 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     Q_PROPERTY(bool obrigatory READ obrigatory WRITE setObrigatory NOTIFY obrigatoryChanged)
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
     Q_PROPERTY(QVariantHash sort READ sort WRITE setSort RESET resetSort NOTIFY sortChanged)
+    Q_PROPERTY(QStringList fieldsValid READ fieldsValid WRITE setFieldsValid RESET resetFieldsValid NOTIFY fieldsValidChanged)
 public:
 
     //!
@@ -214,6 +215,14 @@ public:
     ModelFieldDescriptors &setReadOnly(bool newReadonly);
     ModelFieldDescriptors &resetReadOnly();
 
+    //!
+    //! \brief fieldsValid
+    //! \return
+    //!
+    const QStringList &fieldsValid() const;
+    ModelFieldDescriptors &setFieldsValid(const QStringList &newFieldsValid);
+    ModelFieldDescriptors &resetFieldsValid();
+
 signals:
     void classNameChanged();
     void uuidChanged();
@@ -228,6 +237,7 @@ signals:
     void readOnlyChanged();
     void sortChanged();
     void typeChanged();
+    void fieldsValidChanged();
 private:
     ModelDescriptorPvt *p = nullptr;
 };

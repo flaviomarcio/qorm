@@ -710,6 +710,8 @@ public:
             if(pvt->description.isEmpty())
                 pvt->description=pvt->descriptor->description();
 
+            pvt->descriptor->setFieldsValid(pvt->propertyList);
+
             auto vDescriptors=pvt->descriptor->toHash();
             if(!vDescriptors.isEmpty())
                 pvt->propertyDescriptors=vDescriptors;

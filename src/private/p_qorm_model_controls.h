@@ -41,6 +41,7 @@ public:
     //! \return
     //!
     virtual QUuid &uuid() const;
+    virtual ModelDtoControls &uuid(const QUuid &uuid);
 
     //!
     //! \brief description

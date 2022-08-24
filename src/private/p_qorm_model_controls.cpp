@@ -34,24 +34,23 @@ public:
         const auto &vEndPoints=fieldDescriptors.endPoints()->toList();
         const auto vEndPoint=fieldDescriptors.endPoint()->toHash();
 
-        if(this->items.isEmpty()){
-            QVariantMap vRecord;
-            for(const auto &field:vHeaderList){
-                auto name=field->field();
-                vRecord.insert(name, {});
-            }
-            this->items.append(vRecord);
-        }
+//        if(this->items.isEmpty()){
+//            QVariantMap vRecord;
+//            for(const auto &field:vHeaderList){
+//                auto name=field->field();
+//                vRecord.insert(name, {});
+//            }
+//            this->items.append(vRecord);
+//        }
 
-        QVector<QString> cacheHeader;
-        for(auto &v:this->items){
-            const auto vHash=v.toHash();
+        auto cacheHeader=fieldDescriptors.fieldsValid();
+        if(!this->items.isEmpty()){//caso exista itens e existirem novos campos estes serão adicionados e retornados com a header predefinida
+            const auto vHash=this->items.first().toHash();
             for(auto &field:vHeaderList){
                 auto name=field->field();
-                if(vHash.contains(name))
+                if(vHash.contains(name) && !cacheHeader.contains(name))
                     cacheHeader.append(name);
             }
-            break;
         }
 
         QVariantList vFilters;
@@ -118,6 +117,12 @@ ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &result
 QUuid &ModelDtoControls::uuid() const
 {
     return p->fieldDescriptors.uuid();
+}
+
+ModelDtoControls &ModelDtoControls::uuid(const QUuid &uuid)
+{
+    p->fieldDescriptors.setUuid(uuid);
+    return *this;
 }
 
 QString &ModelDtoControls::description() const

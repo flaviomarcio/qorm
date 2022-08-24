@@ -24,6 +24,7 @@ public:
     EndPoint endPoint;
     bool obrigatory=false;
     bool readOnly=false;
+    QStringList fieldsValid;
     ModelFieldDescriptors *parent=nullptr;
     explicit ModelDescriptorPvt(ModelFieldDescriptors *parent)
         :
@@ -55,6 +56,7 @@ public:
         this->host.clear();
         this->endPoint.clear();
         this->endPoints.clear();
+        this->fieldsValid.clear();
     }
 };
 
@@ -406,6 +408,25 @@ ModelFieldDescriptors &ModelFieldDescriptors::setReadOnly(bool newReadonly)
 ModelFieldDescriptors &ModelFieldDescriptors::resetReadOnly()
 {
     return setReadOnly({});
+}
+
+const QStringList &ModelFieldDescriptors::fieldsValid() const
+{
+    return p->fieldsValid;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::setFieldsValid(const QStringList &newFieldsValid)
+{
+    if (p->fieldsValid == newFieldsValid)
+        return *this;
+    p->fieldsValid = newFieldsValid;
+    emit fieldsValidChanged();
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::resetFieldsValid()
+{
+    return setFieldsValid({});
 }
 
 } // namespace QOrm
