@@ -62,6 +62,8 @@ HEADERS += \
     $$PWD/src/qorm_model_crud_block.h \
     $$PWD/src/qorm_model_crud_types.h \
     $$PWD/src/qorm_model_crud.h \
+    $$PWD/src/qorm_model_action_descriptor.h \
+    $$PWD/src/qorm_model_action_collection.h \
     $$PWD/src/qorm_model_field_collection.h \
     $$PWD/src/qorm_model_field_descriptor.h \
     $$PWD/src/qorm_model_field_descriptors.h \
@@ -127,6 +129,8 @@ SOURCES += \
     $$PWD/src/qorm_model_crud_block.cpp \
     $$PWD/src/qorm_model.cpp \
     $$PWD/src/qorm_model_dto.cpp \
+    $$PWD/src/qorm_model_action_descriptor.cpp \
+    $$PWD/src/qorm_model_action_collection.cpp \
     $$PWD/src/qorm_model_field_collection.cpp \
     $$PWD/src/qorm_model_field_descriptor.cpp \
     $$PWD/src/qorm_model_field_descriptors.cpp \

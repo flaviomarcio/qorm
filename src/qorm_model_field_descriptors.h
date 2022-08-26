@@ -5,8 +5,8 @@
 #include <QVariantMap>
 #include "./qorm_types.h"
 #include "./qorm_model_macro.h"
-#include "./qorm_model_field_descriptor.h"
 #include "./qorm_model_field_collection.h"
+#include "./qorm_model_action_collection.h"
 #include "./private/p_qorm_model_dto_endpoints.h"
 #include "./private/p_qorm_model_dto_design.h"
 
@@ -23,6 +23,8 @@
 #define QORM_MODEL_FIELD_SET_FLAGS(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES);
 
 #define QORM_MODEL_FIELD_SET_OPTIONS(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES);
+
+#define QORM_MODEL_ACTION_SET(NAME, VALUES) addAction(QStringLiteral(#NAME), VALUES);
 
 #define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES)
 
@@ -51,6 +53,7 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     Q_PROPERTY(QString description READ description RESET resetDescription WRITE setDescription RESET resetDescription NOTIFY descriptionChanged)
     Q_PROPERTY(ModelFieldCollection *descriptors READ descriptors WRITE setDescriptors RESET resetDescriptors NOTIFY descriptorsChanged)
     Q_PROPERTY(ModelFieldCollection *filters READ filters WRITE setFilters RESET resetFilters NOTIFY filtersChanged)
+    Q_PROPERTY(ModelActionCollection *actions READ actions WRITE setActions RESET resetActions NOTIFY actionsChanged)
     Q_PROPERTY(Design *design READ design WRITE setDesign RESET resetDesign NOTIFY designChanged)
     Q_PROPERTY(EndPoint *endPoint READ endPoint WRITE setEndPoint NOTIFY endPointChanged)
     Q_PROPERTY(EndPoints *endPoints READ endPoints WRITE setEndPoints RESET resetEndPoints NOTIFY endPointsChanged)
@@ -105,7 +108,6 @@ public:
     //! \return
     //!
     ModelFieldCollection *descriptors();
-    ModelFieldCollection &descriptorsCollection() const;
     ModelFieldDescriptors &setDescriptors(const ModelFieldCollection *newDescriptors);
     ModelFieldDescriptors &resetDescriptors();
 
@@ -114,9 +116,34 @@ public:
     //! \return
     //!
     ModelFieldCollection *filters();
-    ModelFieldCollection &filtersCollection() const;
     ModelFieldDescriptors &setFilters(const ModelFieldCollection *newFilters);
     ModelFieldDescriptors &resetFilters();
+
+    //!
+    //! \brief actions
+    //! \return
+    //!
+    ModelActionCollection *actions() const;
+    ModelFieldDescriptors &setActions(const ModelActionCollection *newActions);
+    ModelFieldDescriptors &resetActions();
+
+    //!
+    //! \brief actionCRUDMaker
+    //! \return
+    //!
+    ModelFieldDescriptors &actionCRUDMaker();
+
+    //!
+    //! \brief actionReportMaker
+    //! \return
+    //!
+    ModelFieldDescriptors &actionReportMaker();
+
+    //!
+    //! \brief actionOperationMaker
+    //! \return
+    //!
+    ModelFieldDescriptors &actionOperationMaker();
 
     //!
     //! \brief addDescriptor
@@ -133,6 +160,14 @@ public:
     //!
     ModelFieldDescriptor &addFilter(const QString &fieldName);
     ModelFieldDescriptors &addFilter(const QString &fieldName, const QVariant &values);
+
+    //!
+    //! \brief addAction
+    //! \param actionName
+    //! \return
+    //!
+    ModelFieldDescriptor &addAction(const QString &actionName);
+    ModelFieldDescriptors &addAction(const QString &actionName, const QVariant &values);
 
     //!
     //! \brief description
@@ -238,6 +273,8 @@ signals:
     void sortChanged();
     void typeChanged();
     void fieldsValidChanged();
+    void actionsChanged();
+
 private:
     ModelDescriptorPvt *p = nullptr;
 };

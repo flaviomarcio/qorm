@@ -9,6 +9,17 @@ namespace QOrm {
 static const auto __30P="30%";
 static const auto __40P="40%";
 
+static auto const __remove="remove";
+static auto const __removeName="Remover";
+static auto const __save="save";
+static auto const __saveName="Salvar";
+static auto const __print="print";
+static auto const __printName="Imprimir";
+static auto const __refresh="print";
+static auto const __refreshName="Atualizar";
+static auto const __finalize="finalize";
+static auto const __finalizeName="Finalizar";
+
 class ModelDescriptorPvt:public QObject
 {
 public:
@@ -17,6 +28,7 @@ public:
     QUuid uuid;
     QString description;
     ModelFieldCollection descriptorsCollection, filtersCollection;
+    ModelActionCollection actionsCollection;
     QVariantHash sort;
     Design design;
     Host host;
@@ -29,6 +41,9 @@ public:
     explicit ModelDescriptorPvt(ModelFieldDescriptors *parent)
         :
           QObject{parent},
+          descriptorsCollection{parent},
+          filtersCollection{parent},
+          actionsCollection{parent},
           design{parent},
           host{parent},
           endPoints{parent},
@@ -44,6 +59,7 @@ public:
         this->description.clear();
         this->descriptorsCollection.clear();
         this->filtersCollection.clear();
+        this->actionsCollection.clear();
         this->sort.clear();
         this->design.clear();
         this->design
@@ -57,6 +73,27 @@ public:
         this->endPoint.clear();
         this->endPoints.clear();
         this->fieldsValid.clear();
+    }
+
+    void actionCRUDMaker()
+    {
+
+        this->descriptorsCollection.clear();
+        this->actionsCollection.item(__save).title(__saveName).order(0);
+        this->actionsCollection.item(__remove).title(__removeName).order(1);
+    }
+
+    void actionReportMaker()
+    {
+        this->descriptorsCollection.clear();
+        this->actionsCollection.item(__refresh).title(__refreshName).order(0);
+        this->actionsCollection.item(__print).title(__printName).order(1);
+    }
+
+    void actionOperationMaker()
+    {
+        this->descriptorsCollection.clear();
+        this->actionsCollection.item(__finalize).title(__finalizeName).order(0);
     }
 };
 
@@ -74,14 +111,14 @@ bool ModelFieldDescriptors::isValid() const
     return true;
 }
 
+void ModelFieldDescriptors::descriptorsInit()
+{
+    p->clear();
+}
+
 ModelFieldCollection *ModelFieldDescriptors::descriptors()
 {
     return &p->descriptorsCollection;
-}
-
-ModelFieldCollection &ModelFieldDescriptors::descriptorsCollection() const
-{
-    return p->descriptorsCollection;
 }
 
 ModelFieldDescriptors &ModelFieldDescriptors::setDescriptors(const ModelFieldCollection *newDescriptors)
@@ -93,17 +130,14 @@ ModelFieldDescriptors &ModelFieldDescriptors::setDescriptors(const ModelFieldCol
 
 ModelFieldDescriptors &ModelFieldDescriptors::resetDescriptors()
 {
-    return this->setDescriptors({});
+    p->descriptorsCollection.clear();
+    emit descriptorsChanged();
+    return *this;
 }
 
 ModelFieldCollection *ModelFieldDescriptors::filters()
 {
     return &p->filtersCollection;
-}
-
-ModelFieldCollection &ModelFieldDescriptors::filtersCollection() const
-{
-    return p->filtersCollection;
 }
 
 ModelFieldDescriptors &ModelFieldDescriptors::setFilters(const ModelFieldCollection *newFilters)
@@ -115,12 +149,46 @@ ModelFieldDescriptors &ModelFieldDescriptors::setFilters(const ModelFieldCollect
 
 ModelFieldDescriptors &ModelFieldDescriptors::resetFilters()
 {
-    return this->setFilters({});
+    p->filtersCollection.clear();
+    emit filtersChanged();
+    return *this;
 }
 
-void ModelFieldDescriptors::descriptorsInit()
+ModelActionCollection *ModelFieldDescriptors::actions() const
 {
-    p->clear();
+    return &p->actionsCollection;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::setActions(const ModelActionCollection *newActions)
+{
+    p->actionsCollection = newActions;
+    emit actionsChanged();
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::resetActions()
+{
+    p->actionsCollection.clear();
+    emit actionsChanged();
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::actionCRUDMaker()
+{
+    p->actionCRUDMaker();
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::actionReportMaker()
+{
+    p->actionReportMaker();
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::actionOperationMaker()
+{
+    p->actionOperationMaker();
+    return *this;
 }
 
 ModelFieldDescriptors &ModelFieldDescriptors::copyDescriptorToFilters()
@@ -190,6 +258,17 @@ ModelFieldDescriptor &ModelFieldDescriptors::addFilter(const QString &fieldName)
 ModelFieldDescriptors &ModelFieldDescriptors::addFilter(const QString &fieldName, const QVariant &values)
 {
     p->filtersCollection.item(fieldName, values);
+    return *this;
+}
+
+ModelFieldDescriptor &ModelFieldDescriptors::addAction(const QString &actionName)
+{
+    return p->descriptorsCollection.item(actionName);
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::addAction(const QString &actionName, const QVariant &values)
+{
+    p->filtersCollection.item(actionName, values);
     return *this;
 }
 

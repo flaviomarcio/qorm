@@ -61,6 +61,7 @@ static const auto vpInputFormat="inputFormat";
 static const auto vpInputLink="inputLink";
 static const auto vpInputMask="inputMask";
 static const auto vpInputType="inputType";
+static const auto vpActionType="actionType";
 static const auto vpItems="items";
 static const auto vpLayout="layout";
 static const auto vpLength="length";

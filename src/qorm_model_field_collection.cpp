@@ -30,12 +30,12 @@ public:
     ModelFieldDescriptor &add(const QString &fieldName)
     {
         auto name=fieldName.trimmed().toLower();
-        auto &field=collection[name];
-        if(!field){
-            field=new ModelFieldDescriptor{this->parent};
-            field->field(name);
+        auto &item=collection[name];
+        if(!item){
+            item=new ModelFieldDescriptor{this->parent};
+            item->field(name);
         }
-        return *field;
+        return *item;
     }
 };
 
