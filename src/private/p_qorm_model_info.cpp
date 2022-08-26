@@ -23,7 +23,7 @@ public:
     QMetaObject staticMetaObjectDescriptor;
     QHash<QString, QMetaMethod> methods;
     QList<QMetaProperty> property;
-    QHash<QString, QMetaProperty> propertyHash;
+    QHash<QString, QMetaProperty> propertyByName;
     QString name;
     QString description;
     QHash<QString, QMetaProperty> propertyByFieldName;
@@ -338,7 +338,7 @@ public:
         ____copy(descriptor             );
         ____copy(tablePkAutoGenerate    );
         ____copy(property               );
-        ____copy(propertyHash           );
+        ____copy(propertyByName           );
         ____copy(propertyByFieldName    );
         ____copy(propertyByPropertyName );
         ____copy(propertyFiltrable      );
@@ -380,7 +380,7 @@ public:
         this->descriptor=nullptr;
         ____clear(tablePkAutoGenerate    );
         ____clear(property               );
-        ____clear(propertyHash           );
+        ____clear(propertyByName           );
         ____clear(propertyByFieldName    );
         ____clear(propertyByPropertyName );
         ____clear(propertyInfo           );
@@ -444,7 +444,7 @@ public:
             if(__propertyIgnoredList->contains(propertyName.toLower()))
                 continue;
 
-            pvt->propertyHash.insert(property.name(), property);
+            pvt->propertyByName.insert(property.name(), property);
             pvt->property.append(property);
         }
 
@@ -519,13 +519,13 @@ public:
             if(propertyName.isEmpty())
                 continue;
             auto field=tablePrefix+tablePrefixSeparator+propertyName;
-            auto property=pvt->propertyHash.value(propertyName);
+            auto property=pvt->propertyByName.value(propertyName);
             if(!property.isValid())
                 continue;
 
             pvt->tablePk.append(field);
             pvt->tablePkField.append(SqlParserItem::createObject(field));
-            pvt->propertyPK.insert(propertyName, pvt->propertyHash[propertyName]);
+            pvt->propertyPK.insert(propertyName, pvt->propertyByName[propertyName]);
         }
 
         pvt->tablePkSingle=pvt->tablePk.isEmpty()?"":pvt->tablePk.join(QByteArrayLiteral(" "));
@@ -534,7 +534,7 @@ public:
             if(propertyName.isEmpty())
                 continue;
 
-            auto property=pvt->propertyHash.value(propertyName);
+            auto property=pvt->propertyByName.value(propertyName);
             if(!property.isValid())
                 continue;
 
@@ -546,7 +546,7 @@ public:
         }
 
         {
-            Q_V_PROPERTY_ITERATOR(pvt->propertyHash){
+            Q_V_PROPERTY_ITERATOR(pvt->propertyByName){
                 i.next();
                 auto &propertyName=i.key();
                 auto &property=i.value();
@@ -586,7 +586,7 @@ public:
                         continue;
 
                     pvt->tableForeignKeys.insert(fieldName, vHash);
-                    auto property=pvt->propertyHash.value(fieldName);
+                    auto property=pvt->propertyByName.value(fieldName);
                     if(property.isValid())//if exists
                         pvt->propertyForeignKeys.insert(property.name(), property);
                 }
@@ -596,7 +596,7 @@ public:
                 if(propertyName.isEmpty())
                     continue;
 
-                auto property=pvt->propertyHash.value(propertyName);
+                auto property=pvt->propertyByName.value(propertyName);
                 if(!property.isValid())
                     continue;
                 auto field=tablePrefix+tablePrefixSeparator+propertyName;
@@ -610,7 +610,7 @@ public:
                 if(propertyName.isEmpty())
                     continue;
 
-                auto property=pvt->propertyHash.value(propertyName);
+                auto property=pvt->propertyByName.value(propertyName);
                 if(!property.isValid())
                     continue;
 
@@ -628,7 +628,7 @@ public:
                 }
 
                 auto propertyName=rowSplited.first();
-                auto property=pvt->propertyHash.value(propertyName);
+                auto property=pvt->propertyByName.value(propertyName);
                 if(!property.isValid())
                     continue;
 
@@ -842,9 +842,113 @@ const ModelInfo &ModelInfo::from(const QMetaObject &metaObject)
     return ModelInfo::from(metaObject.className());
 }
 
+const ModelInfo &ModelInfo::info(const QByteArray &className)
+{
+    if(__static_model_info->contains(className)){
+        const auto &info=*__static_model_info->value(className);
+        return info;
+    }
+    static ModelInfo info;
+    return info;
+}
+
 ModelInfo &ModelInfo::modelInfoInit(const QMetaObject &staticMetaObject)
 {
     return ModelInfoPvt::static_initMetaObject(staticMetaObject);
+}
+
+QVariantHash ModelInfo::toAttributes(const QVariant &v) const
+{
+    Q_DECLARE_VU;
+    auto at=vu.toAttributes(v);
+    if(at.isEmpty())
+        return {};
+
+    QVariantHash __return;
+    for(auto &name:p->propertyList){
+        if(!at.contains(name))
+            continue;
+        auto property=p->propertyByName.value(name.toLower());
+        if(!property.isValid())
+            continue;
+        __return.insert(name, at.value(name));
+    }
+
+    for(auto &name:p->propertyTableList){
+        if(!at.contains(name))
+            continue;
+        auto name2=p->propertyTableVsShort.value(name.toLower());
+        if(__return.contains(name2))
+            continue;
+        __return.insert(name2, at.value(name));
+    }
+    return __return;
+}
+
+QVariantHash ModelInfo::toAttributesFields(const QVariant &v) const
+{
+    auto at=this->toAttributes(v);
+    if(at.isEmpty())
+        return {};
+
+    Q_DECLARE_VU;
+    QVariantHash values;
+
+    for(auto &name:p->propertyTableList){
+        if(!at.contains(name))
+            continue;
+        auto property=p->propertyByFieldName.value(name.toLower());
+        if(!property.isValid())
+            continue;
+        auto val=at.value(name);
+
+        switch (val.typeId()) {
+        case QMetaType::QStringList:
+        case QMetaType::QVariantList:
+        {
+            auto vList=val.toList();
+            for(auto &v:vList)
+                v=vu.toType(property.typeId(), v);
+            val=v;
+            break;
+        }
+        default:
+            break;
+        }
+        values.insert(name, val);
+    }
+
+    for(auto &name:p->propertyList){
+        if(!at.contains(name))
+            continue;
+        auto name2=p->propertyShortVsTable.value(name.toLower());
+        if(values.contains(name2))
+            continue;
+
+        auto property=p->propertyByName.value(name.toLower());
+        if(!property.isValid())
+            continue;
+        auto val=at.value(name);
+
+        switch (val.typeId()) {
+        case QMetaType::QStringList:
+        case QMetaType::QVariantList:
+        {
+            auto vList=val.toList();
+            for(auto &v:vList)
+                v=vu.toType(property.typeId(), v);
+            val=v;
+            break;
+        }
+        default:
+            val=vu.toType(property.typeId(), val);
+            break;
+        }
+
+        values.insert(name2 , at.value(name));
+    }
+
+    return parserVVM(values);
 }
 
 const ModelFieldDescriptors *ModelInfo::descritor() const
@@ -865,6 +969,11 @@ const QStringList &ModelInfo::propertyIgnoredList()
 QList<QMetaProperty> &ModelInfo::property() const
 {
     return p->property;
+}
+
+QHash<QString, QMetaProperty> &ModelInfo::propertyByName() const
+{
+    return p->propertyByName;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyByFieldName() const

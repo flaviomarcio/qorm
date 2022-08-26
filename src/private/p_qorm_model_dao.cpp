@@ -7,6 +7,7 @@
 
 namespace PrivateQOrm {
 static const auto __source="source";
+static const auto __pk_model="pk.model";
 static const auto __fk="fk";
 static const auto __pk="pk";
 
@@ -314,7 +315,7 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
     if(vModelList.isEmpty())
         return {};
 
-    auto tableForeignPK=modelRef.propertyForeignKeysPK();
+    const auto &tableForeignPK=modelRef.propertyForeignKeysPK();
     if(tableForeignPK.isEmpty())
         return {};
 
@@ -324,11 +325,18 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
     auto vList=modelRef.tableForeignKeys().values();
     for(auto & v:vList){
         auto vPkFk=v.toHash();
+        auto classNamePK=vPkFk.value(__pk_model).toByteArray();
         auto fieldNamePK=vPkFk.value(__pk).toString();
         auto fieldNameFK=vPkFk.value(__fk).toString();
         auto vFilter=__return.value(fieldNameFK);
 
         if(!tableForeignPK.contains(fieldNameFK))
+            continue;
+
+        const auto&modelInfoPK=QOrm::ModelInfo::info(classNamePK);
+
+        const auto &propertyShortVsTable=modelInfoPK.propertyShortVsTable();
+        if(propertyShortVsTable.isEmpty())
             continue;
 
         QVariantList vFilterList;
@@ -343,7 +351,8 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
         }
         for(auto &v : vModelList){
             auto itemHash=v.toHash();
-            auto val=itemHash.value(fieldNamePK);
+            auto tableFieldNamePK=propertyShortVsTable.value(fieldNamePK);
+            auto val=itemHash.value(itemHash.contains(tableFieldNamePK)?tableFieldNamePK:fieldNamePK);
             if(val.isValid())
                 vFilterList.append(val);
         }
@@ -373,7 +382,10 @@ QVariantHash ModelDao::toPrepareSearch(const QOrm::ModelInfo &modelRef, const QV
     if(vModelList.isEmpty())
         return {};
 
-    for(auto &fieldName:modelRef.propertyTableList()){
+    const auto &propertyByName=modelRef.propertyByName();
+    const auto &propertyTableList=modelRef.propertyTableList();
+    const auto &propertyTableVsShort=modelRef.propertyTableVsShort();
+    for(auto &fieldName : propertyTableList){
         auto vFilter=__return.value(fieldName);
         QVariantList vFilterList;
         switch (vFilter.typeId()) {
@@ -388,29 +400,51 @@ QVariantHash ModelDao::toPrepareSearch(const QOrm::ModelInfo &modelRef, const QV
 
         for(auto &v : vModelList){
             auto vHash=v.toHash();
-            auto formatField=[](const QVariant &v){
-                switch (v.typeId()) {
-                case QMetaType::QString:
-                case QMetaType::QByteArray:
-                    return QVariant{v.toString()+QStringLiteral("%")};
-                default:
-                    return v;
-                }
-            };
             auto val=vHash.value(fieldName);
-            if(!val.isValid())
-                continue;
-            switch (val.typeId()) {
+            if(!val.isValid()){
+                auto fieldName2=propertyTableVsShort.value(fieldName);
+                val=vHash.value(fieldName2);
+                if(!val.isValid())
+                    continue;
+            }
+
+
+            switch (val.typeId()){//se VALUE for lista adicionaremos um a um na lista para executar o in
             case QMetaType::QVariantList:
+            case QMetaType::QStringList:
             {
                 auto vList=val.toList();
-                for(auto&v : vList)
-                    vFilterList.append(formatField(v));
+                for(auto&v:vList){
+                    if(!vFilterList.contains(v))
+                        vFilterList.append(v);
+                }
                 break;
             }
             default:
-                vFilterList.append(formatField(val));
-                break;
+                if(!vFilterList.contains(val))
+                    vFilterList.append(val);
+            }
+
+
+            auto property=propertyByName.value(fieldName);
+            if(property.isValid()){
+                switch (property.typeId()) {//se a property for string e tiver apenas 1 registro executaremos o like
+                case QMetaType::QString:
+                case QMetaType::QByteArray:
+                {
+                    if(vFilterList.count()==1){
+                        static const auto perChar="%";
+                        auto str=vFilterList.first().toString().trimmed();
+                        if(str.endsWith(perChar))
+                            break;
+                        vFilterList.clear();
+                        vFilterList.append(str+perChar);
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
             }
         }
         if(!vFilterList.isEmpty())

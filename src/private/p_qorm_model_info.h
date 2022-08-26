@@ -61,11 +61,32 @@ public:
     const static ModelInfo &from(const QMetaObject &metaObject);
 
     //!
+    //! \brief info
+    //! \param v
+    //! \return
+    //!
+    const static ModelInfo &info(const QByteArray &className);
+
+    //!
     //! \brief modelInfoInit
     //! \param staticMetaObject
     //! \return
     //!
     static ModelInfo &modelInfoInit(const QMetaObject &staticMetaObject);
+
+    //!
+    //! \brief toAttributes
+    //! \param v
+    //! \return
+    //!
+    QVariantHash toAttributes(const QVariant &v)const;
+
+    //!
+    //! \brief toAttributesFields
+    //! \param v
+    //! \return
+    //!
+    QVariantHash toAttributesFields(const QVariant &v)const;
 
     //!
     //! \brief descritpr
@@ -106,6 +127,12 @@ public:
     //! \return
     //!
     QList<QMetaProperty> &property() const;
+
+    //!
+    //! \brief propertyByName
+    //! \return
+    //!
+    QHash<QString, QMetaProperty> &propertyByName() const;
 
     //!
     //! \brief propertyByFieldName

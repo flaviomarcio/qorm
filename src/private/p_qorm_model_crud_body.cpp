@@ -36,9 +36,10 @@ CRUDTypes::Strategy CRUDBody::strategy()const
 
 QVariant CRUDBody::expressions() const
 {
+    Q_DECLARE_VU;
     if(!this->contains(__expressions))
         return {};
-    return this->value(__expressions);
+    return vu.toVariant(this->value(__expressions));
 }
 
 QVariant CRUDBody::source() const
