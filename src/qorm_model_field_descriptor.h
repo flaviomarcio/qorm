@@ -32,11 +32,14 @@ class Q_ORM_EXPORT ModelFieldDescriptor : public QStm::ObjectWrapper
     Q_PROPERTY(bool editable READ editable WRITE editable RESET resetEditable NOTIFY editableChanged)
     Q_PROPERTY(bool visible READ visible WRITE visible RESET resetVisible NOTIFY visibleChanged)
     Q_PROPERTY(bool sortable READ sortable WRITE sortable RESET resetSortable NOTIFY sortableChanged)
-    Q_PROPERTY(bool readOnly READ readOnly WRITE readOnly RESET resetReadOnly NOTIFY readOnlyChanged)
+    Q_PROPERTY(EditReadOnly readOnly READ readOnly WRITE readOnly RESET resetReadOnly NOTIFY readOnlyChanged)
     Q_PROPERTY(QVariant output READ output WRITE output RESET resetOutput NOTIFY outputChanged)
     Q_PROPERTY(QVariant items READ items WRITE items RESET resetItems NOTIFY itemsChanged)
     Q_PROPERTY(QVariant inputLink READ inputLink WRITE inputLink RESET resetInputLink NOTIFY inputLinkChanged)
 public:
+    enum EditReadOnly{erNo, erYes, erIfNew, erIfExisting};
+    Q_ENUM(EditReadOnly)
+
     explicit ModelFieldDescriptor(QObject *parent = nullptr);
 
     //!
@@ -227,8 +230,8 @@ public:
     //! \brief readOnly
     //! \return
     //!
-    bool readOnly() const;
-    ModelFieldDescriptor &readOnly(bool newReadOnly);
+    EditReadOnly readOnly() const;
+    ModelFieldDescriptor &readOnly(const QVariant &newReadOnly);
     ModelFieldDescriptor &resetReadOnly();
 
     //!

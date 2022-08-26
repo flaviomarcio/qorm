@@ -27,7 +27,7 @@ public:
     bool editable=false;
     bool visible=false;
     bool sortable=false;
-    bool readOnly=false;
+    QStm::MetaEnum<ModelFieldDescriptor::EditReadOnly> readOnly=ModelFieldDescriptor::erNo;
     QVariant output;
     QVariant items;
     QVariant inputLink;
@@ -477,12 +477,12 @@ ModelFieldDescriptor &ModelFieldDescriptor::resetSortable()
     return this->sortable({});
 }
 
-bool ModelFieldDescriptor::readOnly() const
+ModelFieldDescriptor::EditReadOnly ModelFieldDescriptor::readOnly() const
 {
-    return p->readOnly;
+    return p->readOnly.type();
 }
 
-ModelFieldDescriptor &ModelFieldDescriptor::readOnly(bool newReadOnly)
+ModelFieldDescriptor &ModelFieldDescriptor::readOnly(const QVariant &newReadOnly)
 {
     if (p->readOnly == newReadOnly)
         return *this;
@@ -493,7 +493,7 @@ ModelFieldDescriptor &ModelFieldDescriptor::readOnly(bool newReadOnly)
 
 ModelFieldDescriptor &ModelFieldDescriptor::resetReadOnly()
 {
-    return this->readOnly({});
+    return this->readOnly(this->erNo);
 }
 
 const QVariant &ModelFieldDescriptor::output() const
