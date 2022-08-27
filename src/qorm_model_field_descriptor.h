@@ -8,7 +8,7 @@ class ModelFieldDescriptorPvt;
 class Q_ORM_EXPORT ModelFieldDescriptor : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    QSTM_OBJECT_WRAPPER(ModelFieldDescriptor)
+    Q_STM_OBJECT_WRAPPER(ModelFieldDescriptor)
     Q_PROPERTY(QString field READ field WRITE field RESET resetField NOTIFY fieldChanged)
     Q_PROPERTY(QString title READ title WRITE title RESET resetTitle NOTIFY titleChanged)
     Q_PROPERTY(QString inputMask READ inputMask WRITE inputMask RESET resetInputMask NOTIFY inputMaskChanged)

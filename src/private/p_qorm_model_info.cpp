@@ -12,6 +12,11 @@
 
 namespace QOrm {
 
+static const auto __equal="=";
+static const auto __equal2="==";
+static const auto __space=" ";
+static const auto __space2="  ";
+
 typedef QHash<QByteArray, QOrm::ModelInfo*> HashModelInfo;
 Q_GLOBAL_STATIC(HashModelInfo, __static_model_info)
 
@@ -74,7 +79,7 @@ public:
 
     }
 
-    static bool invoke(QObject*objectCheck, const QString &methodName)
+    static bool invoke(QObject *objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.trimmed().replace(QByteArrayLiteral("\""), "").toLower();
         auto metaObject=objectCheck->metaObject();
@@ -338,7 +343,7 @@ public:
         ____copy(descriptor             );
         ____copy(tablePkAutoGenerate    );
         ____copy(property               );
-        ____copy(propertyByName           );
+        ____copy(propertyByName         );
         ____copy(propertyByFieldName    );
         ____copy(propertyByPropertyName );
         ____copy(propertyFiltrable      );
@@ -380,7 +385,7 @@ public:
         this->descriptor=nullptr;
         ____clear(tablePkAutoGenerate    );
         ____clear(property               );
-        ____clear(propertyByName           );
+        ____clear(propertyByName         );
         ____clear(propertyByFieldName    );
         ____clear(propertyByPropertyName );
         ____clear(propertyInfo           );
@@ -483,39 +488,39 @@ public:
         }
 
         pvt->tablePkAutoGenerate=tablePkAutoGenerate;
-        pvt->name=modelName;
-        pvt->description=modelDescription;
-        pvt->tableSchema=tableSchema;
-        pvt->tablePrefix=tablePrefix+tablePrefixSeparator;
-        pvt->tablePrefixSeparator=tablePrefixSeparator;
-        pvt->tableName=tablePrefix+tablePrefixSeparator+tableName.trimmed();
-        pvt->tableSequence=tableSequence;
-        pvt->tableFiltrableField=tableFiltrableField;
+        pvt->name = modelName;
+        pvt->description = modelDescription;
+        pvt->tableSchema = tableSchema;
+        pvt->tablePrefix = tablePrefix+tablePrefixSeparator;
+        pvt->tablePrefixSeparator = tablePrefixSeparator;
+        pvt->tableName = tablePrefix+tablePrefixSeparator+tableName.trimmed();
+        pvt->tableSequence = tableSequence;
+        pvt->tableFiltrableField = tableFiltrableField;
 
         {//make tableFull
             auto makeTableSchema = (tableSchema.isEmpty())?"":QStringLiteral("%1.").arg(tableSchema);
             pvt->tableNameFull = makeTableSchema+pvt->tablePrefix+tableName;
         }
 
-        while(tablePk.contains(QByteArrayLiteral("  ")))
-            tablePk = tablePk.replace(QByteArrayLiteral("  "), QByteArrayLiteral(" ")).trimmed();
+        while(tablePk.contains(__space2))
+            tablePk = tablePk.replace(__space2, __space).trimmed();
 
-        while(tableOrderBy.contains(QByteArrayLiteral("  ")))
-            tableOrderBy = tableOrderBy.replace(QByteArrayLiteral("  "), QByteArrayLiteral(" ")).trimmed();
+        while(tableOrderBy.contains(__space2))
+            tableOrderBy = tableOrderBy.replace(__space2, __space).trimmed();
 
-        while(tableAutoSetFields.contains(QByteArrayLiteral("  ")))
-            tableAutoSetFields = tableAutoSetFields.replace(QByteArrayLiteral("  "), QByteArrayLiteral(" ")).trimmed();
+        while(tableAutoSetFields.contains(__space2))
+            tableAutoSetFields = tableAutoSetFields.replace(__space2, __space).trimmed();
 
-        while(tableForeignPK.contains(QByteArrayLiteral("  ")))
-            tableForeignPK = tableForeignPK.replace(QByteArrayLiteral("  "), QByteArrayLiteral(" ")).trimmed();
+        while(tableForeignPK.contains(__space2))
+            tableForeignPK = tableForeignPK.replace(__space2, __space).trimmed();
 
-        while(tableDeactivateField.contains(QByteArrayLiteral("  ")))
-            tableDeactivateField = tableDeactivateField.replace(QByteArrayLiteral("  "), QByteArrayLiteral(" ")).trimmed();
+        while(tableDeactivateField.contains(__space2))
+            tableDeactivateField = tableDeactivateField.replace(__space2, __space).trimmed();
 
-        while(tableDeactivateField.contains(QByteArrayLiteral("==")))
-            tableDeactivateField = tableDeactivateField.replace(QByteArrayLiteral("=="), QByteArrayLiteral("=")).trimmed();
+        while(tableDeactivateField.contains(__equal2))
+            tableDeactivateField = tableDeactivateField.replace(__equal2, __equal).trimmed();
 
-        for(auto &propertyName:tablePk.split(QByteArrayLiteral(" "))){
+        for(auto &propertyName:tablePk.split(__space)){
             if(propertyName.isEmpty())
                 continue;
             auto field=tablePrefix+tablePrefixSeparator+propertyName;
@@ -525,20 +530,20 @@ public:
 
             pvt->tablePk.append(field);
             pvt->tablePkField.append(SqlParserItem::createObject(field));
-            pvt->propertyPK.insert(propertyName, pvt->propertyByName[propertyName]);
+            pvt->propertyPK.insert(propertyName, pvt->propertyByName.value(propertyName));
         }
 
-        pvt->tablePkSingle=pvt->tablePk.isEmpty()?"":pvt->tablePk.join(QByteArrayLiteral(" "));
+        pvt->tablePkSingle=pvt->tablePk.isEmpty()?"":pvt->tablePk.join(__space);
 
-        for(auto &propertyName:tableForeignPK.split(QByteArrayLiteral(" "))){
+        for(auto &propertyName:tableForeignPK.split(__space)){
             if(propertyName.isEmpty())
                 continue;
 
-            auto property=pvt->propertyByName.value(propertyName);
+            auto property = pvt->propertyByName.value(propertyName);
             if(!property.isValid())
                 continue;
 
-            auto field=tablePrefix+tablePrefixSeparator+propertyName;
+            auto field = tablePrefix+tablePrefixSeparator+propertyName;
             pvt->tableForeignKeysPK.append(field);
             pvt->tableForeignPKField.append(SqlParserItem::createObject(field));
             pvt->propertyForeignKeys.insert(property.name(), property);
@@ -550,8 +555,8 @@ public:
                 i.next();
                 auto &propertyName=i.key();
                 auto &property=i.value();
-                const auto propertyA=propertyName;
-                const auto propertyB=tablePrefix+QByteArrayLiteral("_")+propertyName;
+                const auto propertyA = propertyName;
+                const auto propertyB = tablePrefix+QByteArrayLiteral("_")+propertyName;
                 pvt->propertyList.append(propertyName);
                 pvt->propertyTableList.append(propertyB);
                 pvt->propertyShortVsTable.insert(propertyA, propertyB);
@@ -581,18 +586,15 @@ public:
                         continue;
 
                     auto vHash = pvt->invokeMap(modelObject, methodName);
-                    auto fieldName=vHash[QStringLiteral("fk")].toString().trimmed();
+                    auto fieldName=vHash.value(QStringLiteral("fk")).toString().trimmed();
                     if(fieldName.isEmpty())
                         continue;
 
                     pvt->tableForeignKeys.insert(fieldName, vHash);
-                    auto property=pvt->propertyByName.value(fieldName);
-                    if(property.isValid())//if exists
-                        pvt->propertyForeignKeys.insert(property.name(), property);
                 }
             }
 
-            for(auto &propertyName:tableOrderBy.split(QByteArrayLiteral(" "))){
+            for(auto &propertyName:tableOrderBy.split(__space)){
                 if(propertyName.isEmpty())
                     continue;
 
@@ -606,7 +608,7 @@ public:
                 pvt->tableOrderByField.append(SqlParserItem::createObject(field));
             }
 
-            for(auto &propertyName:tableAutoSetFields.split(QByteArrayLiteral(" "))){
+            for(auto &propertyName:tableAutoSetFields.split(__space)){
                 if(propertyName.isEmpty())
                     continue;
 
@@ -617,7 +619,7 @@ public:
                 pvt->tableAutoSetFields.append(propertyName);
             }
 
-            for(auto &row:tableDeactivateField.split(QByteArrayLiteral(" "))){
+            for(auto &row:tableDeactivateField.split(__space)){
                 if(row.isEmpty())
                     continue;
 

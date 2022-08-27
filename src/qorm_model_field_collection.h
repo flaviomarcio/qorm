@@ -10,7 +10,7 @@ class ModelFieldCollectionPvt;
 class Q_ORM_EXPORT ModelFieldCollection : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    QSTM_OBJECT_WRAPPER(ModelFieldCollection)
+    Q_STM_OBJECT_WRAPPER(ModelFieldCollection)
     Q_PROPERTY(QVariantList items READ items WRITE setItems RESET resetItems NOTIFY itemsChanged)
 public:
     explicit ModelFieldCollection(QObject *parent = nullptr);

@@ -8,7 +8,7 @@ class ModelActionDescriptorPvt;
 class Q_ORM_EXPORT ModelActionDescriptor : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    QSTM_OBJECT_WRAPPER(ModelActionDescriptor)
+    Q_STM_OBJECT_WRAPPER(ModelActionDescriptor)
     Q_PROPERTY(QString action READ action WRITE action RESET resetAction NOTIFY actionChanged)
     Q_PROPERTY(QString title READ title WRITE title RESET resetTitle NOTIFY titleChanged)
     Q_PROPERTY(QVariant actionType READ actionType WRITE actionType RESET resetActionType NOTIFY actionTypeChanged)

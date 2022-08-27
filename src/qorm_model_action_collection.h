@@ -10,7 +10,7 @@ class ModelActionCollectionPvt;
 class Q_ORM_EXPORT ModelActionCollection : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    QSTM_OBJECT_WRAPPER(ModelActionCollection)
+    Q_STM_OBJECT_WRAPPER(ModelActionCollection)
     Q_PROPERTY(QVariantList items READ items WRITE setItems RESET resetItems NOTIFY itemsChanged)
 public:
     explicit ModelActionCollection(QObject *parent = nullptr);

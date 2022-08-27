@@ -53,9 +53,9 @@ public:
     QVariantList toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, const QVariant &vModelFK, const QVariant &vModelPK) const;
 
     //!
-    //! \brief toPrepareForeign
+    //! \brief toPrepareForeignPK
+    //! \param modelRef
     //! \param vModel
-    //! \param v
     //! \return
     //!
     QVariantHash toPrepareForeign(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const;

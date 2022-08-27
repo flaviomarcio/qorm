@@ -9,7 +9,7 @@ class HostPvt;
 class Q_ORM_EXPORT Host : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    QSTM_OBJECT_WRAPPER(Host)
+    Q_STM_OBJECT_WRAPPER(Host)
     Q_PROPERTY(QUuid uuid READ uuid WRITE setUuid RESET resetUuid NOTIFY uuidChanged)
 
     Q_PROPERTY(QByteArray protocol READ protocol WRITE setProtocol RESET resetProtocol NOTIFY protocolChanged)

@@ -13,7 +13,7 @@ class Q_ORM_EXPORT EndPoint : public QStm::ObjectWrapper
 {
     Q_OBJECT
 
-    QSTM_OBJECT_WRAPPER(EndPoint)
+    Q_STM_OBJECT_WRAPPER(EndPoint)
 
     Q_PROPERTY(QVariant method READ method WRITE setMethod RESET resetMethod NOTIFY methodChanged)
 

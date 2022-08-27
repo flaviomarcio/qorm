@@ -177,7 +177,7 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
     if(vModelList.isEmpty())
         return {};
 
-    //const auto&propertyFK=modelRef.propertyForeignKeysPK();
+
     const auto&propertyPK=modelRef.propertyPK();
 
 
@@ -315,12 +315,8 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
     if(vModelList.isEmpty())
         return {};
 
-    const auto &tableForeignPK=modelRef.propertyForeignKeysPK();
-    if(tableForeignPK.isEmpty())
+    if(modelRef.tableForeignKeys().isEmpty())
         return {};
-
-//    static auto __pk=QStringLiteral("pk");
-//    static auto __fk=QStringLiteral("fk");
 
     auto vList=modelRef.tableForeignKeys().values();
     for(auto & v:vList){
@@ -330,10 +326,11 @@ QVariantHash ModelDao::toPrepareForeign(const QOrm::ModelInfo &modelRef, const Q
         auto fieldNameFK=vPkFk.value(__fk).toString();
         auto vFilter=__return.value(fieldNameFK);
 
-        if(!tableForeignPK.contains(fieldNameFK))
-            continue;
+        const auto &modelInfoPK=QOrm::ModelInfo::info(classNamePK);
+        const auto &propertyPK=modelInfoPK.propertyPK();
 
-        const auto&modelInfoPK=QOrm::ModelInfo::info(classNamePK);
+        if(propertyPK.isEmpty() || !propertyPK.contains(fieldNameFK))
+            continue;
 
         const auto &propertyShortVsTable=modelInfoPK.propertyShortVsTable();
         if(propertyShortVsTable.isEmpty())

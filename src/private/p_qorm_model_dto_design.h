@@ -10,7 +10,7 @@ class DesignPvt;
 class Q_ORM_EXPORT Design : public QStm::ObjectWrapper
 {
     Q_OBJECT
-    QSTM_OBJECT_WRAPPER(Design)
+    Q_STM_OBJECT_WRAPPER(Design)
 
     QORM_MODEL_DECLARE_FORM_ENUMS
 
