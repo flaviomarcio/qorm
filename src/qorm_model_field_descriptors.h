@@ -16,14 +16,6 @@
 
 #define QORM_MODEL_FIELD_SET_DESCRIPTOR(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES)
 
-#define QORM_MODEL_FIELD_SET_EDIT(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES);
-
-#define QORM_MODEL_FIELD_SET_DESIGN(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES);
-
-#define QORM_MODEL_FIELD_SET_FLAGS(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES);
-
-#define QORM_MODEL_FIELD_SET_OPTIONS(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES);
-
 #define QORM_MODEL_ACTION_SET(NAME, VALUES) addAction(QStringLiteral(#NAME), VALUES);
 
 #define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES)
