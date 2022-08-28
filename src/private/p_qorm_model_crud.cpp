@@ -336,16 +336,20 @@ ResultValue &CRUDBase::crudify()
         return this->canActionCreate();
     case QOrm::CRUDTypes::Search:
         return this->canActionSearch();
-    case QOrm::CRUDTypes::Insert:
-        return this->canActionInsert();
-    case QOrm::CRUDTypes::Update:
-        return this->canActionUpdate();
     case QOrm::CRUDTypes::Upsert:
         return this->canActionUpsert();
     case QOrm::CRUDTypes::Remove:
         return this->canActionRemove();
     case QOrm::CRUDTypes::Deactivate:
         return this->canActionDeactivate();
+    case QOrm::CRUDTypes::Apply:
+        return this->canActionApply();
+    case QOrm::CRUDTypes::Execute:
+        return this->canActionExecute();
+    case QOrm::CRUDTypes::Finalize:
+        return this->canActionFinalize();
+    case QOrm::CRUDTypes::Print:
+        return this->canActionPrint();
     default:
         return this->lr().setValidation(tr("Invalid strategy"));
     }
@@ -373,58 +377,63 @@ CRUDBase &CRUDBase::actionsSearch()
 CRUDBase &CRUDBase::actionSearch(QOrm::ModelAction &action)
 {
     action.setCrudBase(this);
-    p->actions[__func__]=&action;
+    p->actions.insert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionCreate(QOrm::ModelAction &action)
 {
     action.setCrudBase(this);
-    p->actions[__func__]=&action;
-    return *this;
-}
-
-CRUDBase &CRUDBase::actionInsert(QOrm::ModelAction &action)
-{
-    action.setCrudBase(this);
-    p->actions[__func__]=&action;
+    p->actions.insert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionUpsert(QOrm::ModelAction &action)
 {
     action.setCrudBase(this);
-    p->actions[__func__]=&action;
-    return *this;
-}
-
-CRUDBase &CRUDBase::actionUpdate(QOrm::ModelAction &action)
-{
-    action.setCrudBase(this);
-    p->actions[__func__]=&action;
-    return *this;
-}
-
-CRUDBase &CRUDBase::actionInsertUpsertUpdate(QOrm::ModelAction &action)
-{
-    action.setCrudBase(this);
-    p->actions[QT_STRINGIFY2(actionInsert)]=&action;
-    p->actions[QT_STRINGIFY2(actionUpdate)]=&action;
-    p->actions[QT_STRINGIFY2(actionUpsert)]=&action;
+    p->actions.insert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionRemove(QOrm::ModelAction &action)
 {
     action.setCrudBase(this);
-    p->actions[__func__]=&action;
+    p->actions.insert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionDeactivate(QOrm::ModelAction &action)
 {
     action.setCrudBase(this);
-    p->actions[__func__]=&action;
+    p->actions.insert(__func__, &action);
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionApply(QOrm::ModelAction &action)
+{
+    action.setCrudBase(this);
+    p->actions.insert(__func__, &action);
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionExecute(QOrm::ModelAction &action)
+{
+    action.setCrudBase(this);
+    p->actions.insert(__func__, &action);
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionFinalize(QOrm::ModelAction &action)
+{
+    action.setCrudBase(this);
+    p->actions.insert(__func__, &action);
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionPrint(QOrm::ModelAction &action)
+{
+    action.setCrudBase(this);
+    p->actions.insert(__func__, &action);
     return *this;
 }
 
@@ -445,28 +454,6 @@ ResultValue &CRUDBase::search()
 }
 
 ResultValue &CRUDBase::search(const QVariant &value)
-{
-    Q_UNUSED(value)
-    return this->lr().setNotImplemented();
-}
-
-ResultValue &CRUDBase::insert()
-{
-    return this->lr().setNotImplemented();
-}
-
-ResultValue &CRUDBase::insert(const QVariant &value)
-{
-    Q_UNUSED(value)
-    return this->lr().setNotImplemented();
-}
-
-ResultValue &CRUDBase::update()
-{
-    return this->lr().setNotImplemented();
-}
-
-ResultValue &CRUDBase::update(const QVariant &value)
 {
     Q_UNUSED(value)
     return this->lr().setNotImplemented();
@@ -500,6 +487,28 @@ ResultValue &CRUDBase::deactivate()
 }
 
 ResultValue &CRUDBase::deactivate(const QVariant &value)
+{
+    Q_UNUSED(value)
+    return this->lr().setNotImplemented();
+}
+
+ResultValue &CRUDBase::execute()
+{
+    return this->lr().setNotImplemented();
+}
+
+ResultValue &CRUDBase::execute(const QVariant &value)
+{
+    Q_UNUSED(value)
+    return this->lr().setNotImplemented();
+}
+
+ResultValue &CRUDBase::finalize()
+{
+    return this->lr().setNotImplemented();
+}
+
+ResultValue &CRUDBase::finalize(const QVariant &value)
 {
     Q_UNUSED(value)
     return this->lr().setNotImplemented();
@@ -603,21 +612,6 @@ ResultValue &CRUDBase::canActionSearch()
                     .items(v).o());
 }
 
-ResultValue &CRUDBase::canActionInsert()
-{
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
-    auto act=p->actions.value(name);
-    QVariant v;
-    if(this->source().isValid() && !this->source().isNull()){
-        auto &lr=(act==nullptr)?this->insert():act->action(this->source());
-        v=lr.resultVariant();
-    }
-    return this->lr(p->dto
-                    .uuid(this->uuid())//crud uuid
-                    .host(p->host)
-                    .items(v).o());
-}
-
 ResultValue &CRUDBase::canActionUpsert()
 {
     static const auto name=QByteArray{__func__}.replace(__canAction, __action);
@@ -625,21 +619,6 @@ ResultValue &CRUDBase::canActionUpsert()
     QVariant v;
     if(this->source().isValid() && !this->source().isNull()){
         auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
-        v=lr.resultVariant();
-    }
-    return this->lr(p->dto
-                    .uuid(this->uuid())//crud uuid
-                    .host(p->host)
-                    .items(v).o());
-}
-
-ResultValue &CRUDBase::canActionUpdate()
-{
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
-    auto act=p->actions.value(name);
-    QVariant v;
-    if(this->source().isValid() && !this->source().isNull()){
-        auto &lr=(act==nullptr)?this->update():act->action(this->source());
         v=lr.resultVariant();
     }
     return this->lr(p->dto
@@ -672,6 +651,46 @@ ResultValue &CRUDBase::canActionDeactivate()
         return this->lr(v);
     }
     return this->lr().clear();
+}
+
+ResultValue &CRUDBase::canActionApply()
+{
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    auto act=p->actions.value(name);
+    if(!act)
+        return this->lr();
+    auto &lr=act->action(this->source());
+    return this->lr(lr.resultVariant());
+}
+
+ResultValue &CRUDBase::canActionExecute()
+{
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    auto act=p->actions.value(name);
+    if(!act)
+        return this->lr();
+    auto &lr=act->action(this->source());
+    return this->lr(lr.resultVariant());
+}
+
+ResultValue &CRUDBase::canActionFinalize()
+{
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    auto act=p->actions.value(name);
+    if(!act)
+        return this->lr();
+    auto &lr=act->action(this->source());
+    return this->lr(lr.resultVariant());
+}
+
+ResultValue &CRUDBase::canActionPrint()
+{
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    auto act=p->actions.value(name);
+    if(!act)
+        return this->lr();
+    auto &lr=act->action(this->source());
+    return this->lr(lr.resultVariant());
 }
 
 ResultValue &CRUDBase::doBofore()

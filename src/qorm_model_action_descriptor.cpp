@@ -7,7 +7,7 @@ class ModelActionDescriptorPvt:public QObject{
 public:
     QString action;
     QString title;
-    QStm::MetaEnum<ModelActionDescriptor::Type> actionType=ModelActionDescriptor::None;
+    QStm::MetaEnum<ModelActionDescriptor::Type> actionType=ModelActionDescriptor::Search;
     int order=0;
     QVariant width;
     QVariant inputLink;

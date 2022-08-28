@@ -16,7 +16,7 @@ class Q_ORM_EXPORT ModelActionDescriptor : public QStm::ObjectWrapper
     Q_PROPERTY(QVariant width READ width WRITE width RESET resetWidth NOTIFY widthChanged)
     Q_PROPERTY(QVariant inputLink READ inputLink WRITE inputLink RESET resetInputLink NOTIFY inputLinkChanged)
 public:
-    enum Type{ None, Refresh, Load, Remove, Save, Apply, Finish };
+    enum Type{Search,Create,Upsert,Remove,Deactivate,Apply,Execute,Finalize,Print};
     Q_ENUM(Type)
 
     //!

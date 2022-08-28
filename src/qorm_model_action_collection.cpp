@@ -34,6 +34,8 @@ public:
         if(!item){
             item=new ModelActionDescriptor{this->parent};
             item->action(name);
+            if (!this->order.contains(name))
+                this->order.append(name);
         }
         return *item;
     }
@@ -55,12 +57,8 @@ const ModelActionCollection &ModelActionCollection::item(const QString &actionNa
     if(actionName.trimmed().isEmpty())
         return *this;
     auto action=&p->add(actionName);
-    if(action){
-        auto name=action->action().toLower();
-        if (!p->order.contains(name))
-            p->order.append(name);
+    if(action)
         action->mergeFrom(values);
-    }
     return *this;
 }
 
@@ -69,11 +67,11 @@ const QList<ModelActionDescriptor *> &ModelActionCollection::list() const
     p->list.clear();
     //int order=0;
     for(auto &name : p->order){
-        auto field=p->collection.value(name);
-        if(!field)
+        auto item=p->collection.value(name);
+        if(!item)
             continue;
         //field->order(order++);
-        p->list.append(field);
+        p->list.append(item);
     }
     return p->list;
 }

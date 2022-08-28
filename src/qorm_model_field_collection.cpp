@@ -34,6 +34,8 @@ public:
         if(!item){
             item=new ModelFieldDescriptor{this->parent};
             item->field(name);
+            if (!this->order.contains(name))
+                this->order.append(name);
         }
         return *item;
     }
@@ -55,12 +57,8 @@ const ModelFieldCollection &ModelFieldCollection::item(const QString &fieldName,
     if(fieldName.trimmed().isEmpty())
         return *this;
     auto field=&p->add(fieldName);
-    if(field){
-        auto name=field->field().toLower();
-        if (!p->order.contains(name))
-            p->order.append(name);
+    if(field)
         field->mergeFrom(values);
-    }
     return *this;
 }
 

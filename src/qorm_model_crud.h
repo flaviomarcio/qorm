@@ -88,7 +88,7 @@ private:
 protected:
 
     //!
-    //! \brief insert
+    //! \brief create
     //! \param model
     //! \return
     //!
@@ -99,7 +99,7 @@ protected:
     }
 
     //!
-    //! \brief insert
+    //! \brief create
     //! \param value
     //! \return
     //!
@@ -110,7 +110,7 @@ protected:
     }
 
     //!
-    //! \brief insert
+    //! \brief create
     //! \return
     //!
     virtual ResultValue &create()
@@ -219,95 +219,6 @@ protected:
                 vListReturn.append(v);
         }
         return this->lr(vListReturn);
-    }
-
-    //!
-    //! \brief insert
-    //! \param model
-    //! \return
-    //!
-    virtual ResultValue &insert(T &model)
-    {
-        if(!model.isValid())
-            return this->lr(model.lr());
-
-        model.autoMakeUuid();
-        model.uuidSet();
-        model.datetimeSet();
-
-        if(model.isEmptyPK() && !model.uuidSet())
-            return this->lr(model.lr());
-
-        if(!this->p_dao.insert(model))
-            return this->lr(this->p_dao.lr());
-        else
-            this->generatedRecords().append(model.toHash());
-
-        return this->lr(model.toHash());
-    }
-
-    //!
-    //! \brief insert
-    //! \param value
-    //! \return
-    //!
-    virtual ResultValue &insert(const QVariant &value)
-    {
-        T model(this, value);
-        return this->insert(model);
-    }
-
-    //!
-    //! \brief insert
-    //! \return
-    //!
-    virtual ResultValue &insert()
-    {
-        return this->insert(this->source());
-    }
-
-    //!
-    //! \brief update
-    //! \param model
-    //! \return
-    //!
-    virtual ResultValue &update(T &model)
-    {
-        model.uuidSet();
-        model.datetimeSet();
-        if(!model.isValid())
-            return this->lr(model.lr());
-
-        if(!this->p_dao.update(model))
-            return this->lr(this->p_dao.lr());
-        else
-            this->generatedRecords().append(model.toHash());
-
-        return this->lr(model.toHash());
-    }
-
-    //!
-    //! \brief update
-    //! \param value
-    //! \return
-    //!
-    virtual ResultValue &update(const QVariant &value)
-    {
-        T model(this, value);
-        if(!this->p_dao.reload(model))
-            return this->lr(this->p_dao.lr());
-
-        model.mergeFrom(value);
-        return this->update(model);
-    }
-
-    //!
-    //! \brief update
-    //! \return
-    //!
-    virtual ResultValue &update()
-    {
-        return this->update(this->source());
     }
 
     //!

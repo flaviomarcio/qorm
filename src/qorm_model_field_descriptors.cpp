@@ -9,14 +9,20 @@ namespace QOrm {
 static const auto __30P="30%";
 static const auto __40P="40%";
 
+static auto const __create="create";
+static auto const __createName="Novo";
 static auto const __remove="remove";
 static auto const __removeName="Remover";
 static auto const __save="save";
 static auto const __saveName="Salvar";
 static auto const __print="print";
 static auto const __printName="Imprimir";
-static auto const __refresh="print";
-static auto const __refreshName="Atualizar";
+static auto const __search="search";
+static auto const __searchName="Atualizar";
+static auto const __cancel="cancel";
+static auto const __cancelName="Cancelar";
+//static auto const __apply="apply";
+//static auto const __applyName="Aplicar";
 static auto const __finalize="finalize";
 static auto const __finalizeName="Finalizar";
 
@@ -49,6 +55,7 @@ public:
           endPoints{parent},
           endPoint{parent}
     {
+        this->actionCRUDMaker();
     }
 
     void clear()
@@ -73,27 +80,35 @@ public:
         this->endPoint.clear();
         this->endPoints.clear();
         this->fieldsValid.clear();
+        this->actionCRUDMaker();
     }
 
     void actionCRUDMaker()
     {
-
         this->descriptorsCollection.clear();
-        this->actionsCollection.item(__save).title(__saveName).order(0);
-        this->actionsCollection.item(__remove).title(__removeName).order(1);
+        this->actionsCollection.item(__save).title(__saveName);
+        this->actionsCollection.item(__remove).title(__removeName);
+        this->actionsCollection.item(__search).title(__searchName);
+        this->actionsCollection.item(__create).title(__createName);
+        this->actionsCollection.item(__cancel).title(__cancelName);
     }
 
     void actionReportMaker()
     {
         this->descriptorsCollection.clear();
-        this->actionsCollection.item(__refresh).title(__refreshName).order(0);
-        this->actionsCollection.item(__print).title(__printName).order(1);
+        this->actionsCollection.item(__search).title(__search);
+        this->actionsCollection.item(__print).title(__printName);
     }
 
     void actionOperationMaker()
     {
         this->descriptorsCollection.clear();
-        this->actionsCollection.item(__finalize).title(__finalizeName).order(0);
+        this->actionsCollection.item(__finalize).title(__finalizeName);
+        this->actionsCollection.item(__save).title(__saveName);
+        this->actionsCollection.item(__remove).title(__removeName);
+        this->actionsCollection.item(__search).title(__searchName);
+        this->actionsCollection.item(__create).title(__createName);
+        this->actionsCollection.item(__cancel).title(__cancelName);
     }
 };
 
@@ -261,14 +276,14 @@ ModelFieldDescriptors &ModelFieldDescriptors::addFilter(const QString &fieldName
     return *this;
 }
 
-ModelFieldDescriptor &ModelFieldDescriptors::addAction(const QString &actionName)
+ModelActionDescriptor &ModelFieldDescriptors::addAction(const QString &actionName)
 {
-    return p->descriptorsCollection.item(actionName);
+    return p->actionsCollection.item(actionName);
 }
 
 ModelFieldDescriptors &ModelFieldDescriptors::addAction(const QString &actionName, const QVariant &values)
 {
-    p->filtersCollection.item(actionName, values);
+    p->actionsCollection.item(actionName, values);
     return *this;
 }
 

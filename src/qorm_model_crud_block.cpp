@@ -64,8 +64,9 @@ public:
             }
             break;
         }
-        case QOrm::CRUDTypes::Strategy::Insert:
-        case QOrm::CRUDTypes::Strategy::Update:
+        case QOrm::CRUDTypes::Strategy::Apply:
+        case QOrm::CRUDTypes::Strategy::Execute:
+        case QOrm::CRUDTypes::Strategy::Finalize:
         case QOrm::CRUDTypes::Strategy::Upsert:{
             if(returns.isEmpty()){
                 __return = crudBody;//primeiro registro não deve sofrer modificacao

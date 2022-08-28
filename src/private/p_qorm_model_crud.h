@@ -221,32 +221,12 @@ public:
     virtual CRUDBase &actionCreate(QOrm::ModelAction &action);
 
     //!
-    //! \brief actionInsert
-    //! \param action
-    //! \return
-    //!
-    virtual CRUDBase &actionInsert(QOrm::ModelAction &action);
-
-    //!
     //! \brief actionUpsert
     //! \param action
     //! \return
     //!
     virtual CRUDBase &actionUpsert(QOrm::ModelAction &action);
 
-    //!
-    //! \brief actionUpdate
-    //! \param action
-    //! \return
-    //!
-    virtual CRUDBase &actionUpdate(QOrm::ModelAction &action);
-
-    //!
-    //! \brief actionInsertUpsertUpdate
-    //! \param action
-    //! \return
-    //!
-    virtual CRUDBase &actionInsertUpsertUpdate(QOrm::ModelAction &action);
 
     //!
     //! \brief actionRemove
@@ -261,6 +241,34 @@ public:
     //! \return
     //!
     virtual CRUDBase &actionDeactivate(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionApply
+    //! \param action
+    //! \return
+    //!
+    virtual CRUDBase &actionApply(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionExecute
+    //! \param action
+    //! \return
+    //!
+    virtual CRUDBase &actionExecute(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionFinalize
+    //! \param action
+    //! \return
+    //!
+    virtual CRUDBase &actionFinalize(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionPrint
+    //! \param action
+    //! \return
+    //!
+    virtual CRUDBase &actionPrint(QOrm::ModelAction &action);
 
 signals:
     void typeChanged();
@@ -292,32 +300,6 @@ protected:
     //! \return
     //!
     virtual ResultValue &search(const QVariant &value);
-
-    //!
-    //! \brief insert
-    //! \return
-    //!
-    virtual ResultValue &insert();
-
-    //!
-    //! \brief insert
-    //! \param value
-    //! \return
-    //!
-    virtual ResultValue &insert(const QVariant &value);
-
-    //!
-    //! \brief update
-    //! \return
-    //!
-    virtual ResultValue &update();
-
-    //!
-    //! \brief update
-    //! \param value
-    //! \return
-    //!
-    virtual ResultValue &update(const QVariant &value);
 
     //!
     //! \brief upsert
@@ -359,6 +341,32 @@ protected:
     virtual ResultValue &deactivate(const QVariant &value);
 
     //!
+    //! \brief execute
+    //! \return
+    //!
+    virtual ResultValue &execute();
+
+    //!
+    //! \brief execute
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &execute(const QVariant &value);
+
+    //!
+    //! \brief finalize
+    //! \return
+    //!
+    virtual ResultValue &finalize();
+
+    //!
+    //! \brief finalize
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &finalize(const QVariant &value);
+
+    //!
     //! \brief onBefore
     //! \param method
     //! \return
@@ -392,22 +400,10 @@ protected:
     virtual ResultValue &canActionSearch();
 
     //!
-    //! \brief canActionInsert
-    //! \return
-    //!
-    virtual ResultValue &canActionInsert();
-
-    //!
     //! \brief canActionUpsert
     //! \return
     //!
     virtual ResultValue &canActionUpsert();
-
-    //!
-    //! \brief canActionUpdate
-    //! \return
-    //!
-    virtual ResultValue &canActionUpdate();
 
     //!
     //! \brief canActionRemove
@@ -420,6 +416,30 @@ protected:
     //! \return
     //!
     virtual ResultValue &canActionDeactivate();
+
+    //!
+    //! \brief canActionApply
+    //! \return
+    //!
+    virtual ResultValue &canActionApply();
+
+    //!
+    //! \brief canActionExecute
+    //! \return
+    //!
+    virtual ResultValue &canActionExecute();
+
+    //!
+    //! \brief canActionFinalize
+    //! \return
+    //!
+    virtual ResultValue &canActionFinalize();
+
+    //!
+    //! \brief canActionPrint
+    //! \return
+    //!
+    virtual ResultValue &canActionPrint();
 
 protected:
     //!

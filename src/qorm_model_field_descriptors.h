@@ -158,7 +158,7 @@ public:
     //! \param actionName
     //! \return
     //!
-    ModelFieldDescriptor &addAction(const QString &actionName);
+    ModelActionDescriptor &addAction(const QString &actionName);
     ModelFieldDescriptors &addAction(const QString &actionName, const QVariant &values);
 
     //!

@@ -29,6 +29,7 @@ public:
     {
         QVariantHash vHash;
 
+        const auto &vActions=fieldDescriptors.actions()->toList();
         const auto &vHeaderList=fieldDescriptors.descriptors()->list();
         const auto &vFilterList=fieldDescriptors.filters()->list();
         const auto &vEndPoints=fieldDescriptors.endPoints()->toList();
@@ -69,6 +70,7 @@ public:
         vHash.insert(vpTitle, this->dto->description());
         vHash.insert(vpDesign, this->dto->fields().design()->toHash());
         vHash.insert(vpType, this->dto->fields().design()->type());
+        vHash.insert(vpActions, vActions);
         vHash.insert(vpHeaders, vHeaders);
         vHash.insert(vpFilters, vFilters);
         vHash.insert(vpItems, this->items);
