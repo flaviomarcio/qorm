@@ -32,7 +32,8 @@ public:
     }
     auto &f(const QVariant &v)
     {
-        this->insert(QStringLiteral("f.")+QUuid::createUuid().toString(),v);
+        static const auto __format=QStringLiteral("f.");
+        this->insert(__format+QUuid::createUuid().toString(),v);
         return *this;
     }
     auto &as(const QVariant &name, const QVariant &nameAs)
@@ -65,13 +66,14 @@ public:
     }
     auto &count(const QVariant &name, const QVariant &nameAs, const QVariant &defaultValue)
     {
+        static const auto __rows=QStringLiteral("rows");
         auto _name=name;
         if(name.isNull())
             _name=1;
 
         auto _nameAs=nameAs.toString();
         if(_nameAs.isNull())
-            _nameAs=QStringLiteral("rows");
+            _nameAs=__rows;
         return this->f(SqlParserField(KeywordGrouping::kgCountAs, _name, _nameAs, {}, defaultValue));
     }
 

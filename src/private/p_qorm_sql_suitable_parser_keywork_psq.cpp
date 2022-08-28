@@ -79,7 +79,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                         v2+=QStringLiteral("::timestamp");
                     else if(vType==QMetaType::QDate)
                         v2+=QStringLiteral("::date");
-                    fields << QStringLiteral("%1=s.%2").arg(v1, v2);
+                    fields.append(QStringLiteral("%1=s.%2").arg(v1, v2));
                 }
                 tableFieldsSet=fields.join(QStringLiteral(","));
             }
@@ -88,8 +88,8 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
             {
                 QStringList l;
                 for(auto &v:modelInfo->tablePk())
-                    l<<QStringLiteral("u.")+v;
-                RETURNING = QStringLiteral("RETURNING %1").arg(l.join(QStringLiteral(",")));
+                    l.append(QStringLiteral("u.")+v);
+                RETURNING = QStringLiteral("returning %1").arg(l.join(QStringLiteral(",")));
             }
 
             if(!modelInfo->tablePk().isEmpty()){
@@ -107,14 +107,15 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                     else if(vType==QMetaType::QDate)
                         v2+=QStringLiteral("::date");
 
-                    fieldsWhere<<QStringLiteral("u.%1 = s.%2").arg(v1,v2);
+                    fieldsWhere.append(QStringLiteral("u.%1 = s.%2").arg(v1,v2));
                 }
-                tableWhere=QStringLiteral("where %1").arg(fieldsWhere.join(QStringLiteral(" and ")));
+                static const auto __whereFormat=QStringLiteral("where %1");
+                tableWhere=__whereFormat.arg(fieldsWhere.join(QStringLiteral(" and ")));
             }
 
             tableFromValues=this->parserCommand(kgcFromValues).arg(values.join(QStringLiteral(",")),QStringLiteral("s"),propertyTableList.join(QStringLiteral(",")));
             auto v1=this->parserCommand(kgcUpdateSet).arg(tableNameFull+QStringLiteral(" as u"), tableFieldsSet,tableFromValues,tableWhere,RETURNING);
-            RETURN<<v1;
+            RETURN.append(v1);
         }
         return RETURN;
     }
@@ -130,14 +131,14 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
         QVariantList listRecords;
         for(auto &v:list){
             if(v.typeId()==QMetaType::QVariantMap || v.typeId()==QMetaType::QVariantHash)
-                listRecords<<v;
+                listRecords.append(v);
             else
-                listRecords<<QVariantMap();//deve gerar erro
+                listRecords.append(QVariantMap{});//deve gerar erro
         }
 
         if(!listRecords.isEmpty()){
             //auto tablePk=modelInfo->tablePk();
-            auto RETURNING=QStringLiteral("RETURNING %1").arg(modelInfo->tablePk().join(QStringLiteral(",")));
+            auto RETURNING=QStringLiteral("returning %1").arg(modelInfo->tablePk().join(QStringLiteral(",")));
 
             QString mergeUsingOn;
             QString mergeUpdate;
@@ -147,8 +148,8 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                     QStringList onA;
                     QStringList onB;
                     for(auto &v:modelInfo->tablePk()){
-                        onA << QStringLiteral("m.%1").arg(v);
-                        onB << QStringLiteral("u.%1").arg(v);
+                        onA.append(QStringLiteral("m.%1").arg(v));
+                        onB.append(QStringLiteral("u.%1").arg(v));
                     }
                     mergeUsingOn=QStringLiteral("%1 = %2").arg(onA.join(QStringLiteral(",")), onB.join(QStringLiteral(",")));
                 }
@@ -165,7 +166,7 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                             v2+=QStringLiteral("::timestamp");
                         else if(vType==QMetaType::QDate)
                             v2+=QStringLiteral("::date");
-                        fields << QStringLiteral("%1=excluded.%2").arg(v1, v2);
+                        fields.append(QStringLiteral("%1=excluded.%2").arg(v1, v2));
                     }
 
                     mergeUpdate=fields.join(QStringLiteral(","));
@@ -181,8 +182,8 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
                     QStringList onA;
                     QStringList onB;
                     for(auto &v:propertyTableList){
-                        onA << QStringLiteral("%1").arg(v);
-                        onB << QStringLiteral("m.%1").arg(v);
+                        onA.append(QStringLiteral("%1").arg(v));
+                        onB.append(QStringLiteral("m.%1").arg(v));
                     }
                     mergeInsert=QStringLiteral("insert into %1 (%2)values(%3)").arg(modelInfo->tableNameFull(),onA.join(QStringLiteral(",")), onB.join(QStringLiteral(",")));
                 }
@@ -202,9 +203,9 @@ QStringList SqlSuitableKeyWordPSql::parserCommand(int command, const ModelInfo *
 
                 mergeInsert=QStringLiteral("insert into %1 (%2)values %3").arg(modelInfo->tableNameFull(), modelInfo->propertyTableList().join(QStringLiteral(",")), values.join(QStringLiteral(",")));
 
-                auto v1=QStringLiteral("%1 on conflict(%2) DO UPDATE SET %3 %4 ").arg(mergeInsert, modelInfo->tablePk().join(QStringLiteral(",")), mergeUpdate, RETURNING);
+                auto v1=QStringLiteral("%1 on conflict(%2) do update set %3 %4 ").arg(mergeInsert, modelInfo->tablePk().join(QStringLiteral(",")), mergeUpdate, RETURNING);
 
-                RETURN<<v1;
+                RETURN.append(v1);
             }
         }
         return RETURN;

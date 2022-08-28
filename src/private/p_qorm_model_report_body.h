@@ -14,7 +14,7 @@ public:
     //! \brief ReportBody
     //! \param other
     //!
-    explicit ReportBody(const QVariant &other=QVariant());
+    explicit ReportBody(const QVariant &other={});
 
     //!
     //! \brief ReportBody

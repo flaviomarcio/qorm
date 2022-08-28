@@ -78,8 +78,10 @@ QString SqlParserItem::toFormatParameter(SqlSuitableKeyWord &parser) const
 
     auto name=v.toString();
     if(defValue.isValid() && !defValue.isNull()){
+        static const auto __arg1=QStringLiteral("%1");
+        static const auto __arg2=QStringLiteral("%2");
         auto command =parser.parserCommand(KeywordGenericCommand::kgcIsNullCheckValue);
-        if(command.contains(QStringLiteral("%1")) && command.contains(QStringLiteral("%2"))){
+        if(command.contains(__arg1) && command.contains(__arg2)){
             auto defValueFormated=parser.formatValue(defValue);
             name=command.arg(name, defValueFormated);
         }

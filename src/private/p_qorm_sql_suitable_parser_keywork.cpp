@@ -28,6 +28,15 @@ Q_GLOBAL_STATIC(QMutex, staticSqlSuitableKeyWordLocker)
 Q_GLOBAL_STATIC(DriverSuiteMap, staticSqlSuitableKeyWord)
 Q_GLOBAL_STATIC(DriverSuiteList, staticSqlSuitableKeyWordList)
 
+
+static const auto __value="value";
+static const auto __name="name";
+static const auto __nameAs="nameAs";
+static const auto __and="and";
+static const auto __defaultValue="defaultValue";
+static const auto __nullStr="null";
+
+
 static void deinitKeyWork()
 {
     qDeleteAll(*staticSqlSuitableKeyWordList);
@@ -339,18 +348,21 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
             {
                 QStringList fields;
+                static const auto paramFormat=QStringLiteral("%1=u.%1");
                 for(auto &v:propertyTableList){
-                    fields.append(QStringLiteral("%1=u.%1").arg(v));
+                    fields.append(paramFormat.arg(v));
                 }
                 tableFieldsSet=fields.join(QStringLiteral(","));
             }
 
             if(!modelInfo->tablePk().isEmpty()){
                 QStringList fieldsWhere;
+                static const auto paramFormat=QStringLiteral("u.%1 = s.%1");
                 for(auto &v:modelInfo->tablePk()){
-                    fieldsWhere.append(QStringLiteral("u.%1 = s.%1").arg(v));
+                    fieldsWhere.append(paramFormat.arg(v));
                 }
-                tableWhere=QStringLiteral("where %1").arg(fieldsWhere.join(QStringLiteral("and")));
+                static const auto whereFormat=QStringLiteral("where %1");
+                tableWhere=whereFormat.arg(fieldsWhere.join(__and));
             }
 
             tableFromValues=this->parserCommand(kgcFromValues).arg(values.join(QStringLiteral(",")),"s",propertyTableList.join(QStringLiteral(",")));
@@ -383,14 +395,17 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
             if(!modelInfo->tablePk().isEmpty()){
                 QStringList fieldsWhere;
-                for(auto &v:modelInfo->tablePk()){
-                    fieldsWhere.append(QStringLiteral("d.%1 = s.%1").arg(v));
-                }
-                tableWhere=QStringLiteral("where %1").arg(fieldsWhere.join(QStringLiteral("and")));
+                static const auto paramFormat=QStringLiteral("d.%1 = s.%1");
+                for(auto &v:modelInfo->tablePk())
+                    fieldsWhere.append(paramFormat.arg(v));
+                static const auto whereFormat=QStringLiteral("where %1");
+                tableWhere=whereFormat.arg(fieldsWhere.join(__and));
             }
+            static const auto tableFormat=QStringLiteral("(%1) as s");
+            tableFromValues=tableFormat.arg(this->parserCommand(kgcSelectValues).arg(QStringLiteral("*"), values.join(QStringLiteral(",")), QStringLiteral("s"), tablePk.join(QStringLiteral(","))));
 
-            tableFromValues=QStringLiteral("(%1) as s").arg(this->parserCommand(kgcSelectValues).arg(QStringLiteral("*"), values.join(QStringLiteral(",")), QStringLiteral("s"), tablePk.join(QStringLiteral(","))));
-            auto v1=this->parserCommand(kgcDeleteFromUsing).arg(tableName+QStringLiteral(" as d"), tableFromValues, tableWhere);
+            static const auto asD=QStringLiteral(" as d");
+            auto v1=this->parserCommand(kgcDeleteFromUsing).arg(tableName+asD, tableFromValues, tableWhere);
             RETURN.append(v1);
         }
     }
@@ -401,16 +416,16 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
     }
     else if(command==kgcNextValSelect){
         auto vMap=value.toHash();
-        auto seqName=vMap.value(QByteArrayLiteral("name")).toString().trimmed();
+        auto seqName=vMap.value(__name).toString().trimmed();
         auto scommand=this->parserCommand(command).arg(seqName);
         RETURN.append(scommand);
     }
     else if(groupingTypes.contains(command)){
         auto vMap=value.toHash();
-        auto value=this->formatValue(vMap.value(QByteArrayLiteral("value")));
-        auto name=vMap.value(QByteArrayLiteral("name")).toString().trimmed();
-        auto nameAs=vMap.value(QByteArrayLiteral("nameAs")).toString().trimmed();
-        auto defaultValue=this->formatValue(vMap.value(QByteArrayLiteral("defaultValue")));
+        auto value=this->formatValue(vMap.value(__value));
+        auto name=vMap.value(__name).toString().trimmed();
+        auto nameAs=vMap.value(__nameAs).toString().trimmed();
+        auto defaultValue=this->formatValue(vMap.value(__defaultValue));
         value=value.isEmpty()?name:value;
         auto scommand=this->parserCommand(command);
         if(scommand.contains(QByteArrayLiteral("%3")))
@@ -431,7 +446,6 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
 
 KeywordCache &SqlSuitableKeyWord::commands()
 {
-
     return p->staticKeywordCache;
 }
 
@@ -490,7 +504,7 @@ void SqlSuitableKeyWord::setDrivers(QList<QSqlDriver::DbmsType> value)
 QString SqlSuitableKeyWord::formatValue(const QVariant &v)
 {
     if(!v.isValid())
-        return QStringLiteral("null");
+        return __nullStr;
 
     auto typeId=v.typeId();
 
@@ -532,12 +546,12 @@ QString SqlSuitableKeyWord::formatValue(const QVariant &v)
     case QMetaType::QUuid:
     {
         auto u = v.toUuid();
-        return u.isNull()?QStringLiteral("null"):(QStringLiteral("'")+u.toByteArray()+QStringLiteral("'"));
+        return u.isNull()?__nullStr:(QStringLiteral("'")+u.toByteArray()+QStringLiteral("'"));
     }
     case QMetaType::QUrl:
     {
         auto u = v.toUrl();
-        return u.isEmpty()?QStringLiteral("null"):(QStringLiteral("'")+u.toString()+QStringLiteral("'"));
+        return u.isEmpty()?__nullStr:(QStringLiteral("'")+u.toString()+QStringLiteral("'"));
     }
     case QMetaType::QVariantList:
     case QMetaType::QStringList:
@@ -573,17 +587,17 @@ QString SqlSuitableKeyWord::formatValue(const QVariant &v)
                 ls.append(vv.toString().trimmed());
             }
         }
-        return ls.isEmpty()?QStringLiteral("null"):ls.join(QStringLiteral(","));
+        return ls.isEmpty()?__nullStr:ls.join(QStringLiteral(","));
     }
     default:
-        return QStringLiteral("null");
+        return __nullStr;
     }
 }
 
 QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
 {
     if(!v.isValid())
-        return QStringLiteral("null");
+        return __nullStr;
 
     auto typeId=v.typeId();
     switch (typeId) {
@@ -620,12 +634,12 @@ QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
     case QMetaType::QUuid:
     {
         auto u = v.toUuid();
-        return u.isNull()?QStringLiteral("null"):(QStringLiteral("'")+u.toByteArray()+QStringLiteral("'"));
+        return u.isNull()?__nullStr:(QStringLiteral("'")+u.toByteArray()+QStringLiteral("'"));
     }
     case QMetaType::QUrl:
     {
         auto u = v.toUrl();
-        return u.isEmpty()?QStringLiteral("null"):(QStringLiteral("'")+u.toString()+QStringLiteral("'"));
+        return u.isEmpty()?__nullStr:(QStringLiteral("'")+u.toString()+QStringLiteral("'"));
     }
     case QMetaType::QVariantList:
     case QMetaType::QStringList:
@@ -635,10 +649,10 @@ QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
             if(vv.isValid())
                 ls.append(this->formatParameter(vv));
         }
-        return ls.isEmpty()?QStringLiteral("null"):ls.join(QStringLiteral(","));
+        return ls.isEmpty()?__nullStr:ls.join(QStringLiteral(","));
     }
     default:
-        return QStringLiteral("null");
+        return __nullStr;
     }
 }
 

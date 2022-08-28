@@ -32,7 +32,7 @@ class SearchParametersPvt;
 class Q_ORM_EXPORT SearchParameters:public QVariant
 {
 public:
-    explicit SearchParameters(const QVariant &other=QVariant());
+    explicit SearchParameters(const QVariant &other={});
     virtual ~SearchParameters();
 
     //!
@@ -40,27 +40,27 @@ public:
     //! \param v
     //! \return
     //!
-    virtual bool canRead(const QVariant &v);
+    static bool canRead(const QVariant &v);
 
     //!
     //! \brief isEmpty
     //! \return
     //!
-    virtual bool isEmpty() const;
+    bool isEmpty() const;
 
     //!
     //! \brief operator =
     //! \param v
     //! \return
     //!
-    SearchParameters&operator=(const QVariant &v);
+    SearchParameters &operator=(const QVariant &v);
 
     //!
     //! \brief operator +=
     //! \param v
     //! \return
     //!
-    SearchParameters&operator+=(const QVariant &v);
+    SearchParameters &operator+=(const QVariant &v);
 
     //!
     //! \brief from
