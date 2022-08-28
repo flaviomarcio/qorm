@@ -100,7 +100,18 @@ public:
                     i.next();
                     auto v1=vu.toVariant(i.key());
                     auto v2=vu.toVariant(i.value());
-                    SearchParam param{v1, v2, QOrm::koEqual, QOrm::klAnd};
+
+                    auto opr=QOrm::koEqual;
+                    switch (v2.typeId()) {
+                    case QMetaType::QVariantList:
+                    case QMetaType::QStringList:
+                        opr=QOrm::koIn;
+                        break;
+                    default:
+                        break;
+                    }
+
+                    SearchParam param{v1, v2, opr, QOrm::klAnd};
                     if(param.isValid())
                         this->values.append(param);
                 }
@@ -241,85 +252,84 @@ SearchParam SearchParam::from(const QVariant &value)
 SearchParameters::SearchParameters(const QVariant &other):QVariant{}
 {
     this->p = new SearchParametersPvt{};
+    p->add(other);
+//    QVariant vOther;
+//    switch (other.typeId()) {
+//    case QMetaType::QString:
+//    case QMetaType::QByteArray:
+//        vOther=QJsonDocument::fromJson(other.toByteArray()).toVariant();
+//        break;
+//    default:
+//        vOther=other;
+//    }
 
 
-    QVariant vOther;
-    switch (other.typeId()) {
-    case QMetaType::QString:
-    case QMetaType::QByteArray:
-        vOther=QJsonDocument::fromJson(other.toByteArray()).toVariant();
-        break;
-    default:
-        vOther=other;
-    }
+//    switch (vOther.typeId()) {
+//    case QMetaType::QVariantList:
+//    {
+//        for(auto &v:vOther.toList()){
+//            auto s=SearchParam::from(v);
+//            if(v.isValid())
+//                p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
+//        }
+//        break;
+//    }
+//    case QMetaType::QVariantHash:
+//    case QMetaType::QVariantMap:
+//    {
+//        Q_V_HASH_ITERATOR (vOther.toHash()){
+//            i.next();
+//            auto s=SearchParam::from(i.value());
+//            if(!s.isValid()){
+//                const auto &k=i.key();
+//                const auto &v=i.value();
+
+//                auto keywordOperator=QOrm::koEqual;
+//                auto keywordLogical=QOrm::klAnd;
+
+//                auto vA=QOrm::SqlParserItem::from(k);
+//                auto vB=QOrm::SqlParserItem::from(v);
+
+//                if(!vA.value().isValid() && !vB.value().isValid())
+//                    continue;
+
+//                if(vA.isValue() && QMetaTypeUtilString.contains(vA.typeId())){
+//                    auto s=vA.value().toString();
+//                    if(!s.contains(__percentage))
+//                        s+=__percentage;
+//                    keywordOperator=QOrm::koLike;
+//                    vB.setValue(s);
+//                }
+
+//                switch (vA.typeId()){
+//                case QMetaType::QString:
+//                case QMetaType::QByteArray:
+//                case QMetaType::QChar:
+//                case QMetaType::QBitArray:
+//                {
+//                    if(vB.isValue() && QMetaTypeUtilString.contains(vB.typeId())){
+//                        auto s=vB.value().toString();
+//                        if(!s.contains(__percentage))
+//                            s+=__percentage;
+//                        keywordOperator=QOrm::koLike;
+//                        vB.setValue(s);
+//                    }
+//                    break;
+//                }
+//                default:
+//                    break;
+//                }
 
 
-    switch (vOther.typeId()) {
-    case QMetaType::QVariantList:
-    {
-        for(auto &v:vOther.toList()){
-            auto s=SearchParam::from(v);
-            if(v.isValid())
-                p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
-        }
-        break;
-    }
-    case QMetaType::QVariantHash:
-    case QMetaType::QVariantMap:
-    {
-        Q_V_HASH_ITERATOR (vOther.toHash()){
-            i.next();
-            auto s=SearchParam::from(i.value());
-            if(!s.isValid()){
-                const auto &k=i.key();
-                const auto &v=i.value();
-
-                auto keywordOperator=QOrm::koEqual;
-                auto keywordLogical=QOrm::klAnd;
-
-                auto vA=QOrm::SqlParserItem::from(k);
-                auto vB=QOrm::SqlParserItem::from(v);
-
-                if(!vA.value().isValid() && !vB.value().isValid())
-                    continue;
-
-                if(vA.isValue() && QMetaTypeUtilString.contains(vA.typeId())){
-                    auto s=vA.value().toString();
-                    if(!s.contains(__percentage))
-                        s+=__percentage;
-                    keywordOperator=QOrm::koLike;
-                    vB.setValue(s);
-                }
-
-                switch (vA.typeId()){
-                case QMetaType::QString:
-                case QMetaType::QByteArray:
-                case QMetaType::QChar:
-                case QMetaType::QBitArray:
-                {
-                    if(vB.isValue() && QMetaTypeUtilString.contains(vB.typeId())){
-                        auto s=vB.value().toString();
-                        if(!s.contains(__percentage))
-                            s+=__percentage;
-                        keywordOperator=QOrm::koLike;
-                        vB.setValue(s);
-                    }
-                    break;
-                }
-                default:
-                    break;
-                }
-
-
-                s=SearchParam{vA, vB, keywordOperator, keywordLogical};
-            }
-            p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
-        }
-        break;
-    }
-    default:
-        break;
-    }
+//                s=SearchParam{vA, vB, keywordOperator, keywordLogical};
+//            }
+//            p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
+//        }
+//        break;
+//    }
+//    default:
+//        break;
+//    }
 }
 
 SearchParameters::~SearchParameters()
