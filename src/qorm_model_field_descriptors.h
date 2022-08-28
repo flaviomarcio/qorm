@@ -10,23 +10,23 @@
 #include "./private/p_qorm_model_dto_endpoints.h"
 #include "./private/p_qorm_model_dto_design.h"
 
-#define QORM_MODEL_SET_SORT(value) this->setSort(value)
+#define QORM_DESCRIPTOR_SORT_SET(value) this->setSort(value)
 
-#define QORM_MODEL_SET_DESCRIPTION(value) this->setDescription(value)
+#define QORM_DESCRIPTOR_DESCRIPTION_SET(value) this->setDescription(value)
 
-#define QORM_MODEL_FIELD_SET_DESCRIPTOR(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES)
+#define QORM_DESCRIPTOR_FIELD_SET(NAME, VALUES) addDescriptor(QStringLiteral(#NAME), VALUES)
 
-#define QORM_MODEL_ACTION_SET(NAME, VALUES) addAction(QStringLiteral(#NAME), VALUES);
+#define QORM_DESCRIPTOR_ACTION_SET(NAME, VALUES) addAction(QStringLiteral(#NAME), VALUES);
 
-#define QORM_MODEL_DECLARE_HOST(VALUES) this->addHost(VALUES)
+#define QORM_DESCRIPTOR_DECLARE_HOST(VALUES) this->addHost(VALUES)
 
-#define QORM_MODEL_DECLARE_ENDPOINT(ENDPOINT) static const auto ENDPOINT##EndPoint=this->addEndPoint(#ENDPOINT, ENDPOINT).uuid();
+#define QORM_DESCRIPTOR_ENDPOINT_SET(ENDPOINT) static const auto ENDPOINT##EndPoint=this->addEndPoint(#ENDPOINT, ENDPOINT).uuid();
 
-#define QORM_MODEL_DECLARE_ENDPOINT_PRINCIPAL(ENDPOINT) setEndPoint(ENDPOINT)
+#define QORM_DESCRIPTOR_ENDPOINT_PRINCIPAL_SET(ENDPOINT) setEndPoint(ENDPOINT)
 
-#define QORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, DESCRIPTOR) Q_INVOKABLE explicit CLASSNAME(QObject *parent = nullptr) : DESCRIPTOR{parent}{};
+#define QORM_DESCRIPTOR_CONSTRUCTOR_NEW(CLASSNAME, DESCRIPTOR) Q_INVOKABLE explicit CLASSNAME(QObject *parent = nullptr) : DESCRIPTOR{parent}{};
 
-#define QORM_DESCRIPTOR_CONSTRUCTOR(CLASSNAME) public: QORM_MODEL_DESCRIPTOR_CONSTRUCTOR(CLASSNAME, QOrm::ModelFieldDescriptors)
+#define QORM_DESCRIPTOR_CONSTRUCTOR(CLASSNAME) public: QORM_DESCRIPTOR_CONSTRUCTOR_NEW(CLASSNAME, QOrm::ModelFieldDescriptors)
 
 namespace QOrm {
 class ModelDescriptorPvt;
