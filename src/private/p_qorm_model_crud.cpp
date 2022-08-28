@@ -507,19 +507,19 @@ ResultValue &CRUDBase::deactivate(const QVariant &value)
 
 CRUDBase &CRUDBase::onBefore(QOrm::CRUDBodyActionMethod method)
 {
-    p->actionMethod[__before]=method;
+    p->actionMethod.insert(__before, method);
     return *this;
 }
 
 CRUDBase &CRUDBase::onSuccess(QOrm::CRUDBodyActionMethod method)
 {
-    p->actionMethod[__success]=method;
+    p->actionMethod.insert(__success, method);
     return *this;
 }
 
 CRUDBase &CRUDBase::onFailed(QOrm::CRUDBodyActionMethod method)
 {
-    p->actionMethod[__failed]=method;
+    p->actionMethod.insert(__failed, method);
     return *this;
 }
 
@@ -527,7 +527,7 @@ ResultValue &CRUDBase::canActionCreate()
 {
     Q_DECLARE_VU;
 
-    static auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
 
     QVariantHash vSource;
     {
@@ -565,7 +565,7 @@ ResultValue &CRUDBase::canActionSearch()
 {
     Q_DECLARE_VU;
 
-    static auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
 
     QVariantHash vSource;
     {
@@ -605,42 +605,73 @@ ResultValue &CRUDBase::canActionSearch()
 
 ResultValue &CRUDBase::canActionInsert()
 {
-    static auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
     auto act=p->actions.value(name);
-    auto &lr=(act==nullptr)?this->insert():act->action(this->source());
-    return this->lr(lr);
+    QVariant v;
+    if(this->source().isValid() && !this->source().isNull()){
+        auto &lr=(act==nullptr)?this->insert():act->action(this->source());
+        v=lr.resultVariant();
+    }
+    return this->lr(p->dto
+                    .uuid(this->uuid())//crud uuid
+                    .host(p->host)
+                    .items(v).o());
 }
 
 ResultValue &CRUDBase::canActionUpsert()
 {
-    static auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
     auto act=p->actions.value(name);
-    auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
-    return this->lr(lr);
+    QVariant v;
+    if(this->source().isValid() && !this->source().isNull()){
+        auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
+        v=lr.resultVariant();
+    }
+    return this->lr(p->dto
+                    .uuid(this->uuid())//crud uuid
+                    .host(p->host)
+                    .items(v).o());
 }
 
 ResultValue &CRUDBase::canActionUpdate()
 {
-    static auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
     auto act=p->actions.value(name);
-    auto &lr=(act==nullptr)?this->update():act->action(this->source());
-    return this->lr(lr);
+    QVariant v;
+    if(this->source().isValid() && !this->source().isNull()){
+        auto &lr=(act==nullptr)?this->update():act->action(this->source());
+        v=lr.resultVariant();
+    }
+    return this->lr(p->dto
+                    .uuid(this->uuid())//crud uuid
+                    .host(p->host)
+                    .items(v).o());
 }
 
 ResultValue &CRUDBase::canActionRemove()
 {
-    static auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
     auto act=p->actions.value(name);
-    auto &lr=(act==nullptr)?this->remove():act->action(this->source());
-    return this->lr(lr);
+    QVariant v;
+    if(this->source().isValid() && !this->source().isNull()){
+        auto &lr=(act==nullptr)?this->remove():act->action(this->source());
+        v=lr.resultVariant();
+        return this->lr(v);
+    }
+    return this->lr().clear();
 }
 
 ResultValue &CRUDBase::canActionDeactivate()
 {
-    static auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
     auto act=p->actions.value(name);
-    auto &lr=(act==nullptr)?this->deactivate():act->action(this->source());
-    return this->lr(lr);
+    QVariant v;
+    if(this->source().isValid() && !this->source().isNull()){
+        auto &lr=(act==nullptr)?this->deactivate():act->action(this->source());
+        v=lr.resultVariant();
+        return this->lr(v);
+    }
+    return this->lr().clear();
 }
 
 ResultValue &CRUDBase::doBofore()
