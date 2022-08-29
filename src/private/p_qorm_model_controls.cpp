@@ -169,25 +169,27 @@ const QVariantList &ModelDtoControls::items()const
 
 ModelDtoControls &ModelDtoControls::items(const QVariant &v)
 {
-    p->items=v.toList();
+    Q_DECLARE_VU;
+    p->items=vu.toList(v);
     return *this;
 }
 
 ModelDtoControls &ModelDtoControls::items(const ResultValue &lr)
 {
-    p->items=lr.resultList();
+    p->items=lr.resultToList();
     return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setValue(const QVariant &v)
 {
-    p->items=v.toList();
+    Q_DECLARE_VU;
+    p->items=vu.toList(v);
     return *this;
 }
 
 ModelDtoControls &ModelDtoControls::setValue(const ResultValue &lr)
 {
-    p->items=lr.resultList();
+    p->items=lr.resultToList();
     return *this;
 }
 
