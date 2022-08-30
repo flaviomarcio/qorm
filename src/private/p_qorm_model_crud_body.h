@@ -94,6 +94,3 @@ public:
 }
 
 typedef QOrm::CRUDBody CRUDBody;
-
-//Q_DECLARE_METATYPE(CRUDBody)
-//Q_DECLARE_METATYPE(CRUDBody*)
