@@ -173,9 +173,20 @@ ModelDao &CRUDBase::dao()
     return p->dao;
 }
 
-QOrm::Host &CRUDBase::host()
+const QOrm::Host &CRUDBase::host() const
 {
     return p->host;
+}
+
+CRUDBase &CRUDBase::host(const QOrm::Host &newHost)
+{
+    return this->setHost(newHost);
+}
+
+CRUDBase &CRUDBase::setHost(const QOrm::Host &newHost)
+{
+    p->host.setValues(&newHost);
+    return *this;
 }
 
 const QVariant CRUDBase::type() const

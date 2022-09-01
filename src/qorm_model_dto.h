@@ -80,7 +80,7 @@ public:
     //! \brief Host
     //! \return
     //!
-    virtual Host &host()const;
+    virtual const Host &host()const;
 
     //!
     //! \brief Host
@@ -90,7 +90,13 @@ public:
     virtual ModelDto &host(const QVariant &host);
 
     //!
-    //! \brief EndPoints
+    //! \brief endPoint
+    //! \return
+    //!
+    virtual EndPoint &endPoint()const;
+
+    //!
+    //! \brief endPoints
     //! \return
     //!
     virtual EndPoints &endPoints()const;

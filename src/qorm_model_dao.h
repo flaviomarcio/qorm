@@ -334,7 +334,10 @@ public:
             if (!query.exec())
                 return this->lr(query.lr());
         }
-        return this->lr() = true;
+        if(list.isEmpty())
+            return this->lr();
+
+        return this->lr(list.size()==1?list.first():list) = true;
     }
 
     //!
@@ -386,7 +389,11 @@ public:
             if (!query.exec())
                 return this->lr(query.lr());
         }
-        return this->lr() = true;
+
+        if(list.isEmpty())
+            return this->lr();
+
+        return this->lr(list.size()==1?list.first():list) = true;
     }
 
     //!

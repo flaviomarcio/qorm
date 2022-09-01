@@ -61,7 +61,9 @@ public:
     //! \brief host
     //! \return
     //!
-    QOrm::Host &host();
+    virtual const QOrm::Host &host()const;
+    virtual CRUDBase &host(const QOrm::Host &newHost);
+    virtual CRUDBase &setHost(const QOrm::Host &newHost);
 
     //!
     //! \brief type

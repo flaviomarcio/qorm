@@ -47,9 +47,9 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     Q_PROPERTY(ModelFieldCollection *filters READ filters WRITE setFilters RESET resetFilters NOTIFY filtersChanged)
     Q_PROPERTY(ModelActionCollection *actions READ actions WRITE setActions RESET resetActions NOTIFY actionsChanged)
     Q_PROPERTY(Design *design READ design WRITE setDesign RESET resetDesign NOTIFY designChanged)
+    Q_PROPERTY(const Host *host READ host WRITE setHost RESET resetHost NOTIFY hostChanged)
     Q_PROPERTY(EndPoint *endPoint READ endPoint WRITE setEndPoint NOTIFY endPointChanged)
     Q_PROPERTY(EndPoints *endPoints READ endPoints WRITE setEndPoints RESET resetEndPoints NOTIFY endPointsChanged)
-    Q_PROPERTY(Host *host READ host WRITE setHost RESET resetHost NOTIFY hostChanged)
     Q_PROPERTY(bool obrigatory READ obrigatory WRITE setObrigatory NOTIFY obrigatoryChanged)
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
     Q_PROPERTY(QVariantHash sort READ sort WRITE setSort RESET resetSort NOTIFY sortChanged)
@@ -190,7 +190,7 @@ public:
     //! \brief host
     //! \return
     //!
-    Host *host();
+    const Host *host()const;
     Host &setHost(const Host *newHost);
     Host &setHost(const QVariant &newHost);
     ModelFieldDescriptors &resetHost();

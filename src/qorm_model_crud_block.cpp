@@ -278,9 +278,9 @@ ResultValue &CRUDBlock::crudify()
     auto crudPages=crudBody.pagesHash();
 
     for(auto &crud:p->crudList){
+        crud->setHost(p->host);
         crud->setOptions(p->options);
         crud->setResultInfo(p->resultInfo);
-        crud->host().setValues(&p->host);
     }
 
     for(auto &crud:p->crudList){

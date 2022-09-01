@@ -40,6 +40,10 @@ public:
         this->init();
     }
 
+    //!
+    //! \brief modelInfo
+    //! \return
+    //!
     virtual const QOrm::ModelInfo &modelInfo()const
     {
         return p_dao.modelInfo();
@@ -66,9 +70,33 @@ public:
         return p_dao.host();
     }
 
+    //!
+    //! \brief model
+    //! \return
+    //!
     T &model()const
     {
         this->p_model;
+    }
+
+    //!
+    //! \brief host
+    //! \return
+    //!
+    const QOrm::Host &host()const
+    {
+        return p_dto.host();
+    }
+
+    //!
+    //! \brief setHost
+    //! \param newHost
+    //! \return
+    //!
+    CRUDBase &setHost(const QOrm::Host &newHost)
+    {
+        p_dto.host(newHost);
+        return CRUDBase::setHost(newHost);
     }
 
 private:
