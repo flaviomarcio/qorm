@@ -346,7 +346,7 @@ public:
     {
         auto vHash = value.toHashModel();
         if (this->upsert(vHash)) {
-            value.readFrom(vHash);
+            value.readFrom(this->lr());
             return this->lr() = true;
         }
         return this->lr() = false;
