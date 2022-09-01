@@ -17,12 +17,12 @@ TEST_F(Q_ORM_DTOTestUnit, serviceTestOutPut)
 
     QOrm::ModelDto dto;
     dto
-        .headers().value(qsl("uuid"      )).text(qsl("id")).type(vNumber   ).align(vaStart  ).width(qsl("10%")).editable(true ).d()
-        .headers().value(qsl("name"      )).text(qsl("na")).type(vText     ).align(vaStart  ).width(qsl("25%")).editable(false).d()
-        .headers().value(qsl("enabled"   )).text(qsl("en")).type(vText     ).align(vaStart  ).width(qsl("15%")).editable(false).d()
-        .links().ref(qsl("endpoint_1")).method(vGET).hRef("/endpoint_1").d()
-        .links().ref(qsl("endpoint_1")).method(vPOST).hRef("/endpoint_2").d()
-        .links().ref(qsl("endpoint_2")).method(vPOST).hRef("/endpoint_2").d()
+        .headers().value(QStringLiteral("uuid"      )).text(QStringLiteral("id")).type(vNumber   ).align(vaStart  ).width(QStringLiteral("10%")).editable(true ).d()
+        .headers().value(QStringLiteral("name"      )).text(QStringLiteral("na")).type(vText     ).align(vaStart  ).width(QStringLiteral("25%")).editable(false).d()
+        .headers().value(QStringLiteral("enabled"   )).text(QStringLiteral("en")).type(vText     ).align(vaStart  ).width(QStringLiteral("15%")).editable(false).d()
+        .links().ref(QStringLiteral("endpoint_1")).method(vGET).hRef("/endpoint_1").d()
+        .links().ref(QStringLiteral("endpoint_1")).method(vPOST).hRef("/endpoint_2").d()
+        .links().ref(QStringLiteral("endpoint_2")).method(vPOST).hRef("/endpoint_2").d()
         .filters().d()
         .items(records);
 

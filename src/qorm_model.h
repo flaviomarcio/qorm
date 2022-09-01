@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <QVariantHash>
 #include <QUuid>
+#include <QSqlQuery>
 #include "./qorm_global.h"
 #include "./qorm_object.h"
 #include "./qorm_model_macro.h"
