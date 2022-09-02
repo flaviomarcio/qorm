@@ -19,11 +19,9 @@ public:
     //! \brief CRUD
     //! \param parent
     //!
-    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr)
-        :
-          PrivateQOrm::CRUDBase{parent}
+    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr):PrivateQOrm::CRUDBase{parent}
     {
-        this->init();
+
     }
 
     //!
@@ -37,7 +35,16 @@ public:
         , p_dao{this}
         , p_model{this}
     {
-        this->init();
+
+    }
+
+    //!
+    //! \brief model
+    //! \return
+    //!
+    T &model()const
+    {
+        this->p_model;
     }
 
     //!
@@ -65,24 +72,6 @@ public:
     //! \brief host
     //! \return
     //!
-    Host &host()
-    {
-        return p_dao.host();
-    }
-
-    //!
-    //! \brief model
-    //! \return
-    //!
-    T &model()const
-    {
-        this->p_model;
-    }
-
-    //!
-    //! \brief host
-    //! \return
-    //!
     const QOrm::Host &host()const
     {
         return p_dto.host();
@@ -99,20 +88,23 @@ public:
         return CRUDBase::setHost(newHost);
     }
 
+    //!
+    //! \brief beforeCrudify
+    //! \return
+    //!
+    virtual bool beforeCrudify()
+    {
+        p_dto.initDescriptors(&p_model);
+        const auto &modelInfo=this->modelInfo();
+        this->name(modelInfo.name()).description(modelInfo.description());
+        return true;
+    }
+
 private:
     ModelDao<T> p_dao;
     T p_model;
     QOrm::ModelDto &p_dto=this->dto();
 
-    //!
-    //! \brief init
-    //!
-    void init()
-    {
-        p_dto.initDescriptors(&p_model);
-        const auto &modelInfo=this->modelInfo();
-        this->name(modelInfo.name()).description(modelInfo.description());
-    }
 protected:
 
     //!

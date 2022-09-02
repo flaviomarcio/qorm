@@ -338,32 +338,68 @@ QVariantList &CRUDBase::generatedRecords() const
     return p->generatedRecords;
 }
 
+bool CRUDBase::beforeCrudify()
+{
+    return true;
+}
+
+bool CRUDBase::afterCrudify()
+{
+    return true;
+}
+
 ResultValue &CRUDBase::crudify()
 {
+    if(!this->beforeCrudify())
+        return this->lr()=false;
+
     p->dto.setResultInfo(this->resultInfo());
     auto strategy=this->strategy();
     switch (strategy) {
     case QOrm::CRUDTypes::Create:
-        return this->canActionCreate();
+        if(!this->canActionCreate())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Search:
-        return this->canActionSearch();
+        if(!this->canActionSearch())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Upsert:
-        return this->canActionUpsert();
+        if(!this->canActionUpsert())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Remove:
-        return this->canActionRemove();
+        if(!this->canActionRemove())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Deactivate:
-        return this->canActionDeactivate();
+        if(!this->canActionDeactivate())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Apply:
-        return this->canActionApply();
+        if(!this->canActionApply())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Execute:
-        return this->canActionExecute();
+        if(!this->canActionExecute())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Finalize:
-        return this->canActionFinalize();
+        if(!this->canActionFinalize())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Print:
-        return this->canActionPrint();
+        if(!this->canActionPrint())
+            return this->lr();
+        break;
     default:
         return this->lr().setValidation(tr("Invalid strategy"));
     }
+
+    if(!this->afterCrudify())
+        return this->lr()=false;
+
+    return this->lr();
 }
 
 CRUDBase &CRUDBase::actionsNulls()

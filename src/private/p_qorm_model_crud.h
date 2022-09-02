@@ -190,6 +190,18 @@ public:
     QVariantList &generatedRecords()const;
 
     //!
+    //! \brief beforeCrudify
+    //! \return
+    //!
+    virtual bool beforeCrudify();
+
+    //!
+    //! \brief afterCrudify
+    //! \return
+    //!
+    virtual bool afterCrudify();
+
+    //!
     //! \brief crudify
     //! \return
     //!

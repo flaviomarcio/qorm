@@ -16,10 +16,16 @@ public:
 
     ~EndPointsPvt()
     {
-        this->clear();
+        this->clearItems();
     }
 
     void clear()
+    {
+        this->host.clear();
+        this->clearItems();
+    }
+
+    void clearItems()
     {
         this->hash.clear();
         this->list.clear();
@@ -28,6 +34,7 @@ public:
         objectHash.clear();
         qDeleteAll(aux);
     }
+
 
     void setHost()
     {
@@ -49,8 +56,7 @@ EndPoints::EndPoints(QObject *parent)
 
 bool EndPoints::setValues(const QVariant &v)
 {
-    for(auto &v:v.toList())
-        this->insert(v);
+
     return QStm::ObjectWrapper::setValues(v);
 }
 
@@ -99,9 +105,9 @@ EndPoint *EndPoints::endpoint()
 {
     if(p->objectHash.isEmpty())
         return nullptr;
-
     return p->objectHash.cbegin().value();
 }
+
 
 EndPoint *EndPoints::value(const QUuid &uuid)
 {
@@ -163,7 +169,7 @@ QVariantList &EndPoints::items() const
 
 void EndPoints::setItems(const QVariant &newItems)
 {
-    p->clear();
+    p->clearItems();
     for(auto &v:newItems.toList()){
         auto e=EndPoint::from(v, this);
         if(!e) continue;
