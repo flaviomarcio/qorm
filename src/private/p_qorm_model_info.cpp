@@ -709,6 +709,17 @@ public:
             }
 
             pvt->descriptor->descriptorsInit();
+//#ifdef QT_DEBUG
+//            static const auto c=QString("Logistic::CargoMovimentCollectDescriptor").toLower();
+//            auto name=QString::fromUtf8(pvt->descriptor->metaObject()->className()).toLower();
+//            if(name==c){
+//                vEndPoint=vDescriptors.value("endPoints").toHash();
+//                if(vEndPoint.isEmpty()){
+//                    pvt->descriptor->descriptorsInit();
+//                    vDescriptors=pvt->descriptor->toHash();
+//                }
+//            }
+//#endif
             if(pvt->description.isEmpty())
                 pvt->description=pvt->descriptor->description();
 

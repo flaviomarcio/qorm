@@ -124,15 +124,19 @@ public:
         Query query{this};
         auto &strategy = query.builder().select();
         strategy.fieldsFrom(p_modelInfo);
-        QVariant value(this->variantToParameters(v));
-        if (value.isValid())
-            strategy.where(value);
+
+        auto vHash=v.toHash();
 
         QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
         while (i.hasNext()) {
             i.next();
-            strategy.where().notEqual(i.key(), i.value());
+            if(vHash.contains(i.key())) continue;
+            vHash.insert(i.key(), i.value());
         }
+
+        auto vvm=this->p_modelInfo.parserVVM(vHash);
+        if (!vvm.isEmpty())
+            strategy.where(vvm);
 
         for (const auto &v : this->p_modelInfo.tableOrderByField())
             strategy.orderby().f(v);
@@ -230,16 +234,17 @@ public:
         auto &strategy = query.builder().select();
         strategy.fromExists(p_modelInfo);
 
-        QVariant value = this->variantToParameters(v);
-        if (value.isValid()) {
-            strategy.where().condition(value);
-        }
-
+        auto vHash=v.toHash();
         QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
         while (i.hasNext()) {
             i.next();
             strategy.where().notEqual(i.key(), i.value());
         }
+
+        auto vvm = this->p_modelInfo.parserVVM(vHash);
+
+        if (!vvm.isEmpty())
+            strategy.where().condition(vvm);
 
         if (!query.exec())
             return this->lr(query.lr());
