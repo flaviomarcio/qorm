@@ -3,6 +3,7 @@
 #include <QCryptographicHash>
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_const.h"
+#include "../qorm_log.h"
 #include "../qorm_model.h"
 #include "../qorm_model_field_descriptors.h"
 #include "../qorm_macro.h"
@@ -12,25 +13,27 @@
 
 namespace QOrm {
 
+Q_ORM_DECLARE_PROPERTY_IGNORE_LIST
+
 static const auto __equal="=";
 static const auto __equal2="==";
 static const auto __space=" ";
 static const auto __space2="  ";
 
 typedef QHash<QByteArray, QOrm::ModelInfo*> HashModelInfo;
+
 Q_GLOBAL_STATIC(HashModelInfo, __static_model_info)
 
-class ModelInfoPvt{
+class ModelInfoPvt:public QObject{
 public:
     QUuid uuid;
-    ModelFieldDescriptors *descriptor=nullptr;
+    QString name;
+    QString description;
     QMetaObject staticMetaObjectModel;
     QMetaObject staticMetaObjectDescriptor;
     QHash<QString, QMetaMethod> methods;
     QList<QMetaProperty> property;
     QHash<QString, QMetaProperty> propertyByName;
-    QString name;
-    QString description;
     QHash<QString, QMetaProperty> propertyByFieldName;
     QHash<QString, QMetaProperty> propertyByPropertyName;
     QHash<QString, QMetaProperty> propertyFiltrable;
@@ -40,7 +43,6 @@ public:
     QHash<QString, QMetaProperty> propertyForeignKeysPK;
     QHash<QString, QMetaProperty> propertyForeignKeys;
     QHash<QString, QMetaProperty> propertyFKonPK;
-
     QHash<QString,QString> propertyTableVsShort;
     QHash<QString,QString> propertyShortVsTable;
     QHash<QString,QString> propertyShortFKVsShortPK;
@@ -67,16 +69,16 @@ public:
     QVariantHash tableForeignKeys;
     QVariantList tableFiltrableField;
     QVariantList tableForeignPKField;
-    ModelInfo*modelInfo=nullptr;
+    ModelInfo *modelInfo=nullptr;
 
     explicit ModelInfoPvt(ModelInfo*parent)
+#ifdef Q_ORM_MODEL_INFO_OBJECT
+        :QObject{parent}
+#else
+        :QObject{}
+#endif
     {
         this->modelInfo=parent;
-    }
-
-    virtual ~ModelInfoPvt()
-    {
-
     }
 
     static bool invoke(QObject *objectCheck, const QString &methodName)
@@ -340,7 +342,6 @@ public:
     {
 #define ____copy(var)\
         this->var=p->var;
-        ____copy(descriptor             );
         ____copy(tablePkAutoGenerate    );
         ____copy(property               );
         ____copy(propertyByName         );
@@ -382,7 +383,6 @@ public:
     {
 #define ____clear(var)this->var.clear()
 
-        this->descriptor=nullptr;
         ____clear(tablePkAutoGenerate    );
         ____clear(property               );
         ____clear(propertyByName         );
@@ -446,7 +446,7 @@ public:
             if(!property.isValid())
                 continue;
 
-            if(__propertyIgnoredList->contains(propertyName.toLower()))
+            if(staticPropertyIgnoredList->contains(propertyName.toLower()))
                 continue;
 
             pvt->propertyByName.insert(property.name(), property);
@@ -688,42 +688,79 @@ public:
 
     static void initDescriptores()
     {
-        auto makeDescritor=[](ModelInfo* modelInfo){
-
+        QHash<QByteArray, ModelFieldDescriptors*> descriptors;
+        auto makeDescritor=[&descriptors](ModelInfo* modelInfo){
+            QVariantHash vDescriptors;
             auto pvt=modelInfo->p;
 
             auto metaObject=pvt->staticMetaObjectDescriptor;
-            if(!metaObject.inherits(&ModelFieldDescriptors::staticMetaObject))//SE HERDAR de QOrm::ModelFieldDescriptors
-                return;
 
-            auto obj=metaObject.newInstance(Q_ARG(QObject*, nullptr));
-            if(obj==nullptr)
-                return;
+            auto&descriptor=descriptors[metaObject.className()];
+            if(descriptor==nullptr){
+                if(!metaObject.inherits(&ModelFieldDescriptors::staticMetaObject))//SE HERDAR de QOrm::ModelFieldDescriptors
+                    return vDescriptors;
 
-            pvt->descriptor=dynamic_cast<ModelFieldDescriptors*>(obj);
+                auto obj=metaObject.newInstance(Q_ARG(QObject*, nullptr));
+                if(obj==nullptr)
+                    return vDescriptors;
 
-            if(pvt->descriptor==nullptr){
-                pvt->propertyDescriptors.clear();
-                delete obj;
-                return;
+                descriptor=dynamic_cast<ModelFieldDescriptors*>(obj);
+
+                if(descriptor==nullptr){
+                    delete obj;
+                    return vDescriptors;
+                }
+
+                descriptor->descriptorsInit();
             }
-
-            pvt->descriptor->descriptorsInit();
             if(pvt->description.isEmpty())
-                pvt->description=pvt->descriptor->description();
+                pvt->description=descriptor->description();
 
-            pvt->descriptor->setFieldsValid(pvt->propertyList);
+            descriptor->setFieldsValid(pvt->propertyList);
 
-            auto vDescriptors=pvt->descriptor->toHash();
+            vDescriptors=descriptor->toHash();
             if(!vDescriptors.isEmpty())
                 pvt->propertyDescriptors=vDescriptors;
+            return vDescriptors;
         };
-
+        QVariantHash vNameSpaces;
         QHashIterator <QByteArray, QOrm::ModelInfo*> i(*__static_model_info);
         while(i.hasNext()){
             i.next();
-            makeDescritor(i.value());
+            auto&modelInfo=i.value();
+
+
+            auto nameObject=modelInfo->name();
+            auto nameObjectList=nameObject.split("::");
+            QString nameSpace;
+            if(nameObjectList.size()<=1){
+                nameSpace="";
+            }
+            else{
+                nameObject=nameObjectList.last();
+                nameObjectList.takeLast();
+                nameSpace=nameObjectList.join("::");
+            }
+            if(nameSpace.isEmpty())
+                nameSpace="default";
+            auto vNameSpace=vNameSpaces.value(nameSpace).toHash();
+            auto vDescriptors=makeDescritor(modelInfo);
+            vNameSpace.insert(nameObject, vDescriptors);
+            vNameSpaces.insert(nameSpace, vNameSpace);
         }
+        auto aux=descriptors.values();
+        descriptors.clear();
+        qDeleteAll(aux);
+        if(logRegister()){
+            static const auto __fileName=logDir()+QStringLiteral("/descriptors.json");
+            QFile file(__fileName);
+            if(!file.open(QFile::Truncate | QFile::WriteOnly))
+                return;
+            file.write(QJsonDocument::fromVariant(vNameSpaces).toJson(QJsonDocument::Indented));
+            file.flush();
+            file.close();
+        }
+
     }
 };
 
@@ -735,39 +772,62 @@ static void init()
 
 Q_ORM_STARTUP_FUNCTION(init);
 
-ModelInfo::ModelInfo()
+ModelInfo::ModelInfo(QObject *parent)
+#ifdef Q_ORM_MODEL_INFO_OBJECT
+    :QStm::ObjectWrapper{parent}
+#else
+    :QVariant{}
+#endif
 {
+    Q_UNUSED(parent)
     this->p=new ModelInfoPvt{this};
 }
 
-ModelInfo::ModelInfo(const QByteArray &className):QVariant{}
+ModelInfo::ModelInfo(const QByteArray &className, QObject *parent)
+#ifdef Q_ORM_MODEL_INFO_OBJECT
+    :QStm::ObjectWrapper{parent}
+#else
+    :QVariant{}
+#endif
 {
+    Q_UNUSED(parent)
     this->p=new ModelInfoPvt{this};
     if(__static_model_info->contains(className)){
-        const auto info=*__static_model_info->value(className);
-        p->read(info.p);
+        const auto info=__static_model_info->value(className);
+        p->read(info->p);
     }
 }
 
-ModelInfo::ModelInfo(const QMetaObject &metaObject)
+ModelInfo::ModelInfo(const QMetaObject &metaObject, QObject *parent)
+#ifdef Q_ORM_MODEL_INFO_OBJECT
+    :QStm::ObjectWrapper{parent}
+#else
+    :QVariant{}
+#endif
 {
+    Q_UNUSED(parent)
     this->p=new ModelInfoPvt{this};
     if(__static_model_info->contains(metaObject.className())){
-        const auto info=*__static_model_info->value(metaObject.className());
-        p->read(info.p);
+        const auto info=__static_model_info->value(metaObject.className());
+        p->read(info->p);
     }
 }
 
+#ifndef Q_ORM_MODEL_INFO_OBJECT
 ModelInfo::~ModelInfo()
 {
     delete p;
 }
-
+#endif
 QUuid &ModelInfo::uuid() const
 {
     if(p->uuid.isNull()){
         Q_DECLARE_VU;
-        p->uuid=vu.toMd5Uuid(QVariant::toByteArray());
+#ifdef Q_ORM_MODEL_INFO_OBJECT
+        p->uuid=vu.toMd5Uuid(p->name);
+#else
+        p->uuid=vu.toMd5Uuid(QVariant::toString());
+#endif
     }
     return p->uuid;
 }
@@ -781,22 +841,24 @@ bool ModelInfo::isValid() const
 
 QString &ModelInfo::name()const
 {
+#ifndef Q_ORM_MODEL_INFO_OBJECT
     if(p->name.isEmpty())
         p->name=QVariant::toString();
+#endif
     return p->name;
 }
 
 ModelInfo &ModelInfo::name(const QString &value)
 {
-    p->name=value;
-    QVariant::setValue(value);
-    return *this;
+    return this->setName(value);
 }
 
 ModelInfo &ModelInfo::setName(const QString &value)
 {
     p->name=value;
+#ifndef Q_ORM_MODEL_INFO_OBJECT
     QVariant::setValue(value);
+#endif
     return *this;
 }
 
@@ -953,19 +1015,19 @@ QVariantHash ModelInfo::toAttributesFields(const QVariant &v) const
     return parserVVM(values);
 }
 
-const ModelFieldDescriptors *ModelInfo::descritor() const
-{
-    return p->descriptor;
-}
-
-QMetaObject &ModelInfo::staticMetaObject() const
+QMetaObject &ModelInfo::staticMetaObjectModel() const
 {
     return p->staticMetaObjectModel;
 }
 
+QMetaObject &ModelInfo::staticMetaObjectDescriptor() const
+{
+    return p->staticMetaObjectDescriptor;
+}
+
 const QStringList &ModelInfo::propertyIgnoredList()
 {
-    return *__propertyIgnoredList;
+    return *staticPropertyIgnoredList;
 }
 
 QList<QMetaProperty> &ModelInfo::property() const

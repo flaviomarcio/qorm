@@ -19,7 +19,7 @@ class Q_ORM_EXPORT ModelFieldDescriptor : public QStm::ObjectWrapper
     Q_PROPERTY(QVariant dataType READ dataType WRITE dataType RESET resetDataType NOTIFY dataTypeChanged)
     Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE defaultValue RESET resetDefaultValue NOTIFY defaultValueChanged)
     Q_PROPERTY(QVariant defaultSelect READ defaultSelect WRITE defaultSelect RESET resetDefaultSelect NOTIFY defaultSelectChanged)
-    Q_PROPERTY(bool obrigatory READ obrigatory WRITE obrigatory RESET resetObrigatory NOTIFY obrigatoryChanged)
+    Q_PROPERTY(EditObrigatory obrigatory READ obrigatory WRITE obrigatory RESET resetObrigatory NOTIFY obrigatoryChanged)
     Q_PROPERTY(QVariant align READ align WRITE align RESET resetAlign NOTIFY alignChanged)
     Q_PROPERTY(int order READ order WRITE order RESET resetOrder NOTIFY orderChanged)
     Q_PROPERTY(bool displayer READ displayer WRITE displayer RESET resetDisplayer NOTIFY displayerChanged)
@@ -39,6 +39,9 @@ class Q_ORM_EXPORT ModelFieldDescriptor : public QStm::ObjectWrapper
 public:
     enum EditReadOnly{erNo, erYes, erIfNew, erIfExisting};
     Q_ENUM(EditReadOnly)
+
+    enum EditObrigatory{eoNo, eoYes, eoIfEdit, eoIfFilter};\
+    Q_ENUM(EditObrigatory)
 
     explicit ModelFieldDescriptor(QObject *parent = nullptr);
 
@@ -126,8 +129,8 @@ public:
     //! \brief obrigatory
     //! \return
     //!
-    bool obrigatory() const;
-    ModelFieldDescriptor &obrigatory(bool newObrigatory);
+    QOrm::ModelFieldDescriptor::EditObrigatory obrigatory() const;
+    ModelFieldDescriptor &obrigatory(const QVariant &newObrigatory);
     ModelFieldDescriptor &resetObrigatory();
 
     //!

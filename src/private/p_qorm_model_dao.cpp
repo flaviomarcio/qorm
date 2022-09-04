@@ -405,7 +405,33 @@ QVariantHash ModelDao::toPrepareSearch(const QOrm::ModelInfo &modelRef, const QV
                 if(!val.isValid())
                     continue;
             }
-
+            switch (val.typeId()){//se VALUE for lista adicionaremos um a um na lista para executar o in
+            case QMetaType::QUuid:
+            {
+                auto vUuid=val.toUuid();
+                if(vUuid.isNull())
+                    continue;
+                break;
+            }
+            case QMetaType::QVariantList:
+            case QMetaType::QStringList:
+            {
+                auto vList=val.toList();
+                if(vList.isEmpty())
+                    continue;
+                break;
+            }
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:
+            {
+                auto vHash=val.toHash();
+                if(vHash.isEmpty())
+                    continue;
+                break;
+            }
+            default:
+                break;
+            }
 
             switch (val.typeId()){//se VALUE for lista adicionaremos um a um na lista para executar o in
             case QMetaType::QVariantList:

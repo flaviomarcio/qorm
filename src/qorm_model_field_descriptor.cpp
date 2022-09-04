@@ -14,7 +14,7 @@ public:
     QVariant dataType;
     QVariant defaultValue;
     QVariant defaultSelect;
-    bool obrigatory=false;
+    QStm::MetaEnum<ModelFieldDescriptor::EditObrigatory> obrigatory=ModelFieldDescriptor::eoNo;
     QVariant align;
     int order=0;
     bool displayer=false;
@@ -230,12 +230,12 @@ ModelFieldDescriptor &ModelFieldDescriptor::resetDefaultSelect()
     return this->defaultSelect({});
 }
 
-bool ModelFieldDescriptor::obrigatory() const
+ModelFieldDescriptor::EditObrigatory ModelFieldDescriptor::obrigatory() const
 {
-    return p->obrigatory;
+    return p->obrigatory.type();
 }
 
-ModelFieldDescriptor &ModelFieldDescriptor::obrigatory(bool newObrigatory)
+ModelFieldDescriptor &ModelFieldDescriptor::obrigatory(const QVariant &newObrigatory)
 {
     if (p->obrigatory == newObrigatory)
         return *this;

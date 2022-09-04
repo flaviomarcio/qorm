@@ -19,11 +19,9 @@ public:
     //! \brief CRUD
     //! \param parent
     //!
-    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr)
-        :
-          PrivateQOrm::CRUDBase{parent}
+    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr):PrivateQOrm::CRUDBase{parent}
     {
-        this->init();
+
     }
 
     //!
@@ -37,9 +35,22 @@ public:
         , p_dao{this}
         , p_model{this}
     {
-        this->init();
+
     }
 
+    //!
+    //! \brief model
+    //! \return
+    //!
+    T &model()const
+    {
+        this->p_model;
+    }
+
+    //!
+    //! \brief modelInfo
+    //! \return
+    //!
     virtual const QOrm::ModelInfo &modelInfo()const
     {
         return p_dao.modelInfo();
@@ -52,23 +63,39 @@ public:
     virtual bool isValid()const
     {
         const ModelInfo &modelInfo=this->modelInfo();
-        if(modelInfo.descritor()==nullptr)
-            return {};
-        return true;
+        return modelInfo.propertyDescriptors().isEmpty();
     }
 
     //!
     //! \brief host
     //! \return
     //!
-    Host &host()
+    const QOrm::Host &host()const
     {
-        return p_dao.host();
+        return p_dto.host();
     }
 
-    T &model()const
+    //!
+    //! \brief setHost
+    //! \param newHost
+    //! \return
+    //!
+    CRUDBase &setHost(const QOrm::Host &newHost)
     {
-        this->p_model;
+        p_dto.host(newHost);
+        return CRUDBase::setHost(newHost);
+    }
+
+    //!
+    //! \brief beforeCrudify
+    //! \return
+    //!
+    virtual bool beforeCrudify()
+    {
+        p_dto.initDescriptors(&p_model);
+        const auto &modelInfo=this->modelInfo();
+        this->name(modelInfo.name()).description(modelInfo.description());
+        return true;
     }
 
 private:
@@ -76,15 +103,6 @@ private:
     T p_model;
     QOrm::ModelDto &p_dto=this->dto();
 
-    //!
-    //! \brief init
-    //!
-    void init()
-    {
-        p_dto.initDescriptors(&p_model);
-        const auto &modelInfo=this->modelInfo();
-        this->name(modelInfo.name()).description(modelInfo.description());
-    }
 protected:
 
     //!

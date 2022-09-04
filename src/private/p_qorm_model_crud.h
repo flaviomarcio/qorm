@@ -61,7 +61,9 @@ public:
     //! \brief host
     //! \return
     //!
-    QOrm::Host &host();
+    virtual const QOrm::Host &host()const;
+    virtual CRUDBase &host(const QOrm::Host &newHost);
+    virtual CRUDBase &setHost(const QOrm::Host &newHost);
 
     //!
     //! \brief type
@@ -186,6 +188,18 @@ public:
     //! \return
     //!
     QVariantList &generatedRecords()const;
+
+    //!
+    //! \brief beforeCrudify
+    //! \return
+    //!
+    virtual bool beforeCrudify();
+
+    //!
+    //! \brief afterCrudify
+    //! \return
+    //!
+    virtual bool afterCrudify();
 
     //!
     //! \brief crudify

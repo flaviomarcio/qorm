@@ -339,7 +339,7 @@ ModelFieldDescriptors &ModelFieldDescriptors::setDesign(const QVariantHash &valu
     return *this;
 }
 
-Host *ModelFieldDescriptors::host()
+const Host *ModelFieldDescriptors::host() const
 {
     return &p->host;
 }
@@ -347,6 +347,7 @@ Host *ModelFieldDescriptors::host()
 Host &ModelFieldDescriptors::setHost(const Host *newHost)
 {
     p->host=newHost;
+    emit hostChanged();
     return p->host;
 }
 
@@ -371,6 +372,7 @@ ModelFieldDescriptors &ModelFieldDescriptors::resetDesign()
 
 EndPoints *ModelFieldDescriptors::endPoints() const
 {
+    p->endPoints.setHost(&p->host);//seta o host para gerar retorn caso seja necessário
     return &p->endPoints;
 }
 
@@ -418,8 +420,8 @@ EndPoint &ModelFieldDescriptors::addEndPoint(const QString &name, const QVariant
     default:
         break;
     }
-    endpoint->setName(name.toUtf8());
     endpoint->host()->setValues(&p->host);
+    endpoint->setName(name.toUtf8());
     p->endPoints.insert(endpoint);
     emit endPointsChanged();
     return *endpoint;
@@ -427,6 +429,7 @@ EndPoint &ModelFieldDescriptors::addEndPoint(const QString &name, const QVariant
 
 EndPoint *ModelFieldDescriptors::endPoint() const
 {
+    p->endPoint.setHost(&p->host);//seta o host para gerar retorn caso seja necessário
     return &p->endPoint;
 }
 

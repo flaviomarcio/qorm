@@ -94,7 +94,7 @@ QVariantList Query::makeRecordList(const QMetaObject &metaObject)
 
 QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
 {
-    auto metaObject = modelInfo.staticMetaObject();
+    auto metaObject = modelInfo.staticMetaObjectModel();
     QVariantList recordList;
     if (metaObject.methodCount() == 0) {
         while (this->next()) {
@@ -166,7 +166,7 @@ QVariantHash Query::makeRecord(const ModelInfo &modelInfo) const
     if (!p->initNext())
         return {};
 
-    auto metaObject = modelInfo.staticMetaObject();
+    auto metaObject = modelInfo.staticMetaObjectModel();
     auto propertyTableList = modelInfo.propertyShortVsTable();
     if (metaObject.methodCount() == 0) {
         QVariantHash record;

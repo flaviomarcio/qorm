@@ -89,7 +89,7 @@ public:
     //! \return
     //!
     Host *host() const;
-    void setHost(Host *newHost);
+    void setHost(const Host *newHost);
     void resetHost();
 
     //!

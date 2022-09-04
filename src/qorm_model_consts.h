@@ -1,5 +1,12 @@
 #pragma once
 
+struct EditObrigatory{
+    const char *eoNo="eoNo";
+    const char *eoYes="eoYes";
+    const char *eoIfEdit="eoIfEdit";
+    const char *eoIfFilter="eoIfFilter";
+};
+
 struct EditReadOnly{
     const char *erNo="erNo";
     const char *erYes="erYes";
@@ -21,6 +28,7 @@ static const auto vText="Text";
 static const auto vTime="Time";
 static const auto vUrl="Url";
 static const auto vUuid="Uuid";
+static const EditObrigatory vObrigatory;
 static const EditReadOnly vReadOnly;
 
 

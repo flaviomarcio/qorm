@@ -1,88 +1,19 @@
 #include "./p_qorm_query.h"
-#include "../qorm_startup.h"
 #include "../qorm_model.h"
 #include "../qorm_const.h"
 #include "../qorm_macro.h"
+#include "../qorm_log.h"
 
 namespace QOrm{
-static bool static_log_register=
-#ifdef QT_DEBUG
-true;
-#else
-false;
-#endif
-Q_GLOBAL_STATIC(QString, static_log_dir);
-
-static void static_log_dir_clear(const QString &ormLogDir)
-{
-    QStringList dir_found;
-    QStringList dir_rm_file;
-    dir_found.append(ormLogDir);
-    while(!dir_found.isEmpty()){
-        auto scanDir = dir_found.takeFirst();
-        dir_rm_file.append(scanDir);
-        QDir dir(scanDir);
-        if(!dir.exists(scanDir))
-            continue;
-
-        dir.setFilter(QDir::AllDirs);
-        for(auto &scanInDir:dir.entryList()){
-            if(scanInDir==QStringLiteral(".") || scanInDir==QStringLiteral(".."))
-                continue;
-
-            auto dir=QStringLiteral("%1/%2").arg(scanDir, scanInDir);
-            dir_rm_file.append(dir);
-            dir_found.append(dir);
-        }
-    }
-
-    auto ext=QStringList{QByteArrayLiteral("*.*")};
-    for(auto &sdir:dir_rm_file){
-        QDir scanDir(sdir);
-        if(!scanDir.exists())
-            continue;
-        scanDir.setFilter(QDir::Drives | QDir::Files);
-        scanDir.setNameFilters(ext);
-        for(auto &dirFile : scanDir.entryList()){
-            auto fileName=sdir+QByteArrayLiteral("/")+dirFile;
-            QFile::remove(fileName);
-        }
-    }
-}
-
-static void static_log_init_dir()
-{
-    auto env = QString{getenv(QByteArrayLiteral("Q_LOG_ENABLED"))}.trimmed();
-#ifdef QT_DEBUG
-    static_log_register = env.isEmpty()?true :QVariant(env).toBool();
-#else
-    static_log_register = env.isEmpty()?false:QVariant(env).toBool();
-#endif
-    if(!static_log_register)
-        return;
-
-    static const auto log_local_name=QString{__PRETTY_FUNCTION__}.split(QStringLiteral("::")).first().replace(QStringLiteral("void "), "").split(QStringLiteral(" ")).last();
-    *static_log_dir=QStringLiteral("%1/%2/%3").arg(QDir::homePath(), log_local_name, qApp->applicationName());
-
-    QDir dir(*static_log_dir);
-    if(!dir.exists(*static_log_dir))
-        dir.mkpath(*static_log_dir);
-
-    if(dir.exists(*static_log_dir))
-        static_log_dir_clear(*static_log_dir);
-}
-
-Q_ORM_STARTUP_FUNCTION(static_log_init_dir);
+static const auto __sql="sql";
+static const auto __query="query";
 
 QueryPvt::QueryPvt(Query *parent, const QSqlDatabase &db) : QObject{parent}, sqlBuilder(parent)
 {
     this->query=parent;
-    auto currentName=QThread::currentThread()->objectName().trimmed();
-    if(currentName.isEmpty())
-        currentName=QString::number(qlonglong(QThread::currentThreadId()),16);
-    this->fileLog=QStringLiteral("%1/%2.sql").arg(*static_log_dir, QString::number(qlonglong(QThread::currentThreadId()),16));
     this->connectionName=db.isOpen()?db.connectionName():QString{};
     this->sqlQuery=QSqlQuery{db};
+    this->fileLog=logFile(__sql, __query);
 }
 
 bool QueryPvt::clearCache()
@@ -234,7 +165,7 @@ bool QueryPvt::makeModelMetaObject(QMetaObject &metaObject)
 
 void QueryPvt::writeLog(const QString &scriptSQL, const QSqlError &error)
 {
-    if(!static_log_register)
+    if(!logRegister())
         return;
 
     if(scriptSQL.isEmpty())
@@ -276,7 +207,7 @@ void QueryPvt::writeLog(const QString &scriptSQL, const QSqlError &error)
 
 void QueryPvt::writeLogFinish(const QSqlError &error)
 {
-    if(!static_log_register)
+    if(!logRegister())
         return;
 
     QFile file(this->fileLog);

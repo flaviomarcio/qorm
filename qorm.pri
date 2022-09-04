@@ -46,6 +46,7 @@ HEADERS += \
     $$PWD/src/private/p_qorm_sql_suitable_parser_value.h \
     $$PWD/src/private/p_qorm_task_pool.h \
     $$PWD/src/private/p_qorm_task_slot.h \
+    $$PWD/src/qorm_log.h \
     $$PWD/src/qorm_macro.h \
     $$PWD/src/qorm_connection_manager.h \
     $$PWD/src/qorm_connection_notify.h \
@@ -123,6 +124,7 @@ SOURCES += \
     $$PWD/src/qorm_connection_notify.cpp \
     $$PWD/src/qorm_connection_pool.cpp \
     $$PWD/src/qorm_connection_setting.cpp \
+    $$PWD/src/qorm_log.cpp \
     $$PWD/src/qorm_model_dto_options.cpp \
     $$PWD/src/qorm_controller.cpp \
     $$PWD/src/qorm_dao.cpp \

@@ -43,6 +43,7 @@ public:
         auto &fields=dtoControls.fields();
         auto vDescriptores=modelInfo.propertyDescriptors();
         fields.setValues(vDescriptores);
+        fields.setHost(&dtoControls.host());
     }
 };
 
@@ -99,26 +100,31 @@ ModelFieldCollection &ModelDto::filters()
     return p->dtoControls.filters();
 }
 
-Host &ModelDto::host() const
+const Host &ModelDto::host() const
 {
-    return *p->dtoControls.endpoints().host();
+    return p->dtoControls.host();
 }
 
 ModelDto &ModelDto::host(const Host &host)
 {
-    p->dtoControls.endpoints().host(&host);
+    p->dtoControls.setHost(host);
     return *this;
 }
 
 ModelDto &ModelDto::host(const QVariant &host)
 {
-    p->dtoControls.endpoints().host(host);
+    p->dtoControls.setHost(host);
     return *this;
+}
+
+EndPoint &ModelDto::endPoint() const
+{
+    return p->dtoControls.endPoint();
 }
 
 EndPoints &ModelDto::endPoints() const
 {
-    return p->dtoControls.endpoints();
+    return p->dtoControls.endPoints();
 }
 
 const QVariantList &ModelDto::items()const

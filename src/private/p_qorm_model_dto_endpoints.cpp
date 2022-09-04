@@ -16,10 +16,16 @@ public:
 
     ~EndPointsPvt()
     {
-        this->clear();
+        this->clearItems();
     }
 
     void clear()
+    {
+        this->host.clear();
+        this->clearItems();
+    }
+
+    void clearItems()
     {
         this->hash.clear();
         this->list.clear();
@@ -28,6 +34,7 @@ public:
         objectHash.clear();
         qDeleteAll(aux);
     }
+
 
     void setHost()
     {
@@ -49,8 +56,7 @@ EndPoints::EndPoints(QObject *parent)
 
 bool EndPoints::setValues(const QVariant &v)
 {
-    for(auto &v:v.toList())
-        this->insert(v);
+
     return QStm::ObjectWrapper::setValues(v);
 }
 
@@ -65,26 +71,27 @@ int EndPoints::count()const
     return p->objectHash.count();
 }
 
-Host *EndPoints::host() const
+const Host *EndPoints::host() const
 {
     return &p->host;
 }
 
 void EndPoints::host(const Host *newHost)
 {
-    p->host = newHost;
-    emit hostChanged();
+    this->setHost(newHost);
 }
 
 void EndPoints::host(const QVariant &newHost)
 {
     p->host = newHost;
+    p->setHost();
     emit hostChanged();
 }
 
 void EndPoints::setHost(const Host *newHost)
 {
     p->host = newHost;
+    p->setHost();
     emit hostChanged();
 }
 
@@ -98,9 +105,9 @@ EndPoint *EndPoints::endpoint()
 {
     if(p->objectHash.isEmpty())
         return nullptr;
-
     return p->objectHash.cbegin().value();
 }
+
 
 EndPoint *EndPoints::value(const QUuid &uuid)
 {
@@ -127,16 +134,18 @@ void EndPoints::insert(EndPoint *endPoint)
     if(!endPoint) return;
     if(endPoint->parent()!=this)
         endPoint->setParent(this);
+    endPoint->host()->setValues(&p->host);
     p->objectHash.insert(endPoint->uuid().toString(), endPoint);
 }
 
 void EndPoints::insert(const QVariant &endPoint)
 {
-    auto endpoint=endPoint.value<EndPoint*>();
-    if(endpoint==nullptr)
-        endpoint=EndPoint::from(endPoint, this);
-    if(!endpoint)return;
-    p->objectHash.insert(endpoint->uuid().toString(), endpoint);
+    auto __endPoint=endPoint.value<EndPoint*>();
+    if(__endPoint==nullptr)
+        __endPoint=EndPoint::from(endPoint, this);
+    if(!__endPoint)return;
+    __endPoint->host()->setValues(&p->host);
+    p->objectHash.insert(__endPoint->uuid().toString(), __endPoint);
 }
 
 void EndPoints::remove(const QUuid &uuid)
@@ -160,7 +169,7 @@ QVariantList &EndPoints::items() const
 
 void EndPoints::setItems(const QVariant &newItems)
 {
-    p->clear();
+    p->clearItems();
     for(auto &v:newItems.toList()){
         auto e=EndPoint::from(v, this);
         if(!e) continue;

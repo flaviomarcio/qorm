@@ -71,16 +71,20 @@ public:
     //! \brief host
     //! \return
     //!
-    virtual Host &host();
+    virtual const Host &host() const;
+    virtual const ModelDtoControls &host(const Host &value);
+    virtual const ModelDtoControls &host(const QVariant &value);
+    virtual const ModelDtoControls &setHost(const Host &value);
+    virtual const ModelDtoControls &setHost(const QVariant &value);
 
     //!
-    //! \brief endpoints
+    //! \brief endPoints
     //! \return
     //!
-    virtual EndPoints &endpoints();
+    virtual EndPoints &endPoints();
 
     //!
-    //! \brief endpoint
+    //! \brief endPoint
     //! \return
     //!
     virtual EndPoint &endPoint();

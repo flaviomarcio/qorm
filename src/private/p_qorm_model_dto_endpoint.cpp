@@ -145,7 +145,7 @@ Host *EndPoint::host()const
     return &p->host;
 }
 
-void EndPoint::setHost(Host *newHost)
+void EndPoint::setHost(const Host *newHost)
 {
     this->p->host = newHost;
     emit hostChanged();

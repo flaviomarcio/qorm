@@ -11,38 +11,33 @@ class ModelDtoControlsPvt:public QObject{
 public:
     QUuid uuid;
     QString settingName;
+    Host host;
     ModelFieldDescriptors fieldDescriptors;
     QVariantList items;
     QStm::ResultInfo resultInfo;
     QVariantHash descriptors;
-    ModelDtoControls *dto=nullptr;
+    ModelDtoControls *parent=nullptr;
 
     explicit ModelDtoControlsPvt(ModelDtoControls *parent)
-        :QObject{parent},
+        :
+          QObject{parent},
+          host{this},
           fieldDescriptors{parent},
           resultInfo{parent}
     {
-        this->dto=parent;
+        this->parent=parent;
     }
 
     QVariantHash toOutput()
     {
         QVariantHash vHash;
+        fieldDescriptors.setHost(&this->host);
 
         const auto &vActions=fieldDescriptors.actions()->toList();
         const auto &vHeaderList=fieldDescriptors.descriptors()->list();
         const auto &vFilterList=fieldDescriptors.filters()->list();
         const auto &vEndPoints=fieldDescriptors.endPoints()->toList();
         const auto vEndPoint=fieldDescriptors.endPoint()->toHash();
-
-//        if(this->items.isEmpty()){
-//            QVariantMap vRecord;
-//            for(const auto &field:vHeaderList){
-//                auto name=field->field();
-//                vRecord.insert(name, {});
-//            }
-//            this->items.append(vRecord);
-//        }
 
         auto cacheHeader=fieldDescriptors.fieldsValid();
         if(!this->items.isEmpty()){//caso exista itens e existirem novos campos estes serão adicionados e retornados com a header predefinida
@@ -65,11 +60,11 @@ public:
                 vHeaders.append(field->toHash());
         }
 
-        vHash.insert(vpUuid, this->dto->uuid());
-        vHash.insert(vpName, this->dto->description());
-        vHash.insert(vpTitle, this->dto->description());
-        vHash.insert(vpDesign, this->dto->fields().design()->toHash());
-        vHash.insert(vpType, this->dto->fields().design()->type());
+        vHash.insert(vpUuid, this->parent->uuid());
+        vHash.insert(vpName, this->parent->description());
+        vHash.insert(vpTitle, this->parent->description());
+        vHash.insert(vpDesign, this->parent->fields().design()->toHash());
+        vHash.insert(vpType, this->parent->fields().design()->type());
         vHash.insert(vpActions, vActions);
         vHash.insert(vpHeaders, vHeaders);
         vHash.insert(vpFilters, vFilters);
@@ -79,7 +74,7 @@ public:
         vHash.insert(vpResultInfo, this->resultInfo.toHash());
 
         {
-            Q_V_HASH_ITERATOR(this->dto->sort()){
+            Q_V_HASH_ITERATOR(this->parent->sort()){
                 i.next();
                 vHash.insert(i.key(), i.value());
             }
@@ -89,10 +84,12 @@ public:
 
     void clear()
     {
+        this->host.clear();
         this->fieldDescriptors.clear();
         this->items.clear();
         this->resultInfo.clear();
     }
+
 };
 
 ModelDtoControls::ModelDtoControls(QObject *parent) : QStm::Object{parent}
@@ -147,12 +144,34 @@ ModelFieldCollection &ModelDtoControls::filters()
     return *p->fieldDescriptors.filters();
 }
 
-Host &ModelDtoControls::host()
+const Host &ModelDtoControls::host()const
 {
-    return *p->fieldDescriptors.endPoints()->host();
+    return p->host;
 }
 
-EndPoints &ModelDtoControls::endpoints()
+const ModelDtoControls &ModelDtoControls::host(const Host &value)
+{
+    return this->setHost(value);
+}
+
+const ModelDtoControls &ModelDtoControls::host(const QVariant &value)
+{
+    return this->setHost(value);
+}
+
+const ModelDtoControls &ModelDtoControls::setHost(const Host &value)
+{
+    p->host.setValues(&value);
+    return *this;
+}
+
+const ModelDtoControls &ModelDtoControls::setHost(const QVariant &value)
+{
+    p->host.setValues(value);
+    return *this;
+}
+
+EndPoints &ModelDtoControls::endPoints()
 {
     return *p->fieldDescriptors.endPoints();
 }
