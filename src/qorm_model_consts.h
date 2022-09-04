@@ -3,8 +3,8 @@
 struct EditObrigatory{
     const char *eoNo="eoNo";
     const char *eoYes="eoYes";
-    const char *eoIfEdit="eoEdit";
-    const char *eoIfFilter="eoFilter";
+    const char *eoIfEdit="eoIfEdit";
+    const char *eoIfFilter="eoIfFilter";
 };
 
 struct EditReadOnly{
