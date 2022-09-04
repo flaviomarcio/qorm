@@ -158,7 +158,7 @@ public:
     {
         auto tablePk = this->p_modelInfo.tablePk();
         if (tablePk.isEmpty())
-            return this->lr(QVariant()) = true;
+            return this->lr().clear() = true;
 
         Query query{this};
         auto &strategy = query.builder().select();
