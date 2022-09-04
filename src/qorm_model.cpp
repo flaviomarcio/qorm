@@ -16,11 +16,9 @@
 #include <QBitArray>
 #include <QSqlQuery>
 
-namespace PrivateOrm {
-}
-
 namespace QOrm {
 
+Q_ORM_DECLARE_PROPERTY_IGNORE_LIST
 
 typedef QMultiHash<QByteArray,QByteArray> WrapperMap;
 
@@ -51,7 +49,7 @@ public:
         QVariantHash vBody;
         for(int col = 0; col < metaObject.propertyCount(); ++col) {
             auto property = metaObject.property(col);
-            if(__propertyIgnoredList->contains(property.name()))
+            if(staticPropertyIgnoredList->contains(property.name()))
                 continue;
 
             if(list.contains(property.name()))
@@ -68,7 +66,7 @@ public:
             if(!property.isWritable() || !property.isResettable())
                 continue;
 
-            if(__propertyIgnoredList->contains(property.name()))
+            if(staticPropertyIgnoredList->contains(property.name()))
                 continue;
 
             property.reset(this->model);
@@ -412,7 +410,7 @@ public:
             auto record=v.toHash();
             for(int col = 0; col < metaObject->propertyCount(); ++col) {
                 auto property = metaObject->property(col);
-                if(__propertyIgnoredList->contains(property.name()))
+                if(staticPropertyIgnoredList->contains(property.name()))
                     continue;
 
                 //auto value=record.value(property.name());

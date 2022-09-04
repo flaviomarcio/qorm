@@ -89,6 +89,7 @@ SOURCES += \
     $$PWD/src/private/p_qorm_connection_manager.cpp \
     $$PWD/src/private/p_qorm_connection_notify.cpp \
     $$PWD/src/private/p_qorm_connection_notify_subscribe.cpp \
+    $$PWD/src/private/p_qorm_const.cpp \
     $$PWD/src/private/p_qorm_model_action_method.cpp \
     $$PWD/src/private/p_qorm_model_controls.cpp \
     $$PWD/src/private/p_qorm_model_crud_body.cpp \

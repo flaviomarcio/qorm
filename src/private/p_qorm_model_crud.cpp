@@ -158,8 +158,7 @@ CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent
 
 bool CRUDBase::isValid()const
 {
-    auto descriptor=this->modelInfo().descritor();
-    return (descriptor!=nullptr);
+    return !this->modelInfo().propertyDescriptors().isEmpty();
 }
 
 const QOrm::ModelInfo &CRUDBase::modelInfo() const

@@ -9,37 +9,54 @@
 #include <QVariantMap>
 #include "../qorm_global.h"
 #include "../../qstm/src/qstm_vvm.h"
+#include "../../qstm/src/qstm_object_wrapper.h"
 
 namespace QOrm {
 class ModelInfoPvt;
 class Model;
 class ModelFieldDescriptors;
-class Q_ORM_EXPORT ModelInfo:public QVariant
+
+//#define Q_ORM_MODEL_INFO_OBJECT
+
+class Q_ORM_EXPORT ModelInfo
+#ifdef Q_ORM_MODEL_INFO_OBJECT
+    :public QStm::ObjectWrapper
+    Q_OBJECT
+public:
+    Q_STM_OBJECT_WRAPPER(ModelInfo)
+#else
+    :public QVariant
+#endif
 {
     friend class ModelInfoPvt;
 public:
     //!
     //! \brief ModelInfo
     //!
-    explicit ModelInfo();
-
+#ifdef Q_ORM_MODEL_INFO_OBJECT
+    Q_INVOKABLE explicit ModelInfo(QObject *parent=nullptr);
+#else
+    explicit ModelInfo(QObject *parent=nullptr);
+#endif
     //!
     //! \brief ModelInfo
     //! \param className
     //!
-    explicit ModelInfo(const QByteArray &className);
+    explicit ModelInfo(const QByteArray &className, QObject *parent=nullptr);
 
     //!
     //! \brief ModelInfo
     //! \param metaObject
     //!
-    explicit ModelInfo(const QMetaObject &metaObject);
+    explicit ModelInfo(const QMetaObject &metaObject, QObject *parent=nullptr);
 
+#ifndef Q_ORM_MODEL_INFO_OBJECT
     //!
     //! \brief ~ModelInfo
     //!
     virtual ~ModelInfo();
 
+#endif
     //!
     //! \brief uuid
     //! \return
@@ -89,12 +106,6 @@ public:
     QVariantHash toAttributesFields(const QVariant &v)const;
 
     //!
-    //! \brief descritpr
-    //! \return
-    //!
-    const ModelFieldDescriptors *descritor()const;
-
-    //!
     //! \brief modelName
     //! \return
     //!
@@ -111,10 +122,16 @@ public:
     ModelInfo &setDescription(const QString &value);
 
     //!
-    //! \brief staticMetaObject
+    //! \brief staticMetaObjectModel
     //! \return
     //!
-    QMetaObject &staticMetaObject() const;
+    QMetaObject &staticMetaObjectModel() const;
+
+    //!
+    //! \brief staticMetaObjectDescriptor
+    //! \return
+    //!
+    QMetaObject &staticMetaObjectDescriptor() const;
 
     //!
     //! \brief propertyIgnoredList

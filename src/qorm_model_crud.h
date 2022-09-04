@@ -63,9 +63,7 @@ public:
     virtual bool isValid()const
     {
         const ModelInfo &modelInfo=this->modelInfo();
-        if(modelInfo.descritor()==nullptr)
-            return {};
-        return true;
+        return modelInfo.propertyDescriptors().isEmpty();
     }
 
     //!
