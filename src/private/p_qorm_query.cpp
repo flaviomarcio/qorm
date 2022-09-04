@@ -2,22 +2,18 @@
 #include "../qorm_model.h"
 #include "../qorm_const.h"
 #include "../qorm_macro.h"
-#include "./p_qorm_const.h"
+#include "../qorm_log.h"
 
 namespace QOrm{
+static const auto __sql="sql";
+static const auto __query="query";
 
 QueryPvt::QueryPvt(Query *parent, const QSqlDatabase &db) : QObject{parent}, sqlBuilder(parent)
 {
     this->query=parent;
-    auto currentName=QThread::currentThread()->objectName().trimmed();
-    if(currentName.isEmpty())
-        currentName=QString::number(qlonglong(QThread::currentThreadId()),16);
-
-    static const auto __format=logDir()+QStringLiteral("/querys/%1.sql");
-
-    this->fileLog=__format.arg(QString::number(qlonglong(QThread::currentThreadId()),16));
     this->connectionName=db.isOpen()?db.connectionName():QString{};
     this->sqlQuery=QSqlQuery{db};
+    this->fileLog=logFile(__sql, __query);
 }
 
 bool QueryPvt::clearCache()

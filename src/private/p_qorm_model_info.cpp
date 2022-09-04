@@ -3,6 +3,7 @@
 #include <QCryptographicHash>
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_const.h"
+#include "../qorm_log.h"
 #include "../qorm_model.h"
 #include "../qorm_model_field_descriptors.h"
 #include "../qorm_macro.h"
