@@ -690,13 +690,6 @@ public:
         QHash<QByteArray, ModelFieldDescriptors*> descriptors;
         auto makeDescritor=[&descriptors](ModelInfo* modelInfo){
             QVariantHash vDescriptors;
-#ifdef QT_DEBUG
-            static const auto c=QString("Logistic::CargoMovimentCollect");
-            if(modelInfo->name().startsWith(c)){
-                qWarning()<<modelInfo->name();
-            }
-#endif
-
             auto pvt=modelInfo->p;
 
             auto metaObject=pvt->staticMetaObjectDescriptor;
