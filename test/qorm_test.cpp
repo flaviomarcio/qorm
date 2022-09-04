@@ -1,6 +1,6 @@
 #include "./qorm_test.h"
-#include "../src/qstm_types.h"
 #include "../src/qstm_meta_types.h"
+//#include "../src/qstm_types.h"
 
 namespace QOrm {
 SDKGoogleTest::SDKGoogleTest()
@@ -21,7 +21,7 @@ QStringList SDKGoogleTest::arguments() const
 const QByteArray SDKGoogleTest::toMd5(const QVariant &v)
 {
     QByteArray bytes;
-    if(!QMetaTypeUtilObjectMetaData.contains(qTypeId(v)))
+    if(!QMetaTypeUtilObjectMetaData.contains(v.typeId()))
         bytes=v.toByteArray();
     else
         bytes=QJsonDocument::fromVariant(v).toJson(QJsonDocument::Compact);
@@ -30,7 +30,7 @@ const QByteArray SDKGoogleTest::toMd5(const QVariant &v)
 
 const QVariant SDKGoogleTest::toVar(const QVariant &v)
 {
-    if(QMetaTypeUtilString.contains(qTypeId(v)))
+    if(QMetaTypeUtilString.contains(v.typeId()))
         return QJsonDocument::fromJson(v.toByteArray()).toVariant();
     return v;
 }

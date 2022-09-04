@@ -11,9 +11,6 @@
 #include <QLocale>
 #include <QJsonDocument>
 #include <gtest/gtest.h>
-#include "../../qstm/src/qstm_types.h"
-
-static const QVector<QByteArray> Q_ORM_CRUD_PROPERTY_LIST=QVector<QByteArray>{"resultInfo","items","links","text","filters","type","layout","headers","id"};
 
 #define CRUD_TESTER_BODY(vCrud){\
 auto ___hash=QVariant(vCrud).toHash();\
