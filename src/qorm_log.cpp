@@ -1,5 +1,6 @@
-#include "./p_qorm_const.h"
-#include "../qorm_startup.h"
+#include "./qorm_log.h"
+#include <QCoreApplication>
+#include <QThread>
 #include <QDir>
 #include <QFile>
 #include <QStandardPaths>
@@ -80,5 +81,30 @@ bool logRegister()
 {
     return staticLogRegister;
 }
+
+QString logFile(const QString &extension, const QString &path)
+{
+    auto vExt=extension.trimmed();
+    if(vExt.trimmed().isEmpty())
+        vExt="log";
+
+    auto currentName=QThread::currentThread()->objectName().trimmed();
+    if(currentName.isEmpty())
+        currentName=QString::number(qlonglong(QThread::currentThreadId()),16);
+
+    if(logRegister()){
+        static const auto __formatPath=logDir()+QStringLiteral("/%1");
+        static const auto __formatFile=QStringLiteral("/%1/%2.%3");
+
+        auto finalPath=__formatPath.arg(path);
+        QDir dir(finalPath);
+        if(!dir.exists())
+            dir.mkpath(finalPath);
+
+        return __formatFile.arg(finalPath, currentName, extension);
+    }
+    return {};
+}
+
 
 }
