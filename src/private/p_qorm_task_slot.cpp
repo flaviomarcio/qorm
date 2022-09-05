@@ -126,7 +126,7 @@ TaskSlot::TaskSlot(TaskPool *pool,
                    TaskRunnerMethod methodExecute,
                    TaskRunnerMethod methodSuccess,
                    TaskRunnerMethod methodFailed)
-    : QThread(nullptr)
+    : QThread{nullptr}
 {
     this->p = new TaskSlotPvt{this};
     this->moveToThread(this);
