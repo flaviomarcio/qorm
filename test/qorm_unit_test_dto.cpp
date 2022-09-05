@@ -3,6 +3,7 @@
 
 #include <QtReforce/QStm>
 #include <QtReforce/QOrm>
+#include <QtReforce/QApr>
 
 #include "../src/qorm_model_dto.h"
 

@@ -5,19 +5,19 @@
 
 namespace QOrm {
 
-    class Q_ORM_CRUDTestUnit : public SDKGoogleTestUnit {
-    public:
-    };
+class Q_ORM_CRUDTestUnit : public SDKGoogleTestUnit {
+public:
+};
 
-//    TEST_F(Q_ORM_CRUDTestUnit, serviceStart)
-//    {
-//        EXPECT_EQ(this->serviceStart(),true)<<"fail: service start";
-//    }
+//TEST_F(Q_ORM_CRUDTestUnit, serviceStart)
+//{
+//    EXPECT_EQ(this->serviceStart(),true)<<"fail: service start";
+//}
 
-//    TEST_F(Q_ORM_CRUDTestUnit, serviceStop)
-//    {
-//        EXPECT_EQ(this->serviceStop(),true)<<"fail: service stop";
-//    }
+//TEST_F(Q_ORM_CRUDTestUnit, serviceStop)
+//{
+//    EXPECT_EQ(this->serviceStop(),true)<<"fail: service stop";
+//}
 
 }
 
