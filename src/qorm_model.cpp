@@ -1004,20 +1004,15 @@ ResultValue &Model::datetimeSet()
     return this->lr()=true;
 }
 
+ResultValue &Model::activateSetValues()
+{
+    this->mergeFrom(p->modelInfo().propertyActivateField());
+    return this->lr();
+}
+
 ResultValue &Model::deactivateSetValues()
 {
-    auto propertyDeactivateField=p->modelInfo().propertyDeactivateField();
-    if(propertyDeactivateField.isEmpty())
-        return this->lr()=false;
-
-    Q_V_HASH_ITERATOR(propertyDeactivateField){
-        i.next();
-        const auto k=i.key().toUtf8();
-        const auto v=i.value().toHash().value(__value);
-        if(this->setProperty(k, v))
-            continue;
-        return this->lr().setValidation(tr("Invalid data to define in the model as deleted"));
-    }
+    this->mergeFrom(p->modelInfo().propertyDeactivateField());
     return this->lr();
 }
 
@@ -1063,6 +1058,5 @@ Model &Model::operator=(const QVariant &v)
     this->readFrom(v);
     return *this;
 }
-
 
 }

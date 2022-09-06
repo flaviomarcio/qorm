@@ -244,8 +244,8 @@ CRUDBase &CRUDBase::clean()
 const QUuid &CRUDBase::uuid()
 {
     Q_DECLARE_VU;
-    if(p->uuid.isNull())
-        p->uuid=vu.toMd5Uuid(this->name());
+    auto name=this->name();
+    p->uuid=vu.toMd5Uuid(name);
     return p->uuid;
 }
 
@@ -612,6 +612,7 @@ ResultValue &CRUDBase::canActionCreate()
         return this->lr(lr);
     auto v=lr.resultVariant();
     return this->lr(p->dto
+                    .uuid(this->uuid())//crud uuid
                     .host(p->host)
                     .items(v).o());
 }

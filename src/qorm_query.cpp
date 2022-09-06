@@ -79,9 +79,9 @@ QVariantList Query::makeRecordList()
         auto &sqlRecord = this->sqlRecord();
         for (int col = 0; col < sqlRecord.count(); ++col) {
             const auto v = sqlRecord.value(col);
-            record[sqlRecord.fieldName(col)] = v;
+            record.insert(sqlRecord.fieldName(col),v);
         }
-        records << record;
+        records.append(record);
     }
     return records;
 }
@@ -102,9 +102,9 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
             auto &sqlRecord = this->sqlRecord();
             for (int col = 0; col < sqlRecord.count(); ++col) {
                 const auto v = sqlRecord.value(col);
-                record[sqlRecord.fieldName(col)] = v;
+                record.insert(sqlRecord.fieldName(col),v);
             }
-            recordList << record;
+            recordList.append(record);
         }
         return recordList;
     }
@@ -126,7 +126,7 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
                 auto index = sqlRecord.indexOf(fieldName);
                 if (index < 0)
                     continue;
-                recordsIndex[index] = property.name();
+                recordsIndex.insert(index, property.name());
             }
         }
 
@@ -134,9 +134,9 @@ QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
         while (i.hasNext()) {
             i.next();
             const auto v = sqlRecord.value(i.key());
-            record[i.value()] = v;
+            record.insert(i.value(), v);
         }
-        recordList << record;
+        recordList.append(record);
     }
     return recordList;
 }
@@ -150,7 +150,7 @@ QVariantHash Query::makeRecord() const
     auto &sqlRecord = p->sqlRecord;
     for (int col = 0; col < p->sqlRecord.count(); ++col) {
         const auto v = sqlRecord.value(col);
-        record[sqlRecord.fieldName(col)] = v;
+        record.insert(sqlRecord.fieldName(col), v);
     }
     return record;
 }
@@ -183,7 +183,7 @@ QVariantHash Query::makeRecord(const ModelInfo &modelInfo) const
         if (!propertyName.isEmpty()) {
             auto index = p->sqlRecord.indexOf(propertyName);
             if (index >= 0)
-                recordsIndex << index;
+                recordsIndex.append(index);
         }
     }
 

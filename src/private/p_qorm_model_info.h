@@ -265,10 +265,16 @@ public:
     bool propertyNameConvertMap(QVariantHash &propertyHash);
 
     //!
+    //! \brief propertyActivateField
+    //! \return
+    //!
+    const QVariantHash &propertyActivateField() const;
+
+    //!
     //! \brief propertyDeactivateField
     //! \return
     //!
-    QVariantHash propertyDeactivateField() const;
+    const QVariantHash &propertyDeactivateField() const;
 
     //!
     //! \brief tableSchema
@@ -354,13 +360,6 @@ public:
     //!
     QStringList tableAutoSetFields() const;
 
-
-    //!
-    //! \brief tableDeactivateField
-    //! \return
-    //!
-    QVariantHash tableDeactivateField() const;
-
     //!
     //! \brief tablePkAutoGenerate
     //! \return
@@ -406,7 +405,7 @@ public:
     //! \param vvm
     //! \return
     //!
-    QVVM parserVVM(const QVariantHash &vvm)const;
+    QVVM parserVVM(const QVariant &v)const;
 
 private:
     ModelInfoPvt *p=nullptr;

@@ -6,7 +6,7 @@
 #include "../qorm_log.h"
 #include "../qorm_model.h"
 #include "../qorm_model_field_descriptors.h"
-#include "../qorm_macro.h"
+//#include "../qorm_macro.h"
 #include "../qorm_model_macro.h"
 #include "../qorm_startup.h"
 #include "./p_qorm_sql_suitable_parser_item.h"
@@ -15,8 +15,8 @@ namespace QOrm {
 
 Q_ORM_DECLARE_PROPERTY_IGNORE_LIST
 
-static const auto __equal="=";
-static const auto __equal2="==";
+//static const auto __equal="=";
+//static const auto __equal2="==";
 static const auto __space=" ";
 static const auto __space2="  ";
 
@@ -49,6 +49,7 @@ public:
     QVariantHash propertyDescriptors;
     QStringList propertyList;
     QStringList propertyTableList;
+    QVariantHash propertyActivateField;
     QVariantHash propertyDeactivateField;
     QString tableSchema;
     QString tablePrefix;
@@ -61,7 +62,7 @@ public:
     QStringList tableOrderBy;
     QVariantList tableOrderByField;
     QStringList tableAutoSetFields;
-    QVVM tableDeactivateField;
+
     QString tablePkSingle;
     QVariantHash tableSequence;
     QVariant tablePkAutoGenerate;
@@ -198,7 +199,7 @@ public:
         return {};
     };
 
-    static QVariantHash invokeMap(QObject*objectCheck, const QString &methodName)
+    static QVariantHash invokeHash(QObject*objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.toUtf8().trimmed().replace(QByteArrayLiteral("\""), "").toLower();
         auto metaObject=objectCheck->metaObject();
@@ -354,8 +355,9 @@ public:
         ____copy(propertyShortVsTable   );
         ____copy(propertyList           );
         ____copy(propertyTableList      );
-        ____copy(propertyDeactivateField);
         ____copy(propertyDescriptors    );
+        ____copy(propertyActivateField  );
+        ____copy(propertyDeactivateField);
         ____copy(tableSchema            );
         ____copy(tablePrefix            );
         ____copy(tablePrefixSeparator   );
@@ -372,7 +374,6 @@ public:
         ____copy(tableOrderBy           );
         ____copy(tableOrderByField      );
         ____copy(tableAutoSetFields     );
-        ____copy(tableDeactivateField   );
         ____copy(tableForeignKeysPK     );
         ____copy(tableForeignKeys       );
         ____copy(tableFiltrableField    );
@@ -393,12 +394,13 @@ public:
         ____clear(propertyShortVsTable   );
         ____clear(propertyList           );
         ____clear(propertyTableList      );
-        ____clear(propertyDeactivateField);
         ____clear(propertyDescriptors    );
         ____clear(propertyPK             );
         ____clear(propertyForeignKeysPK  );
         ____clear(propertyForeignKeys    );
         ____clear(propertyFKonPK         );
+        ____clear(propertyActivateField  );
+        ____clear(propertyDeactivateField);
         ____clear(tableSchema            );
         ____clear(tablePrefix            );
         ____clear(tablePrefixSeparator   );
@@ -410,7 +412,6 @@ public:
         ____clear(tableOrderBy           );
         ____clear(tableOrderByField      );
         ____clear(tableAutoSetFields     );
-        ____clear(tableDeactivateField   );
         ____clear(tableForeignKeys       );
         ____clear(tableFiltrableField    );
         ____clear(tableForeignKeysPK     );
@@ -472,8 +473,9 @@ public:
         auto tableOrderBy = pvt->invokeText(modelObject, QByteArrayLiteral("tableOrderBy")).trimmed();
         auto tableAutoSetFields = pvt->invokeText(modelObject, QByteArrayLiteral("tableAutoSetFields")).trimmed();
         auto tableForeignPK = pvt->invokeText(modelObject, QByteArrayLiteral("tableForeignPK")).trimmed();
-        auto tableDeactivateField = pvt->invokeText(modelObject, QByteArrayLiteral("tableDeactivateField")).trimmed();
-        auto tableSequence = pvt->invokeMap(modelObject, QByteArrayLiteral("tableSequence"));
+        auto propertyActivateField = pvt->invokeHash(modelObject, QByteArrayLiteral("propertyActivateField"));
+        auto propertyDeactivateField = pvt->invokeHash(modelObject, QByteArrayLiteral("propertyDeactivateField"));
+        auto tableSequence = pvt->invokeHash(modelObject, QByteArrayLiteral("tableSequence"));
         auto tableFiltrableField = pvt->invokeList(modelObject, QByteArrayLiteral("tableFiltrableField"));
         auto tablePkCompuser = pvt->invokeVar(modelObject, QByteArrayLiteral("tablePkCompuser"));
 
@@ -487,6 +489,8 @@ public:
             }
         }
 
+        pvt->propertyActivateField=propertyActivateField;
+        pvt->propertyDeactivateField=propertyDeactivateField;
         pvt->tablePkAutoGenerate=tablePkAutoGenerate;
         pvt->name = modelName;
         pvt->description = modelDescription;
@@ -514,11 +518,6 @@ public:
         while(tableForeignPK.contains(__space2))
             tableForeignPK = tableForeignPK.replace(__space2, __space).trimmed();
 
-        while(tableDeactivateField.contains(__space2))
-            tableDeactivateField = tableDeactivateField.replace(__space2, __space).trimmed();
-
-        while(tableDeactivateField.contains(__equal2))
-            tableDeactivateField = tableDeactivateField.replace(__equal2, __equal).trimmed();
 
         for(auto &propertyName:tablePk.split(__space)){
             if(propertyName.isEmpty())
@@ -585,7 +584,7 @@ public:
                     if(!methodName.startsWith(QByteArrayLiteral("tableForeignKeys_")))
                         continue;
 
-                    auto vHash = pvt->invokeMap(modelObject, methodName);
+                    auto vHash = pvt->invokeHash(modelObject, methodName);
                     auto fieldName=vHash.value(QStringLiteral("fk")).toString().trimmed();
                     if(fieldName.isEmpty())
                         continue;
@@ -617,38 +616,6 @@ public:
                     continue;
 
                 pvt->tableAutoSetFields.append(propertyName);
-            }
-
-            for(auto &row:tableDeactivateField.split(__space)){
-                if(row.isEmpty())
-                    continue;
-
-                auto rowSplited=row.split(QStringLiteral("="));
-                if(rowSplited.size()<=1){
-                    oWarning()<<QStringLiteral("invalid deactivate fields on ")+pvt->tableNameFull;
-                    continue;
-                }
-
-                auto propertyName=rowSplited.first();
-                auto property=pvt->propertyByName.value(propertyName);
-                if(!property.isValid())
-                    continue;
-
-                if(!pvt->propertyByPropertyName.contains(propertyName))
-                    continue;
-
-                property=pvt->propertyByPropertyName.value(propertyName);
-                auto value=QVariant{rowSplited.last()};
-                if(!value.isValid() || value.isNull())
-                    value={};
-                else
-                    value=VariantUtil(value).toType(property.typeId());
-
-                auto field=tablePrefix+tablePrefixSeparator+propertyName;
-                auto vField=SqlParserItem::createObject(field);
-                auto vValue=SqlParserItem::createValue(value);
-                pvt->propertyDeactivateField.insert(propertyName,vValue);
-                pvt->tableDeactivateField.insert(vField, vValue);
             }
 
             auto makeTablePkCompuser=[&tablePkCompuser, &pvt](){
@@ -1219,7 +1186,12 @@ bool ModelInfo::propertyNameConvertMap(QVariantHash &propertyHash)
     return !propertyHash.isEmpty();
 }
 
-QVariantHash ModelInfo::propertyDeactivateField() const
+const QVariantHash &ModelInfo::propertyActivateField() const
+{
+    return p->propertyActivateField;
+}
+
+const QVariantHash &ModelInfo::propertyDeactivateField() const
 {
     return p->propertyDeactivateField;
 }
@@ -1294,11 +1266,6 @@ QStringList ModelInfo::tableAutoSetFields() const
     return p->tableAutoSetFields;
 }
 
-QVariantHash ModelInfo::tableDeactivateField() const
-{
-    return p->tableDeactivateField;
-}
-
 bool ModelInfo::tablePkAutoGenerate()const
 {
     return p->tablePkAutoGenerate.toBool();
@@ -1370,60 +1337,77 @@ QVariantHash ModelInfo::toHashModel(const QObject *object)const
     return __return;
 }
 
-QVVM ModelInfo::parserVVM(const QVariantHash &vvm) const
+QVVM ModelInfo::parserVVM(const QVariant &v) const
 {
-    if(vvm.isEmpty())
+    QVariantList vList;
+    switch (v.typeId()) {
+    case QMetaType::QVariantList:
+    case QMetaType::QStringList:
+        vList=v.toList();
+        break;
+    default:
+        if(v.isValid())
+            vList.append(v);
+        break;
+    }
+
+    if(vList.isEmpty())
         return QVVM{};
 
     QVVM __return;
+    for(auto&item:vList){
+        //auto&propertyByFieldName=p->propertyByFieldName;
 
-    //auto&propertyByFieldName=p->propertyByFieldName;
+        Q_DECLARE_VU;
+        const auto &propertyByFieldName=p->propertyByFieldName;
+        const auto &propertyShortVsTable=p->propertyShortVsTable;
+        const auto &propertyTableVsShort=p->propertyTableVsShort;
+        auto vHash=item.toHash();
+        if(vHash.isEmpty())
+            continue;
 
-    Q_DECLARE_VU;
-    const auto &propertyByFieldName=p->propertyByFieldName;
-    const auto &propertyShortVsTable=p->propertyShortVsTable;
-    const auto &propertyTableVsShort=p->propertyTableVsShort;
+        QHashIterator<QString, QVariant> i(vHash);
+        while(i.hasNext()){
+            i.next();
+            auto v1=vu.toVariant(i.key());
+            auto v2=vu.toVariant(i.value());
 
-    QHashIterator<QString, QVariant> i(vvm);
-    while(i.hasNext()){
-        i.next();
-        auto v1=vu.toVariant(i.key());
-        auto v2=vu.toVariant(i.value());
+            switch (v1.typeId()) {
+            case QMetaType::QString:
+            case QMetaType::QByteArray:
+            {
+                auto s=v1.toString().trimmed().toLower();
+                if(propertyByFieldName.contains(s))
+                    v1=SqlParserItem::createObject(s);
+                else if(propertyShortVsTable.contains(s))
+                    v1=SqlParserItem::createObject(propertyShortVsTable.value(s));
+                else if(propertyTableVsShort.contains(s))
+                    v1=SqlParserItem::createObject(propertyTableVsShort.value(s));
+                break;
+            }
+            default:
+                break;
+            }
 
-        switch (v1.typeId()) {
-        case QMetaType::QString:
-        case QMetaType::QByteArray:
-        {
-            auto s=v1.toString().trimmed().toLower();
-            if(propertyByFieldName.contains(s))
-                v1=SqlParserItem::createObject(s);
-            else if(propertyShortVsTable.contains(s))
-                v1=SqlParserItem::createObject(propertyShortVsTable.value(s));
-            else if(propertyTableVsShort.contains(s))
-                v1=SqlParserItem::createObject(propertyTableVsShort.value(s));
-            break;
+            switch (v2.typeId()) {
+            case QMetaType::QString:
+            case QMetaType::QByteArray:
+            {
+                auto s=v2.toString().trimmed().toLower();
+                if(propertyByFieldName.contains(s))
+                    v2=SqlParserItem::createObject(s);
+                else if(propertyShortVsTable.contains(s))
+                    v2=SqlParserItem::createObject(propertyShortVsTable.value(s));
+                else if(propertyTableVsShort.contains(s))
+                    v2=SqlParserItem::createObject(propertyTableVsShort.value(s));
+                break;
+            }
+            default:
+                break;
+            }
+            __return.insert(v1,v2);
         }
-        default:
-            break;
-        }
 
-        switch (v2.typeId()) {
-        case QMetaType::QString:
-        case QMetaType::QByteArray:
-        {
-            auto s=v2.toString().trimmed().toLower();
-            if(propertyByFieldName.contains(s))
-                v2=SqlParserItem::createObject(s);
-            else if(propertyShortVsTable.contains(s))
-                v2=SqlParserItem::createObject(propertyShortVsTable.value(s));
-            else if(propertyTableVsShort.contains(s))
-                v2=SqlParserItem::createObject(propertyTableVsShort.value(s));
-            break;
-        }
-        default:
-            break;
-        }
-        __return.insert(v1,v2);
     }
 
     return __return;

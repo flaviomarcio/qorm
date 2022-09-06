@@ -35,7 +35,9 @@ public:\
     return QVariant{v1};\
 }
 
-#define QORM_DECLARE_TABLE_DEACTIVATE_FIELD(name) public: Q_INVOKABLE virtual QByteArray tableDeactivateField()const{static auto ___return=QByteArrayLiteral(#name).trimmed(); return ___return;}
+#define QORM_DECLARE_FIELD_DEACTIVATE(VALUE) public: Q_INVOKABLE virtual QVariantHash propertyDeactivateField()const{static QVariantHash ___return=VALUE; return ___return;}
+
+#define QORM_DECLARE_FIELD_ACTIVATE(VALUE) public: Q_INVOKABLE virtual QVariantHash propertyActivateField()const{static QVariantHash ___return=VALUE; return ___return;}
 
 #define QORM_DESCRIPTOR_ORDERBY(name)public: Q_INVOKABLE virtual QByteArray descriptorOrderBy()const{static const auto ___return=QByteArrayLiteral(#name);return ___return;}
 
@@ -203,6 +205,7 @@ static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::stat
 static const auto &ModelName##M = ModelName::m();\
 class ModelName##CRUD : public QOrm::CRUD<ModelName>{\
 public:\
+    virtual const QByteArray &name(){ static const QByteArray __name##ModelName=QByteArray(#ModelName)+QByteArray("CRUD"); return __name##ModelName;}\
     Q_INVOKABLE explicit ModelName##CRUD(QObject *parent = nullptr) : QOrm::CRUD<ModelName>{parent}{\
         if(this->parent()!=parent)\
             this->setParent(parent);\

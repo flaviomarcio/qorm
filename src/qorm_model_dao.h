@@ -40,6 +40,24 @@ public:
     Q_INVOKABLE explicit ModelDao(QObject *parent = nullptr) : PrivateQOrm::ModelDao(parent) {}
 
     //!
+    //! \brief deactivateField
+    //! \return
+    //!
+    bool deactivateField()
+    {
+        return _deactivateField;
+    }
+
+    //!
+    //! \brief setDeactivateField
+    //! \param value
+    //!
+    void setDeactivateField(bool value)
+    {
+        _deactivateField=value;
+    }
+
+    //!
     //! \brief variantToParameters
     //! \param value
     //! \return
@@ -94,11 +112,13 @@ public:
         QVariant value;
         if (v.isValid()) {
             SearchParameters vv{this->variantToParameters(v)};
-            vv += this->p_modelInfo.tableDeactivateField();
+            if(this->_deactivateField)
+                vv += this->p_modelInfo.propertyActivateField();
             value = vv.buildVariant();
         }
         if (value.isValid())
             strategy.where().condition(value);
+
         if (!query.exec())
             return this->lr(query.lr());
 
@@ -125,18 +145,17 @@ public:
         auto &strategy = query.builder().select();
         strategy.fieldsFrom(p_modelInfo);
 
-        auto vHash=v.toHash();
-
-        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
-        while (i.hasNext()) {
-            i.next();
-            if(vHash.contains(i.key())) continue;
-            vHash.insert(i.key(), i.value());
-        }
-
-        auto vvm=this->p_modelInfo.parserVVM(vHash);
+        auto vvm=this->p_modelInfo.parserVVM(v);
         if (!vvm.isEmpty())
             strategy.where(vvm);
+
+        if(this->_deactivateField){
+            QHashIterator<QString, QVariant> i(this->p_modelInfo.propertyActivateField());
+            while (i.hasNext()) {
+                i.next();
+                strategy.where().equal(i.key(), i.value());
+            }
+        }
 
         for (const auto &v : this->p_modelInfo.tableOrderByField())
             strategy.orderby().f(v);
@@ -144,21 +163,21 @@ public:
         if (!query.exec())
             return this->lr(query.lr());
 
-        return this->lr(query.makeRecordList());
+        return this->lr(query.makeRecordList(this->p_modelInfo));
     }
 
     //!
-    //! \brief recordMap
+    //! \brief recordHash
     //! \return
     //!
-    auto &recordMap() { return this->recordMap({}); }
+    auto &recordHash() { return this->recordMap({}); }
 
     //!
-    //! \brief recordMap
+    //! \brief recordHash
     //! \param v
     //! \return
     //!
-    auto &recordMap(const QVariant &v)
+    auto &recordHash(const QVariant &v)
     {
         auto tablePk = this->p_modelInfo.tablePk();
         if (tablePk.isEmpty())
@@ -168,26 +187,28 @@ public:
         auto &strategy = query.builder().select();
         strategy.fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
-        if (value.isValid()) {
+        if (value.isValid())
             strategy.where().condition(value);
-        }
 
-        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
-        while (i.hasNext()) {
-            i.next();
-            strategy.where().notEqual(i.key(), i.value());
+        if(this->_deactivateField){
+            QHashIterator<QString, QVariant> i(this->p_modelInfo.propertyActivateField());
+            while (i.hasNext()) {
+                i.next();
+                strategy.where().equal(i.key(), i.value());
+            }
         }
 
         if (!query.exec())
             return this->lr(query.lr());
 
         QVariantHash vHash;
-        for (auto &v : query.makeRecordList()) {
+        for (auto &v : query.makeRecordList(this->p_modelInfo)) {
             QVariantHash vMap(v.toHash());
             QStringList key;
             QObject model;
+            auto &propertyByName=p_modelInfo.propertyByName();
             for (auto &pkField : tablePk) {
-                const auto property = p_modelInfo.propertyByFieldName(pkField);
+                const auto property = propertyByName.value(pkField);
                 const auto vMapValue = vMap.value(pkField);
                 const auto vType = property.typeId();
                 if (vType == vMapValue.Invalid || !vMapValue.isValid() || vMapValue.isNull())
@@ -208,7 +229,7 @@ public:
     //! \brief exists
     //! \return
     //!
-    auto &exists() { return this->exists(QVariant()); }
+    auto &exists() { return this->exists(QVariant{}); }
 
     //!
     //! \brief exists
@@ -235,10 +256,12 @@ public:
         strategy.fromExists(p_modelInfo);
 
         auto vHash=v.toHash();
-        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
-        while (i.hasNext()) {
-            i.next();
-            strategy.where().notEqual(i.key(), i.value());
+        if(this->_deactivateField){
+            QHashIterator<QString, QVariant> i(this->p_modelInfo.propertyActivateField());
+            while (i.hasNext()) {
+                i.next();
+                strategy.where().equal(i.key(), i.value());
+            }
         }
 
         auto vvm = this->p_modelInfo.parserVVM(vHash);
@@ -492,14 +515,8 @@ public:
         auto &strategy = query.builder().remove();
         strategy.from(p_modelInfo);
         QVariant value(this->variantToParameters(v));
-        if (value.isValid()) {
+        if (value.isValid())
             strategy.where().condition(value);
-        }
-        QHashIterator<QString, QVariant> i(this->p_modelInfo.tableDeactivateField());
-        while (i.hasNext()) {
-            i.next();
-            strategy.where().notEqual(i.key(), i.value());
-        }
 
         if (!query.exec())
             return this->lr(query.lr());
@@ -764,6 +781,7 @@ public:
     }
 
 private:
+    bool _deactivateField=true;
     const QOrm::ModelInfo &p_modelInfo = QOrm::ModelInfo::from(T::staticMetaObject);
 };
 
