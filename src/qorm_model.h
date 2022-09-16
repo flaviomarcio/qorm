@@ -410,6 +410,12 @@ public:
     virtual ResultValue &datetimeSet();
 
     //!
+    //! \brief activateSetValues
+    //! \return
+    //!
+    virtual ResultValue &activateSetValues();
+
+    //!
     //! \brief deactivateSetValues
     //! \return
     //!
