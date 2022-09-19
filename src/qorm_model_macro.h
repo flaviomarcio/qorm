@@ -18,7 +18,6 @@ public:\
         return name;\
     }\
 public:\
-    static modelClass &m(){ modelClass*__m=nullptr; if(__m==nullptr) __m = new modelClass(); return*__m;}\
     auto &modelInfo()const{return QOrm::ModelInfo::from(modelClass::staticMetaObject);}\
     Q_PROPERTY(QByteArray tablePrefix READ tablePrefix)\
     Q_PROPERTY(QByteArray tablePrefixSeparator READ tablePrefixSeparator)\
@@ -147,9 +146,7 @@ virtual QVariant propertyName##_keyValue(){\
     static const auto ___name=QByteArrayLiteral(#propertyName);\
     return QVariantHash{{___name, this->property(___name)}};\
 }\
-virtual propertyType propertyName()const{\
-    return z____##propertyName;\
-}\
+virtual propertyType propertyName()const{return z____##propertyName;}\
 virtual bool set_##propertyName(const propertyType&value){\
     if(this->propertyBeforeSet(QByteArrayLiteral(#propertyName), value)){\
         auto oldValue=z____##propertyName;\
@@ -160,14 +157,13 @@ virtual bool set_##propertyName(const propertyType&value){\
     }\
     return false;\
 }\
-void reset_##propertyName(){\
-    set_##propertyName({});\
-}\
+void reset_##propertyName(){ set_##propertyName({});}\
 virtual bool propertyName##Eq(const propertyType&value)const{\
     if(this->propertyName()==value)\
         return true;\
     return false;\
 }\
+auto &propertyName(const propertyType &value){ this->set_##propertyName(value); return *this;}\
 private:\
     propertyType z____##propertyName=propertyDefault;\
 public:
@@ -177,9 +173,9 @@ public:
 
 #define QORM_DECLARE_PROPERTY(propertyType, propertyName, propertyDefault)public:QORM_DECLARE_PROPERTY_HEADER(propertyType, propertyName, propertyDefault,)
 
-#define QORM_DECLARE_MODEL(ModelName)\
-    static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
-    static const auto &ModelName##M = ModelName::m();
+#define QORM_DECLARE_MODEL_REFERENCE(ModelName)\
+static const auto &ModelName##R = QOrm::ModelInfo::init(ModelName::staticMetaObject);\
+static const auto &ModelName##M = QOrm::ModelInfo::instance<ModelName>(ModelName::staticMetaObject);\
 
 #define QORM_DECLARE_DAO(ModelName)\
 class ModelName##GDao : public QOrm::ModelDao<ModelName>{\
@@ -189,8 +185,7 @@ public:\
             this->setParent(parent);\
     }\
 };\
-static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
-static const auto &ModelName##M = ModelName::m();
+QORM_DECLARE_MODEL_REFERENCE(ModelName)
 
 
 #define QORM_DECLARE_CRUD(ModelName)\
@@ -201,8 +196,7 @@ public:\
             this->setParent(parent);\
     }\
 };\
-static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
-static const auto &ModelName##M = ModelName::m();\
+QORM_DECLARE_MODEL_REFERENCE(ModelName)\
 class ModelName##CRUD : public QOrm::CRUD<ModelName>{\
 public:\
     virtual const QByteArray &name(){ static const QByteArray __name##ModelName=QByteArray(#ModelName)+QByteArray("CRUD"); return __name##ModelName;}\
@@ -217,25 +211,22 @@ public:\
 };
 
 #define QORM_DECLARE_REPORT(ModelName)\
-    class ModelName##GDao : public QOrm::ModelDao<ModelName>{\
-        Q_OBJECT\
-    public:\
-        Q_INVOKABLE explicit ModelName##GDao(QObject *parent = nullptr) : QOrm::ModelDao<ModelName>{parent}{\
-            if(this->parent()!=parent)\
-                this->setParent(parent);\
-        }\
-    };\
-    static const auto &ModelName##R = QOrm::ModelInfo::modelInfoInit(ModelName::staticMetaObject);\
-    static const auto &ModelName##M = ModelName::m();\
-    class ModelName##Report : public QOrm::ModelReport<ModelName>{\
-        Q_OBJECT\
-    public:\
-        Q_INVOKABLE explicit ModelName##Report(QObject *parent = nullptr) : QOrm::ModelReport<ModelName>{parent}{\
-            if(this->parent()!=parent)\
-                this->setParent(parent);\
-        }\
-        Q_INVOKABLE explicit ModelName##Report(const QVariant &crudBody, QObject *parent = nullptr) : QOrm::ModelReport<ModelName>(crudBody, parent){\
-            if(this->parent()!=parent)\
-                this->setParent(parent);\
-        }\
-    };
+class ModelName##GDao : public QOrm::ModelDao<ModelName>{\
+public:\
+    Q_INVOKABLE explicit ModelName##GDao(QObject *parent = nullptr) : QOrm::ModelDao<ModelName>{parent}{\
+        if(this->parent()!=parent)\
+            this->setParent(parent);\
+    }\
+};\
+QORM_DECLARE_MODEL_REFERENCE(ModelName)\
+class ModelName##Report : public QOrm::ModelReport<ModelName>{\
+public:\
+    Q_INVOKABLE explicit ModelName##Report(QObject *parent = nullptr) : QOrm::ModelReport<ModelName>{parent}{\
+        if(this->parent()!=parent)\
+            this->setParent(parent);\
+    }\
+    Q_INVOKABLE explicit ModelName##Report(const QVariant &crudBody, QObject *parent = nullptr) : QOrm::ModelReport<ModelName>(crudBody, parent){\
+        if(this->parent()!=parent)\
+            this->setParent(parent);\
+    }\
+};

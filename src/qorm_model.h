@@ -45,11 +45,6 @@ public:
     //!
     Q_INVOKABLE explicit Model(QObject *parent = nullptr);
 
-    //!
-    //! \brief ~Model
-    //!
-    ~Model();
-
 public:
     //!
     //! \brief tablePkCompuser
@@ -117,7 +112,7 @@ public:
     //! \brief toHashModel
     //! \return
     //!
-    virtual QVariantHash toHashModel() const;
+    virtual QVariantHash toHashModel(bool nullValuesAdd=true) const;
 
     //!
     //! \brief toPKValues

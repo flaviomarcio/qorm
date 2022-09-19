@@ -85,11 +85,24 @@ public:
     const static ModelInfo &info(const QByteArray &className);
 
     //!
-    //! \brief modelInfoInit
+    //! \brief Init
     //! \param staticMetaObject
     //! \return
     //!
-    static ModelInfo &modelInfoInit(const QMetaObject &staticMetaObject);
+    static ModelInfo &init(const QMetaObject &staticMetaObject);
+
+    //!
+    //! \brief instance
+    //! \return
+    //!
+    //! espefic model converted in Model instance
+    template<class T>
+    static const T &instance(const QMetaObject &staticMetaObject)
+    {
+        auto model=QOrm::ModelInfo::internalinstance(staticMetaObject);
+        auto __return=dynamic_cast<T*>(model);
+        return *__return;
+    }
 
     //!
     //! \brief toAttributes
@@ -377,28 +390,28 @@ public:
     //! \param object
     //! \return
     //!
-    QVariantMap toMap(const QObject *object) const;
+    QVariantMap toMap(const QObject *object, bool nullValuesAdd=false) const;
 
     //!
     //! \brief toHash
     //! \param object
     //! \return
     //!
-    QVariantHash toHash(const QObject *object) const;
+    QVariantHash toHash(const QObject *object, bool nullValuesAdd=false) const;
 
     //!
     //! \brief toMapModel
     //! \param object
     //! \return
     //!
-    QVariantMap toMapModel(const QObject *object) const;
+    QVariantMap toMapModel(const QObject *object, bool nullValuesAdd=false) const;
 
     //!
     //! \brief toHashModel
     //! \param object
     //! \return
     //!
-    QVariantHash toHashModel(const QObject *object) const;
+    QVariantHash toHashModel(const QObject *object, bool nullValuesAdd=false) const;
 
     //!
     //! \brief parserVVM
@@ -409,6 +422,12 @@ public:
 
 private:
     ModelInfoPvt *p=nullptr;
+
+    //!
+    //! \brief internalinstance
+    //! \return
+    //!
+    static Model *internalinstance(const QMetaObject &staticMetaObject);
 };
 
 }

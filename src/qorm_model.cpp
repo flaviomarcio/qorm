@@ -22,7 +22,7 @@ Q_ORM_DECLARE_PROPERTY_IGNORE_LIST
 
 typedef QMultiHash<QByteArray,QByteArray> WrapperMap;
 
-class ModelPvt{
+class ModelPvt:public QObject{
 public:
     QMultiHash<QByteArray, QMultiHash<QByteArray,QByteArray>> mapWrapper;
     QOrm::Model*model=nullptr;
@@ -30,10 +30,6 @@ public:
     explicit ModelPvt(QOrm::Model*model)
     {
         this->model=model;
-    }
-
-    virtual ~ModelPvt()
-    {
     }
 
     const ModelInfo &modelInfo()
@@ -73,10 +69,6 @@ public:
         }
     }
 
-    QMetaObject metaObject()const
-    {
-        return*model->metaObject();
-    }
 
     bool write(const QMetaProperty&property, const QVariant &value)
     {
@@ -525,10 +517,6 @@ Model::Model(QObject *parent):QOrm::Object{parent}
     this->p=new ModelPvt{this};
 }
 
-Model::~Model()
-{
-    delete p;
-}
 
 QVariant Model::tablePkCompuser() const
 {
@@ -589,17 +577,17 @@ QVariantList Model::toList(const QVariantList &vList)
 
 QVariantMap Model::toMap()const
 {
-    return p->modelInfo().toMap(this);
+    return p->modelInfo().toMap(this, true);
 }
 
 QVariantHash Model::toHash() const
 {
-    return p->modelInfo().toHash(this);
+    return p->modelInfo().toHash(this, true);
 }
 
-QVariantHash Model::toHashModel() const
+QVariantHash Model::toHashModel(bool nullValuesAdd) const
 {
-    return p->modelInfo().toHashModel(this);
+    return p->modelInfo().toHashModel(this, nullValuesAdd);
 }
 
 QVariantHash Model::toPKValues() const

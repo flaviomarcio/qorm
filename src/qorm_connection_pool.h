@@ -41,11 +41,6 @@ public:
     explicit ConnectionPool(const ConnectionPool &pool, QObject *parent = nullptr);
 
     //!
-    //! \brief ~ConnectionPool
-    //!
-    ~ConnectionPool();
-
-    //!
     //! \brief setting
     //! \return
     //!
