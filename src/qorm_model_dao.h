@@ -109,15 +109,18 @@ public:
         Query query{this};
         auto &strategy = query.builder().select();
         strategy.limit(1).fieldsFrom(p_modelInfo);
-        QVariant value;
         if (v.isValid()) {
+            QVariant value;
             SearchParameters vv{this->variantToParameters(v)};
-            if(this->_deactivateField)
-                vv += this->p_modelInfo.propertyActivateField();
             value = vv.buildVariant();
+            if (value.isValid())
+                strategy.where().condition(value);
         }
-        if (value.isValid())
-            strategy.where().condition(value);
+
+        if(this->_deactivateField){
+            auto vvm=this->p_modelInfo.parserVVM(this->p_modelInfo.propertyActivateField());
+            strategy.where(vvm);
+        }
 
         if (!query.exec())
             return this->lr(query.lr());
@@ -150,11 +153,8 @@ public:
             strategy.where(vvm);
 
         if(this->_deactivateField){
-            QHashIterator<QString, QVariant> i(this->p_modelInfo.propertyActivateField());
-            while (i.hasNext()) {
-                i.next();
-                strategy.where().equal(i.key(), i.value());
-            }
+            auto vvm=this->p_modelInfo.parserVVM(this->p_modelInfo.propertyActivateField());
+            strategy.where(vvm);
         }
 
         for (const auto &v : this->p_modelInfo.tableOrderByField())
@@ -188,14 +188,11 @@ public:
         strategy.fieldsFrom(p_modelInfo);
         QVariant value(this->variantToParameters(v));
         if (value.isValid())
-            strategy.where().condition(value);
+            strategy.where(value);
 
         if(this->_deactivateField){
-            QHashIterator<QString, QVariant> i(this->p_modelInfo.propertyActivateField());
-            while (i.hasNext()) {
-                i.next();
-                strategy.where().equal(i.key(), i.value());
-            }
+            auto vvm=this->p_modelInfo.parserVVM(this->p_modelInfo.propertyActivateField());
+            strategy.where(vvm);
         }
 
         if (!query.exec())
@@ -255,19 +252,14 @@ public:
         auto &strategy = query.builder().select();
         strategy.fromExists(p_modelInfo);
 
-        auto vHash=v.toHash();
-        if(this->_deactivateField){
-            QHashIterator<QString, QVariant> i(this->p_modelInfo.propertyActivateField());
-            while (i.hasNext()) {
-                i.next();
-                strategy.where().equal(i.key(), i.value());
-            }
-        }
-
-        auto vvm = this->p_modelInfo.parserVVM(vHash);
-
+        auto vvm = this->p_modelInfo.parserVVM(v);
         if (!vvm.isEmpty())
-            strategy.where().condition(vvm);
+            strategy.where(vvm);
+
+        if(this->_deactivateField){
+            auto vvm=this->p_modelInfo.parserVVM(this->p_modelInfo.propertyActivateField());
+            strategy.where(vvm);
+        }
 
         if (!query.exec())
             return this->lr(query.lr());

@@ -489,8 +489,6 @@ public:
             }
         }
 
-        pvt->propertyActivateField=propertyActivateField;
-        pvt->propertyDeactivateField=propertyDeactivateField;
         pvt->tablePkAutoGenerate=tablePkAutoGenerate;
         pvt->name = modelName;
         pvt->description = modelDescription;
@@ -616,6 +614,25 @@ public:
                     continue;
 
                 pvt->tableAutoSetFields.append(propertyName);
+            }
+
+            {//Fields Activate/Deactivate
+                {//Activate
+                    QHashIterator<QString, QVariant> i(propertyActivateField);
+                    while(i.hasNext()){
+                        i.next();
+                        if(pvt->propertyByName.contains(i.key()))
+                            pvt->propertyActivateField.insert(i.key(), i.value());
+                    }
+                }
+                {//Deactivate
+                    QHashIterator<QString, QVariant> i(propertyDeactivateField);
+                    while(i.hasNext()){
+                        i.next();
+                        if(pvt->propertyByName.contains(i.key()))
+                            pvt->propertyDeactivateField.insert(i.key(), i.value());
+                    }
+                }
             }
 
             auto makeTablePkCompuser=[&tablePkCompuser, &pvt](){
