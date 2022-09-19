@@ -21,8 +21,8 @@ static const auto __space=" ";
 static const auto __space2="  ";
 
 typedef QHash<QByteArray, QOrm::ModelInfo*> HashModelInfo;
-
 Q_GLOBAL_STATIC(HashModelInfo, __static_model_info)
+Q_GLOBAL_STATIC(QObject, __modelInfoParent)
 
 class ModelInfoPvt:public QObject{
 public:
@@ -71,6 +71,7 @@ public:
     QVariantList tableFiltrableField;
     QVariantList tableForeignPKField;
     ModelInfo *modelInfo=nullptr;
+    Model* instance=nullptr;
 
     explicit ModelInfoPvt(ModelInfo*parent)
 #ifdef Q_ORM_MODEL_INFO_OBJECT
@@ -80,6 +81,27 @@ public:
 #endif
     {
         this->modelInfo=parent;
+    }
+
+    template<class T>
+    T toDictionary(const QObject *object, bool nullValuesAdd, bool tableProperty)const
+    {
+        T __return;
+        Q_DECLARE_VU;
+        for(auto &property:this->property){
+            if(!property.isValid())
+                continue;
+
+            auto propertyName = QString{property.name()}.toLower();
+            if(tableProperty)
+                propertyName=this->propertyShortVsTable.value(propertyName);
+
+            auto value=property.read(object);
+            if(!nullValuesAdd && vu.vIsEmpty(value))
+                continue;
+            __return.insert(propertyName, value);
+        }
+        return __return;
     }
 
     static bool invoke(QObject *objectCheck, const QString &methodName)
@@ -424,21 +446,23 @@ public:
             return;
 
         pvt->clear();
-        QScopedPointer<QObject> scopePointer(staticMetaObject.newInstance(Q_ARG(QObject*, nullptr )));
-        auto object=scopePointer.data();
+
+
+        auto object=staticMetaObject.newInstance(Q_ARG(QObject*, __modelInfoParent));
 
         if(object==nullptr)
             return;
 
-        auto modelObject=dynamic_cast<Model*>(object);
+        pvt->instance=dynamic_cast<Model*>(object);
+        auto instance=pvt->instance;
 
-        if(modelObject==nullptr){
+        if(instance==nullptr){
             delete object;
             return;
         }
 
         pvt->staticMetaObjectModel=staticMetaObject;
-        pvt->staticMetaObjectDescriptor=modelObject->descriptor();
+        pvt->staticMetaObjectDescriptor=instance->descriptor();
 
         for(int i = 0; i < staticMetaObject.propertyCount(); ++i) {
             auto property=staticMetaObject.property(i);
@@ -458,26 +482,25 @@ public:
             auto method=staticMetaObject.method(i);
             if(!method.isValid())
                 continue;
-
-            pvt->methods[method.name()]=method;
+            pvt->methods.insert(method.name(), method);
         }
 
-        auto modelName = pvt->invokeText(modelObject, QByteArrayLiteral("modelName")).trimmed();
-        auto modelDescription = pvt->invokeText(modelObject, QByteArrayLiteral("modelDescription")).trimmed();
-        auto tablePkAutoGenerate = pvt->invokeBool(modelObject, QByteArrayLiteral("tablePkAutoGenerate"));
-        auto tableSchema = pvt->invokeText(modelObject, QByteArrayLiteral("tableSchema")).trimmed();
-        auto tablePrefix = pvt->invokeText(modelObject, QByteArrayLiteral("tablePrefix")).trimmed();
-        auto tablePrefixSeparator = pvt->invokeText(modelObject, QByteArrayLiteral("tablePrefixSeparator")).trimmed();
-        auto tableName = pvt->invokeText(modelObject, QByteArrayLiteral("tableName")).trimmed();
-        auto tablePk = pvt->invokeText(modelObject, QByteArrayLiteral("tablePk")).trimmed();
-        auto tableOrderBy = pvt->invokeText(modelObject, QByteArrayLiteral("tableOrderBy")).trimmed();
-        auto tableAutoSetFields = pvt->invokeText(modelObject, QByteArrayLiteral("tableAutoSetFields")).trimmed();
-        auto tableForeignPK = pvt->invokeText(modelObject, QByteArrayLiteral("tableForeignPK")).trimmed();
-        auto propertyActivateField = pvt->invokeHash(modelObject, QByteArrayLiteral("propertyActivateField"));
-        auto propertyDeactivateField = pvt->invokeHash(modelObject, QByteArrayLiteral("propertyDeactivateField"));
-        auto tableSequence = pvt->invokeHash(modelObject, QByteArrayLiteral("tableSequence"));
-        auto tableFiltrableField = pvt->invokeList(modelObject, QByteArrayLiteral("tableFiltrableField"));
-        auto tablePkCompuser = pvt->invokeVar(modelObject, QByteArrayLiteral("tablePkCompuser"));
+        auto modelName = pvt->invokeText(instance, QByteArrayLiteral("modelName")).trimmed();
+        auto modelDescription = pvt->invokeText(instance, QByteArrayLiteral("modelDescription")).trimmed();
+        auto tablePkAutoGenerate = pvt->invokeBool(instance, QByteArrayLiteral("tablePkAutoGenerate"));
+        auto tableSchema = pvt->invokeText(instance, QByteArrayLiteral("tableSchema")).trimmed();
+        auto tablePrefix = pvt->invokeText(instance, QByteArrayLiteral("tablePrefix")).trimmed();
+        auto tablePrefixSeparator = pvt->invokeText(instance, QByteArrayLiteral("tablePrefixSeparator")).trimmed();
+        auto tableName = pvt->invokeText(instance, QByteArrayLiteral("tableName")).trimmed();
+        auto tablePk = pvt->invokeText(instance, QByteArrayLiteral("tablePk")).trimmed();
+        auto tableOrderBy = pvt->invokeText(instance, QByteArrayLiteral("tableOrderBy")).trimmed();
+        auto tableAutoSetFields = pvt->invokeText(instance, QByteArrayLiteral("tableAutoSetFields")).trimmed();
+        auto tableForeignPK = pvt->invokeText(instance, QByteArrayLiteral("tableForeignPK")).trimmed();
+        auto propertyActivateField = pvt->invokeHash(instance, QByteArrayLiteral("propertyActivateField"));
+        auto propertyDeactivateField = pvt->invokeHash(instance, QByteArrayLiteral("propertyDeactivateField"));
+        auto tableSequence = pvt->invokeHash(instance, QByteArrayLiteral("tableSequence"));
+        auto tableFiltrableField = pvt->invokeList(instance, QByteArrayLiteral("tableFiltrableField"));
+        auto tablePkCompuser = pvt->invokeVar(instance, QByteArrayLiteral("tablePkCompuser"));
 
         QVector<QString> tableFiltrableField_;
         if(!tableFiltrableField.isEmpty()){
@@ -584,7 +607,7 @@ public:
                     if(!methodName.startsWith(QByteArrayLiteral("tableForeignKeys_")))
                         continue;
 
-                    auto vHash = pvt->invokeHash(modelObject, methodName);
+                    auto vHash = pvt->invokeHash(instance, methodName);
                     auto fieldName=vHash.value(QStringLiteral("fk")).toString().trimmed();
                     if(fieldName.isEmpty())
                         continue;
@@ -883,7 +906,7 @@ const ModelInfo &ModelInfo::info(const QByteArray &className)
     return info;
 }
 
-ModelInfo &ModelInfo::modelInfoInit(const QMetaObject &staticMetaObject)
+ModelInfo &ModelInfo::init(const QMetaObject &staticMetaObject)
 {
     return ModelInfoPvt::static_initMetaObject(staticMetaObject);
 }
@@ -1276,65 +1299,24 @@ QString ModelInfo::tablePkSingle()const
     return p->tablePkSingle;
 }
 
-QVariantMap ModelInfo::toMap(const QObject *object)const
+QVariantMap ModelInfo::toMap(const QObject *object, bool nullValuesAdd)const
 {
-    QVariantMap __return;
-    for(auto &property:p->property){
-        if(!property.isValid())
-            continue;
-        auto propertyName = QString{property.name()}.toLower();
-        QVariant value;
-        switch (property.typeId()){
-        case QMetaType::User:
-        case 65538/*CustomType*/:
-            value=property.read(object).toInt();
-            break;
-        default:
-            value=value=property.read(object);
-        }
-        __return.insert(propertyName, value);
-    }
-    return __return;
+    return p->toDictionary<QVariantMap>(object, nullValuesAdd, false);
 }
 
-QVariantHash ModelInfo::toHash(const QObject *object) const
+QVariantHash ModelInfo::toHash(const QObject *object, bool nullValuesAdd) const
 {
-    QVariantHash __return;
-    for(auto &property:p->property){
-        if(!property.isValid())
-            continue;
-        auto propertyName =QString{property.name()}.toLower();
-        QVariant value;
-        switch (property.typeId()){
-        case QMetaType::User:
-        case 65538/*CustomType*/:
-            value=property.read(object).toInt();
-            break;
-        default:
-            value=value=property.read(object);
-        }
-        __return.insert(propertyName, value);
-    }
-    return __return;
+    return p->toDictionary<QVariantHash>(object, nullValuesAdd, false);
 }
 
-QVariantMap ModelInfo::toMapModel(const QObject *object) const
+QVariantMap ModelInfo::toMapModel(const QObject *object, bool nullValuesAdd) const
 {
-    return QVariant{this->toHashModel(object)}.toMap();
+    return p->toDictionary<QVariantMap>(object, nullValuesAdd, true);
 }
 
-QVariantHash ModelInfo::toHashModel(const QObject *object)const
+QVariantHash ModelInfo::toHashModel(const QObject *object, bool nullValuesAdd)const
 {
-    QVariantHash __return;
-    for(auto &property:p->property){
-        if(!property.isValid())
-            continue;
-
-        auto propertyName = QString{property.name()}.toLower();
-        propertyName=p->propertyShortVsTable.value(propertyName);
-        __return.insert(propertyName, property.read(object));
-    }
-    return __return;
+    return p->toDictionary<QVariantHash>(object, nullValuesAdd, true);
 }
 
 QVVM ModelInfo::parserVVM(const QVariant &v) const
@@ -1356,8 +1338,6 @@ QVVM ModelInfo::parserVVM(const QVariant &v) const
 
     QVVM __return;
     for(auto&item:vList){
-        //auto&propertyByFieldName=p->propertyByFieldName;
-
         Q_DECLARE_VU;
         const auto &propertyByFieldName=p->propertyByFieldName;
         const auto &propertyShortVsTable=p->propertyShortVsTable;
@@ -1411,6 +1391,14 @@ QVVM ModelInfo::parserVVM(const QVariant &v) const
     }
 
     return __return;
+}
+
+Model *ModelInfo::internalinstance(const QMetaObject &staticMetaObject)
+{
+    auto modelInfo=&ModelInfo::info(staticMetaObject.className());
+    if(modelInfo)
+        return modelInfo->p->instance;
+    return nullptr;
 }
 
 }

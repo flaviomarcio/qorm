@@ -40,7 +40,7 @@ public:
     //!
     Q_INVOKABLE explicit Controller(const QSqlDatabase &connection, QObject *parent = nullptr);
 
-    ~Controller();
+
 
     //!
     //! \brief dbConnect

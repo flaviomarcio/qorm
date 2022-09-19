@@ -30,10 +30,10 @@ Controller::Controller(const QSqlDatabase &connection, QObject *parent)
     this->p = new ControllerPvt{this};
 }
 
-Controller::~Controller()
-{
 
-}
+
+
+
 
 bool Controller::dbConnect(QObject *objectConnection)
 {

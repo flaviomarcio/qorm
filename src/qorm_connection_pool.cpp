@@ -40,7 +40,7 @@ public:
     {
         this->parent = parent;
         this->baseName
-            = ((this->parent != nullptr) ? this->parent->objectName().trimmed() : "").left(50);
+                = ((this->parent != nullptr) ? this->parent->objectName().trimmed() : "").left(50);
         if (!this->baseName.isEmpty())
             return;
         auto thread = QThread::currentThread();
@@ -53,7 +53,19 @@ public:
         auto threadId = QString::number(qlonglong(QThread::currentThreadId()), 16);
         this->baseName = QStringLiteral("pool%1").arg(threadId).left(50);
     }
-    virtual ~ConnectionPoolPvt() {}
+
+    virtual ~ConnectionPoolPvt()
+    {
+        this->finish();
+    }
+
+    void finish()
+    {
+        for (auto &connectionName : this->connectionList){
+            auto connection=QSqlDatabase::database(connectionName);
+            finish(connection);
+        }
+    }
 
     bool finish(QSqlDatabase &connection)
     {
@@ -92,7 +104,7 @@ public:
     {
         Q_UNUSED(readOnly)
         this->finish(connection);
-        this->lastError = QSqlError();
+        this->lastError = {};
         auto driver = this->connectionSetting.driver().trimmed();
 
 #if Q_ORM_LOG_VERBOSE
@@ -164,28 +176,30 @@ public:
                 auto name = __connection.connectionName();
                 __connection = {};
                 QSqlDatabase::removeDatabase(name);
-            } else {
-                QStringList params;
-                params << QStringLiteral("Driver=%1").arg(odbcDriver);
+            }
+            else {
+                QStringList params={QStringLiteral("Driver=%1").arg(odbcDriver)};
+
                 if (!hostName.isEmpty())
-                    params << QStringLiteral("Server=%1").arg(hostName);
+                    params.append(QStringLiteral("Server=%1").arg(hostName));
                 if (!dataBaseName.isEmpty())
-                    params << QStringLiteral("Database=%1").arg(dataBaseName);
+                    params.append(QStringLiteral("Database=%1").arg(dataBaseName));
                 if (port > 0)
-                    params << QStringLiteral("Port=%1").arg(port);
+                    params.append(QStringLiteral("Port=%1").arg(port));
                 if (!userName.isEmpty())
-                    params << QStringLiteral("Uid=%1").arg(userName);
+                    params.append(QStringLiteral("Uid=%1").arg(userName));
                 if (!password.isEmpty())
-                    params << QStringLiteral("Pwd=%1").arg(password);
+                    params.append(QStringLiteral("Pwd=%1").arg(password));
 
                 if (readOnly)
-                    params << QStringLiteral("ApplicationIntent=ReadOnly");
-                params << QStringLiteral("Application Name=%1").arg(qAppName());
+                    params.append(QStringLiteral("ApplicationIntent=ReadOnly"));
+                params.append(QStringLiteral("Application Name=%1").arg(qAppName()));
                 auto __db = params.join(QStringLiteral(";"));
                 __connection.setDatabaseName(__db);
             }
 
-        } else {
+        }
+        else {
             __connection.setHostName(hostName);
             __connection.setUserName(userName);
             __connection.setPassword(password);
@@ -231,12 +245,12 @@ public:
         //connectionName
         cmd = keyWord.parserCommand(kgcSetApplicationName);
         if (cmd.contains(QStringLiteral("%1")))
-            listCmd << cmd.arg(this->baseName);
+            listCmd.append(cmd.arg(this->baseName));
 
         if (!schameNames.isEmpty()) {
             cmd = keyWord.parserCommand(kgcSetSearchPath);
             if (cmd.contains(QStringLiteral("%1")))
-                listCmd << cmd.arg(schameNames.join(QStringLiteral(",")));
+                listCmd.append(cmd.arg(schameNames.join(QStringLiteral(","))));
         }
 
         {
@@ -245,25 +259,25 @@ public:
                                         : kgcSetTransactionReadOnlyOff;
             auto cmd = keyWord.parserCommand(transaction).trimmed();
             if (!cmd.isEmpty())
-                listCmd << cmd;
+                listCmd.append(cmd);
         }
 
         if (!listCmd.isEmpty()) {
             cmd = listCmd.join(QStringLiteral(";"));
-            QSqlQuery query(__connection);
+            QSqlQuery query{__connection};
             if (!query.exec(cmd)) {
                 this->lastError = __connection.lastError();
                 oWarning() << QStringLiteral("%1:%2 error:%3")
-                                  .arg(__connection.driverName(),
-                                       __connection.connectionName(),
-                                       query.lastError().text());
+                              .arg(__connection.driverName(),
+                                   __connection.connectionName(),
+                                   query.lastError().text());
             }
             query.clear();
             query.finish();
         }
 
         connection = __connection;
-        this->connectionList << __connection.connectionName();
+        this->connectionList.append(__connection.connectionName());
         return connection.isValid() && connection.isOpen();
     }
 };
@@ -290,50 +304,38 @@ ConnectionPool::ConnectionPool(const ConnectionPool &pool, QObject *parent):QObj
     this->p = new ConnectionPoolPvt{parent, pool.setting()};
 }
 
-ConnectionPool::~ConnectionPool()
-{
-    this->finish();
-}
-
 ConnectionSetting &ConnectionPool::setting() const
 {
-
     return p->connectionSetting;
 }
 
 bool ConnectionPool::isValid()
 {
-
     return p->connectionSetting.isValid();
 }
 
 bool ConnectionPool::from(ConnectionPool &pool)
 {
-
     return p->from(pool);
 }
 
 bool ConnectionPool::from(const ConnectionSetting &setting)
 {
-
     return p->from(setting);
 }
 
 bool ConnectionPool::from(const QVariant &connection)
 {
-
     return p->from(connection);
 }
 
 bool ConnectionPool::from(const QSqlDatabase &connection)
 {
-
     return p->from(connection);
 }
 
 QSqlDatabase ConnectionPool::get()
 {
-
     QSqlDatabase connection;
     if (p->get(connection, false))
         return connection;
@@ -342,7 +344,6 @@ QSqlDatabase ConnectionPool::get()
 
 bool ConnectionPool::get(QSqlDatabase &connection)
 {
-
     if (p->get(connection, false))
         return connection.isValid() && connection.isOpen();
     return {};
@@ -350,7 +351,6 @@ bool ConnectionPool::get(QSqlDatabase &connection)
 
 QSqlDatabase ConnectionPool::getReadOnly()
 {
-
     QSqlDatabase connection;
     if (p->get(connection, true))
         return connection;
@@ -359,7 +359,6 @@ QSqlDatabase ConnectionPool::getReadOnly()
 
 bool ConnectionPool::getReadOnly(QSqlDatabase &connection)
 {
-
     if (p->get(connection, true))
         return connection.isValid() && connection.isOpen();
     return {};
@@ -367,9 +366,7 @@ bool ConnectionPool::getReadOnly(QSqlDatabase &connection)
 
 ConnectionPool &ConnectionPool::finish()
 {
-
-    for (auto &connection : p->connectionList)
-        this->finish(connection);
+    p->finish();
     return *this;
 }
 
@@ -397,7 +394,6 @@ bool ConnectionPool::finish(QString connection)
 
 QSqlError &ConnectionPool::lastError()
 {
-
     return p->lastError;
 }
 

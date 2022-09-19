@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./qorm_query.h"
+#include "./qorm_model.h"
 #include "./private/p_qorm_model_dao.h"
 #include "./private/p_qorm_sql_suitable_parser_strategy_options.h"
 
@@ -33,6 +34,11 @@ template<class T>
 class ModelDao : public PrivateQOrm::ModelDao
 {
 public:
+
+    enum Action{None, Insert, Update, Upsert, Search};
+    Q_ENUM(Action)
+
+
     //!
     //! \brief ModelDao
     //! \param parent
@@ -88,9 +94,81 @@ public:
         return PrivateQOrm::ModelDao::toPrepareForeign(this->p_modelInfo, vModelFK);
     }
 
+    //!
+    //! \brief toPrepareSearch
+    //! \param modelRef
+    //! \param vModel
+    //! \return
+    //!
     QVariantHash toPrepareSearch(const QOrm::ModelInfo &modelRef, const QVariant &vModel) const
     {
         return PrivateQOrm::ModelDao::toPrepareSearch(modelRef, vModel);
+    }
+
+    //!
+    //! \brief actionExec
+    //! \param value
+    //! \param newPropertyModel
+    //! \return
+    //!
+    auto &actionExec(const QVariant &value, const T &newPropertyModel)
+    {
+        auto newPropertyValues=newPropertyModel.toHashModel(false);
+        return this->actionExec(value, newPropertyValues);
+    }
+    auto &actionExec(const ResultValue &value, const T &newPropertyModel)
+    {
+        auto newPropertyValues=newPropertyModel.toHashModel(false);
+        return this->actionExec(value.resultVariant(), newPropertyValues);
+    }
+    auto &actionExec(const ResultValue &value, QVariantHash &newPropertyValues)
+    {
+        return this->actionExec(value.resultVariant(), newPropertyValues);
+    }
+    auto &actionExec(const QVariant &value, QVariantHash &newPropertyValues)
+    {
+        if (value.isNull() || !value.isValid())
+            return this->lr();
+
+        QVariantList list;
+        if(!newPropertyValues.isEmpty()){
+            switch (value.typeId()) {
+            case QMetaType::QVariantList:
+                list=value.toList();
+                break;
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:
+                list.append(value);
+                break;
+            default:
+                const T *model=value.value<T*>();
+                if(model)
+                    list.append(model->toHashModel());
+                break;
+            }
+            //merge new values values
+            for (auto &v : list) {
+                T model{v};
+                model.mergeFrom(newPropertyValues);
+                v=model.toHashModel();
+            }
+        }
+
+        if(list.isEmpty())
+            return this->lr();
+
+        switch (this->_action){
+        case Insert:
+            return this->insert(list);
+        case Update:
+            return this->update(list);
+        case Upsert:
+            return this->upsert(list);
+        case Search:
+            return this->recordList(list);
+        default:
+            return this->lr();
+        }
     }
 
     //!
@@ -280,6 +358,16 @@ public:
 
     //!
     //! \brief insert
+    //! \return
+    //!
+    auto &insert()
+    {
+        this->_action=Insert;
+        return *static_cast<ModelDao<T>*>(this);
+    }
+
+    //!
+    //! \brief insert
     //! \param value
     //! \return
     //!
@@ -325,6 +413,16 @@ public:
 
     //!
     //! \brief update
+    //! \return
+    //!
+    auto &update()
+    {
+        this->_action=Update;
+        return *static_cast<ModelDao<T>*>(this);
+    }
+
+    //!
+    //! \brief update
     //! \param value
     //! \return
     //!
@@ -366,6 +464,16 @@ public:
             return this->lr();
 
         return this->lr(list.size()==1?list.first():list) = true;
+    }
+
+    //!
+    //! \brief upsert
+    //! \return
+    //!
+    auto &upsert()
+    {
+        this->_action=Upsert;
+        return *static_cast<ModelDao<T>*>(this);
     }
 
     //!
@@ -781,6 +889,7 @@ public:
     }
 
 private:
+    Action _action=Action::None;
     bool _deactivateField=true;
     const QOrm::ModelInfo &p_modelInfo = QOrm::ModelInfo::from(T::staticMetaObject);
 };
