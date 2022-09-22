@@ -8,7 +8,6 @@ public:
     ModelDtoOptions *parent = nullptr;
     bool searchOnEmptyFilter = true;
     explicit ModelDtoOptionsPvt(ModelDtoOptions *parent):QObject{parent} { this->parent = parent; }
-    virtual ~ModelDtoOptionsPvt() {}
 };
 
 ModelDtoOptions::ModelDtoOptions(QObject *parent) : QObject{parent}

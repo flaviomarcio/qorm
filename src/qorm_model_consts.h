@@ -16,6 +16,7 @@ struct EditReadOnly{
 
 static const auto vAuto="Auto";
 static const auto vBool="Bool";
+static const auto vColor="Color";
 static const auto vCurrency="Currency";
 static const auto vDate="Date";
 static const auto vDateTime="DateTime";

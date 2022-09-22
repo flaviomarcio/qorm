@@ -96,7 +96,7 @@ public:
     void actionReportMaker()
     {
         this->descriptorsCollection.clear();
-        this->actionsCollection.item(__search).title(__search);
+        this->actionsCollection.item(__search).title(__searchName);
         this->actionsCollection.item(__print).title(__printName);
     }
 
@@ -213,6 +213,8 @@ ModelFieldDescriptors &ModelFieldDescriptors::copyDescriptorToFilters()
         if(!field->filtrable()) continue;
         this->addFilter(field->field(), field->toHash());
     }
+    for(auto&field:p->filtersCollection.list())
+        field->visible(true);
     return *this;
 }
 
