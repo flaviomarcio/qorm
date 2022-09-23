@@ -653,6 +653,7 @@ ResultValue &CRUDBase::canActionSearch()
             return this->lr(lr);
         v=lr.resultVariant();
     }
+    p->generatedRecords=vu.toList(v);
     return this->lr(p->dto
                     .uuid(this->uuid())//crud uuid
                     .host(p->host)

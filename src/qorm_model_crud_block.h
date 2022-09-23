@@ -156,6 +156,12 @@ public:
     const QVariantList generatedRecords(const ModelInfo &modelInfo) const;
 
     //!
+    //! \brief generatedListRecords
+    //! \return
+    //!
+    const QVariantList generatedListRecords() const;
+
+    //!
     //! \brief crudify
     //! \return
     //!

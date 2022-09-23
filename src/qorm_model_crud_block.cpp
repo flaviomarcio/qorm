@@ -259,6 +259,14 @@ const QVariantList CRUDBlock::generatedRecords(const ModelInfo &modelInfo) const
     return {};
 }
 
+const QVariantList CRUDBlock::generatedListRecords() const
+{
+    QVariantList __return;
+    for(auto &crud:p->crudList)
+        __return.append(crud->generatedRecords());
+    return __return;
+}
+
 ResultValue &CRUDBlock::crudify()
 {
     this->clean();
@@ -271,7 +279,7 @@ ResultValue &CRUDBlock::crudify()
 
     Q_DECLARE_VU;
 
-    QVariantList __return;
+    QVariantList pageList;
     const CRUDBody crudBody{p->crudBody};
 
     this->resultInfo().setValues(crudBody.resultInfo());
@@ -292,16 +300,21 @@ ResultValue &CRUDBlock::crudify()
         else
             crudItem=crudBody;
 
-        if(!crud->crudBody(p->reMakeCRUDBody(__return, crud, crudItem)).crudify())
+        if(!crud->crudBody(p->reMakeCRUDBody(pageList, crud, crudItem)).crudify())
             return this->lr(crud->lr());
 
-        __return.append(crud->lr().resultVariant());
+        pageList.append(crud->lr().resultVariant());
     }
 
-    if(__return.isEmpty())
+    if(pageList.isEmpty())
         return this->lr().clear();
 
-    return this->lr(QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__pages, __return}, {__type, this->type()}});
+    auto __return=QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__pages, pageList}, {__type, this->type()}};
+
+    for(auto &crud:p->crudList)
+        crud->clean();
+
+    return this->lr(__return);
 }
 
 }
