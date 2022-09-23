@@ -349,6 +349,8 @@ bool CRUDBase::afterCrudify()
 
 ResultValue &CRUDBase::crudify()
 {
+    this->clean();
+
     if(!this->beforeCrudify())
         return this->lr()=false;
 
@@ -669,6 +671,8 @@ ResultValue &CRUDBase::canActionUpsert()
         auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
         v=lr.resultVariant();
     }
+    Q_DECLARE_VU;
+    p->generatedRecords=vu.toList(v);
     return this->lr(p->dto
                     .uuid(this->uuid())//crud uuid
                     .host(p->host)
@@ -683,6 +687,8 @@ ResultValue &CRUDBase::canActionRemove()
     if(this->source().isValid() && !this->source().isNull()){
         auto &lr=(act==nullptr)?this->remove():act->action(this->source());
         v=lr.resultVariant();
+        Q_DECLARE_VU;
+        p->generatedRecords=vu.toList(v);
         return this->lr(v);
     }
     return this->lr().clear();
@@ -696,6 +702,8 @@ ResultValue &CRUDBase::canActionDeactivate()
     if(this->source().isValid() && !this->source().isNull()){
         auto &lr=(act==nullptr)?this->deactivate():act->action(this->source());
         v=lr.resultVariant();
+        Q_DECLARE_VU;
+        p->generatedRecords=vu.toList(v);
         return this->lr(v);
     }
     return this->lr().clear();
