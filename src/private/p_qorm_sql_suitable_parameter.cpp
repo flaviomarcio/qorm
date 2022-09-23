@@ -1,5 +1,5 @@
 #include "./p_qorm_sql_suitable_parameter.h"
-#include "./p_qorm_sql_suitable_parser_item.h"
+//#include "./p_qorm_sql_suitable_parser_item.h"
 #include "../../../qstm/src/qstm_util_variant.h"
 #include "../../../qstm/src/qstm_macro.h"
 #include <QJsonDocument>
@@ -9,7 +9,9 @@ static const auto __valueB="valueB";
 static const auto __valueC="valueC";
 static const auto __keywordOperator="keywordOperator";
 static const auto __keywordLogical="keywordLogical";
-static const auto __percentage="%";
+static const auto __start="start";
+static const auto __end="end";
+//static const auto __percentage="%";
 
 
 class SearchParametersPvt{
@@ -100,6 +102,7 @@ public:
                     i.next();
                     auto v1=vu.toVariant(i.key());
                     auto v2=vu.toVariant(i.value());
+                    QVariant v3;
 
                     auto opr=QOrm::koEqual;
                     switch (v2.typeId()) {
@@ -107,11 +110,25 @@ public:
                     case QMetaType::QStringList:
                         opr=QOrm::koIn;
                         break;
+                    case QMetaType::QVariantHash:
+                    case QMetaType::QVariantMap:
+                    case QMetaType::QVariantPair:
+                    {
+                        auto vHash=v2.toHash();
+                        if(vHash.contains(__start) && vHash.contains(__end)){
+                            opr=QOrm::koBetween;
+                            v2=vHash.value(__start);
+                            v3=vHash.value(__end);
+                        }
+                        break;
+                    }
                     default:
                         break;
                     }
 
-                    SearchParam param{v1, v2, opr, QOrm::klAnd};
+                    auto param=v3.isValid()
+                            ?SearchParam{v1, v2, v3, opr, QOrm::klAnd}
+                            :SearchParam{v1, v2, opr, QOrm::klAnd};
                     if(param.isValid())
                         this->values.append(param);
                 }
@@ -253,83 +270,6 @@ SearchParameters::SearchParameters(const QVariant &other):QVariant{}
 {
     this->p = new SearchParametersPvt{};
     p->add(other);
-//    QVariant vOther;
-//    switch (other.typeId()) {
-//    case QMetaType::QString:
-//    case QMetaType::QByteArray:
-//        vOther=QJsonDocument::fromJson(other.toByteArray()).toVariant();
-//        break;
-//    default:
-//        vOther=other;
-//    }
-
-
-//    switch (vOther.typeId()) {
-//    case QMetaType::QVariantList:
-//    {
-//        for(auto &v:vOther.toList()){
-//            auto s=SearchParam::from(v);
-//            if(v.isValid())
-//                p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
-//        }
-//        break;
-//    }
-//    case QMetaType::QVariantHash:
-//    case QMetaType::QVariantMap:
-//    {
-//        Q_V_HASH_ITERATOR (vOther.toHash()){
-//            i.next();
-//            auto s=SearchParam::from(i.value());
-//            if(!s.isValid()){
-//                const auto &k=i.key();
-//                const auto &v=i.value();
-
-//                auto keywordOperator=QOrm::koEqual;
-//                auto keywordLogical=QOrm::klAnd;
-
-//                auto vA=QOrm::SqlParserItem::from(k);
-//                auto vB=QOrm::SqlParserItem::from(v);
-
-//                if(!vA.value().isValid() && !vB.value().isValid())
-//                    continue;
-
-//                if(vA.isValue() && QMetaTypeUtilString.contains(vA.typeId())){
-//                    auto s=vA.value().toString();
-//                    if(!s.contains(__percentage))
-//                        s+=__percentage;
-//                    keywordOperator=QOrm::koLike;
-//                    vB.setValue(s);
-//                }
-
-//                switch (vA.typeId()){
-//                case QMetaType::QString:
-//                case QMetaType::QByteArray:
-//                case QMetaType::QChar:
-//                case QMetaType::QBitArray:
-//                {
-//                    if(vB.isValue() && QMetaTypeUtilString.contains(vB.typeId())){
-//                        auto s=vB.value().toString();
-//                        if(!s.contains(__percentage))
-//                            s+=__percentage;
-//                        keywordOperator=QOrm::koLike;
-//                        vB.setValue(s);
-//                    }
-//                    break;
-//                }
-//                default:
-//                    break;
-//                }
-
-
-//                s=SearchParam{vA, vB, keywordOperator, keywordLogical};
-//            }
-//            p->insert(s.valueA(), s.valueB(), s.valueC(), s.keywordOperator(), s.keywordLogical());
-//        }
-//        break;
-//    }
-//    default:
-//        break;
-//    }
 }
 
 SearchParameters::~SearchParameters()

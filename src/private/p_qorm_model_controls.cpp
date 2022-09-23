@@ -33,7 +33,7 @@ public:
         QVariantHash vHash;
         fieldDescriptors.setHost(&this->host);
 
-        const auto &vActions=fieldDescriptors.actions()->toList();
+        const auto &vActions=fieldDescriptors.actions()->toHash();
         const auto &vHeaderList=fieldDescriptors.descriptors()->list();
         const auto &vFilterList=fieldDescriptors.filters()->list();
         const auto &vEndPoints=fieldDescriptors.endPoints()->toList();

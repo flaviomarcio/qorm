@@ -414,6 +414,12 @@ public:
     QVariantHash toHashModel(const QObject *object, bool nullValuesAdd=false) const;
 
     //!
+    //! \brief extractProperties
+    //! \return
+    //!
+    QVariantHash extractProperties(const QVariantHash &values) const;
+
+    //!
     //! \brief parserVVM
     //! \param vvm
     //! \return

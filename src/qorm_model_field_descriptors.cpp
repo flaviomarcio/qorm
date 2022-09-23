@@ -85,7 +85,7 @@ public:
 
     void actionCRUDMaker()
     {
-        this->descriptorsCollection.clear();
+        this->actionsCollection.clear();
         this->actionsCollection.item(__save).title(__saveName);
         this->actionsCollection.item(__remove).title(__removeName);
         this->actionsCollection.item(__search).title(__searchName);
@@ -95,14 +95,14 @@ public:
 
     void actionReportMaker()
     {
-        this->descriptorsCollection.clear();
+        this->actionsCollection.clear();
         this->actionsCollection.item(__search).title(__searchName);
         this->actionsCollection.item(__print).title(__printName);
     }
 
     void actionOperationMaker()
     {
-        this->descriptorsCollection.clear();
+        this->actionsCollection.clear();
         this->actionsCollection.item(__finalize).title(__finalizeName);
         this->actionsCollection.item(__save).title(__saveName);
         this->actionsCollection.item(__remove).title(__removeName);

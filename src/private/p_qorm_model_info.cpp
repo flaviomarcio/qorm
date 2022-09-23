@@ -1336,6 +1336,20 @@ QVariantHash ModelInfo::toHashModel(const QObject *object, bool nullValuesAdd)co
     return p->toDictionary<QVariantHash>(object, nullValuesAdd, true);
 }
 
+QVariantHash ModelInfo::extractProperties(const QVariantHash &values)const
+{
+    QVariantHash __return;
+    QHashIterator<QString,QMetaProperty> i(p->propertyByFieldName);
+    while(i.hasNext()){
+        i.next();
+        if(values.contains(i.key()))
+            __return.insert(i.key(), values.value(i.key()));
+        else if(values.contains(i.value().name()))
+            __return.insert(i.value().name(), values.value(i.value().name()));
+    }
+    return __return;
+}
+
 QVVM ModelInfo::parserVVM(const QVariant &v) const
 {
     QVariantList vList;
@@ -1353,12 +1367,13 @@ QVVM ModelInfo::parserVVM(const QVariant &v) const
     if(vList.isEmpty())
         return QVVM{};
 
+    const auto &propertyByFieldName=p->propertyByFieldName;
+    const auto &propertyShortVsTable=p->propertyShortVsTable;
+    const auto &propertyTableVsShort=p->propertyTableVsShort;
     QVVM __return;
+
+    Q_DECLARE_VU;
     for(auto&item:vList){
-        Q_DECLARE_VU;
-        const auto &propertyByFieldName=p->propertyByFieldName;
-        const auto &propertyShortVsTable=p->propertyShortVsTable;
-        const auto &propertyTableVsShort=p->propertyTableVsShort;
         auto vHash=item.toHash();
         if(vHash.isEmpty())
             continue;

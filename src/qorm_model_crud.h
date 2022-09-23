@@ -19,7 +19,11 @@ public:
     //! \brief CRUD
     //! \param parent
     //!
-    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr):PrivateQOrm::CRUDBase{parent}
+    Q_INVOKABLE explicit CRUD(QObject *parent = nullptr)
+      :
+        PrivateQOrm::CRUDBase{parent}
+      , p_dao{this}
+      , p_model{this}
     {
 
     }
@@ -181,9 +185,6 @@ protected:
     //!
     virtual ResultValue &search()
     {
-//        static const auto __operator="operator";
-//        static const auto __format="format";
-
         QVariantList vList;
         switch (this->source().typeId()) {
         case QMetaType::QVariantList:
@@ -201,48 +202,8 @@ protected:
 
         QVariantList vListReturn;
         for(auto&v:vList){
-            auto mapSource=v.toHash();
-            T model(mapSource);
-            //SearchParameters map;
-            //const QOrm::ModelInfo &modelInfo=this->modelInfo();
-            //auto addHash=[this, &map, &mapSource, &modelInfo](const QVariantHash &vHash){
-            //    const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
-            //    QHashIterator<QString, QVariant> i(vHash);
-            //    while (i.hasNext()) {
-            //        i.next();
-            //        const auto header=&this->p_dto.headers().item(i.key());
-            //        if(!header)
-            //            continue;
-            //        auto vHash=header->filtrableStrategy().toHash();
-            //        auto keywordOperator=vHash.value(__operator);
-            //        QString format=vHash.value(__format).toString().trimmed();
-            //        QVariant v_value;
-            //        if(format.contains(QStringLiteral("%1")))
-            //            v_value=format.arg(i.value().toString());
-            //        else
-            //            v_value=i.value();
-            //        if(mapSource.contains(i.key())){
-            //            auto v_key=propertyShortVsTable.value(i.key());
-            //            auto a=SqlParserItem::createObject(v_key);
-            //            auto b=SqlParserItem::createValue(v_value);
-            //            map.insert(a, b, keywordOperator);
-            //        }
-            //    }
-            //};
-
-            QVariantHash map;
-
-            if(!mapSource.isEmpty()){
-                auto vHash=model.toHash();
-                QHashIterator<QString, QVariant> i(vHash);
-                while (i.hasNext()) {
-                    i.next();
-                    if(mapSource.contains(i.key()))//requer que exista na body
-                        map.insert(i.key(), i.value());
-                }
-            }
-
-            if(!this->search(map))
+            auto filters=this->modelInfo().extractProperties(v.toHash());
+            if(!this->search(filters))
                 return this->lr();
 
             for(auto&v:this->lr().resultList())
