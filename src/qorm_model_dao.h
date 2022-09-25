@@ -248,7 +248,7 @@ public:
     //! \brief recordHash
     //! \return
     //!
-    auto &recordHash() { return this->recordMap({}); }
+    auto &recordHash() { return this->recordHash({}); }
 
     //!
     //! \brief recordHash
