@@ -341,7 +341,7 @@ void ModelFieldDescriptor::setDisplayWidth(const QVariant &newDisplayWidth)
 
 void ModelFieldDescriptor::resetDisplayWidth()
 {
-    setDisplayWidth({}); // TODO: Adapt to use your actual default value
+    setDisplayWidth({});
 }
 
 const QVariant &ModelFieldDescriptor::width() const
