@@ -70,6 +70,12 @@ public:
     virtual bool isValid() const;
 
     //!
+    //! \brief prepare
+    //! \return
+    //!
+    ModelFieldDescriptors &prepare();
+
+    //!
     //! \brief descriptorsInit
     //!
     virtual void descriptorsInit();

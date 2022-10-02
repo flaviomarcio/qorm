@@ -83,6 +83,81 @@ public:
         this->actionCRUDMaker();
     }
 
+    void recalcSizes()
+    {
+        static const auto __P="%";
+        QVector<ModelFieldDescriptor *> listOrder;
+        VariantUtil vu;
+
+        double vCurrentValue=-1;
+
+        auto list=descriptorsCollection.list();
+        if(list.isEmpty())
+            return;
+
+        while(!list.isEmpty()){
+            ModelFieldDescriptor *fieldCur=nullptr;
+            foreach (auto &field, list) {
+                if(!field->displayer()){
+                    list.remove(list.indexOf(field));
+                    continue;
+                }
+
+                auto v=field->displayWidth().toString();
+                if(!v.contains(__P)){
+                    list.remove(list.indexOf(field));
+                    continue;
+                }
+                auto vCheck=vu.toDouble(v);
+
+                if(!fieldCur){
+                    fieldCur=field;
+                    vCurrentValue=vCheck;
+                    continue;
+                }
+
+                if(vCheck>=vCurrentValue){
+                    fieldCur=field;
+                    vCurrentValue=vCheck;
+                }
+
+            }
+
+            auto index=list.indexOf(fieldCur);
+            if(index>=0){
+                list.remove(index);
+                listOrder.append(fieldCur);
+            }
+        }
+
+        vCurrentValue=0;
+        for(auto *field:listOrder)
+            vCurrentValue+=(vu.toDouble(field->displayWidth()));//toDouble identifica o % e converte para percentual
+
+        if(vCurrentValue<=1)
+            return;
+
+        vCurrentValue=0;
+        for(int i=0; i<listOrder.count()-2; i++){
+            auto field=listOrder.at(i);
+            vCurrentValue+=vu.toDouble(field->displayWidth());//toDouble identifica o % e converte para percentual
+        }
+
+        static const auto __format=QStringLiteral("%1%");
+        const auto vDiff=(1.00-vCurrentValue);//toDouble identifica o % e converte para percentual
+
+        for(int i=0; i<listOrder.count()-2; i++){
+            auto field=listOrder.at(i);
+            auto v=field->displayWidth().toString();
+            auto vCalc=vu.toDouble(v);
+            vCalc-=(vCalc*vDiff);
+            vCalc=vCalc*100;
+            v=__format.arg(vCalc);
+            field->setDisplayWidth(v);
+        }
+    }
+
+
     void actionCRUDMaker()
     {
         this->actionsCollection.clear();
@@ -110,6 +185,8 @@ public:
         this->actionsCollection.item(__create).title(__createName);
         this->actionsCollection.item(__cancel).title(__cancelName);
     }
+
+
 };
 
 ModelFieldDescriptors::ModelFieldDescriptors(QObject *parent) : QStm::ObjectWrapper{parent}
@@ -124,6 +201,13 @@ bool ModelFieldDescriptors::isValid() const
     if (m1 == m2)
         return false;
     return true;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::prepare()
+{
+    this->descriptorsInit();
+    p->recalcSizes();
+    return *this;
 }
 
 void ModelFieldDescriptors::descriptorsInit()

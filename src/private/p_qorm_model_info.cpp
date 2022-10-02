@@ -718,7 +718,7 @@ public:
                     return vDescriptors;
                 }
 
-                descriptor->descriptorsInit();
+                descriptor->prepare();
             }
             if(pvt->description.isEmpty())
                 pvt->description=descriptor->description();
