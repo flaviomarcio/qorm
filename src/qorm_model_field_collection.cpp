@@ -1,8 +1,11 @@
-#include "qorm_model_field_collection.h"
+#include "./qorm_model_field_collection.h"
+#include "./qorm_model_field_descriptor.h"
 
 #include <qstring.h>
 
 namespace QOrm {
+
+static const auto __P="%";
 
 class ModelFieldCollectionPvt:public QObject{
 public:
@@ -27,6 +30,31 @@ public:
         qDeleteAll(aux);
     }
 
+    void checkWidth()
+    {
+        Q_DECLARE_VU;
+        double total=0;
+        static const auto &mObj=ModelFieldDescriptor::staticMetaObject;
+        QHashIterator<QString,ModelFieldDescriptor*> i(this->collection);
+        while(i.hasNext()){
+            i.next();
+            auto v=i.value();
+            if(!v->displayWidth().toString().contains(__P))
+                continue;
+            auto w=vu.toDouble(v->displayWidth());
+            total+=w;
+            if(total>100){
+                auto p=this->parent->parent()->parent();
+                while(p && !p->inherits(mObj.className()))
+                    p=p->parent();
+                if(p)
+                    qWarning()<<QString("%s: displayWidth exceeds 100% threshold").arg(p->metaObject()->className());
+                break;
+            }
+        }
+
+    }
+
     ModelFieldDescriptor &add(const QString &fieldName)
     {
         auto name=fieldName.trimmed().toLower();
@@ -37,6 +65,7 @@ public:
             if (!this->order.contains(name))
                 this->order.append(name);
         }
+        this->checkWidth();
         return *item;
     }
 };

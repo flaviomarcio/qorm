@@ -24,6 +24,7 @@ class Q_ORM_EXPORT ModelFieldDescriptor : public QStm::ObjectWrapper
     Q_PROPERTY(int order READ order WRITE order RESET resetOrder NOTIFY orderChanged)
     Q_PROPERTY(bool displayer READ displayer WRITE displayer RESET resetDisplayer NOTIFY displayerChanged)
     Q_PROPERTY(bool displayText READ displayText WRITE displayText RESET resetDisplayText NOTIFY displayTextChanged)
+    Q_PROPERTY(QVariant displayWidth READ displayWidth WRITE setDisplayWidth RESET resetDisplayWidth NOTIFY displayWidthChanged)
     Q_PROPERTY(QVariant width READ width WRITE width RESET resetWidth NOTIFY widthChanged)
     Q_PROPERTY(QVariant color READ color WRITE color RESET resetColor NOTIFY colorChanged)
     Q_PROPERTY(QVariant font READ font WRITE font RESET resetFont NOTIFY fontChanged)
@@ -166,6 +167,14 @@ public:
     ModelFieldDescriptor &resetDisplayText();
 
     //!
+    //! \brief displayWidth
+    //! \return
+    //!
+    const QVariant &displayWidth() const;
+    void setDisplayWidth(const QVariant &newDisplayWidth);
+    void resetDisplayWidth();
+
+    //!
     //! \brief width
     //! \return
     //!
@@ -261,6 +270,7 @@ public:
     ModelFieldDescriptor &inputLink(const QVariant &newInputLink);
     ModelFieldDescriptor &resetInputLink();
 
+
 signals:
     void fieldChanged();
 
@@ -317,6 +327,8 @@ signals:
     void itemsChanged();
 
     void inputLinkChanged();
+
+    void displayWidthChanged();
 
 private:
     ModelFieldDescriptorPvt *p=nullptr;

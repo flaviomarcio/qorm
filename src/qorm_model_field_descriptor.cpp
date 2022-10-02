@@ -19,6 +19,7 @@ public:
     int order=0;
     bool displayer=false;
     bool displayText=false;
+    QVariant _displayWidth;
     QVariant width;
     QVariant color;
     QVariant font;
@@ -323,6 +324,24 @@ ModelFieldDescriptor &ModelFieldDescriptor::displayText(bool newDisplayText)
 ModelFieldDescriptor &ModelFieldDescriptor::resetDisplayText()
 {
     return this->displayText({});
+}
+
+const QVariant &ModelFieldDescriptor::displayWidth() const
+{
+    return p->_displayWidth;
+}
+
+void ModelFieldDescriptor::setDisplayWidth(const QVariant &newDisplayWidth)
+{
+    if (p->_displayWidth == newDisplayWidth)
+        return;
+    p->_displayWidth = newDisplayWidth;
+    emit displayWidthChanged();
+}
+
+void ModelFieldDescriptor::resetDisplayWidth()
+{
+    setDisplayWidth({}); // TODO: Adapt to use your actual default value
 }
 
 const QVariant &ModelFieldDescriptor::width() const

@@ -1,17 +1,16 @@
 #include "./p_qorm_model_report_body.h"
 
+static const auto __source="source";
+static const auto __strategy="strategy";
+
 ReportBody::ReportBody(const QVariant &other):QVariantHash(other.toHash())
 {
 
 }
 
-ReportBody::ReportBody(const QVariant &strategy, const QVariant &source):QVariantHash{{QStringLiteral("strategy"), strategy}, {QStringLiteral("source"), source}}
+ReportBody::ReportBody(const QVariant &strategy, const QVariant &source):QVariantHash{{__strategy, strategy}, {__source, source}}
 {
 
-}
-
-ReportBody::~ReportBody()
-{
 }
 
 const QVariant &ReportBody::strategy()

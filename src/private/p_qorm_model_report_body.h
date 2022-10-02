@@ -24,11 +24,6 @@ public:
     explicit ReportBody(const QVariant &strategy, const QVariant &source);
 
     //!
-    //! \brief ~ReportBody
-    //!
-    virtual ~ReportBody();
-
-    //!
     //! \brief strategy
     //! \return
     //!
