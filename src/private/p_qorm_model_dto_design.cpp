@@ -3,15 +3,15 @@
 
 namespace QOrm {
 
-static const auto __percent30 = "30%";
-static const auto __percent40 = "40%";
+//static const auto __percent30 = "30%";
+//static const auto __percent40 = "40%";
 
 class DesignPvt:public QObject
 {
 public:
     Design *parent=nullptr;
-    QVariant width=__percent30;
-    QVariant height=__percent40;
+    QVariant width={};
+    QVariant height={};
     int rows=1;
     int columns=1;
     QStm::MetaEnum<Design::Layout> layout=Design::Vertical;
@@ -42,7 +42,7 @@ Design &Design::setWidth(const QVariant &value)
 
 Design &Design::resetWidth()
 {
-    return setWidth(__percent40);
+    return setWidth({});
 }
 
 QVariant &Design::height()
@@ -61,7 +61,7 @@ Design &Design::setHeight(const QVariant &value)
 
 Design &Design::resetHeight()
 {
-    return setHeight(__percent30);
+    return setHeight({});
 }
 
 int Design::rows() const
