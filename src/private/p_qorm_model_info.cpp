@@ -1136,7 +1136,7 @@ QHash<QString, QMetaProperty> &ModelInfo::propertyForeignKeys() const
     return p->propertyForeignKeys;
 }
 
-QVariantHash ModelInfo::propertyDescriptors() const
+QVariantHash &ModelInfo::propertyDescriptors() const
 {
     return p->propertyDescriptors;
 }

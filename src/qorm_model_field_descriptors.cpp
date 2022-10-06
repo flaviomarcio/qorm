@@ -44,6 +44,7 @@ public:
     bool readOnly=false;
     QStringList fieldsValid;
     ModelFieldDescriptors *parent=nullptr;
+    QStm::MetaEnum<QOrm::ModelFieldDescriptors::ActionStart> actionStart=ModelFieldDescriptors::asSEARCH;
     explicit ModelDescriptorPvt(ModelFieldDescriptors *parent)
         :
           QObject{parent},
@@ -160,6 +161,7 @@ public:
 
     void actionCRUDMaker()
     {
+        this->actionStart=ModelFieldDescriptors::asSEARCH;
         this->actionsCollection.clear();
         this->actionsCollection.item(__save).title(__saveName);
         this->actionsCollection.item(__remove).title(__removeName);
@@ -170,6 +172,7 @@ public:
 
     void actionReportMaker()
     {
+        this->actionStart=ModelFieldDescriptors::asCREATE;
         this->actionsCollection.clear();
         this->actionsCollection.item(__search).title(__searchName);
         this->actionsCollection.item(__print).title(__printName);
@@ -177,6 +180,7 @@ public:
 
     void actionOperationMaker()
     {
+        this->actionStart=ModelFieldDescriptors::asCREATE;
         this->actionsCollection.clear();
         this->actionsCollection.item(__finalize).title(__finalizeName);
         this->actionsCollection.item(__save).title(__saveName);
@@ -292,6 +296,7 @@ ModelFieldDescriptors &ModelFieldDescriptors::actionOperationMaker()
 
 ModelFieldDescriptors &ModelFieldDescriptors::copyDescriptorToFilters()
 {
+    this->setActionStart(this->asCREATE);
     p->filtersCollection.clear();
     for(auto&field:p->descriptorsCollection.list()){
         if(!field->filtrable()) continue;
@@ -610,6 +615,24 @@ ModelFieldDescriptors &ModelFieldDescriptors::setFieldsValid(const QStringList &
 ModelFieldDescriptors &ModelFieldDescriptors::resetFieldsValid()
 {
     return setFieldsValid({});
+}
+
+ModelFieldDescriptors::ActionStart ModelFieldDescriptors::actionStart()
+{
+    return p->actionStart.type();
+}
+
+void ModelFieldDescriptors::setActionStart(const QVariant &newActionStart)
+{
+    if (p->actionStart == newActionStart)
+        return;
+    p->actionStart = newActionStart;
+    emit actionStartChanged();
+}
+
+void ModelFieldDescriptors::resetActionStart()
+{
+    setActionStart(asSEARCH);
 }
 
 } // namespace QOrm

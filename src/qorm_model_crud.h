@@ -71,6 +71,24 @@ public:
     }
 
     //!
+    //! \brief actionStart
+    //! \return
+    //!
+    virtual ActionStart actionStart()const
+    {
+        static const auto __actionStart="actionStart";
+
+        if(!this->isValid())
+            return asCREATE;
+
+        const ModelInfo &modelInfo=this->modelInfo();
+        const auto &propertyDescriptors=modelInfo.propertyDescriptors();
+
+        QStm::MetaEnum<ActionStart> action=propertyDescriptors.value(__actionStart);
+        return action.type();
+    }
+
+    //!
     //! \brief host
     //! \return
     //!

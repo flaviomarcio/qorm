@@ -103,6 +103,7 @@ static const auto vpSortBy="sortBy";
 static const auto vpSortDesc="sortDesc";
 static const auto vpTitle="title";
 static const auto vpType="type";
+static const auto vpActionStart="actionStart";
 static const auto vpUuid="uuid";
 static const auto vpVisible="visible";
 static const auto vpWidth="width";

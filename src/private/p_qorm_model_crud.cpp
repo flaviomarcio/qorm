@@ -161,6 +161,11 @@ bool CRUDBase::isValid()const
     return !this->modelInfo().propertyDescriptors().isEmpty();
 }
 
+CRUDBase::ActionStart CRUDBase::actionStart() const
+{
+    return this->asCREATE;
+}
+
 const QOrm::ModelInfo &CRUDBase::modelInfo() const
 {
     static QOrm::ModelInfo __return;

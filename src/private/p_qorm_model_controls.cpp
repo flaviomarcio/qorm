@@ -65,6 +65,7 @@ public:
         vHash.insert(vpTitle, this->parent->description());
         vHash.insert(vpDesign, this->parent->fields().design()->toHash());
         vHash.insert(vpType, this->parent->fields().design()->type());
+        vHash.insert(vpActionStart, this->parent->fields().actionStart());
         vHash.insert(vpActions, vActions);
         vHash.insert(vpHeaders, vHeaders);
         vHash.insert(vpFilters, vFilters);

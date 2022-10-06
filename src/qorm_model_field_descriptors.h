@@ -54,6 +54,8 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
     Q_PROPERTY(QVariantHash sort READ sort WRITE setSort RESET resetSort NOTIFY sortChanged)
     Q_PROPERTY(QStringList fieldsValid READ fieldsValid WRITE setFieldsValid RESET resetFieldsValid NOTIFY fieldsValidChanged)
+    Q_PROPERTY(ActionStart actionStart READ actionStart WRITE setActionStart RESET resetActionStart NOTIFY actionStartChanged)
+
 public:
 
     //!
@@ -79,6 +81,24 @@ public:
     //! \brief descriptorsInit
     //!
     virtual void descriptorsInit();
+
+    //!
+    //! \brief actionCRUDMaker
+    //! \return
+    //!
+    ModelFieldDescriptors &actionCRUDMaker();
+
+    //!
+    //! \brief actionReportMaker
+    //! \return
+    //!
+    ModelFieldDescriptors &actionReportMaker();
+
+    //!
+    //! \brief actionOperationMaker
+    //! \return
+    //!
+    ModelFieldDescriptors &actionOperationMaker();
 
     //!
     //! \brief copyDescriptorToFilters
@@ -124,24 +144,6 @@ public:
     ModelActionCollection *actions() const;
     ModelFieldDescriptors &setActions(const ModelActionCollection *newActions);
     ModelFieldDescriptors &resetActions();
-
-    //!
-    //! \brief actionCRUDMaker
-    //! \return
-    //!
-    ModelFieldDescriptors &actionCRUDMaker();
-
-    //!
-    //! \brief actionReportMaker
-    //! \return
-    //!
-    ModelFieldDescriptors &actionReportMaker();
-
-    //!
-    //! \brief actionOperationMaker
-    //! \return
-    //!
-    ModelFieldDescriptors &actionOperationMaker();
 
     //!
     //! \brief addDescriptor
@@ -256,6 +258,14 @@ public:
     ModelFieldDescriptors &setFieldsValid(const QStringList &newFieldsValid);
     ModelFieldDescriptors &resetFieldsValid();
 
+    //!
+    //! \brief actionStart
+    //! \return
+    //!
+    ActionStart actionStart();
+    void setActionStart(const QVariant &newActionStart);
+    void resetActionStart();
+
 signals:
     void classNameChanged();
     void uuidChanged();
@@ -272,6 +282,8 @@ signals:
     void typeChanged();
     void fieldsValidChanged();
     void actionsChanged();
+
+    void actionStartChanged();
 
 private:
     ModelDescriptorPvt *p = nullptr;

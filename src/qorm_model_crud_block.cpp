@@ -30,6 +30,26 @@ public:
     {
         auto strategy=crudBody.strategy();
         CRUDBody __return;
+
+        switch (strategy) {
+        case QOrm::CRUDTypes::Strategy::Init:
+        {
+            switch (crud->actionStart()) {
+            case PrivateQOrm::CRUDBase::asCREATE:
+                strategy=QOrm::CRUDTypes::Create;
+                break;
+            case PrivateQOrm::CRUDBase::asSEARCH:
+                strategy=QOrm::CRUDTypes::Search;
+                break;
+            default:
+                break;
+            }
+        }
+        default:
+            break;
+        }
+
+
         switch (strategy) {
         case QOrm::CRUDTypes::Strategy::Create:
         case QOrm::CRUDTypes::Strategy::Remove:
@@ -290,6 +310,9 @@ ResultValue &CRUDBlock::crudify()
         crud->setOptions(p->options);
         crud->setResultInfo(p->resultInfo);
     }
+
+
+    //p->crudList.
 
     for(auto &crud:p->crudList){
 

@@ -46,6 +46,12 @@ public:
     virtual bool isValid()const;
 
     //!
+    //! \brief actionStart
+    //! \return
+    //!
+    virtual ActionStart actionStart()const;
+
+    //!
     //! \brief modelInfo
     //! \return
     //!

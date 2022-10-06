@@ -12,7 +12,7 @@ namespace QOrm {
 class CRUDTypes:public QObject{
     Q_OBJECT
 public:
-    enum Strategy {Search, Create, Upsert, Remove, Deactivate, Apply, Execute, Finalize, Print};
+    enum Strategy {Init, Search, Create, Upsert, Remove, Deactivate, Apply, Execute, Finalize, Print};
     Q_ENUM(Strategy)
     explicit CRUDTypes(QObject *parent=nullptr):QObject{parent}{}
 

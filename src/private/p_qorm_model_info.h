@@ -254,7 +254,7 @@ public:
     //! \brief propertyDescriptors
     //! \return
     //!
-    QVariantHash propertyDescriptors() const;
+    QVariantHash &propertyDescriptors() const;
 
     //!
     //! \brief propertyParserToTable
