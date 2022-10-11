@@ -51,10 +51,19 @@ public:
 
 
         switch (strategy) {
+        case QOrm::CRUDTypes::Strategy::Print:
+            strategy=QOrm::CRUDTypes::Strategy::Search;
+            break;
+        default:
+            break;
+        }
+
+        switch (strategy) {
         case QOrm::CRUDTypes::Strategy::Create:
         case QOrm::CRUDTypes::Strategy::Remove:
         case QOrm::CRUDTypes::Strategy::Deactivate:
-        case QOrm::CRUDTypes::Strategy::Search:{
+        case QOrm::CRUDTypes::Strategy::Search:
+        case QOrm::CRUDTypes::Strategy::Print:{
             if(returns.isEmpty()){//prepara primeira consulta
                 QVariant data;
                 if(strategy==QOrm::CRUDTypes::Strategy::Search && crudBody.expressions().isValid())

@@ -17,6 +17,7 @@ static const auto __resuliInfo = "resultInfo";
 static const auto __canAction = "canAction";
 static const auto __before = "before";
 static const auto __failed = "failed";
+static const auto __print = "print";
 
 class CRUDBasePvt:public QObject{
 public:
@@ -628,7 +629,7 @@ ResultValue &CRUDBase::canActionSearch()
 {
     Q_DECLARE_VU;
 
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action).replace(__print, __action);
 
     QVariantHash vSource;
     {
@@ -746,12 +747,7 @@ ResultValue &CRUDBase::canActionFinalize()
 
 ResultValue &CRUDBase::canActionPrint()
 {
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
-    auto act=p->actions.value(name);
-    if(!act)
-        return this->lr();
-    auto &lr=act->action(this->source());
-    return this->lr(lr.resultVariant());
+    return this->lr(canActionSearch());
 }
 
 ResultValue &CRUDBase::doBofore()
