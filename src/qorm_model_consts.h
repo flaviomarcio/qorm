@@ -113,6 +113,7 @@ static const auto vList="list";
 static const auto vObject="object";
 
 static const auto vtInputAuto="InputAuto";
+static const auto vtInputActions="InputActions";
 static const auto vtInputAddress="InputAddress";
 static const auto vtInputCalendar="InputCalendar";
 static const auto vtInputCheckBox="InputCheckBox";

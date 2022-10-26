@@ -56,7 +56,10 @@ public:
         QVariantList vHeaders;
         for(const auto &field:vHeaderList){
             auto name=field->field();
-            if(cacheHeader.contains(name))//se o cachec contiver a header entao lancaremos
+            static const auto __inputActions="InputActions";
+            if(field->inputType() == __inputActions)
+                vHeaders.append(field->toHash());
+            else if(cacheHeader.contains(name))//se o cachec contiver a header entao lancaremos
                 vHeaders.append(field->toHash());
         }
 

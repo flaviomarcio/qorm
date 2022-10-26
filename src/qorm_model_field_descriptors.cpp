@@ -1,8 +1,10 @@
 #include "./qorm_model_field_descriptors.h"
 #include "./qorm_model_field_descriptor.h"
+#include "./qorm_model_consts.h"
 #include <QMetaProperty>
 #include <QRect>
 #include "../../../qstm/src/qstm_meta_enum.h"
+
 
 namespace QOrm {
 
@@ -56,6 +58,7 @@ public:
           endPoints{parent},
           endPoint{parent}
     {
+        this->parent=parent;
         this->actionCRUDMaker();
     }
 
@@ -82,6 +85,11 @@ public:
         this->endPoints.clear();
         this->fieldsValid.clear();
         this->actionCRUDMaker();
+    }
+
+    void addDescriptor(const QString &fieldName, const QVariant &values)
+    {
+        this->descriptorsCollection.item(fieldName, values);
     }
 
     void recalcSizes()
@@ -158,6 +166,26 @@ public:
         }
     }
 
+    void actionHeaderAdd()
+    {
+
+        auto actionDescriptor=QVariantHash{
+        {vpField, vpActions},
+        {vpTitle, vpActions},
+        {vpInputType, vtInputActions},
+        {vpLength, 0},
+        {vpDataType, vObject},
+        {vpAlign, vaStart},
+        {vpOrder, 0},
+        {vpDisplayer, true},
+        {vpDisplayText, true},
+        {vpDisplayWidth, "2%"},
+        {vpWidth, "2%"},
+        {vpVisible, true}};
+
+        this->addDescriptor(vpActions, actionDescriptor);
+    }
+
 
     void actionCRUDMaker()
     {
@@ -168,6 +196,7 @@ public:
         this->actionsCollection.item(__search).title(__searchName);
         this->actionsCollection.item(__create).title(__createName);
         this->actionsCollection.item(__cancel).title(__cancelName);
+        actionHeaderAdd();
     }
 
     void actionReportMaker()
@@ -188,6 +217,7 @@ public:
         this->actionsCollection.item(__search).title(__searchName);
         this->actionsCollection.item(__create).title(__createName);
         this->actionsCollection.item(__cancel).title(__cancelName);
+        actionHeaderAdd();
     }
 
 
@@ -352,7 +382,7 @@ ModelFieldDescriptor &ModelFieldDescriptors::addDescriptor(const QString &fieldN
 
 ModelFieldDescriptors &ModelFieldDescriptors::addDescriptor(const QString &fieldName, const QVariant &values)
 {
-    p->descriptorsCollection.item(fieldName, values);
+    p->addDescriptor(fieldName, values);
     return *this;
 }
 
