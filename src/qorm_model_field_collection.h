@@ -24,6 +24,12 @@ public:
     const ModelFieldCollection &item(const QString &fieldName, const QVariant &values)const;
 
     //!
+    //! \brief remove
+    //! \param fieldName
+    //!
+    void remove(const QString &fieldName);
+
+    //!
     //! \brief list
     //! \return
     //!

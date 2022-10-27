@@ -42,6 +42,18 @@ public:
         }
         return *item;
     }
+
+    void remove(const QString &fieldName)
+    {
+        auto name=fieldName.trimmed().toLower();
+        this->order.removeAll(name);
+        auto item=collection[name];
+        if(item){
+            collection.remove(name);
+            delete item;
+        }
+
+    }
 };
 
 ModelFieldCollection::ModelFieldCollection(QObject *parent)
@@ -63,6 +75,11 @@ const ModelFieldCollection &ModelFieldCollection::item(const QString &fieldName,
     if(field)
         field->mergeFrom(values);
     return *this;
+}
+
+void ModelFieldCollection::remove(const QString &fieldName)
+{
+    p->remove(fieldName);
 }
 
 const QList<ModelFieldDescriptor *> &ModelFieldCollection::list() const

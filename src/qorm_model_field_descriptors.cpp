@@ -186,6 +186,11 @@ public:
         this->addDescriptor(vpActions, actionDescriptor);
     }
 
+    void actionHeaderRemove()
+    {
+        this->descriptorsCollection.remove(vpActions);
+    }
+
 
     void actionCRUDMaker()
     {
@@ -205,6 +210,7 @@ public:
         this->actionsCollection.clear();
         this->actionsCollection.item(__search).title(__searchName);
         this->actionsCollection.item(__print).title(__printName);
+        actionHeaderRemove();
     }
 
     void actionOperationMaker()
