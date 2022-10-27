@@ -179,8 +179,8 @@ public:
         {vpOrder, 0},
         {vpDisplayer, true},
         {vpDisplayText, true},
-        {vpDisplayWidth, "2%"},
-        {vpWidth, "2%"},
+        {vpDisplayWidth, "10%"},
+        {vpWidth, "10%"},
         {vpVisible, true}};
 
         this->addDescriptor(vpActions, actionDescriptor);
