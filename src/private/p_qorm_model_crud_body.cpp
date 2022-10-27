@@ -138,6 +138,19 @@ bool CRUDBody::isStrategy(const QVariant &v)
     return (strategy == v.toInt());
 }
 
+bool CRUDBody::isStrategyModify()
+{
+    auto strategy=this->strategy();
+    if(
+            strategy==QOrm::CRUDTypes::Upsert
+            ||
+            strategy==QOrm::CRUDTypes::Remove
+            )
+        return true;
+
+    return false;
+}
+
 QVariant CRUDBody::resultInfo() const
 {
     return this->value(__resultInfo);

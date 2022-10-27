@@ -85,6 +85,12 @@ public:
     virtual bool isStrategy(const QVariant &v);
 
     //!
+    //! \brief isStrategyModify
+    //! \return
+    //!
+    virtual bool isStrategyModify();
+
+    //!
     //! \brief resultInfo
     //! \return
     //!
