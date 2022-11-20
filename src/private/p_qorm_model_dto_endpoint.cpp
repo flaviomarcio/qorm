@@ -12,11 +12,11 @@ public:
     QByteArray path;
     QByteArray url;
     QByteArray name;
+    QVariantHash args;
     explicit EndPointPvt(QObject *parent):QObject{parent}{
 
     }
-    virtual ~EndPointPvt(){
-    }
+
 private:
 };
 
@@ -119,11 +119,9 @@ void EndPoint::addAuthBearer(const QByteArray &credentials) const
 
 const QUuid &EndPoint::uuid()const
 {
-    if(p->uuid.isNull()){
-        Q_DECLARE_VU;
-        auto vHash=this->extractHash(this, QStringList{{__func__}});
-        p->uuid=vu.toUuid(vHash);
-    }
+    Q_DECLARE_VU;
+    if(p->uuid.isNull())
+        p->uuid=QUuid::createUuidV3(QUuid::createUuid(), QByteArray{__func__});
     return p->uuid;
 }
 
@@ -234,7 +232,48 @@ void EndPoint::setName(const QByteArray &newName)
 
 void EndPoint::resetName()
 {
-    setName({}); 
+    setName({});
+}
+
+QVariantHash &EndPoint::args()
+{
+    return p->args;
+}
+
+void EndPoint::setArgs(const QVariant &newArgs)
+{
+    if (p->args == newArgs)
+        return;
+    Q_DECLARE_VU;
+    p->args.clear();
+    auto v=vu.toHash(newArgs);
+    this->args(v);
+}
+
+EndPoint &EndPoint::args(const QVariantPair &newArgs)
+{
+    auto v=QVariantHash{{newArgs.first.toString(), newArgs.second}};
+    return this->args(v);
+}
+
+EndPoint &EndPoint::args(const QVariantHash &newArgs)
+{
+    if(newArgs.isEmpty())
+        return *this;
+
+    QHashIterator<QString, QVariant> i(newArgs);
+    while(i.hasNext()){
+        i.next();
+        auto value=i.value().toString().trimmed().toLower();
+        p->args.insert(i.key().toLower().trimmed(), value);
+    }
+    emit argsChanged();
+    return *this;
+}
+
+void EndPoint::resetArgs()
+{
+    setArgs({});
 }
 
 } // namespace QOrm

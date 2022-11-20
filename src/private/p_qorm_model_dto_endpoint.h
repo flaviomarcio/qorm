@@ -28,6 +28,8 @@ class Q_ORM_EXPORT EndPoint : public QStm::ObjectWrapper
     Q_PROPERTY(QByteArray url READ url NOTIFY urlChanged)
 
     Q_PROPERTY(QByteArray name READ name WRITE setName RESET resetName NOTIFY nameChanged)
+
+    Q_PROPERTY(QVariant args READ args WRITE setArgs RESET resetArgs NOTIFY argsChanged)
 public:
 
     //!
@@ -123,9 +125,23 @@ public:
     //!
     QByteArray &url() const;
 
+    //!
+    //! \brief name
+    //! \return
+    //!
     const QByteArray &name() const;
     void setName(const QByteArray &newName);
     void resetName();
+
+    //!
+    //! \brief args
+    //! \return
+    //!
+    QVariantHash &args();
+    void setArgs(const QVariant &newArgs);
+    EndPoint &args(const QVariantPair &newArgs);
+    EndPoint &args(const QVariantHash &newArgs);
+    void resetArgs();
 
 private:
     EndPointPvt *p=nullptr;
@@ -139,6 +155,7 @@ signals:
     void methodChanged();
     void urlChanged();
     void nameChanged();
+    void argsChanged();
 };
 
 } // namespace QOrm

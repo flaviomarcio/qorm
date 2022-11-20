@@ -85,6 +85,7 @@ static const auto vpLayout="layout";
 static const auto vpLength="length";
 static const auto vpLinks="links";
 static const auto vpMethod="method";
+static const auto vpArgs="args";
 static const auto vpName="name";
 static const auto vpObrigatory="obrigatory";
 static const auto vpOptions="options";
