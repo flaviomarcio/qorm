@@ -39,6 +39,12 @@ static const auto vBetweenText="BetweenText";
 static const EditObrigatory vObrigatory;
 static const EditReadOnly vReadOnly;
 
+static const auto vNone="None";
+static const auto vCount="Count";
+static const auto vSum="Sum";
+static const auto vMax="Max";
+static const auto vMin="Min";
+static const auto vAvg="Avg";
 
 static const auto vaCenter="center";
 static const auto vaEnd="end";
