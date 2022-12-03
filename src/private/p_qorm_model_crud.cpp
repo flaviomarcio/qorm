@@ -2,7 +2,7 @@
 #include "../qorm_model_dto.h"
 #include <QJsonDocument>
 #include "./p_qorm_model_crud_body.h"
-#include "./p_qorm_sql_suitable_parser_item.h"
+//#include "./p_qorm_sql_suitable_parser_item.h"
 //#include "../qorm_query.h"
 //#include "../qorm_transaction_scope.h"
 
@@ -25,6 +25,7 @@ public:
     QOrm::ModelDtoOptions options;    
     QOrm::Host host;
     QUuid uuid;
+    QByteArray owner;
     QByteArray name;
     QByteArray description;
     ModelDao dao;
@@ -217,6 +218,17 @@ const QUuid &CRUDBase::uuid()
     auto name=this->name();
     p->uuid=vu.toMd5Uuid(name);
     return p->uuid;
+}
+
+const QByteArray &CRUDBase::owner()
+{
+    return p->owner;
+}
+
+CRUDBase &CRUDBase::owner(const QVariant &value)
+{
+    p->owner=value.toByteArray();
+    return *this;
 }
 
 const QByteArray &CRUDBase::name()
@@ -664,7 +676,7 @@ ResultValue &CRUDBase::print(const QVariant &value)
             .items(this->lr().resultList())
             .title(this->description())
             .signature(makerSignature)
-            .owner({})
+            .owner(this->owner())
             .items(this->lr().resultList())
             .make()
             ;

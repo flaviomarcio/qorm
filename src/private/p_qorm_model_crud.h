@@ -132,6 +132,13 @@ public:
     virtual const QUuid &uuid();
 
     //!
+    //! \brief owner
+    //! \return
+    //!
+    virtual const QByteArray &owner();
+    virtual CRUDBase &owner(const QVariant &value);
+
+    //!
     //! \brief name
     //! \return
     //!
