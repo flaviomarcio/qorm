@@ -781,11 +781,22 @@ ResultValue &CRUDBase::canActionSearch()
             return this->lr(lr);
         v=lr.resultVariant();
     }
-    p->generatedRecords=vu.toList(v);
+    switch (p->type.type()) {
+    case ReportForm:
+        p->generatedRecords=this->maker()
+                .clean()
+                .items(v)
+                .makeRecords();
+
+        break;
+    default:
+        p->generatedRecords=vu.toList(v);
+    }
+    v={};
     return this->lr(p->dto
                     .uuid(this->uuid())//crud uuid
                     .host(p->host)
-                    .items(v).o());
+                    .items(p->generatedRecords).o());
 }
 
 ResultValue &CRUDBase::canActionUpsert()
