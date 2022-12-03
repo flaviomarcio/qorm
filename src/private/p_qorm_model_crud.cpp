@@ -669,7 +669,11 @@ ResultValue &CRUDBase::print(const QVariant &value)
             .make()
             ;
 
-    return this->lr(QUrl{this->maker().outFileName()});
+    auto fileName=this->maker().outFileName();
+    if(!QFile::exists(fileName))
+        return this->lr();
+
+    return this->lr(QUrl::fromLocalFile(fileName));
 }
 
 CRUDBase &CRUDBase::onBefore(QOrm::CRUDBodyActionMethod method)
@@ -858,12 +862,7 @@ ResultValue &CRUDBase::canActionPrint()
         auto &lr=(act==nullptr)?this->print():act->action(this->source());
         v=lr.resultVariant();
     }
-    Q_DECLARE_VU;
-    p->generatedRecords=vu.toList(v);
-    return this->lr(p->dto
-                    .uuid(this->uuid())//crud uuid
-                    .host(p->host)
-                    .items(v).o());
+    return this->lr(v);
 }
 
 ResultValue &CRUDBase::doBofore()
