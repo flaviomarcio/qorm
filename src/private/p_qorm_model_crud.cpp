@@ -35,52 +35,10 @@ public:
     QVariant source;
     QVariantList generatedRecords;
     CRUDBase*parent=nullptr;
-
-    explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dao{parent}, dto{parent}
+    QRmk::Maker maker;
+    explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dao{parent}, dto{parent}, maker{parent}
     {
         this->parent=parent;
-    }
-
-    QVariant parserSearch(const QVariant &v)
-    {
-        if(!v.isValid() || v.isNull())
-            return {};
-
-        QVariantList vList;
-        switch (v.typeId()) {
-        case QMetaType::QVariantList:
-            vList=v.toList();
-            break;
-        case QMetaType::QVariantHash:
-        case QMetaType::QVariantMap:
-            vList.append(v);
-            break;
-        default:
-            return v;
-        }
-        if(vList.isEmpty())
-            return {};
-
-        //this.parent->dao()
-
-        //const auto &modelInfo = this->parent->modelInfo();
-        for(auto&v:vList){
-            auto vHash=v.toHash();
-            QHashIterator <QString, QVariant> i(vHash);
-            while(i.hasNext()){
-                i.next();
-                auto vA=QOrm::SqlParserItem::from(i.key());
-                auto vB=QOrm::SqlParserItem::from(i.value());
-
-                if(vA.isValue()){
-
-                }
-
-            }
-        }
-
-        return vList.size()==1?vList.first():vList;
-
     }
 
     auto &doModelAction(const QString &methodName)
@@ -140,6 +98,7 @@ public:
     {
         this->strategy=strategy;
     }
+
 };
 
 
@@ -176,6 +135,11 @@ const QOrm::ModelInfo &CRUDBase::modelInfo() const
 ModelDao &CRUDBase::dao()
 {
     return p->dao;
+}
+
+QRmk::Maker &CRUDBase::maker()
+{
+    return p->maker;
 }
 
 const QOrm::Host &CRUDBase::host() const
@@ -493,7 +457,7 @@ CRUDBase &CRUDBase::actionPrint(QOrm::ModelAction &action)
 
 ResultValue &CRUDBase::create()
 {
-    return this->lr().setNotImplemented();
+    return this->create({});
 }
 
 ResultValue &CRUDBase::create(const QVariant &value)
@@ -504,7 +468,7 @@ ResultValue &CRUDBase::create(const QVariant &value)
 
 ResultValue &CRUDBase::search()
 {
-    return this->lr().setNotImplemented();
+    return this->upsert({});
 }
 
 ResultValue &CRUDBase::search(const QVariant &value)
@@ -515,7 +479,7 @@ ResultValue &CRUDBase::search(const QVariant &value)
 
 ResultValue &CRUDBase::upsert()
 {
-    return this->lr().setNotImplemented();
+    return this->upsert({});
 }
 
 ResultValue &CRUDBase::upsert(const QVariant &value)
@@ -526,7 +490,7 @@ ResultValue &CRUDBase::upsert(const QVariant &value)
 
 ResultValue &CRUDBase::remove()
 {
-    return this->lr().setNotImplemented();
+    return this->remove({});
 }
 
 ResultValue &CRUDBase::remove(const QVariant &value)
@@ -537,7 +501,7 @@ ResultValue &CRUDBase::remove(const QVariant &value)
 
 ResultValue &CRUDBase::deactivate()
 {
-    return this->lr().setNotImplemented();
+    return this->deactivate({});
 }
 
 ResultValue &CRUDBase::deactivate(const QVariant &value)
@@ -548,7 +512,7 @@ ResultValue &CRUDBase::deactivate(const QVariant &value)
 
 ResultValue &CRUDBase::execute()
 {
-    return this->lr().setNotImplemented();
+    return this->execute({});
 }
 
 ResultValue &CRUDBase::execute(const QVariant &value)
@@ -559,13 +523,153 @@ ResultValue &CRUDBase::execute(const QVariant &value)
 
 ResultValue &CRUDBase::finalize()
 {
-    return this->lr().setNotImplemented();
+    return this->finalize({});
 }
 
 ResultValue &CRUDBase::finalize(const QVariant &value)
 {
     Q_UNUSED(value)
     return this->lr().setNotImplemented();
+}
+
+ResultValue &CRUDBase::print()
+{
+    return this->print(this->source());
+}
+
+ResultValue &CRUDBase::print(const QVariant &value)
+{
+    p->maker.clean();
+    if(!this->search(value))
+        return this->lr();
+
+    auto makeFilters=[this](QRmk::Headers &headers){
+
+
+        static const auto __title="title";
+        static const auto __field="field";
+        static const auto __value="value";
+
+        QVariantHash filters;
+
+        {//parse filters
+            const auto &modelInfo=this->modelInfo();
+            auto vSource=this->source().toHash();
+            const auto &vFields=modelInfo.propertyByFieldName();
+            QHashIterator<QString,QMetaProperty> i(vFields);
+            while(i.hasNext()){
+                i.next();
+                if(!vSource.contains(i.key()) && !vSource.contains(i.value().name()))
+                    continue;
+                filters.insert(i.value().name(), vSource.value(i.key()));
+            }
+        }
+
+        QVariantHash __return;
+        QHashIterator<QString, QVariant> i(filters);
+        while(i.hasNext()){
+            i.next();
+
+            const auto &key=i.key().trimmed().toLower();
+            auto value=i.value();
+
+            if(!headers.contains(key))
+                continue;
+
+//            switch (value.typeId()) {
+//            case QVariantL:
+
+//                break;
+//            default:
+//                break;
+//            }
+
+
+            const auto &header=headers.header(key);
+            auto v=QVariantHash{{__title, header.title()}, {__field, key},{__value, value}};
+            __return.insert(key, v);
+        }
+        return __return;
+    };
+
+    auto makeHeaders=[this](QRmk::Headers &headers)
+    {
+        QStringList groupingField;
+        for(auto&header : this->dto().headers().list()){
+            headers
+                    .header(header->field())
+                    .title(header->title())
+                    .align(header->align())
+                    .field(header->field())
+                    .width(header->width())
+                    .visible(header->displayer())
+                    .format(header->format())
+                    .dataType(header->dataType());
+            if(header->grouping() && !groupingField.contains(header->field()))
+                groupingField.append(header->field());
+        }
+        this->p->maker.groupingFields(groupingField);
+    };
+
+    auto makeSummary=[this](QRmk::Headers &headers)
+    {
+        for(auto&header : this->dto().headers().list()){
+            if(header->summaryMode()==header->None)
+                continue;
+            headers
+                    .header(header->field())
+                    .computeMode(header->summaryMode());
+        }
+    };
+
+    auto makerSignature=[](QRmk::Signatures &signatures)
+    {
+        Q_UNUSED(signatures)
+//            auto declaration=QStringList
+//            {
+//                    "<p>Recebi da <strong>Empresa de Serviços</strong> LTDA com CNPJ: ",
+//                    "888.888.88/0001-88, a importância total de <strong>R$ 505,82 ( QUINHENTOS E CINCO ",
+//                    "REAIS E OITENTA E DOIS CENTAVOS )</strong> valor este discriminado acima</p> "
+//            };
+
+//            auto local="Sant Lois";
+
+//            signatures
+//                    .pageArea(QRmk::Signatures::Area{"20%","30%"})
+//                    .title("Recibo")
+//                    .declaration(declaration)
+//                    .local(local);
+
+//            signatures
+//                    .signature("${document01}-One")
+//                    .documentType(QRmk::Signature::CNPJ)
+//                    .name("${name}");
+
+//            signatures
+//                    .signature("${document02}-Two")
+//                    .documentType(QRmk::Signature::CNPJ)
+//                    .name("${name}");
+
+//            signatures
+//                    .signature("${document03}-three")
+//                    .documentType(QRmk::Signature::CNPJ)
+//                    .name("${name}");
+    };
+
+    this->maker()
+            .clean()
+            .headers(makeHeaders)
+            .summary(makeSummary)
+            .filters(makeFilters)
+            .items(this->lr().resultList())
+            .title(this->description())
+            .signature(makerSignature)
+            .owner({})
+            .items(this->lr().resultList())
+            .make()
+            ;
+
+    return this->lr(QUrl{this->maker().outFileName()});
 }
 
 CRUDBase &CRUDBase::onBefore(QOrm::CRUDBodyActionMethod method)
@@ -747,7 +851,19 @@ ResultValue &CRUDBase::canActionFinalize()
 
 ResultValue &CRUDBase::canActionPrint()
 {
-    return this->lr(canActionSearch());
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    auto act=p->actions.value(name);
+    QVariant v;
+    if(this->source().isValid() && !this->source().isNull()){
+        auto &lr=(act==nullptr)?this->print():act->action(this->source());
+        v=lr.resultVariant();
+    }
+    Q_DECLARE_VU;
+    p->generatedRecords=vu.toList(v);
+    return this->lr(p->dto
+                    .uuid(this->uuid())//crud uuid
+                    .host(p->host)
+                    .items(v).o());
 }
 
 ResultValue &CRUDBase::doBofore()

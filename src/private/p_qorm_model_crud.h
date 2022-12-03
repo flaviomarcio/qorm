@@ -9,6 +9,7 @@
 #include "../qorm_model_dto_options.h"
 #include "../qorm_model_dto.h"
 #include "../qorm_model_crud_types.h"
+#include "../../../qrmk/include/QRmk"
 
 namespace QOrm {
 typedef std::function<ResultValue &(QOrm::ObjectDb *controller, const QVariant &vBody)> CRUDBodyActionMethod;
@@ -62,6 +63,12 @@ public:
     //! \return
     //!
     ModelDao &dao();
+
+    //!
+    //! \brief maker
+    //! \return
+    //!
+    QRmk::Maker &maker();
 
     //!
     //! \brief host
@@ -385,6 +392,19 @@ protected:
     //! \return
     //!
     virtual ResultValue &finalize(const QVariant &value);
+
+    //!
+    //! \brief print
+    //! \return
+    //!
+    virtual ResultValue &print();
+
+    //!
+    //! \brief print
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &print(const QVariant &value);
 
     //!
     //! \brief onBefore

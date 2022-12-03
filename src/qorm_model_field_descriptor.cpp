@@ -32,6 +32,9 @@ public:
     QVariant output;
     QVariant items;
     QVariant inputLink;
+    QString format={};
+    QStm::MetaEnum<ModelFieldDescriptor::SummaryMode> summaryMode=ModelFieldDescriptor::None;
+    bool grouping=false;
     explicit ModelFieldDescriptorPvt(QObject *parent):QObject{parent}{}
 };
 
@@ -570,6 +573,62 @@ ModelFieldDescriptor &ModelFieldDescriptor::inputLink(const QVariant &newInputLi
 ModelFieldDescriptor &ModelFieldDescriptor::resetInputLink()
 {
     return this->inputLink({});
+}
+
+ModelFieldDescriptor::SummaryMode ModelFieldDescriptor::summaryMode() const
+{
+    return p->summaryMode.type();
+}
+
+ModelFieldDescriptor &ModelFieldDescriptor::summaryMode(const QVariant &newSummaryMode)
+{
+    if(!p->summaryMode.equal(newSummaryMode))
+        return *this;
+
+    emit summaryModeChanged();
+    return *this;
+}
+
+ModelFieldDescriptor &ModelFieldDescriptor::resetSummaryMode()
+{
+    return this->summaryMode(ModelFieldDescriptor::None);
+}
+
+bool ModelFieldDescriptor::grouping() const
+{
+    return p->grouping;
+}
+
+ModelFieldDescriptor &ModelFieldDescriptor::grouping(bool newGrouping)
+{
+    if(p->grouping!=newGrouping)
+        return *this;
+    p->grouping=newGrouping;
+    emit groupingChanged();
+    return *this;
+}
+
+ModelFieldDescriptor &ModelFieldDescriptor::resetGrouping()
+{
+    return this->grouping({});
+}
+
+QString &ModelFieldDescriptor::format() const
+{
+    return p->format;
+}
+
+ModelFieldDescriptor &ModelFieldDescriptor::format(const QString &newFormat)
+{
+    if(p->format!=newFormat)
+        return *this;
+    p->format=newFormat;
+    return *this;
+}
+
+ModelFieldDescriptor &ModelFieldDescriptor::resetFormat()
+{
+    return this->format({});
 }
 
 } // namespace QOrm

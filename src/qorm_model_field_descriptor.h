@@ -37,12 +37,25 @@ class Q_ORM_EXPORT ModelFieldDescriptor : public QStm::ObjectWrapper
     Q_PROPERTY(QVariant output READ output WRITE output RESET resetOutput NOTIFY outputChanged)
     Q_PROPERTY(QVariant items READ items WRITE items RESET resetItems NOTIFY itemsChanged)
     Q_PROPERTY(QVariant inputLink READ inputLink WRITE inputLink RESET resetInputLink NOTIFY inputLinkChanged)
+    Q_PROPERTY(QVariant summaryMode READ summaryMode WRITE summaryMode RESET resetSummaryMode NOTIFY summaryModeChanged)
+    Q_PROPERTY(bool grouping READ grouping WRITE grouping RESET resetGrouping NOTIFY groupingChanged)
+    Q_PROPERTY(QString format READ format WRITE format RESET resetFormat NOTIFY formatChanged)
 public:
     enum EditReadOnly{erNo, erYes, erIfNew, erIfExisting};
     Q_ENUM(EditReadOnly)
 
     enum EditObrigatory{eoNo, eoYes, eoIfEdit, eoIfFilter};\
     Q_ENUM(EditObrigatory)
+
+    enum SummaryMode{
+          None
+        , Count
+        , Sum
+        , Max
+        , Min
+        , Avg
+    };
+    Q_ENUM(SummaryMode)
 
     explicit ModelFieldDescriptor(QObject *parent = nullptr);
 
@@ -270,6 +283,30 @@ public:
     ModelFieldDescriptor &inputLink(const QVariant &newInputLink);
     ModelFieldDescriptor &resetInputLink();
 
+    //!
+    //! \brief summaryMode
+    //! \return
+    //!
+    QOrm::ModelFieldDescriptor::SummaryMode summaryMode() const;
+    ModelFieldDescriptor &summaryMode(const QVariant &newSummaryMode);
+    ModelFieldDescriptor &resetSummaryMode();
+
+    //!
+    //! \brief grouping
+    //! \return
+    //!
+    bool grouping() const;
+    ModelFieldDescriptor &grouping(bool newGrouping);
+    ModelFieldDescriptor &resetGrouping();
+
+    //!
+    //! \brief format
+    //! \return
+    //!
+    QString &format() const;
+    ModelFieldDescriptor &format(const QString &newFormat);
+    ModelFieldDescriptor &resetFormat();
+
 
 signals:
     void fieldChanged();
@@ -329,6 +366,12 @@ signals:
     void inputLinkChanged();
 
     void displayWidthChanged();
+
+    void summaryModeChanged();
+
+    void groupingChanged();
+
+    void formatChanged();
 
 private:
     ModelFieldDescriptorPvt *p=nullptr;

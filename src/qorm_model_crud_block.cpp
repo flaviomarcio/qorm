@@ -50,13 +50,13 @@ public:
         }
 
 
-        switch (strategy) {
-        case QOrm::CRUDTypes::Strategy::Print:
-            strategy=QOrm::CRUDTypes::Strategy::Search;
-            break;
-        default:
-            break;
-        }
+//        switch (strategy) {
+//        case QOrm::CRUDTypes::Strategy::Print:
+//            strategy=QOrm::CRUDTypes::Strategy::Search;
+//            break;
+//        default:
+//            break;
+//        }
 
         switch (strategy) {
         case QOrm::CRUDTypes::Strategy::Create:
@@ -66,10 +66,18 @@ public:
         case QOrm::CRUDTypes::Strategy::Print:{
             if(returns.isEmpty()){//prepara primeira consulta
                 QVariant data;
-                if(strategy==QOrm::CRUDTypes::Strategy::Search && crudBody.expressions().isValid())
-                    data=crudBody.expressions();
-                else
+                switch (strategy) {
+                case QOrm::CRUDTypes::Strategy::Search:
+                case QOrm::CRUDTypes::Strategy::Print:
+                    if(crudBody.expressions().isValid())
+                        data=crudBody.expressions();
+                    else
+                        data=crudBody.data();
+                    break;
+                default:
                     data=crudBody.data();
+                    break;
+                }
                 __return=CRUDBody{strategy, crud->dao().toPrepareSearch(crud->modelInfo(), data)};
             }
             else{
