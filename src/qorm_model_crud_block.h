@@ -33,12 +33,18 @@ public:
     explicit CRUDBlock(const QVariant &crudBody, QObject *parent=nullptr);
 
     //!
+    //! \brief owner
+    //! \return
+    //!
+    QByteArray &owner() const;
+    CRUDBlock &owner(const QVariant &newOwner);
+
+    //!
     //! \brief type
     //! \return
     //!
     QVariant type() const;
-    CRUDBlock &setType(const FormType &newType);
-    CRUDBlock &resetType();
+    CRUDBlock &type(const FormType &newType);
 
     //!
     //! \brief host

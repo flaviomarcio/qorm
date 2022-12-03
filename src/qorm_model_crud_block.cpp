@@ -12,6 +12,7 @@ static auto __items="items";
 
 class CRUDBlockPvt:public QObject{
 public:
+    QByteArray owner;
     QStm::MetaEnum<CRUDBlock::FormType> type=CRUDBlock::RegisterForm;
     ModelDtoOptions options;
     QStm::ResultInfo resultInfo;
@@ -152,22 +153,28 @@ CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb{p
     p->crudBody=crudBody;
 }
 
+QByteArray &CRUDBlock::owner() const
+{
+    return p->owner;
+}
+
+CRUDBlock &CRUDBlock::owner(const QVariant &newOwner)
+{
+    p->owner=newOwner.toByteArray();
+    return *this;
+}
+
 QVariant CRUDBlock::type() const
 {
     return p->type.name();
 }
 
-CRUDBlock &CRUDBlock::setType(const FormType &newType)
+CRUDBlock &CRUDBlock::type(const FormType &newType)
 {
     if (p->type == newType)
         return *this;
     p->type = newType;
     return *this;
-}
-
-CRUDBlock &CRUDBlock::resetType()
-{
-    return setType(RegisterForm);
 }
 
 Host &CRUDBlock::host()
