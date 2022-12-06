@@ -349,8 +349,8 @@ ResultValue &CRUDBlock::crudify()
 
         if(!crud->crudBody(p->reMakeCRUDBody(pageList, crud, crudItem)).crudify())
             return this->lr(crud->lr());
-
-        pageList.append(crud->lr().resultVariant());
+        auto vResult=crud->lr().resultVariant();
+        pageList.append(vResult);
     }
 
     if(pageList.isEmpty())

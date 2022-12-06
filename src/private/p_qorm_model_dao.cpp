@@ -42,30 +42,54 @@ public:
         return true;
     }
 
-    static QVariant parseVariables(const QVariant &v)
+    static QVariant parseRecord(const QVariant &v)
     {
-        static const auto __searchValue = "${searchValue}";
+        static const auto __rowType="__row_type__";
+        static const auto __rowValue="__row_value__";
         switch (v.typeId()) {
         case QMetaType::QVariantPair:
         case QMetaType::QVariantMap:
         case QMetaType::QVariantHash:
         {
             auto vHash=v.toHash();
-            if(vHash.contains(__searchValue))
-                return vHash.value(__searchValue);
-            break;
-        }
-        case QMetaType::QVariantList:
-        {
-            auto vList=v.toList();
-            for(auto &v:vList)
-                v=parseVariables(v);
+            if(vHash.contains(__rowType))
+                return vHash.value(__rowValue);
             break;
         }
         default:
             break;
         }
         return v;
+    }
+
+    static QVariant parseVariables(const QVariant &value)
+    {
+        static const auto __searchValue = "${searchValue}";
+        auto vRecord=parseRecord(value);
+        switch (vRecord.typeId()) {
+        case QMetaType::QVariantPair:
+        case QMetaType::QVariantMap:
+        case QMetaType::QVariantHash:
+        {
+            auto vHash=vRecord.toHash();
+            if(vHash.contains(__searchValue)){
+                vRecord=vHash.value(__searchValue);
+                vRecord=parseRecord(vRecord);
+            }
+            break;
+        }
+        case QMetaType::QVariantList:
+        {
+            auto vList=vRecord.toList();
+            for(auto &v:vList)
+                v=parseVariables(v);//recursive
+            vRecord=vList;
+            break;
+        }
+        default:
+            break;
+        }
+        return vRecord;
     }
 
 
