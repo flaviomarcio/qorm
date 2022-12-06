@@ -14,6 +14,16 @@ struct EditReadOnly{
     const char *erIfExisting="erIfExisting";
 };
 
+struct SummaryMode{
+    const char *None="None";
+    const char *Text="Text";
+    const char *Count="Count";
+    const char *Sum="Sum";
+    const char *Max="Max";
+    const char *Min="Min";
+    const char *Avg="Avg";
+};
+
 static const auto vAuto="Auto";
 static const auto vBoolean="Boolean";
 static const auto vColor="Color";
@@ -38,6 +48,7 @@ static const auto vBetweenCurrency="BetweenCurrency";
 static const auto vBetweenText="BetweenText";
 static const EditObrigatory vObrigatory;
 static const EditReadOnly vReadOnly;
+static const SummaryMode summaryMode;
 
 static const auto vNone="None";
 static const auto vCount="Count";

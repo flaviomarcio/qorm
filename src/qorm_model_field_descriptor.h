@@ -49,6 +49,7 @@ public:
 
     enum SummaryMode{
           None
+        , Text
         , Count
         , Sum
         , Max

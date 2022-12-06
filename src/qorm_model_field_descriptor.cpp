@@ -577,14 +577,17 @@ ModelFieldDescriptor &ModelFieldDescriptor::resetInputLink()
 
 ModelFieldDescriptor::SummaryMode ModelFieldDescriptor::summaryMode() const
 {
+    if(p->summaryMode.equal(ModelFieldDescriptor::None))
+        return {};
+
     return p->summaryMode.type();
 }
 
 ModelFieldDescriptor &ModelFieldDescriptor::summaryMode(const QVariant &newSummaryMode)
 {
-    if(!p->summaryMode.equal(newSummaryMode))
+    if(p->summaryMode.equal(newSummaryMode))
         return *this;
-
+    p->summaryMode=newSummaryMode;
     emit summaryModeChanged();
     return *this;
 }
@@ -601,7 +604,7 @@ bool ModelFieldDescriptor::grouping() const
 
 ModelFieldDescriptor &ModelFieldDescriptor::grouping(bool newGrouping)
 {
-    if(p->grouping!=newGrouping)
+    if(p->grouping==newGrouping)
         return *this;
     p->grouping=newGrouping;
     emit groupingChanged();
@@ -620,7 +623,7 @@ QString &ModelFieldDescriptor::format() const
 
 ModelFieldDescriptor &ModelFieldDescriptor::format(const QString &newFormat)
 {
-    if(p->format!=newFormat)
+    if(p->format==newFormat)
         return *this;
     p->format=newFormat;
     return *this;

@@ -42,6 +42,130 @@ public:
         this->parent=parent;
     }
 
+    QRmk::Maker &makerPrepare()
+    {
+        this->maker.clear();
+
+        auto makeFilters=[this](QRmk::Headers &headers){
+
+
+            static const auto __title="title";
+            static const auto __field="field";
+            static const auto __value="value";
+
+            QVariantHash filters;
+
+            {//parse filters
+                const auto &modelInfo=this->parent->modelInfo();
+                auto vSource=this->parent->source().toHash();
+                const auto &vFields=modelInfo.propertyByFieldName();
+                QHashIterator<QString,QMetaProperty> i(vFields);
+                while(i.hasNext()){
+                    i.next();
+                    if(!vSource.contains(i.key()) && !vSource.contains(i.value().name()))
+                        continue;
+                    filters.insert(i.value().name(), vSource.value(i.key()));
+                }
+            }
+
+            QVariantHash __return;
+            QHashIterator<QString, QVariant> i(filters);
+            while(i.hasNext()){
+                i.next();
+
+                const auto &key=i.key().trimmed().toLower();
+                auto value=i.value();
+
+                if(!headers.contains(key))
+                    continue;
+
+                const auto &header=headers.header(key);
+                auto v=QVariantHash{{__title, header.title()}, {__field, key},{__value, value}};
+                __return.insert(key, v);
+            }
+            return __return;
+        };
+
+        auto makeHeaders=[this](QRmk::Headers &headers)
+        {
+            QStringList groupingField;
+            for(auto&header : this->parent->dto().headers().list()){
+                headers
+                        .header(header->field())
+                        .title(header->title())
+                        .align(header->align())
+                        .field(header->field())
+                        .width(header->width())
+                        .visible(header->displayer())
+                        .format(header->format())
+                        .dataType(header->dataType());
+                if(header->grouping() && !groupingField.contains(header->field()))
+                    groupingField.append(header->field());
+            }
+            this->maker.groupingFields(groupingField);
+        };
+
+        auto makeSummary=[this](QRmk::Headers &headers)
+        {
+            for(auto&header : this->parent->dto().headers().list()){
+                if(header->summaryMode()==header->None)
+                    continue;
+                headers
+                        .header(header->field())
+                        .format(header->format())
+                        .computeMode(header->summaryMode());
+            }
+        };
+
+        auto makerSignature=[](QRmk::Signatures &signatures)
+        {
+            Q_UNUSED(signatures)
+    //            auto declaration=QStringList
+    //            {
+    //                    "<p>Recebi da <strong>Empresa de Serviços</strong> LTDA com CNPJ: ",
+    //                    "888.888.88/0001-88, a importância total de <strong>R$ 505,82 ( QUINHENTOS E CINCO ",
+    //                    "REAIS E OITENTA E DOIS CENTAVOS )</strong> valor este discriminado acima</p> "
+    //            };
+
+    //            auto local="Sant Lois";
+
+    //            signatures
+    //                    .pageArea(QRmk::Signatures::Area{"20%","30%"})
+    //                    .title("Recibo")
+    //                    .declaration(declaration)
+    //                    .local(local);
+
+    //            signatures
+    //                    .signature("${document01}-One")
+    //                    .documentType(QRmk::Signature::CNPJ)
+    //                    .name("${name}");
+
+    //            signatures
+    //                    .signature("${document02}-Two")
+    //                    .documentType(QRmk::Signature::CNPJ)
+    //                    .name("${name}");
+
+    //            signatures
+    //                    .signature("${document03}-three")
+    //                    .documentType(QRmk::Signature::CNPJ)
+    //                    .name("${name}");
+        };
+
+        this->maker
+                .clean()
+                .headers(makeHeaders)
+                .summary(makeSummary)
+                .filters(makeFilters)
+                .title(this->parent->description())
+                .signature(makerSignature)
+                .owner(this->owner)
+                .make()
+                ;
+
+        return this->maker;
+    }
+
+
     auto &doModelAction(const QString &methodName)
     {
         auto method=this->actionMethod.value(methodName.toUtf8());
@@ -140,7 +264,7 @@ ModelDao &CRUDBase::dao()
 
 QRmk::Maker &CRUDBase::maker()
 {
-    return p->maker;
+    return p->makerPrepare();
 }
 
 const QOrm::Host &CRUDBase::host() const
@@ -551,132 +675,10 @@ ResultValue &CRUDBase::print()
 
 ResultValue &CRUDBase::print(const QVariant &value)
 {
-    p->maker.clean();
     if(!this->search(value))
         return this->lr();
 
-    auto makeFilters=[this](QRmk::Headers &headers){
-
-
-        static const auto __title="title";
-        static const auto __field="field";
-        static const auto __value="value";
-
-        QVariantHash filters;
-
-        {//parse filters
-            const auto &modelInfo=this->modelInfo();
-            auto vSource=this->source().toHash();
-            const auto &vFields=modelInfo.propertyByFieldName();
-            QHashIterator<QString,QMetaProperty> i(vFields);
-            while(i.hasNext()){
-                i.next();
-                if(!vSource.contains(i.key()) && !vSource.contains(i.value().name()))
-                    continue;
-                filters.insert(i.value().name(), vSource.value(i.key()));
-            }
-        }
-
-        QVariantHash __return;
-        QHashIterator<QString, QVariant> i(filters);
-        while(i.hasNext()){
-            i.next();
-
-            const auto &key=i.key().trimmed().toLower();
-            auto value=i.value();
-
-            if(!headers.contains(key))
-                continue;
-
-//            switch (value.typeId()) {
-//            case QVariantL:
-
-//                break;
-//            default:
-//                break;
-//            }
-
-
-            const auto &header=headers.header(key);
-            auto v=QVariantHash{{__title, header.title()}, {__field, key},{__value, value}};
-            __return.insert(key, v);
-        }
-        return __return;
-    };
-
-    auto makeHeaders=[this](QRmk::Headers &headers)
-    {
-        QStringList groupingField;
-        for(auto&header : this->dto().headers().list()){
-            headers
-                    .header(header->field())
-                    .title(header->title())
-                    .align(header->align())
-                    .field(header->field())
-                    .width(header->width())
-                    .visible(header->displayer())
-                    .format(header->format())
-                    .dataType(header->dataType());
-            if(header->grouping() && !groupingField.contains(header->field()))
-                groupingField.append(header->field());
-        }
-        this->p->maker.groupingFields(groupingField);
-    };
-
-    auto makeSummary=[this](QRmk::Headers &headers)
-    {
-        for(auto&header : this->dto().headers().list()){
-            if(header->summaryMode()==header->None)
-                continue;
-            headers
-                    .header(header->field())
-                    .computeMode(header->summaryMode());
-        }
-    };
-
-    auto makerSignature=[](QRmk::Signatures &signatures)
-    {
-        Q_UNUSED(signatures)
-//            auto declaration=QStringList
-//            {
-//                    "<p>Recebi da <strong>Empresa de Serviços</strong> LTDA com CNPJ: ",
-//                    "888.888.88/0001-88, a importância total de <strong>R$ 505,82 ( QUINHENTOS E CINCO ",
-//                    "REAIS E OITENTA E DOIS CENTAVOS )</strong> valor este discriminado acima</p> "
-//            };
-
-//            auto local="Sant Lois";
-
-//            signatures
-//                    .pageArea(QRmk::Signatures::Area{"20%","30%"})
-//                    .title("Recibo")
-//                    .declaration(declaration)
-//                    .local(local);
-
-//            signatures
-//                    .signature("${document01}-One")
-//                    .documentType(QRmk::Signature::CNPJ)
-//                    .name("${name}");
-
-//            signatures
-//                    .signature("${document02}-Two")
-//                    .documentType(QRmk::Signature::CNPJ)
-//                    .name("${name}");
-
-//            signatures
-//                    .signature("${document03}-three")
-//                    .documentType(QRmk::Signature::CNPJ)
-//                    .name("${name}");
-    };
-
-    this->maker()
-            .clean()
-            .headers(makeHeaders)
-            .summary(makeSummary)
-            .filters(makeFilters)
-            .items(this->lr().resultList())
-            .title(this->description())
-            .signature(makerSignature)
-            .owner(this->owner())
+    p->makerPrepare()
             .items(this->lr().resultList())
             .make()
             ;
@@ -739,8 +741,7 @@ ResultValue &CRUDBase::canActionCreate()
     if(!lr)
         return this->lr(lr);
     auto v=lr.resultVariant();
-    p->generatedRecords=this->maker()
-            .clean()
+    p->generatedRecords=p->makerPrepare()
             .items(v)
             .makeRecords();
     v={};
@@ -786,8 +787,7 @@ ResultValue &CRUDBase::canActionSearch()
             return this->lr(lr);
         v=lr.resultVariant();
     }
-    //p->generatedRecords=vu.toList(v);
-    p->generatedRecords=this->maker()
+    p->generatedRecords=p->makerPrepare()
             .clean()
             .items(v)
             .makeRecords();
