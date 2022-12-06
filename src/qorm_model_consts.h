@@ -114,7 +114,8 @@ static const auto vpActionStart="actionStart";
 static const auto vpUuid="uuid";
 static const auto vpVisible="visible";
 static const auto vpWidth="width";
-
+static const auto vpGrouping="grouping";
+static const auto vpSummaryMode="summaryMode";
 
 static const auto vList="list";
 static const auto vObject="object";
