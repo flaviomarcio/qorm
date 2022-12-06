@@ -299,8 +299,16 @@ protected:
     //!
     virtual ResultValue &remove(T &value)
     {
-        if(!this->p_dao.remove(value))
-            return this->lr(this->p_dao.lr());
+        auto &modelInfo=this->modelInfo();
+
+        if(!modelInfo.propertyDeactivateField().isEmpty()){
+            if(!this->p_dao.deactivate(value))
+                return this->lr(this->p_dao.lr());
+        }
+        else{
+            if(!this->p_dao.remove(value))
+                return this->lr(this->p_dao.lr());
+        }
 
         return this->lr().clear();
     }

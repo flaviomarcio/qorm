@@ -42,23 +42,50 @@ public:
         return true;
     }
 
-    static QVariantList cleanList(const QVariant &vValues)
+    static QVariant parseVariables(const QVariant &v)
     {
-
-        if(!vValues.isValid() || vValues.isNull())
-            return {};
-
-        QVariantList vList;
-        switch (vValues.typeId()) {
+        static const auto __searchValue = "${searchValue}";
+        switch (v.typeId()) {
+        case QMetaType::QVariantPair:
+        case QMetaType::QVariantMap:
+        case QMetaType::QVariantHash:
+        {
+            auto vHash=v.toHash();
+            if(vHash.contains(__searchValue))
+                return vHash.value(__searchValue);
+            break;
+        }
         case QMetaType::QVariantList:
         {
-            vList=vValues.toList();
+            auto vList=v.toList();
+            for(auto &v:vList)
+                v=parseVariables(v);
             break;
         }
         default:
-            vList.append(vValues);
+            break;
         }
+        return v;
+    }
 
+
+    static QVariantList cleanList(const QVariant &vValues)
+    {
+        if(!vValues.isValid() || vValues.isNull())
+            return {};
+
+        auto values=parseVariables(vValues);
+
+        QVariantList vList;
+        switch (values.typeId()) {
+        case QMetaType::QVariantList:
+        {
+            vList=values.toList();
+            break;
+        }
+        default:
+            vList.append(values);
+        }
 
         if(vList.isEmpty())
             return {};
@@ -90,6 +117,7 @@ public:
         }
         return __return;
     }
+
 
 };
 
