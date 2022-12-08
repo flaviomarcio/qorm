@@ -5,7 +5,6 @@
 #include <QRect>
 #include "../../../qstm/src/qstm_meta_enum.h"
 
-
 namespace QOrm {
 
 static const auto __30P="30%";
@@ -47,6 +46,7 @@ public:
     QStringList fieldsValid;
     ModelFieldDescriptors *parent=nullptr;
     QStm::MetaEnum<QOrm::ModelFieldDescriptors::ActionStart> actionStart=ModelFieldDescriptors::asSEARCH;
+    QRmk::Maker reportMaker;
     explicit ModelDescriptorPvt(ModelFieldDescriptors *parent)
         :
           QObject{parent},
@@ -669,6 +669,28 @@ void ModelFieldDescriptors::setActionStart(const QVariant &newActionStart)
 void ModelFieldDescriptors::resetActionStart()
 {
     setActionStart(asSEARCH);
+}
+
+QRmk::Maker &ModelFieldDescriptors::reportMaker()
+{
+    return p->reportMaker;
+}
+
+QVariant ModelFieldDescriptors::reportMakerGet() const
+{
+    return p->reportMaker.toHash();
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::reportMakerSet(const QVariant &v)
+{
+    p->reportMaker.setItems(v);
+    emit reportMakerChanged();
+    return *this;
+}
+
+ModelFieldDescriptors &ModelFieldDescriptors::reportMakerReset()
+{
+    return this->reportMakerSet({});
 }
 
 } // namespace QOrm

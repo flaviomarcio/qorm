@@ -9,6 +9,11 @@
 #include "./qorm_model_action_collection.h"
 #include "./private/p_qorm_model_dto_endpoints.h"
 #include "./private/p_qorm_model_dto_design.h"
+#include "../../qrmk/src/qrmk_maker.h"
+
+namespace QRmk {
+    class Maker;
+}
 
 #define QORM_DESCRIPTOR_SORT_SET(value) this->setSort(value)
 
@@ -56,7 +61,7 @@ class Q_ORM_EXPORT ModelFieldDescriptors : public QStm::ObjectWrapper
     Q_PROPERTY(QVariantHash sort READ sort WRITE setSort RESET resetSort NOTIFY sortChanged)
     Q_PROPERTY(QStringList fieldsValid READ fieldsValid WRITE setFieldsValid RESET resetFieldsValid NOTIFY fieldsValidChanged)
     Q_PROPERTY(ActionStart actionStart READ actionStart WRITE setActionStart RESET resetActionStart NOTIFY actionStartChanged)
-
+    Q_PROPERTY(QVariant reportMaker READ reportMakerGet WRITE reportMakerSet RESET reportMakerReset NOTIFY reportMakerChanged)
 public:
 
     //!
@@ -267,6 +272,16 @@ public:
     void setActionStart(const QVariant &newActionStart);
     void resetActionStart();
 
+    //!
+    //! \brief reportMaker
+    //! \return
+    //!
+    QRmk::Maker &reportMaker();
+private:
+    QVariant reportMakerGet()const;
+    ModelFieldDescriptors &reportMakerSet(const QVariant &v);
+    ModelFieldDescriptors &reportMakerReset();
+
 signals:
     void classNameChanged();
     void uuidChanged();
@@ -285,6 +300,7 @@ signals:
     void actionsChanged();
 
     void actionStartChanged();
+    void reportMakerChanged();
 
 private:
     ModelDescriptorPvt *p = nullptr;
