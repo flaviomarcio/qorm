@@ -7,6 +7,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(TEST QOrm_SRCS)
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
@@ -23,9 +24,11 @@ endif()
 
 #add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 
-#if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../qstm/src/src.cmake")
-  include(${CMAKE_CURRENT_SOURCE_DIR}/../qstm/src/src.cmake)
-#endif()
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../qstm/src/CMakeLists.txt")
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../qstm/src)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../qstm/src/private)
+  #include(${CMAKE_CURRENT_SOURCE_DIR}/../qstm/src/src.cmake)
+endif()
 
 #include(${CMAKE_CURRENT_SOURCE_DIR}/src/src.cmake)
 
