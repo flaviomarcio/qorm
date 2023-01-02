@@ -36,12 +36,22 @@ public:
     QVariant source;
     QVariantList generatedRecords;
     CRUDBase*parent=nullptr;
+#ifdef QTREFORCE_QRMK
     QRmk::Maker maker;
-    explicit CRUDBasePvt(CRUDBase*parent):QObject{parent}, options{parent}, dao{parent}, dto{parent}, maker{parent}
+#endif
+    explicit CRUDBasePvt(CRUDBase*parent):
+        QObject{parent}
+      , options{parent}
+      , dao{parent}
+#ifdef QTREFORCE_QRMK
+      , maker{parent}
+#endif
+      , dto{parent}
     {
         this->parent=parent;
     }
 
+#ifdef QTREFORCE_QRMK
     QRmk::Maker &makerPrepare()
     {
         this->maker.clear();
@@ -164,7 +174,7 @@ public:
 
         return this->maker;
     }
-
+#endif
 
     auto &doModelAction(const QString &methodName)
     {
@@ -262,10 +272,12 @@ ModelDao &CRUDBase::dao()
     return p->dao;
 }
 
+#ifdef QTREFORCE_QRMK
 QRmk::Maker &CRUDBase::maker()
 {
     return p->makerPrepare();
 }
+#endif
 
 const QOrm::Host &CRUDBase::host() const
 {
@@ -677,7 +689,7 @@ ResultValue &CRUDBase::print(const QVariant &value)
 {
     if(!this->search(value))
         return this->lr();
-
+#ifdef QTREFORCE_QRMK
     p->makerPrepare()
             .items(this->lr().resultList())
             .make()
@@ -688,6 +700,9 @@ ResultValue &CRUDBase::print(const QVariant &value)
         return this->lr();
 
     return this->lr(QUrl::fromLocalFile(fileName));
+#else
+    return this->lr();
+#endif
 }
 
 CRUDBase &CRUDBase::onBefore(QOrm::CRUDBodyActionMethod method)
@@ -741,10 +756,14 @@ ResultValue &CRUDBase::canActionCreate()
     if(!lr)
         return this->lr(lr);
     auto v=lr.resultVariant();
+#ifdef QTREFORCE_QRMK
     p->generatedRecords=p->makerPrepare()
             .items(v)
             .makeRecords();
     v={};
+#else
+    p->generatedRecords=vu.toList(v);
+#endif
     return this->lr(p->dto
                     .uuid(this->uuid())//crud uuid
                     .host(p->host)
@@ -787,11 +806,15 @@ ResultValue &CRUDBase::canActionSearch()
             return this->lr(lr);
         v=lr.resultVariant();
     }
+#ifdef QTREFORCE_QRMK
     p->generatedRecords=p->makerPrepare()
             .clean()
             .items(v)
             .makeRecords();
     v={};
+#else
+    p->generatedRecords=vu.toList(v);
+#endif
     return this->lr(p->dto
                     .uuid(this->uuid())//crud uuid
                     .host(p->host)

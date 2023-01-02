@@ -46,7 +46,9 @@ public:
     QStringList fieldsValid;
     ModelFieldDescriptors *parent=nullptr;
     QStm::MetaEnum<QOrm::ModelFieldDescriptors::ActionStart> actionStart=ModelFieldDescriptors::asSEARCH;
+#ifdef QTREFORCE_QRMK
     QRmk::Maker reportMaker;
+#endif
     explicit ModelDescriptorPvt(ModelFieldDescriptors *parent)
         :
           QObject{parent},
@@ -671,20 +673,30 @@ void ModelFieldDescriptors::resetActionStart()
     setActionStart(asSEARCH);
 }
 
+#ifdef QTREFORCE_QRMK
 QRmk::Maker &ModelFieldDescriptors::reportMaker()
 {
     return p->reportMaker;
 }
+#endif
 
 QVariant ModelFieldDescriptors::reportMakerGet() const
 {
+#ifdef QTREFORCE_QRMK
     return p->reportMaker.toHash();
+#else
+    return {};
+#endif
 }
 
 ModelFieldDescriptors &ModelFieldDescriptors::reportMakerSet(const QVariant &v)
 {
+#ifdef QTREFORCE_QRMK
     p->reportMaker.setItems(v);
     emit reportMakerChanged();
+#else
+    Q_UNUSED(v)
+#endif
     return *this;
 }
 
