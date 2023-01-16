@@ -43,10 +43,10 @@ public:
         QObject{parent}
       , options{parent}
       , dao{parent}
+      , dto{parent}
 #ifdef QTREFORCE_QRMK
       , maker{parent}
 #endif
-      , dto{parent}
     {
         this->parent=parent;
     }
