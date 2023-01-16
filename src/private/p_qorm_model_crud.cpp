@@ -19,6 +19,10 @@ static const auto __before = "before";
 static const auto __failed = "failed";
 static const auto __print = "print";
 
+static const auto __title="title";
+static const auto __field="field";
+static const auto __value="value";
+
 class CRUDBasePvt:public QObject{
 public:
     QStm::MetaEnum<CRUDBase::FormType> type=CRUDBase::RegisterForm;
@@ -57,12 +61,6 @@ public:
         this->maker.clear();
 
         auto makeFilters=[this](QRmk::Headers &headers){
-
-
-            static const auto __title="title";
-            static const auto __field="field";
-            static const auto __value="value";
-
             QVariantHash filters;
 
             {//parse filters
