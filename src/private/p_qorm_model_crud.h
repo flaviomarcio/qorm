@@ -64,12 +64,13 @@ public:
     //!
     ModelDao &dao();
 
+#ifdef QTREFORCE_QRMK
     //!
     //! \brief maker
     //! \return
     //!
     QRmk::Maker &maker();
-
+#endif
     //!
     //! \brief host
     //! \return

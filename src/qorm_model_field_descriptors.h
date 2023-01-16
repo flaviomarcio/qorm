@@ -9,8 +9,9 @@
 #include "./qorm_model_action_collection.h"
 #include "./private/p_qorm_model_dto_endpoints.h"
 #include "./private/p_qorm_model_dto_design.h"
+#ifdef QTREFORCE_QRMK
 #include "../../qrmk/src/qrmk_maker.h"
-
+#endif
 namespace QRmk {
     class Maker;
 }
@@ -272,11 +273,13 @@ public:
     void setActionStart(const QVariant &newActionStart);
     void resetActionStart();
 
+#ifdef QTREFORCE_QRMK
     //!
     //! \brief reportMaker
     //! \return
     //!
     QRmk::Maker &reportMaker();
+#endif
 private:
     QVariant reportMakerGet()const;
     ModelFieldDescriptors &reportMakerSet(const QVariant &v);
