@@ -29,15 +29,16 @@ public:
 
             QByteArray _textBytes;
             QString _textStr;
-            QGenericReturnArgument invokeReturn;
 
-            switch (method.returnType()) {
-            case QMetaType::QString:
-                invokeReturn = Q_RETURN_ARG(QString, _textStr);
-                break;
-            default:
-                invokeReturn = Q_RETURN_ARG(QByteArray, _textBytes);
-            }
+            auto makeArg=[&method, &_textStr, &_textBytes](){
+                switch (method.returnType()) {
+                case QMetaType::QString:
+                    return Q_RETURN_ARG(QString, _textStr);
+                default:
+                    return Q_RETURN_ARG(QByteArray, _textBytes);
+                }
+            };
+            auto invokeReturn=makeArg();
 
             if (!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)) {
 #ifdef Q_ORM_LOG_SUPER_VERBOSE
