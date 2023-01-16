@@ -451,7 +451,7 @@ public:
             QMultiHashIterator<QByteArray, QByteArray> i(mapWrapper);
             while (i.hasNext()) {
                 i.next();
-                auto &k=modelInfo.tablePrefix()+i.key();
+                auto  k=modelInfo.tablePrefix()+i.key();
                 auto &s=i.value();
                 auto v=record.value(k);
                 switch (v.typeId()){
