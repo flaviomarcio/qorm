@@ -1,6 +1,7 @@
 #Qt Project
 *.pro.user
 *.pro.user*
+*.txt.user.*
 
 # Prerequisites
 *.d
