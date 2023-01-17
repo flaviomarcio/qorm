@@ -149,22 +149,19 @@ public:
             QVariant _v;
             QVariantList _vList;
             QStringList _sList;
-            auto makeArg=[&method, &_v, &_vList, &_sList](){
 
-                switch (method.returnType()) {
-                case QMetaType::QVariantList:
-                    return Q_RETURN_ARG(QVariantList, _vList);
-                    break;
-                case QMetaType::QStringList:
-                    return Q_RETURN_ARG(QStringList, _sList);
-                    break;
-                default:
-                    return Q_RETURN_ARG(QVariant, _v);
-                    break;
-                }
-            };
-
-            auto invokeReturn=makeArg();
+            QGenericReturnArgument invokeReturn;
+            switch (method.returnType()) {
+            case QMetaType::QVariantList:
+                invokeReturn=Q_RETURN_ARG(QVariantList, _vList);
+                break;
+            case QMetaType::QStringList:
+                invokeReturn=Q_RETURN_ARG(QStringList, _sList);
+                break;
+            default:
+                invokeReturn=Q_RETURN_ARG(QVariant, _v);
+                break;
+            }
 
 
             if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
@@ -196,18 +193,18 @@ public:
             QVariantList _vList;
             QStringList _sList;
 
-            auto makeArg=[&method, &_v, &_vList, &_sList](){
-                switch (method.returnType()) {
-                case QMetaType::QVariantList:
-                    return Q_RETURN_ARG(QVariantList, _vList);
-                case QMetaType::QStringList:
-                    return Q_RETURN_ARG(QStringList, _sList);
-                default:
-                    return Q_RETURN_ARG(QVariant, _v);
-                }
-            };
+            QGenericReturnArgument invokeReturn;
 
-            auto invokeReturn=makeArg();
+            switch (method.returnType()) {
+            case QMetaType::QVariantList:
+                invokeReturn=Q_RETURN_ARG(QVariantList, _vList);
+                break;
+            case QMetaType::QStringList:
+                invokeReturn=Q_RETURN_ARG(QStringList, _sList);
+                break;
+            default:
+                invokeReturn=Q_RETURN_ARG(QVariant, _v);
+            }
 
             if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
                 continue;
@@ -244,20 +241,18 @@ public:
             QVariant _v;
             QVariantMap _vMap;
             QVariantHash _vHash;
-//            QGenericReturnArgument invokeReturn;
+            QGenericReturnArgument invokeReturn;
 
-            auto makeArg=[&method, &_v, &_vMap, &_vHash](){
-                switch (method.returnType()) {
-                case QMetaType::QVariantHash:
-                    return Q_RETURN_ARG(QVariantHash, _vHash);
-                case QMetaType::QVariantMap:
-                    return Q_RETURN_ARG(QVariantMap, _vMap);
-                default:
-                    return Q_RETURN_ARG(QVariant, _v);
-                }
-            };
-
-            auto invokeReturn=makeArg();
+            switch (method.returnType()) {
+            case QMetaType::QVariantHash:
+                invokeReturn=Q_RETURN_ARG(QVariantHash, _vHash);
+                break;
+            case QMetaType::QVariantMap:
+                invokeReturn=Q_RETURN_ARG(QVariantMap, _vMap);
+                break;
+            default:
+                invokeReturn=Q_RETURN_ARG(QVariant, _v);
+            }
 
             if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
                 continue;
@@ -293,19 +288,19 @@ public:
             QVariant _v;
             QByteArray _textBytes;
             QString _textString;
+            QGenericReturnArgument invokeReturn;
 
-            auto makeArg=[&method, &_v, &_textBytes, &_textString](){
-                switch (method.returnType()) {
-                case QMetaType::QByteArray:
-                    return Q_RETURN_ARG(QByteArray, _textBytes);
-                case QMetaType::QString:
-                    return Q_RETURN_ARG(QString, _textString);
-                default:
-                    return Q_RETURN_ARG(QVariant, _v);
-                }
-            };
-
-            auto invokeReturn=makeArg();
+            switch (method.returnType()) {
+            case QMetaType::QByteArray:
+                invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
+                break;
+            case QMetaType::QString:
+                invokeReturn=Q_RETURN_ARG(QString, _textString);
+                break;
+            default:
+                invokeReturn=Q_RETURN_ARG(QVariant, _v);
+                break;
+            }
 
             if(!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn))
                 continue;
