@@ -52,8 +52,11 @@ public:
         case QMetaType::QVariantHash:
         {
             auto vHash=v.toHash();
-            if(vHash.contains(__rowType))
+            if(vHash.contains(__rowType) && vHash.contains(__rowValue)){
+                if(vHash.value(__rowType).toInt()!=4)
+                    return {};
                 return vHash.value(__rowValue);
+            }
             break;
         }
         default:
@@ -98,18 +101,21 @@ public:
         if(!vValues.isValid() || vValues.isNull())
             return {};
 
-        auto values=parseVariables(vValues);
 
         QVariantList vList;
-        switch (values.typeId()) {
+        switch (vValues.typeId()) {
         case QMetaType::QVariantList:
         {
-            vList=values.toList();
+            vList=vValues.toList();
             break;
         }
         default:
-            vList.append(values);
+            vList.append(vValues);
         }
+        for(auto&v:vList)
+            v=parseRecord(v);
+
+        vList=parseVariables(vList).toList();
 
         if(vList.isEmpty())
             return {};
