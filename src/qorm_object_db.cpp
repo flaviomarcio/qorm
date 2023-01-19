@@ -35,8 +35,10 @@ public:
             switch (method.returnType()) {
             case QMetaType::QString:
                 invokeReturn=Q_RETURN_ARG(QString, _textStr);
+                break;
             default:
                 invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
+                break;
             }
 
             if (!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)) {
