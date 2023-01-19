@@ -2,6 +2,7 @@
 #include "../qorm_macro.h"
 #include "../qorm_const.h"
 #include "../../qstm/src/qstm_util_variant.h"
+#include "../../qstm/src/qstm_envs.h"
 #include <QFile>
 #include <QDir>
 #include <QJsonDocument>
@@ -162,7 +163,7 @@ bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
     auto settings=vSettings;
 
     if(vSettings.contains(QStringLiteral("connection")))
-        settings=vSettings[QStringLiteral("connection")].toHash();
+        settings=vSettings.value(QStringLiteral("connection")).toHash();
 
     if(vSettings.isEmpty()){
         p.clear();
@@ -174,34 +175,23 @@ bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
         return true;
     }
 
-    auto enviroment = QByteArray(getenv(QByteArrayLiteral("DATABASE_ENVIROMENT"))).trimmed();
+    auto enviroment = QByteArray(getenv(QByteArrayLiteral("DB_ENVIROMENT"))).trimmed();
 
-    QVariantHash defaultVariables;
-    QVariantHash defaultValues;
-    defaultVariables.insert(QStringLiteral("driver"        )  , QStringLiteral("DATABASE_DRIVER"  )    );
-    defaultVariables.insert(QStringLiteral("hostName"      )  , QStringLiteral("DATABASE_HOST"    )    );
-    defaultVariables.insert(QStringLiteral("userName"      )  , QStringLiteral("DATABASE_USERNAME")    );
-    defaultVariables.insert(QStringLiteral("password"      )  , QStringLiteral("DATABASE_PASSWORD")    );
-    defaultVariables.insert(QStringLiteral("dataBaseName"  )  , QStringLiteral("DATABASE_NAME"    )    );
-    defaultVariables.insert(QStringLiteral("connectOptions")  , QStringLiteral("DATABASE_OPTION"  )    );
-    defaultVariables.insert(QStringLiteral("port"          )  , QStringLiteral("DATABASE_PORT"    )    );
+    QStm::Envs envs;
+    envs.customEnvs(QStringLiteral("driver"        )  , QStringLiteral("DB_DRIVER"  ));
+    envs.customEnvs(QStringLiteral("hostName"      )  , QStringLiteral("DB_HOST"    ));
+    envs.customEnvs(QStringLiteral("userName"      )  , QStringLiteral("DB_USER"    ));
+    envs.customEnvs(QStringLiteral("password"      )  , QStringLiteral("DB_PASS"    ));
+    envs.customEnvs(QStringLiteral("dataBaseName"  )  , QStringLiteral("DB_DATABASE"));
+    envs.customEnvs(QStringLiteral("connectOptions")  , QStringLiteral("DB_OPTION"  ));
+    envs.customEnvs(QStringLiteral("port"          )  , QStringLiteral("DB_PORT"    ));
+    envs.customEnvs(QStringLiteral("schemaNames"   )  , QStringLiteral("DB_SCHEMA"  ));
 
-    if(!defaultVariables.isEmpty()){
-        QHashIterator<QString, QVariant> i(defaultVariables);
-        while (i.hasNext()) {
-            i.next();
-            auto env=i.value().toByteArray().trimmed();
-            auto v = QByteArray(getenv(env)).trimmed();
-            if(v.isEmpty())
-                v = QByteArray(getenv(env.toLower())).trimmed();
-            if(!v.isEmpty())
-                defaultValues.insert(i.key(),v);
-        }
-    }
     p.secret = settings.value(QStringLiteral("secret")).toByteArray();
     p.enviroment = settings.value(QStringLiteral("enviroment")).toByteArray();
     p.enviroment=enviroment.isEmpty()?p.enviroment:enviroment;
     auto paramaters = settings.value(QStringLiteral("paramaters")).toHash();
+    paramaters=envs.parser(paramaters).toHash();
     QHashIterator<QString, QVariant> i(paramaters);
     while (i.hasNext()) {
         i.next();
@@ -209,23 +199,13 @@ bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
         if(name.trimmed().isEmpty())
             continue;
 
-        auto value = paramaters.value(name).toHash();
+        auto value=i.value().toHash();
+        if(value.isEmpty())
+            continue;
 
-        if(p.enviroment.toLower()==i.key().toLower()){
-            QHashIterator<QString, QVariant> i(defaultValues);
-            while (i.hasNext()) {
-                i.next();
-                auto v0=value.value(i.key()).toString();
-                oWarning()<<QStringLiteral("replace [%1==%2] to [%1==%3]").arg(i.key(), v0, i.value().toString());
-                value.insert(i.key(), i.value());
-            }
-        }
-
-        if(!value.isEmpty()){
-            value.insert(QStringLiteral("name"), name);
-            p.insert(value);
-            RETURN=true;
-        }
+        value.insert(QStringLiteral("name"), name);
+        p.insert(value);
+        RETURN=true;
     }
     return RETURN;
 }
