@@ -9,7 +9,9 @@
 #include "../qorm_model_dto_options.h"
 #include "../qorm_model_dto.h"
 #include "../qorm_model_crud_types.h"
+#ifdef QTREFORCE_QRMK
 #include "../../../qrmk/include/QRmk"
+#endif
 
 namespace QOrm {
 typedef std::function<ResultValue &(QOrm::ObjectDb *controller, const QVariant &vBody)> CRUDBodyActionMethod;

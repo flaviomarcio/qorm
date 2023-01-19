@@ -19,9 +19,11 @@ static const auto __before = "before";
 static const auto __failed = "failed";
 static const auto __print = "print";
 
+#ifdef QTREFORCE_QRMK
 static const auto __title="title";
 static const auto __field="field";
 static const auto __value="value";
+#endif
 
 class CRUDBasePvt:public QObject{
 public:
