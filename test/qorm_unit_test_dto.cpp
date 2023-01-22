@@ -41,7 +41,7 @@ TEST_F(Q_ORM_DTOTestUnit, serviceTestOutPut)
         EXPECT_EQ(items.isEmpty()   ,false)<<"invalid items";
 
 
-        EXPECT_EQ(headers.size() ,3)<<"invalid headers";
+        EXPECT_EQ(headers.size() ,4)<<"invalid headers";
         //EXPECT_EQ(links.size()   ,2)<<"invalid links";
         EXPECT_EQ(filters.size() ,0)<<"invalid filters";
         //EXPECT_EQ(edit.size()    ,2)<<"invalid fields";

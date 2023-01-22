@@ -1009,8 +1009,16 @@ ResultValue &Model::isValid()
     auto pk=this->modelInfo().tablePk();
     for(const auto &s:pk){
         auto v=this->property(s.toUtf8());
-        if(v.isNull() || !v.isValid())
-            return this->lr()=false;
+        switch (v.typeId()) {
+        case QMetaType::QUuid:{
+            if(v.toUuid().isNull())
+                return this->lr()=false;
+            break;
+        }
+        default:
+            if(v.isNull() || !v.isValid())
+                return this->lr()=false;
+        }
     }
     return this->lr()=true;
 }

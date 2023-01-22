@@ -550,7 +550,7 @@ public:
             pvt->propertyPK.insert(propertyName, pvt->propertyByName.value(propertyName));
         }
 
-        pvt->tablePkSingle=pvt->tablePk.isEmpty()?"":pvt->tablePk.join(__space);
+        pvt->tablePkSingle=pvt->tablePk.isEmpty()?"":pvt->tablePk.first();
 
         for(auto &propertyName:tableForeignPK.split(__space)){
             if(propertyName.isEmpty())
