@@ -4,6 +4,7 @@
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_const.h"
 #include "../qorm_log.h"
+#include "../qorm_macro.h"
 #include "../qorm_model.h"
 #include "../qorm_model_field_descriptors.h"
 //#include "../qorm_macro.h"
@@ -76,9 +77,9 @@ public:
     explicit ModelInfoPvt(ModelInfo*parent)
 #ifdef Q_ORM_MODEL_INFO_OBJECT
         :QObject{parent}
-#else
+    #else
         :QObject{}
-#endif
+    #endif
     {
         this->modelInfo=parent;
     }
@@ -361,7 +362,7 @@ public:
     void read(ModelInfoPvt *p)
     {
 #define ____copy(var)\
-        this->var=p->var;
+    this->var=p->var;
         ____copy(tablePkAutoGenerate    );
         ____copy(property               );
         ____copy(propertyByName         );
@@ -779,9 +780,9 @@ Q_ORM_STARTUP_FUNCTION(init);
 ModelInfo::ModelInfo(QObject *parent)
 #ifdef Q_ORM_MODEL_INFO_OBJECT
     :QStm::ObjectWrapper{parent}
-#else
+    #else
     :QVariant{}
-#endif
+    #endif
 {
     Q_UNUSED(parent)
     this->p=new ModelInfoPvt{this};
@@ -790,9 +791,9 @@ ModelInfo::ModelInfo(QObject *parent)
 ModelInfo::ModelInfo(const QByteArray &className, QObject *parent)
 #ifdef Q_ORM_MODEL_INFO_OBJECT
     :QStm::ObjectWrapper{parent}
-#else
+    #else
     :QVariant{}
-#endif
+    #endif
 {
     Q_UNUSED(parent)
     this->p=new ModelInfoPvt{this};
@@ -805,9 +806,9 @@ ModelInfo::ModelInfo(const QByteArray &className, QObject *parent)
 ModelInfo::ModelInfo(const QMetaObject &metaObject, QObject *parent)
 #ifdef Q_ORM_MODEL_INFO_OBJECT
     :QStm::ObjectWrapper{parent}
-#else
+    #else
     :QVariant{}
-#endif
+    #endif
 {
     Q_UNUSED(parent)
     this->p=new ModelInfoPvt{this};
@@ -896,11 +897,11 @@ const ModelInfo &ModelInfo::from(const QVariant &v)
         className=v.toByteArray();
     }
 
-    if(__static_model_info->contains(className)){
+    if(!className.isEmpty() && __static_model_info->contains(className)){
         const auto &info=*__static_model_info->value(className);
         return info;
     }
-
+    oWarning()<<QObject::tr("Invalid model info, className:[%1]").arg(className);
     static ModelInfo info;
     return info;
 }

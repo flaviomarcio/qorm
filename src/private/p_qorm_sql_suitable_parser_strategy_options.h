@@ -423,7 +423,7 @@ public:
         if(list.isEmpty())
             return {};
         QStringList output;
-        output<<parser.parserCommand(KeywordCombine::kcWhere);
+        output.append(parser.parserCommand(KeywordCombine::kcWhere));
         auto first=true;
         for(auto &v:list){
             auto map=v.toHash();
@@ -432,7 +432,7 @@ public:
                 first=false;
             }
             SqlParserCondition condition(map);
-            output<<condition.toScript(parser);
+            output.append(condition.toScript(parser));
         }
         return output;
     }
@@ -874,16 +874,16 @@ public:
 
         QVariantList lst;
         for(auto &v:lstFrom)
-            lst<<v;
+            lst.append(v);
         for(auto &v:lstJoin)
-            lst<<v;
+            lst.append(v);
         for(auto &v:lstWhere)
-            lst<<v;
+            lst.append(v);
 
         QStringList output;
         for(auto &vCombine:lst){
             auto combine=SqlParserCombinations::SqlParserCombination{vCombine};
-            output<<combine.toScript(parser);
+            output.append(combine.toScript(parser));
         }
 
         return output;

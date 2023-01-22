@@ -285,18 +285,18 @@ public:
                 if(isGrouping)
                     parser_groupby.append(group);
             }
-            output<<(fields.isEmpty()?"":fields.join(','));
+            output.append((fields.isEmpty()?"":fields.join(',')));
         }
 
 
         if(!parser_combination.isEmpty()){
             SqlParserCombinations<SqlParserSelect> obj(parser_combination);
-            output<<obj.toScript(parser);
+            output.append(obj.toScript(parser));
         }
 
         if(!parser_groupby.isEmpty()){
-            output<<parser.parserCommand(kgcGroupBy);
-            output<<parser_groupby.join(',');
+            output.append(parser.parserCommand(kgcGroupBy));
+            output.append(parser_groupby.join(','));
         }
 
         if(parser_orderby.isValid()){
@@ -325,7 +325,7 @@ public:
                         else
                             name=item.toString().trimmed();
                         if(!fields.contains(name))
-                            fields<<name;
+                            fields.append(name);
                         break;
                     }
                     case QMetaType::QVariantList:
@@ -531,11 +531,11 @@ public:
         auto parser_combination=appendMapStartsWith(local_keys, mapObject);
         QStringList output;
         if(!parser_combination.isEmpty()){
-            output<<parser.parserCommand(kgcDelete);
+            output.append(parser.parserCommand(kgcDelete));
 
             if(!parser_combination.isEmpty()){
                 SqlParserCombinations<SqlParserRemove> obj(parser_combination);
-                output<<obj.toScript(parser);
+                output.append(obj.toScript(parser));
             }
         }
         return output;
@@ -594,7 +594,7 @@ public:
             else
                 command=parser.parserCommand(type, &modelInfo, object);
             for(auto &v:command)
-                output<<v;
+                output.append(v);
         }
 
         return output;
@@ -652,7 +652,7 @@ public:
             if(modelInfo.isValid())
                 command=parser.parserCommand(type, &modelInfo, value);
             for(auto &v:command)
-                output<<v;
+                output.append(v);
         }
 
         return output;

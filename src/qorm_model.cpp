@@ -510,6 +510,51 @@ public:
         return __return;
     }
 
+    bool isEmptyPK()
+    {
+        const auto &modelInfo=this->modelInfo();
+        auto pks=modelInfo.propertyPK();
+        if(pks.isEmpty())
+            return true;
+        QHashIterator<QString,QMetaProperty> i(pks);
+        while(i.hasNext()){
+            i.next();
+            auto&property=i.value();
+            auto v=property.read(this->model);
+            switch (property.typeId()) {
+            case QMetaType::QUuid:{
+                if(v.toUuid().isNull())
+                    return true;
+                break;
+            }
+            case QMetaType::QUrl:{
+                if(v.toUrl().isEmpty())
+                    return true;
+                break;
+            }
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:
+            case QMetaType::QVariantPair:
+            {
+                if(v.toHash().isEmpty())
+                    return true;
+                break;
+            }
+            case QMetaType::QVariantList:
+            case QMetaType::QStringList:
+            {
+                if(v.toHash().isEmpty())
+                    return true;
+                break;
+            }
+            default:
+                if(v.isNull() || !v.isValid())
+                    return true;
+            }
+        }
+        return {};
+    }
+
 };
 
 Model::Model(QObject *parent):QOrm::Object{parent}
@@ -1006,21 +1051,7 @@ ResultValue &Model::deactivateSetValues()
 
 ResultValue &Model::isValid()
 {
-    auto pk=this->modelInfo().tablePk();
-    for(const auto &s:pk){
-        auto v=this->property(s.toUtf8());
-        switch (v.typeId()) {
-        case QMetaType::QUuid:{
-            if(v.toUuid().isNull())
-                return this->lr()=false;
-            break;
-        }
-        default:
-            if(v.isNull() || !v.isValid())
-                return this->lr()=false;
-        }
-    }
-    return this->lr()=true;
+    return this->lr()=!p->isEmptyPK();
 }
 
 ResultValue &Model::isActive()
@@ -1030,13 +1061,7 @@ ResultValue &Model::isActive()
 
 ResultValue &Model::isEmptyPK()
 {
-    auto pk=this->modelInfo().tablePk();
-    for(const auto &s:pk){
-        auto v=this->property(s.toUtf8());
-        if(v.isNull() || !v.isValid())
-            return this->lr()=true;
-    }
-    return this->lr()=false;
+    return this->lr()=p->isEmptyPK();
 }
 
 bool Model::beforePost()const

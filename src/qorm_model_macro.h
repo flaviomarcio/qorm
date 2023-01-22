@@ -13,12 +13,15 @@
 
 #define QORM_MODEL(modelClass)\
 public:\
-    virtual const QByteArray &modelName() const{\
+    virtual const QByteArray modelName() const{\
         static const QByteArray name=QString{this->metaObject()->className()}.split(QStringLiteral("::")).last().toLower().toUtf8();\
         return name;\
     }\
 public:\
-    auto &modelInfo()const{return QOrm::ModelInfo::from(modelClass::staticMetaObject);}\
+    virtual const QOrm::ModelInfo &modelInfo()const{\
+        static const auto __modelInfo=QOrm::ModelInfo::from(modelClass::staticMetaObject);\
+        return __modelInfo;\
+    }\
     Q_PROPERTY(QByteArray tablePrefix READ tablePrefix)\
     Q_PROPERTY(QByteArray tablePrefixSeparator READ tablePrefixSeparator)\
     Q_PROPERTY(QByteArray tableName READ tableName)\
