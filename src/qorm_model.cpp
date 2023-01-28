@@ -645,7 +645,66 @@ QVariantHash Model::toPKValues() const
         if(!property.isValid())
             return {};
 
-        auto fieldName=propertyShortVsTable[property.name()].trimmed();
+        auto fieldName=propertyShortVsTable.value(property.name()).trimmed();
+        if(fieldName.isEmpty())
+            return {};
+
+        auto value=property.read(this);
+
+        switch (property.typeId()) {
+        case QMetaType::QUuid:{
+            auto uuid=value.toUuid();
+            auto v=uuid.toString();
+            value=v;
+            break;
+        }
+        case QMetaType::QUrl:{
+            auto v=value.toUrl().toString();//no remove the .toString()
+            value=v;
+            break;
+        }
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+        {
+            auto v=value.toHash();
+            value=v;
+            break;
+        }
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        case QMetaType::QChar:
+        case QMetaType::QBitArray:
+        {
+            auto v=value.toString().trimmed();
+//            if(v.isEmpty())
+//                return {};
+            value=v;
+            break;
+        }
+        default:
+            break;
+        }
+
+        //value=property.read(this);
+        const auto k=SqlParserItem::createObject(fieldName);
+        const auto v=SqlParserItem::createValue(value);
+        qvvm.insert(k,v);
+
+    }
+    return QVariant{qvvm}.toHash();
+}
+
+QVariantHash Model::toPKValuesValid() const
+{
+    QVVM qvvm;
+    auto &modelInfo=p->modelInfo();
+    const auto &propertyShortVsTable=modelInfo.propertyShortVsTable();
+    auto pList=modelInfo.propertyPK().values();
+    for(auto &property:pList){
+        if(!property.isValid())
+            return {};
+
+        auto fieldName=propertyShortVsTable.value(property.name()).trimmed();
         if(fieldName.isEmpty())
             return {};
 
@@ -700,6 +759,7 @@ QVariantHash Model::toPKValues() const
     return QVariant{qvvm}.toHash();
 }
 
+
 QVariantHash Model::toFKValues() const
 {
     QVVM qvvm;
@@ -710,7 +770,7 @@ QVariantHash Model::toFKValues() const
         if(!property.isValid())
             continue;
 
-        auto fieldName=propertyShortVsTable[property.name()].trimmed();
+        auto fieldName=propertyShortVsTable.value(property.name()).trimmed();
         if(fieldName.isEmpty())
             continue;
 

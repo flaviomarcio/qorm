@@ -314,8 +314,6 @@ public:
     auto &exists(T &model)
     {
         auto vHash = model.toPKValues();
-        if (vHash.isEmpty())
-            vHash = model.toFKValues();
         return this->exists(vHash);
     }
 
@@ -598,8 +596,6 @@ public:
     {
         auto vHash = model.toPKValues();
         if (vHash.isEmpty())
-            vHash = model.toFKValues();
-        if (vHash.isEmpty())
             return this->lr() = false;
         return this->remove(vHash);
     }
@@ -649,7 +645,7 @@ public:
     //!
     auto &reload(T &model)
     {
-        auto vHash = model.toPKValues();
+        auto vHash = model.toPKValuesValid();
         if (vHash.isEmpty())
             vHash = model.toFKValues();
         if (vHash.isEmpty())

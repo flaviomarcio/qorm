@@ -121,6 +121,12 @@ public:
     virtual QVariantHash toPKValues() const;
 
     //!
+    //! \brief toPKValuesValid
+    //! \return
+    //!
+    virtual QVariantHash toPKValuesValid() const;
+
+    //!
     //! \brief toFKValues
     //! \return
     //!

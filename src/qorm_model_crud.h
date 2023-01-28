@@ -165,7 +165,7 @@ protected:
     //!
     virtual ResultValue &search(const T &model)
     {
-        auto value=model.toPKValues();
+        auto value=model.toPKValuesValid();
         VariantUtil util;
         if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
             return this->lr();
