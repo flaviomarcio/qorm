@@ -14,6 +14,12 @@
 
 namespace QOrm {
 
+//static const auto driver_QMYSQL="QMYSQL";
+static const auto driver_QODBC="QODBC";
+//static const auto driver_QOIC="QOIC";
+//static const auto driver_QPSQL="QPSQL";
+static const auto driver_QSQLITE="QSQLITE";
+
 static qlonglong connectionCount = 0;
 Q_GLOBAL_STATIC(QStringList, static_dbcDrivers)
 
@@ -216,25 +222,52 @@ public:
             this->finish(__connection);
             return {};
         }
+        QString url;
+#if Q_ORM_LOG
+        static const auto __format=QString("connection: %1://%2");
+        if(__connection.driverName()==driver_QSQLITE){
+            url=__format.arg(__connection.driverName(), __connection.databaseName());
+        }
+        else if(__connection.driverName()==driver_QODBC){
+            url=__format.arg(__connection.driverName(), __connection.connectOptions());
+        }
+        else if(__connection.hostName().isEmpty() && !__connection.connectOptions().isEmpty()){
+            url=__format.arg(__connection.driverName(), __connection.connectOptions());
+        }
+        else {
+#ifdef QT_DEBUG
+            static const auto __format=QString("connection: %1://%2:%3/%4?user=%5&password=%6");
+            url=__format
+                    .arg(__connection.driverName(),__connection.hostName())
+                    .arg(__connection.port())
+                    .arg(__connection.databaseName(), __connection.userName(), __connection.password());
+
+#else
+            static const auto __format=QString("connection: %1://%2:%3/%4?user=%5");
+            url=__format
+                    .arg(__connection.driverName(),__connection.hostName())
+                    .arg(__connection.port())
+                    .arg(__connection.databaseName(), __connection.userName());
+#endif
+#endif
+        }
 
         if (!__connection.open()) {
 #if Q_ORM_LOG
             this->lastError = __connection.lastError();
-            oWarning() << __connection.lastError().text();
-            if (__connection.driverName() == QStringLiteral("QODBC")) {
-#ifndef QT_DEBUG
-                __connection.setPassword({});
-#endif
-                oWarning() << __connection.databaseName();
-            }
+            static const auto __format=QString("%1, error=%2");
+            oWarning() << __format.arg(url, __connection.lastError().text());
 #endif
             this->finish(__connection);
             return {};
         }
-
-#if Q_ORM_LOG_VERBOSE
-        oWarning() << tr("%1:%2 is connected").arg(db.driverName(), db.connectionName());
+        else{
+#if Q_ORM_LOG
+            static const auto __format=QString("%1, successful");
+            oWarning() << __format.arg(url);
 #endif
+        }
+
         auto &keyWord = SqlSuitableKeyWord::parser(__connection);
         if (!keyWord.isValid())
             return {};
