@@ -166,7 +166,7 @@ public:
         QString connectOptions = this->connectionSetting.connectOptions().trimmed();
         auto schameNames = this->connectionSetting.schemaNames();
 
-        if (__connection.driverName() == QStringLiteral("QODBC")) {
+        if (__connection.driverName() == driver_QODBC) {
             QString odbcDriver;
             const auto &odbcDriverList = *static_dbcDrivers;
             if (odbcDriverList.isEmpty())
