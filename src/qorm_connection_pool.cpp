@@ -20,6 +20,8 @@ static const auto driver_QODBC="QODBC";
 //static const auto driver_QPSQL="QPSQL";
 static const auto driver_QSQLITE="QSQLITE";
 
+static const auto __arg_1="%1";
+
 static qlonglong connectionCount = 0;
 Q_GLOBAL_STATIC(QStringList, static_dbcDrivers)
 
@@ -104,6 +106,35 @@ public:
     virtual bool from(const QSqlDatabase &db)
     {
         return connectionSetting.fromConnection(db).isValid();
+    }
+
+    static QString urlMaker(const QSqlDatabase &connection)
+    {
+        static const auto __formatDefault=QStringLiteral("connection: %1://%2");
+        if(connection.driverName()==driver_QSQLITE)
+            return __formatDefault.arg(connection.driverName(), connection.databaseName());
+
+        if(connection.driverName()==driver_QODBC)
+            return __formatDefault.arg(connection.driverName(), connection.connectOptions());
+
+        if(connection.hostName().isEmpty() && !connection.connectOptions().isEmpty())
+            return __formatDefault.arg(connection.driverName(), connection.connectOptions());
+
+#ifdef QT_DEBUG
+        static const auto __format=QStringLiteral("connection: %1://%2:%3/%4?user=%5&password=%6");
+        return __format
+                .arg(connection.driverName(),connection.hostName())
+                .arg(connection.port())
+                .arg(connection.databaseName(), connection.userName(), connection.password());
+
+#else
+        static const auto __format=QStringLiteral("connection: %1://%2:%3/%4?user=%5");
+        retunr __format
+                .arg(__connection.driverName(),__connection.hostName())
+                .arg(__connection.port())
+                .arg(__connection.databaseName(), __connection.userName());
+#endif
+
     }
 
     bool get(QSqlDatabase &connection, bool readOnly)
@@ -214,58 +245,32 @@ public:
             __connection.setConnectOptions(connectOptions);
         }
 
-        QString url;
-#if Q_ORM_LOG
-        static const auto __format=QStringLiteral("connection: %1://%2");
-        if(__connection.driverName()==driver_QSQLITE){
-            url=__format.arg(__connection.driverName(), __connection.databaseName());
-        }
-        else if(__connection.driverName()==driver_QODBC){
-            url=__format.arg(__connection.driverName(), __connection.connectOptions());
-        }
-        else if(__connection.hostName().isEmpty() && !__connection.connectOptions().isEmpty()){
-            url=__format.arg(__connection.driverName(), __connection.connectOptions());
-        }
-        else {
-#ifdef QT_DEBUG
-            static const auto __format=QStringLiteral("connection: %1://%2:%3/%4?user=%5&password=%6");
-            url=__format
-                    .arg(__connection.driverName(),__connection.hostName())
-                    .arg(__connection.port())
-                    .arg(__connection.databaseName(), __connection.userName(), __connection.password());
-
-#else
-            static const auto __format=QStringLiteral("connection: %1://%2:%3/%4?user=%5");
-            url=__format
-                    .arg(__connection.driverName(),__connection.hostName())
-                    .arg(__connection.port())
-                    .arg(__connection.databaseName(), __connection.userName());
-#endif
-#endif
-        }
 
         if (!__connection.isValid()) {
-#if Q_ORM_LOG
             this->lastError = __connection.lastError();
+            this->finish(__connection);
+#if Q_ORM_LOG
             static const auto __format=QStringLiteral("%1, invalid connection");
+            QString url=this->urlMaker(__connection);
             oWarning() << __format.arg(url);
 #endif
-            this->finish(__connection);
             return {};
         }
 
         if (!__connection.open()) {
-#if Q_ORM_LOG
             this->lastError = __connection.lastError();
+            this->finish(__connection);
+#if Q_ORM_LOG
             static const auto __format=QStringLiteral("%1, error=%2");
+            QString url=this->urlMaker(__connection);
             oWarning() << __format.arg(url, __connection.lastError().text());
 #endif
-            this->finish(__connection);
             return {};
         }
 #if Q_ORM_LOG_VERBOSE
         else{
             static const auto __format=QString("%1, successful");
+            QString url=this->urlMaker(__connection);
             oWarning() << __format.arg(url);
         }
 #endif
@@ -279,12 +284,12 @@ public:
 
         //connectionName
         cmd = keyWord.parserCommand(kgcSetApplicationName);
-        if (cmd.contains(QStringLiteral("%1")))
+        if (cmd.contains(__arg_1))
             listCmd.append(cmd.arg(this->baseName));
 
         if (!schameNames.isEmpty()) {
             cmd = keyWord.parserCommand(kgcSetSearchPath);
-            if (cmd.contains(QStringLiteral("%1")))
+            if (cmd.contains(__arg_1))
                 listCmd.append(cmd.arg(schameNames.join(QStringLiteral(","))));
         }
 
