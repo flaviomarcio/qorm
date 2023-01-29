@@ -214,17 +214,9 @@ public:
             __connection.setConnectOptions(connectOptions);
         }
 
-        if (!__connection.isValid()) {
-#if Q_ORM_LOG
-            this->lastError = __connection.lastError();
-            oWarning() << __connection.lastError().text();
-#endif
-            this->finish(__connection);
-            return {};
-        }
         QString url;
 #if Q_ORM_LOG
-        static const auto __format=QString("connection: %1://%2");
+        static const auto __format=QStringLiteral("connection: %1://%2");
         if(__connection.driverName()==driver_QSQLITE){
             url=__format.arg(__connection.driverName(), __connection.databaseName());
         }
@@ -236,14 +228,14 @@ public:
         }
         else {
 #ifdef QT_DEBUG
-            static const auto __format=QString("connection: %1://%2:%3/%4?user=%5&password=%6");
+            static const auto __format=QStringLiteral("connection: %1://%2:%3/%4?user=%5&password=%6");
             url=__format
                     .arg(__connection.driverName(),__connection.hostName())
                     .arg(__connection.port())
                     .arg(__connection.databaseName(), __connection.userName(), __connection.password());
 
 #else
-            static const auto __format=QString("connection: %1://%2:%3/%4?user=%5");
+            static const auto __format=QStringLiteral("connection: %1://%2:%3/%4?user=%5");
             url=__format
                     .arg(__connection.driverName(),__connection.hostName())
                     .arg(__connection.port())
@@ -252,21 +244,31 @@ public:
 #endif
         }
 
+        if (!__connection.isValid()) {
+#if Q_ORM_LOG
+            this->lastError = __connection.lastError();
+            static const auto __format=QStringLiteral("%1, invalid connection");
+            oWarning() << __format.arg(url);
+#endif
+            this->finish(__connection);
+            return {};
+        }
+
         if (!__connection.open()) {
 #if Q_ORM_LOG
             this->lastError = __connection.lastError();
-            static const auto __format=QString("%1, error=%2");
+            static const auto __format=QStringLiteral("%1, error=%2");
             oWarning() << __format.arg(url, __connection.lastError().text());
 #endif
             this->finish(__connection);
             return {};
         }
+#if Q_ORM_LOG_VERBOSE
         else{
-#if Q_ORM_LOG
             static const auto __format=QString("%1, successful");
             oWarning() << __format.arg(url);
-#endif
         }
+#endif
 
         auto &keyWord = SqlSuitableKeyWord::parser(__connection);
         if (!keyWord.isValid())
