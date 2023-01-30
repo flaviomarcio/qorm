@@ -150,8 +150,9 @@ public:
 
         if (driver.isEmpty()) {
 #if Q_ORM_LOG
+            static const auto __msg=QStringLiteral("driver is empty, avaliable drivers, %1");
             static const auto drivers = QSqlDatabase::drivers();
-            auto msg = QStringLiteral("driver is empty, avaliable drivers, %1").arg(drivers.join(QStringLiteral(",")));
+            auto msg = __msg.arg(drivers.join(QStringLiteral(",")));
             this->lastError = QSqlError(QStringLiteral("NoDriver"), msg);
             oWarning() << msg;
 #endif
@@ -160,20 +161,22 @@ public:
 
         if (!QSqlDatabase::isDriverAvailable(driver)) {
 #if Q_ORM_LOG
-            auto msg = QStringLiteral("no avaliable driver: ") + driver;
+            static const auto __msg=QStringLiteral("no avaliable driver: %1");
+            auto msg = __msg.arg(driver);
             this->lastError = QSqlError(QStringLiteral("NoDriver"), msg);
             oWarning() << msg;
 #endif
             return {};
         }
 
-        auto connectionName = QStringLiteral("%1_%2").arg(this->baseName.left(55)).arg(++connectionCount);
+        static const auto __c_2_args=QStringLiteral("%1_%2");
+        auto connectionName = __c_2_args.arg(this->baseName.left(55)).arg(++connectionCount);
         auto __connection = QSqlDatabase::addDatabase(driver, connectionName);
         if (!__connection.isValid()) {
 #if Q_ORM_LOG
-            auto msg = QStringLiteral("invalid QSqlDatabase connection settings");
-            this->lastError = QSqlError(driver, msg);
-            oWarning() << msg;
+            static const auto __msg = QStringLiteral("invalid QSqlDatabase connection settings");
+            this->lastError = QSqlError(driver, __msg);
+            oWarning() << __msg;
 #endif
             this->finish(__connection);
             return {};
@@ -181,7 +184,8 @@ public:
 
         if (!__connection.lastError().text().isEmpty()) {
 #if Q_ORM_LOG
-            auto msg = QStringLiteral("QSqlDatabase error: ") + __connection.lastError().text();
+            static const auto __msg=QStringLiteral("QSqlDatabase error: %1");
+            auto msg = __msg.arg(__connection.lastError().text());
             this->lastError = QSqlError(driver, msg);
             oWarning() << msg;
 #endif
@@ -306,8 +310,9 @@ public:
             cmd = listCmd.join(QStringLiteral(";"));
             QSqlQuery query{__connection};
             if (!query.exec(cmd)) {
+                static const auto __msg=QStringLiteral("%1:%2 error:%3");
                 this->lastError = __connection.lastError();
-                oWarning() << QStringLiteral("%1:%2 error:%3")
+                oWarning() << __msg
                               .arg(__connection.driverName(),
                                    __connection.connectionName(),
                                    query.lastError().text());
