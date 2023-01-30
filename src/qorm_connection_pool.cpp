@@ -130,9 +130,9 @@ public:
 #else
         static const auto __format=QStringLiteral("connection: %1://%2:%3/%4?user=%5");
         return __format
-                .arg(__connection.driverName(),__connection.hostName())
-                .arg(__connection.port())
-                .arg(__connection.databaseName(), __connection.userName());
+                .arg(connection.driverName(),connection.hostName())
+                .arg(connection.port())
+                .arg(connection.databaseName(), connection.userName());
 #endif
 
     }
