@@ -181,7 +181,7 @@ bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
     envs.customEnvs(QStringLiteral("driver"        )  , QStringLiteral("DB_DRIVER"  ));
     envs.customEnvs(QStringLiteral("hostName"      )  , QStringLiteral("DB_HOST"    ));
     envs.customEnvs(QStringLiteral("userName"      )  , QStringLiteral("DB_USER"    ));
-    envs.customEnvs(QStringLiteral("password"      )  , QStringLiteral("DB_PASS"    ));
+    envs.customEnvs(QStringLiteral("password"      )  , QStringLiteral("DB_PASSWORD"    ));
     envs.customEnvs(QStringLiteral("dataBaseName"  )  , QStringLiteral("DB_DATABASE"));
     envs.customEnvs(QStringLiteral("connectOptions")  , QStringLiteral("DB_OPTION"  ));
     envs.customEnvs(QStringLiteral("port"          )  , QStringLiteral("DB_PORT"    ));
