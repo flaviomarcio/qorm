@@ -12,6 +12,37 @@
 
 namespace QOrm {
 
+//"secret"
+//"environment"
+//"paramaters"
+
+static const auto __secret="secret";
+static const auto __environment="environment";
+static const auto __paramaters="paramaters";
+
+static const auto __connection="connection";
+static const auto __host="host";
+static const auto __user="user";
+static const auto __driver="driver";
+static const auto __hostName="hostName";
+static const auto __userName="userName";
+static const auto __password="password";
+static const auto __dataBaseName="dataBaseName";
+static const auto __connectOptions="connectOptions";
+static const auto __schemaNames="schemaNames";
+static const auto __port="port";
+static const auto __name="name";
+
+static const auto __DB_ENVIRONMENT="DB_ENVIRONMENT";
+static const auto __DB_DRIVER="DB_DRIVER";
+static const auto __DB_HOST="DB_HOST";
+static const auto __DB_USER="DB_USER";
+static const auto __DB_PASSWORD="DB_PASSWORD";
+static const auto __DB_DATABASE="DB_DATABASE";
+static const auto __DB_OPTION="DB_OPTION";
+static const auto __DB_PORT="DB_PORT";
+static const auto __DB_SCHEMA="DB_SCHEMA";
+
 ConnectionManagerPvt::ConnectionManagerPvt(ConnectionManager *parent):QObject{parent}, notify(parent),defaultPool(parent)
 {
     this->parent=parent;
@@ -113,7 +144,7 @@ ConnectionManager &ConnectionManagerPvt::insert(const QVariantHash &value)
 {
     auto &p=*this;
     if(!value.isEmpty()){
-        auto name=value.value(QStringLiteral("name")).toByteArray().trimmed();
+        auto name=value.value(__name).toByteArray().trimmed();
         if(!name.isEmpty()){
             auto drivers=QSqlDatabase::drivers();
             auto setting=p.settings.value(name);
@@ -162,35 +193,35 @@ bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
     bool RETURN=false;
     auto settings=vSettings;
 
-    if(vSettings.contains(QStringLiteral("connection")))
-        settings=vSettings.value(QStringLiteral("connection")).toHash();
+    if(vSettings.contains(__connection))
+        settings=vSettings.value(__connection).toHash();
 
     if(vSettings.isEmpty()){
         p.clear();
         return false;
     }
 
-    if(settings.contains(QStringLiteral("host")) && settings.contains(QStringLiteral("user"))){
+    if(settings.contains(__host) && settings.contains(__user)){
         this->insert(settings);
         return true;
     }
 
-    auto enviroment = QByteArray(getenv(QByteArrayLiteral("DB_ENVIROMENT"))).trimmed();
+    QByteArray enviroment = getenv(__DB_ENVIRONMENT);
 
     QStm::Envs envs;
-    envs.customEnvs(QStringLiteral("driver"        )  , QStringLiteral("DB_DRIVER"  ));
-    envs.customEnvs(QStringLiteral("hostName"      )  , QStringLiteral("DB_HOST"    ));
-    envs.customEnvs(QStringLiteral("userName"      )  , QStringLiteral("DB_USER"    ));
-    envs.customEnvs(QStringLiteral("password"      )  , QStringLiteral("DB_PASSWORD"    ));
-    envs.customEnvs(QStringLiteral("dataBaseName"  )  , QStringLiteral("DB_DATABASE"));
-    envs.customEnvs(QStringLiteral("connectOptions")  , QStringLiteral("DB_OPTION"  ));
-    envs.customEnvs(QStringLiteral("port"          )  , QStringLiteral("DB_PORT"    ));
-    envs.customEnvs(QStringLiteral("schemaNames"   )  , QStringLiteral("DB_SCHEMA"  ));
+    envs.customEnvs(__driver        , __DB_DRIVER  );
+    envs.customEnvs(__hostName      , __DB_HOST    );
+    envs.customEnvs(__userName      , __DB_USER    );
+    envs.customEnvs(__password      , __DB_PASSWORD);
+    envs.customEnvs(__dataBaseName  , __DB_DATABASE);
+    envs.customEnvs(__connectOptions, __DB_OPTION  );
+    envs.customEnvs(__port          , __DB_PORT    );
+    envs.customEnvs(__schemaNames   , __DB_SCHEMA  );
 
-    p.secret = settings.value(QStringLiteral("secret")).toByteArray();
-    p.enviroment = settings.value(QStringLiteral("enviroment")).toByteArray();
+    p.secret = settings.value(__secret).toByteArray();
+    p.enviroment = settings.value(__environment).toByteArray();
     p.enviroment=enviroment.isEmpty()?p.enviroment:enviroment;
-    auto paramaters = settings.value(QStringLiteral("paramaters")).toHash();
+    auto paramaters = settings.value(__paramaters).toHash();
     paramaters=envs.parser(paramaters).toHash();
     QHashIterator<QString, QVariant> i(paramaters);
     while (i.hasNext()) {
@@ -203,7 +234,7 @@ bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
         if(value.isEmpty())
             continue;
 
-        value.insert(QStringLiteral("name"), name);
+        value.insert(__name, name);
         p.insert(value);
         RETURN=true;
     }
@@ -240,7 +271,7 @@ bool ConnectionManagerPvt::load(const QString &settingsFileName)
     }
 
     auto settings=doc.object().toVariantHash();
-    if(!settings.contains(QStringLiteral("connection"))){
+    if(!settings.contains(__connection)){
         oWarning()<<QStringLiteral("tag connection not exists, %1").arg(file.fileName());
         return false;
     }
