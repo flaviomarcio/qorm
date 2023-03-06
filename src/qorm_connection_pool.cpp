@@ -263,12 +263,12 @@ public:
 
         if (!__connection.open()) {
             this->lastError = __connection.lastError();
-            this->finish(__connection);
 #if Q_ORM_LOG
             static const auto __format=QStringLiteral("%1, error=%2");
             QString url=this->urlMaker(__connection);
             oWarning() << __format.arg(url, __connection.lastError().text());
 #endif
+            this->finish(__connection);
             return {};
         }
 #if Q_ORM_LOG_VERBOSE
