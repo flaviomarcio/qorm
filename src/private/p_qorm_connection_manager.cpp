@@ -209,14 +209,14 @@ bool ConnectionManagerPvt::load(const QVariantHash &vSettings)
     QByteArray enviroment = getenv(__DB_ENVIRONMENT);
 
     QStm::Envs envs;
-    envs.customEnvs(__driver        , __DB_DRIVER  );
-    envs.customEnvs(__hostName      , __DB_HOST    );
-    envs.customEnvs(__userName      , __DB_USER    );
-    envs.customEnvs(__password      , __DB_PASSWORD);
-    envs.customEnvs(__dataBaseName  , __DB_DATABASE);
-    envs.customEnvs(__connectOptions, __DB_OPTION  );
-    envs.customEnvs(__port          , __DB_PORT    );
-    envs.customEnvs(__schemaNames   , __DB_SCHEMA  );
+    envs.customEnvs(__driver        , envs.value(__DB_DRIVER  ));
+    envs.customEnvs(__hostName      , envs.value(__DB_HOST    ));
+    envs.customEnvs(__userName      , envs.value(__DB_USER    ));
+    envs.customEnvs(__password      , envs.value(__DB_PASSWORD));
+    envs.customEnvs(__dataBaseName  , envs.value(__DB_DATABASE));
+    envs.customEnvs(__connectOptions, envs.value(__DB_OPTION  ));
+    envs.customEnvs(__port          , envs.value(__DB_PORT    ));
+    envs.customEnvs(__schemaNames   , envs.value(__DB_SCHEMA  ));
 
     p.secret = settings.value(__secret).toByteArray();
     p.enviroment = settings.value(__environment).toByteArray();
