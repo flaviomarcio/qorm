@@ -121,9 +121,9 @@ private:\
 public:
 
 #define QORM_DECLARE_FIELD(propertyName, propertyTitle)\
-Q_INVOKABLE QOrm::SqlParserItem&propertyName##_field(QByteArray alias="")const{ \
-    alias=alias.toLower().trimmed();\
-    alias=(alias=="")?"":(alias+QByteArrayLiteral("."));\
+Q_INVOKABLE QOrm::SqlParserItem&propertyName##_field(const QByteArray &aliasName={})const{ \
+    auto alias=aliasName.toLower().trimmed();\
+    alias=(alias.isEmpty())?"":(alias+QByteArrayLiteral("."));\
     static auto fieldName = alias+tablePrefix() + tablePrefixSeparator()+QByteArrayLiteral(#propertyName);\
     static auto fieldTitle = QByteArrayLiteral(#propertyTitle);\
     static QOrm::SqlParserItem ____pn(fieldName, fieldTitle, QOrm::koiObject);\
@@ -133,9 +133,9 @@ Q_INVOKABLE QByteArray &propertyName##_property()const{ \
     static QByteArray __return = #propertyName;\
     return __return;\
 }\
-Q_INVOKABLE QByteArray &propertyName##_fieldName(const QByteArray &vAlias="")const{ \
+Q_INVOKABLE QByteArray &propertyName##_fieldName(const QByteArray &vAlias={})const{ \
     auto alias=vAlias.toLower().trimmed();\
-    alias=(alias=="")?"":(alias+QByteArrayLiteral("."));\
+    alias=(alias.isEmpty())?"":(alias+QByteArrayLiteral("."));\
     static QByteArray ___return = alias+tablePrefix() + tablePrefixSeparator()+QByteArrayLiteral(#propertyName);\
     return ___return;\
 }
@@ -155,7 +155,7 @@ virtual bool set_##propertyName(const propertyType&value){\
         z____##propertyName=value;\
         if(this->propertyAfterSet(QByteArrayLiteral(#propertyName), value))\
             return true;\
-        oldValue=oldValue;\
+        z____##propertyName=oldValue;\
     }\
     return false;\
 }\
