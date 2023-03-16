@@ -49,9 +49,11 @@ public:
 
     void clear();
 
-    void makeSqlRecord(QSqlRecord&sqlRecord);
+    void makeSqlRecord(QSqlRecord &sqlRecord);
 
-    bool makeModelMetaObject(QMetaObject&metaObject);
+    bool makeModelMetaObject(QMetaObject &metaObject);
+
+    QVariantHash makeRecord(bool splitted=false);
 
     void writeLog(const QString &scriptSQL, const QSqlError &error);
 

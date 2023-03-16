@@ -146,13 +146,7 @@ QVariantHash Query::makeRecord() const
     if (!p->initNext())
         return {};
 
-    QVariantHash record;
-    auto &sqlRecord = p->sqlRecord;
-    for (int col = 0; col < p->sqlRecord.count(); ++col) {
-        const auto v = sqlRecord.value(col);
-        record.insert(sqlRecord.fieldName(col), v);
-    }
-    return record;
+    return p->makeRecord();
 }
 
 QVariantHash Query::makeRecord(const QMetaObject &metaObject) const
@@ -191,6 +185,14 @@ QVariantHash Query::makeRecord(const ModelInfo &modelInfo) const
     for (auto &col : recordsIndex)
         record.insert(p->sqlRecord.fieldName(col), p->sqlRecord.value(col));
     return record;
+}
+
+QVariantHash Query::makeRecordSplitted() const
+{
+    if (!p->initNext())
+        return {};
+
+    return p->makeRecord(true);
 }
 
 bool Query::modelRead(QOrm::Model *model) const

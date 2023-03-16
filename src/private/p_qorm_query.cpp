@@ -163,6 +163,26 @@ bool QueryPvt::makeModelMetaObject(QMetaObject &metaObject)
     return true;
 }
 
+QVariantHash QueryPvt::makeRecord(bool splitted)
+{
+    QVariantHash record;
+    auto &sqlRecord = this->sqlRecord;
+    for (int col = 0; col < this->sqlRecord.count(); ++col) {
+        auto fieldName=sqlRecord.fieldName(col);
+        const auto v = sqlRecord.value(col);
+        if(splitted){
+            static const auto ___="_";
+            auto lst=fieldName.split(___);
+            if(!lst.isEmpty())
+                lst.removeFirst();
+            if(!lst.isEmpty())
+                fieldName=lst.join(___);
+        }
+        record.insert(fieldName, v);
+    }
+    return record;
+}
+
 void QueryPvt::writeLog(const QString &scriptSQL, const QSqlError &error)
 {
     if(!logRegister())

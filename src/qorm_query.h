@@ -111,6 +111,12 @@ public:
     virtual QVariantHash makeRecord(const QOrm::ModelInfo &modelInfo) const;
 
     //!
+    //! \brief makeRecordSplitted
+    //! \return
+    //!
+    virtual QVariantHash makeRecordSplitted() const;
+
+    //!
     //! \brief modelRead
     //! \param model
     //! \return
