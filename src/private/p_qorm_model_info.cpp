@@ -20,6 +20,8 @@ Q_ORM_DECLARE_PROPERTY_IGNORE_LIST
 //static const auto __equal2="==";
 static const auto __space=" ";
 static const auto __space2="  ";
+static const auto __fk="fk";
+
 
 typedef QHash<QByteArray, QOrm::ModelInfo*> HashModelInfo;
 Q_GLOBAL_STATIC(HashModelInfo, __static_model_info)
@@ -39,9 +41,7 @@ public:
     QHash<QString, QMetaProperty> propertyByPropertyName;
     QHash<QString, QMetaProperty> propertyFiltrable;
     QHash<QString, QMetaProperty> propertyFiltrableByLike;
-    QHash<QString, QMetaProperty> propertyInfo;
     QHash<QString, QMetaProperty> propertyPK;
-    QHash<QString, QMetaProperty> propertyForeignKeysPK;
     QHash<QString, QMetaProperty> propertyForeignKeys;
     QHash<QString, QMetaProperty> propertyFKonPK;
     QHash<QString,QString> propertyTableVsShort;
@@ -70,7 +70,6 @@ public:
     QStringList tableForeignKeysPK;
     QVariantHash tableForeignKeys;
     QVariantList tableFiltrableField;
-    QVariantList tableForeignPKField;
     ModelInfo *modelInfo=nullptr;
     Model* instance=nullptr;
 
@@ -230,7 +229,7 @@ public:
         for(int methodIndex = 0; methodIndex < metaObject->methodCount(); ++methodIndex) {
             auto method = metaObject->method(methodIndex);
 
-            if(!(method.returnType()==QMetaType::QVariantMap || method.returnType()==QMetaType::QVariantHash))
+            if(method.returnType()!=QMetaType::QVariantHash && method.returnType()!=QMetaType::QVariantMap)
                 continue;
 
             if(method.parameterCount()>0)
@@ -370,7 +369,6 @@ public:
         ____copy(propertyByPropertyName );
         ____copy(propertyFiltrable      );
         ____copy(propertyFiltrableByLike);
-        ____copy(propertyInfo           );
         ____copy(propertyTableVsShort   );
         ____copy(propertyShortVsTable   );
         ____copy(propertyList           );
@@ -386,7 +384,6 @@ public:
         ____copy(tablePkField           );
         ____copy(tablePkCompuser        );
         ____copy(propertyPK             );
-        ____copy(propertyForeignKeysPK  );
         ____copy(propertyForeignKeys    );
         ____copy(propertyFKonPK         );
         ____copy(tablePkSingle          );
@@ -397,7 +394,6 @@ public:
         ____copy(tableForeignKeysPK     );
         ____copy(tableForeignKeys       );
         ____copy(tableFiltrableField    );
-        ____copy(tableForeignPKField    );
     }
 
     void clear()
@@ -409,14 +405,12 @@ public:
         ____clear(propertyByName         );
         ____clear(propertyByFieldName    );
         ____clear(propertyByPropertyName );
-        ____clear(propertyInfo           );
         ____clear(propertyTableVsShort   );
         ____clear(propertyShortVsTable   );
         ____clear(propertyList           );
         ____clear(propertyTableList      );
         ____clear(propertyDescriptors    );
         ____clear(propertyPK             );
-        ____clear(propertyForeignKeysPK  );
         ____clear(propertyForeignKeys    );
         ____clear(propertyFKonPK         );
         ____clear(propertyActivateField  );
@@ -435,7 +429,6 @@ public:
         ____clear(tableForeignKeys       );
         ____clear(tableFiltrableField    );
         ____clear(tableForeignKeysPK     );
-        ____clear(tableForeignPKField    );
     }
 
     static void static_init_make(ModelInfoPvt *pvt, const QMetaObject &staticMetaObject)
@@ -493,7 +486,6 @@ public:
         auto tablePk = pvt->invokeText(instance, QByteArrayLiteral("tablePk")).trimmed();
         auto tableOrderBy = pvt->invokeText(instance, QByteArrayLiteral("tableOrderBy")).trimmed();
         auto tableAutoSetFields = pvt->invokeText(instance, QByteArrayLiteral("tableAutoSetFields")).trimmed();
-        auto tableForeignPK = pvt->invokeText(instance, QByteArrayLiteral("tableForeignPK")).trimmed();
         auto propertyActivateField = pvt->invokeHash(instance, QByteArrayLiteral("propertyActivateField"));
         auto propertyDeactivateField = pvt->invokeHash(instance, QByteArrayLiteral("propertyDeactivateField"));
         auto tableSequence = pvt->invokeHash(instance, QByteArrayLiteral("tableSequence"));
@@ -510,13 +502,14 @@ public:
             }
         }
 
+
         pvt->tablePkAutoGenerate=tablePkAutoGenerate;
         pvt->name = modelName;
         pvt->description = modelDescription;
         pvt->tableSchema = tableSchema;
-        pvt->tablePrefix = tablePrefix+tablePrefixSeparator;
         pvt->tablePrefixSeparator = tablePrefixSeparator;
-        pvt->tableName = tablePrefix+tablePrefixSeparator+tableName.trimmed();
+        pvt->tablePrefix = tablePrefix.isEmpty()?"":(tablePrefix+tablePrefixSeparator);
+        pvt->tableName = pvt->tablePrefix+tableName.trimmed();
         pvt->tableSequence = tableSequence;
         pvt->tableFiltrableField = tableFiltrableField;
 
@@ -534,10 +527,6 @@ public:
         while(tableAutoSetFields.contains(__space2))
             tableAutoSetFields = tableAutoSetFields.replace(__space2, __space).trimmed();
 
-        while(tableForeignPK.contains(__space2))
-            tableForeignPK = tableForeignPK.replace(__space2, __space).trimmed();
-
-
         for(auto &propertyName:tablePk.split(__space)){
             if(propertyName.isEmpty())
                 continue;
@@ -553,28 +542,13 @@ public:
 
         pvt->tablePkSingle=pvt->tablePk.isEmpty()?"":pvt->tablePk.first();
 
-        for(auto &propertyName:tableForeignPK.split(__space)){
-            if(propertyName.isEmpty())
-                continue;
-
-            auto property = pvt->propertyByName.value(propertyName);
-            if(!property.isValid())
-                continue;
-
-            auto field = tablePrefix+tablePrefixSeparator+propertyName;
-            pvt->tableForeignKeysPK.append(field);
-            pvt->tableForeignPKField.append(SqlParserItem::createObject(field));
-            pvt->propertyForeignKeys.insert(property.name(), property);
-            pvt->propertyForeignKeysPK.insert(property.name(), property);
-        }
-
         {
             Q_V_PROPERTY_ITERATOR(pvt->propertyByName){
                 i.next();
                 auto &propertyName=i.key();
                 auto &property=i.value();
                 const auto propertyA = propertyName;
-                const auto propertyB = tablePrefix+QByteArrayLiteral("_")+propertyName;
+                const auto propertyB = pvt->tablePrefix+propertyName;
                 pvt->propertyList.append(propertyName);
                 pvt->propertyTableList.append(propertyB);
                 pvt->propertyShortVsTable.insert(propertyA, propertyB);
@@ -587,24 +561,18 @@ public:
 
                 if(!QMetaTypeUtilVariantDictionary.contains(property.typeId()))//property info
                     continue;
-
-                auto split=propertyName.split(QStringLiteral("qorm__info__"));
-                if(split.size()!=2)
-                    continue;
-
-                auto name=split.last().trimmed();
-                pvt->propertyInfo.insert(name, property);
             }
 
             {
+                static const auto __qorm_declare_fk_="__qorm_declare_fk_";
                 Q_V_METHOD_ITERATOR(pvt->methods){
                     i.next();
                     auto methodName=i.key();
-                    if(!methodName.startsWith(QByteArrayLiteral("tableForeignKeys_")))
+                    if(!methodName.startsWith(__qorm_declare_fk_))
                         continue;
 
-                    auto vHash = pvt->invokeHash(instance, methodName);
-                    auto fieldName=vHash.value(QStringLiteral("fk")).toString().trimmed();
+                    auto vHash=pvt->invokeHash(instance, methodName);
+                    auto fieldName=vHash.value(__fk).toString().trimmed();
                     if(fieldName.isEmpty())
                         continue;
 
@@ -1116,19 +1084,9 @@ QHash<QString, QString> &ModelInfo::propertyShortVsTable() const
     return p->propertyShortVsTable;
 }
 
-QHash<QString, QMetaProperty> &ModelInfo::propertyInfo() const
-{
-    return p->propertyInfo;
-}
-
 QHash<QString, QMetaProperty> &ModelInfo::propertyPK() const
 {
     return p->propertyPK;
-}
-
-QHash<QString, QMetaProperty> &ModelInfo::propertyForeignKeysPK() const
-{
-    return p->propertyForeignKeysPK;
 }
 
 QHash<QString, QMetaProperty> &ModelInfo::propertyForeignKeys() const
@@ -1276,11 +1234,6 @@ QVariantList ModelInfo::tablePkField() const
     return p->tablePkField;
 }
 
-QStringList ModelInfo::tableForeignKeysPK()const
-{
-    return p->tableForeignKeysPK;
-}
-
 QVariantHash ModelInfo::tableForeignKeys() const
 {
     return p->tableForeignKeys;
@@ -1316,19 +1269,9 @@ QString ModelInfo::tablePkSingle()const
     return p->tablePkSingle;
 }
 
-QVariantMap ModelInfo::toMap(const QObject *object, bool nullValuesAdd)const
-{
-    return p->toDictionary<QVariantMap>(object, nullValuesAdd, false);
-}
-
 QVariantHash ModelInfo::toHash(const QObject *object, bool nullValuesAdd) const
 {
     return p->toDictionary<QVariantHash>(object, nullValuesAdd, false);
-}
-
-QVariantMap ModelInfo::toMapModel(const QObject *object, bool nullValuesAdd) const
-{
-    return p->toDictionary<QVariantMap>(object, nullValuesAdd, true);
 }
 
 QVariantHash ModelInfo::toHashModel(const QObject *object, bool nullValuesAdd)const

@@ -620,11 +620,6 @@ QVariantList Model::toList(const QVariantList &vList)
     return rList;
 }
 
-QVariantMap Model::toMap()const
-{
-    return p->modelInfo().toMap(this, true);
-}
-
 QVariantHash Model::toHash() const
 {
     return p->modelInfo().toHash(this, true);

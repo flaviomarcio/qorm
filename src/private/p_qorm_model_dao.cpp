@@ -348,7 +348,7 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
     if(vModelList.isEmpty())
         return {};
 
-    auto tableForeignKeysPK=modelRef.propertyForeignKeys();
+    auto propertyForeignKeys=modelRef.propertyForeignKeys();
     for(auto &vItem:vModelList){
         auto vItemHash=vItem.toHash();
         Q_V_HASH_ITERATOR(modelRef.tableForeignKeys()){
@@ -356,7 +356,7 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
             auto vHash=i.value().toHash();
             auto fkName=vHash.value(__fk).toString().trimmed().toLower();
             auto pkName=vHash.value(__pk).toString().trimmed().toLower();
-            if(!tableForeignKeysPK.contains(fkName))//se nao for uma FK/PK contiuaremos
+            if(!propertyForeignKeys.contains(fkName))//se nao for uma FK/PK contiuaremos
                 continue;
             auto pkValue=vRecordHash.value(pkName);
             vItemHash.insert(fkName, pkValue);

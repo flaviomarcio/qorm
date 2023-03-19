@@ -33,7 +33,6 @@ public:
     QORM_DECLARE_TABLE_SCHEMA()
     QORM_DECLARE_TABLE(,_,)
     QORM_DECLARE_TABLE_PRIMARY_KEY()
-    QORM_DECLARE_TABLE_FOREIGN_KEY()
     QORM_DECLARE_TABLE_SEQUENCE()
     QORM_DECLARE_TABLE_PRIMARY_KEY_NON_AUTO()
     QORM_DECLARE_FILTRABLE_FIELD({})
@@ -95,12 +94,6 @@ public:
     //! \return
     //!
     virtual QVariantList toList(const QVariantList &vList);
-
-    //!
-    //! \brief toMap
-    //! \return
-    //!
-    virtual QVariantMap toMap() const;
 
     //!
     //! \brief toHash

@@ -829,6 +829,8 @@ ResultValue &CRUDBase::canActionUpsert()
     if(this->source().isValid() && !this->source().isNull()){
         auto &lr=(act==nullptr)?this->upsert():act->action(this->source());
         v=lr.resultVariant();
+        if(!lr)
+            return this->lr(lr);
     }
     Q_DECLARE_VU;
     p->generatedRecords=vu.toList(v);
@@ -845,6 +847,8 @@ ResultValue &CRUDBase::canActionRemove()
     QVariant v;
     if(this->source().isValid() && !this->source().isNull()){
         auto &lr=(act==nullptr)?this->remove():act->action(this->source());
+        if(!lr)
+            return this->lr(lr);
         v=lr.resultVariant();
         Q_DECLARE_VU;
         p->generatedRecords=vu.toList(v);
@@ -860,6 +864,8 @@ ResultValue &CRUDBase::canActionDeactivate()
     QVariant v;
     if(this->source().isValid() && !this->source().isNull()){
         auto &lr=(act==nullptr)?this->deactivate():act->action(this->source());
+        if(!lr)
+            return this->lr();
         v=lr.resultVariant();
         Q_DECLARE_VU;
         p->generatedRecords=vu.toList(v);
@@ -875,6 +881,8 @@ ResultValue &CRUDBase::canActionApply()
     if(!act)
         return this->lr();
     auto &lr=act->action(this->source());
+    if(!lr)
+        return this->lr();
     return this->lr(lr.resultVariant());
 }
 
@@ -885,6 +893,8 @@ ResultValue &CRUDBase::canActionExecute()
     if(!act)
         return this->lr();
     auto &lr=act->action(this->source());
+    if(!lr)
+        return this->lr();
     return this->lr(lr.resultVariant());
 }
 
@@ -895,6 +905,8 @@ ResultValue &CRUDBase::canActionFinalize()
     if(!act)
         return this->lr();
     auto &lr=act->action(this->source());
+    if(!lr)
+        return this->lr();
     return this->lr(lr.resultVariant());
 }
 
@@ -906,6 +918,8 @@ ResultValue &CRUDBase::canActionPrint()
     if(this->source().isValid() && !this->source().isNull()){
         auto &lr=(act==nullptr)?this->print():act->action(this->source());
         v=lr.resultVariant();
+        if(!lr)
+            return this->lr();
     }
     return this->lr(v);
 }

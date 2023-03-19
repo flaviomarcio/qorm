@@ -6,7 +6,6 @@
 #include <QObject>
 #include <QVariant>
 #include <QVariantHash>
-#include <QVariantMap>
 #include "../qorm_global.h"
 #include "../../qstm/src/qstm_vvm.h"
 #include "../../qstm/src/qstm_object_wrapper.h"
@@ -227,22 +226,10 @@ public:
     QHash<QString, QString> &propertyShortVsTable() const;
 
     //!
-    //! \brief propertyInfo
-    //! \return
-    //!
-    QHash<QString, QMetaProperty> &propertyInfo() const;
-
-    //!
     //! \brief propertyPK
     //! \return
     //!
     QHash<QString, QMetaProperty> &propertyPK() const;
-
-    //!
-    //! \brief propertyForeignKeysPK
-    //! \return
-    //!
-    QHash<QString, QMetaProperty> &propertyForeignKeysPK() const;
 
     //!
     //! \brief propertyForeignKeys
@@ -338,12 +325,6 @@ public:
     QVariantList tablePkField() const;
 
     //!
-    //! \brief tableForeignPk
-    //! \return
-    //!
-    QStringList tableForeignKeysPK() const;
-
-    //!
     //! \brief tableForeignKeys
     //! \return
     //!
@@ -386,25 +367,11 @@ public:
     QString tablePkSingle() const;
 
     //!
-    //! \brief toMap
-    //! \param object
-    //! \return
-    //!
-    QVariantMap toMap(const QObject *object, bool nullValuesAdd=false) const;
-
-    //!
     //! \brief toHash
     //! \param object
     //! \return
     //!
     QVariantHash toHash(const QObject *object, bool nullValuesAdd=false) const;
-
-    //!
-    //! \brief toMapModel
-    //! \param object
-    //! \return
-    //!
-    QVariantMap toMapModel(const QObject *object, bool nullValuesAdd=false) const;
 
     //!
     //! \brief toHashModel

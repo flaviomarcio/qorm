@@ -105,12 +105,8 @@ Q_INVOKABLE virtual bool tablePkAutoGenerate()const{return true;}
 public:\
 Q_INVOKABLE virtual bool tablePkAutoGenerate()const{return false;}
 
-#define QORM_DECLARE_TABLE_FOREIGN_KEY(propertyPk)\
-public:\
-Q_INVOKABLE virtual QByteArray tableForeignPk()const{static const auto ___return=QByteArrayLiteral(#propertyPk); return ___return;}
-
-#define QORM_DECLARE_TABLE_FOREIGN_KEY_ON_PRIMARY_KEY(fk_propertyName, pk_modelName, pk_propertyName)\
-Q_INVOKABLE virtual QVariantHash tableForeignKeys_##fk_propertyName()const{ \
+#define QORM_DECLARE_FOREIGN_KEY(fk_propertyName, pk_modelName, pk_propertyName)\
+Q_INVOKABLE virtual QVariantHash __qorm_declare_fk_##fk_propertyName()const{ \
     static const auto __return=QVariantHash{{QStringLiteral("fk"),QStringLiteral(#fk_propertyName)}, {QStringLiteral("pk.model"),QStringLiteral(#pk_modelName)}, {QStringLiteral("pk"),QStringLiteral(#pk_propertyName)}};\
     return __return;\
 }
