@@ -67,7 +67,6 @@ public:
     QString tablePkSingle;
     QVariantHash tableSequence;
     QVariant tablePkAutoGenerate;
-    QStringList tableForeignKeysPK;
     QVariantHash tableForeignKeys;
     QVariantList tableFiltrableField;
     ModelInfo *modelInfo=nullptr;
@@ -391,7 +390,6 @@ public:
         ____copy(tableOrderBy           );
         ____copy(tableOrderByField      );
         ____copy(tableAutoSetFields     );
-        ____copy(tableForeignKeysPK     );
         ____copy(tableForeignKeys       );
         ____copy(tableFiltrableField    );
     }
@@ -428,7 +426,6 @@ public:
         ____clear(tableAutoSetFields     );
         ____clear(tableForeignKeys       );
         ____clear(tableFiltrableField    );
-        ____clear(tableForeignKeysPK     );
     }
 
     static void static_init_make(ModelInfoPvt *pvt, const QMetaObject &staticMetaObject)
@@ -577,6 +574,14 @@ public:
                         continue;
 
                     pvt->tableForeignKeys.insert(fieldName, vHash);
+
+                    auto property=pvt->propertyByName.value(fieldName);
+                    if(!property.isValid()){
+                        oWarning()<<QString("FK not found: %1::%2").arg(staticMetaObject.className(), fieldName);
+                        continue;
+                    }
+
+                    pvt->propertyForeignKeys.insert(property.name(), property);
                 }
             }
 

@@ -348,7 +348,7 @@ QVariantList ModelDao::toPrepareForeignWrapper(const QOrm::ModelInfo &modelRef, 
     if(vModelList.isEmpty())
         return {};
 
-    auto propertyForeignKeys=modelRef.propertyForeignKeys();
+    const auto &propertyForeignKeys=modelRef.propertyForeignKeys();
     for(auto &vItem:vModelList){
         auto vItemHash=vItem.toHash();
         Q_V_HASH_ITERATOR(modelRef.tableForeignKeys()){
