@@ -298,7 +298,6 @@ signals:
     void obrigatoryChanged();
     void readOnlyChanged();
     void sortChanged();
-    void typeChanged();
     void fieldsValidChanged();
     void actionsChanged();
 

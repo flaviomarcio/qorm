@@ -86,8 +86,8 @@ public:
     //! \return
     //!
     const QVariant type() const;
-    CRUDBase &type(const FormType &newType){ return this->setType(newType);}
-    CRUDBase &setType(const FormType &newType);
+    CRUDBase &type(const QVariant &newType){ return this->setType(newType);}
+    CRUDBase &setType(const QVariant &newType);
     CRUDBase &resetType();
 
     //!

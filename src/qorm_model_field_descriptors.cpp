@@ -27,10 +27,12 @@ static auto const __cancelName="Cancelar";
 static auto const __finalize="finalize";
 static auto const __finalizeName="Finalizar";
 
+static const auto __registerForm="RegisterForm";
+
 class ModelDescriptorPvt:public QObject
 {
 public:
-    QStm::MetaEnum<QOrm::ModelFieldDescriptors::FormType> type = ModelFieldDescriptors::RegisterForm;
+    QVariant type=__registerForm;
     QByteArray className;
     QUuid uuid;
     QString description;
@@ -66,7 +68,7 @@ public:
 
     void clear()
     {
-        this->type=ModelFieldDescriptors::RegisterForm;
+        this->type=__registerForm;
         this->className.clear();
         this->uuid={};
         this->description.clear();
@@ -81,7 +83,7 @@ public:
                 .columns(0)
                 .rows(3)
                 .layout(Design::Vertical)
-                .type(Design::RegisterForm);
+                .type(__registerForm);
         this->host.clear();
         this->endPoint.clear();
         this->endPoints.clear();

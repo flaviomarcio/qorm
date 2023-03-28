@@ -3,8 +3,7 @@
 
 namespace QOrm {
 
-//static const auto __percent30 = "30%";
-//static const auto __percent40 = "40%";
+static const auto __RegisterForm = "RegisterForm";
 
 class DesignPvt:public QObject
 {
@@ -15,7 +14,7 @@ public:
     int rows=1;
     int columns=1;
     QStm::MetaEnum<Design::Layout> layout=Design::Vertical;
-    QStm::MetaEnum<Design::FormType> type=Design::RegisterForm;
+    QVariant type=__RegisterForm;
     QVariant typeName;
     explicit DesignPvt(Design *parent):QObject{parent}{ this->parent=parent; }
 };
@@ -123,7 +122,7 @@ Design &Design::resetLayout()
 
 QVariant &Design::type() const
 {
-    p->typeName=p->type.name();
+    p->typeName=p->type;
     return p->typeName;
 }
 

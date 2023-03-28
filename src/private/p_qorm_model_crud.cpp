@@ -25,9 +25,11 @@ static const auto __field="field";
 static const auto __value="value";
 #endif
 
+static const auto __registerForm="RegisterForm";
+
 class CRUDBasePvt:public QObject{
 public:
-    QStm::MetaEnum<CRUDBase::FormType> type=CRUDBase::RegisterForm;
+    QVariant type=__registerForm;
     QOrm::ModelDtoOptions options;    
     QOrm::Host host;
     QUuid uuid;
@@ -297,10 +299,10 @@ CRUDBase &CRUDBase::setHost(const QOrm::Host &newHost)
 
 const QVariant CRUDBase::type() const
 {
-    return p->type.name();
+    return p->type;
 }
 
-CRUDBase &CRUDBase::setType(const FormType &newType)
+CRUDBase &CRUDBase::setType(const QVariant &newType)
 {
     if (p->type == newType)
         return *this;

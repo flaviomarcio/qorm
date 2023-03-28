@@ -1,6 +1,5 @@
 #include "./qorm_model_crud_block.h"
 #include "../../qstm/src/qstm_util_variant.h"
-#include "../../qstm/src/qstm_meta_enum.h"
 #include "./private/p_qorm_model_crud_body.h"
 
 namespace QOrm {
@@ -9,11 +8,12 @@ static auto __resultInfo="resultInfo";
 static auto __pages="pages";
 static auto __type="type";
 static auto __items="items";
+static const auto __registerForm="RegisterForm";
 
 class CRUDBlockPvt:public QObject{
 public:
     QByteArray owner;
-    QStm::MetaEnum<CRUDBlock::FormType> type=CRUDBlock::RegisterForm;
+    QVariant type=__registerForm;
     ModelDtoOptions options;
     QStm::ResultInfo resultInfo;
     CRUDBlock *parent=nullptr;
@@ -166,10 +166,10 @@ CRUDBlock &CRUDBlock::owner(const QVariant &newOwner)
 
 QVariant CRUDBlock::type() const
 {
-    return p->type.name();
+    return p->type;
 }
 
-CRUDBlock &CRUDBlock::type(const FormType &newType)
+CRUDBlock &CRUDBlock::type(const QVariant &newType)
 {
     if (p->type == newType)
         return *this;

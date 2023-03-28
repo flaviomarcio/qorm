@@ -44,7 +44,7 @@ public:
     //! \return
     //!
     QVariant type() const;
-    CRUDBlock &type(const FormType &newType);
+    CRUDBlock &type(const QVariant &newType);
 
     //!
     //! \brief host
