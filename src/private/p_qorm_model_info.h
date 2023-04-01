@@ -63,6 +63,14 @@ public:
     QUuid &uuid()const;
 
     //!
+    //! \brief tableUuid
+    //! \return
+    //!
+    QUuid &tableUuid()const;
+
+
+
+    //!
     //! \brief isValid
     //! \return
     //!

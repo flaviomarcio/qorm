@@ -1,5 +1,16 @@
 #pragma once
 
+#define Q_ORM_REPORTFORM "ReportForm"
+#define Q_ORM_REGISTERFORM "RegisterForm"
+#define Q_ORM_EDITFIELDS "EditFields"
+#define Q_ORM_EDITADDRESS "EditAddress"
+#define Q_ORM_EDITDUALLIST "EditDualList"
+#define Q_ORM_REPORTGRIDLIST "ReportGridList"
+#define Q_ORM_REPORTGRIDCARD "ReportGridCard"
+
+
+#define QORM_CRUD_PROPERTY_LIST QVector<QString>({"type","id","resultInfo","layout","links","title","items","filters","headers"})
+
 #define QORM_MODEL_CONSTRUCTOR(ModelName, Model)\
     Q_INVOKABLE explicit ModelName(QObject *parent = nullptr):Model{parent}{};\
     Q_INVOKABLE explicit ModelName(const QVariant &record):Model(nullptr){this->readFrom(record);};\

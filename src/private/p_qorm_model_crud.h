@@ -264,7 +264,6 @@ public:
     //!
     virtual CRUDBase &actionUpsert(QOrm::ModelAction &action);
 
-
     //!
     //! \brief actionRemove
     //! \param action
@@ -299,6 +298,13 @@ public:
     //! \return
     //!
     virtual CRUDBase &actionFinalize(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionCustom
+    //! \param action
+    //! \return
+    //!
+    virtual CRUDBase &actionCustom(QOrm::ModelAction &action);
 
     //!
     //! \brief actionPrint
@@ -491,7 +497,14 @@ protected:
     //!
     virtual ResultValue &canActionPrint();
 
+    //!
+    //! \brief canActionCustom
+    //! \return
+    //!
+    virtual ResultValue &canActionCustom();
+
 protected:
+
     //!
     //! \brief doBofore
     //! \return

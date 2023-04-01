@@ -3,8 +3,6 @@
 
 namespace QOrm {
 
-static const auto __RegisterForm = "RegisterForm";
-
 class DesignPvt:public QObject
 {
 public:
@@ -14,7 +12,7 @@ public:
     int rows=1;
     int columns=1;
     QStm::MetaEnum<Design::Layout> layout=Design::Vertical;
-    QVariant type=__RegisterForm;
+    QVariant type;
     QVariant typeName;
     explicit DesignPvt(Design *parent):QObject{parent}{ this->parent=parent; }
 };

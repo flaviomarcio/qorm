@@ -8,12 +8,11 @@ static auto __resultInfo="resultInfo";
 static auto __pages="pages";
 static auto __type="type";
 static auto __items="items";
-static const auto __registerForm="RegisterForm";
 
 class CRUDBlockPvt:public QObject{
 public:
     QByteArray owner;
-    QVariant type=__registerForm;
+    QVariant type;
     ModelDtoOptions options;
     QStm::ResultInfo resultInfo;
     CRUDBlock *parent=nullptr;
@@ -356,7 +355,11 @@ ResultValue &CRUDBlock::crudify()
     if(pageList.isEmpty())
         return this->lr().clear();
 
-    auto __return=QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__pages, pageList}, {__type, this->type()}};
+    auto crudType=this->type().toString().trimmed();
+    if(crudType.isEmpty())
+        crudType=Q_ORM_REGISTERFORM;
+
+    auto __return=QVariantHash{{__resultInfo, this->resultInfo().toHash()}, {__pages, pageList}, {__type, crudType}};
 
     for(auto &crud:p->crudList)
         crud->clean();

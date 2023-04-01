@@ -7,7 +7,6 @@ QT_STRINGIFY2(#name)
 
 #define QORM_OBJECT(v)
 
-#define Q_ORM_CRUD_PROPERTY_LIST QVector<QString>({"type","id","resultInfo","layout","links","title","items","filters","headers"})
 
 #define QORM_DECLARE_MODEL_CONST(ModelName, ModelAlias)\
 namespace QOrm {\

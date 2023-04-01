@@ -25,11 +25,9 @@ static const auto __field="field";
 static const auto __value="value";
 #endif
 
-static const auto __registerForm="RegisterForm";
-
 class CRUDBasePvt:public QObject{
 public:
-    QVariant type=__registerForm;
+    QVariant type;
     QOrm::ModelDtoOptions options;    
     QOrm::Host host;
     QUuid uuid;
@@ -352,9 +350,13 @@ CRUDBase &CRUDBase::clean()
 
 const QUuid &CRUDBase::uuid()
 {
-    Q_DECLARE_VU;
-    auto name=this->name();
-    p->uuid=vu.toMd5Uuid(name);
+    if(p->uuid.isNull()){
+        Q_DECLARE_VU;
+        const auto &modelInfo=this->modelInfo();
+        p->uuid=modelInfo.tableUuid();
+        if(p->uuid.isNull())
+            p->uuid=vu.toMd5Uuid(this->name());
+    }
     return p->uuid;
 }
 
@@ -378,7 +380,11 @@ const QByteArray &CRUDBase::name()
 
 CRUDBase &CRUDBase::name(const QVariant &value)
 {
-    p->name=value.toByteArray().trimmed();
+    auto name=value.toByteArray().trimmed();
+    if(p->name==name)
+        return *this;
+    Q_DECLARE_VU;
+    p->name=name;
     return *this;
 }
 
@@ -514,7 +520,9 @@ ResultValue &CRUDBase::crudify()
             return this->lr();
         break;
     default:
-        return this->lr().setValidation(tr("Invalid strategy"));
+        if(!this->canActionCustom())
+            return this->lr();
+        break;
     }
 
     if(!this->afterCrudify())
@@ -592,6 +600,13 @@ CRUDBase &CRUDBase::actionExecute(QOrm::ModelAction &action)
 }
 
 CRUDBase &CRUDBase::actionFinalize(QOrm::ModelAction &action)
+{
+    action.setCrudBase(this);
+    p->actions.insert(__func__, &action);
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionCustom(QOrm::ModelAction &action)
 {
     action.setCrudBase(this);
     p->actions.insert(__func__, &action);
@@ -924,6 +939,18 @@ ResultValue &CRUDBase::canActionPrint()
             return this->lr();
     }
     return this->lr(v);
+}
+
+ResultValue &CRUDBase::canActionCustom()
+{
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    auto act=p->actions.value(name);
+    if(!act)
+        return this->lr();
+    auto &lr=act->action(this->source());
+    if(!lr)
+        return this->lr();
+    return this->lr(lr.resultVariant());
 }
 
 ResultValue &CRUDBase::doBofore()

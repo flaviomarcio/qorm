@@ -810,6 +810,16 @@ QUuid &ModelInfo::uuid() const
     return p->uuid;
 }
 
+QUuid &ModelInfo::tableUuid() const
+{
+    if(p->uuid.isNull()){
+        Q_DECLARE_VU;
+        auto fullName=this->tableNameFull().toLower();
+        p->uuid=vu.toMd5Uuid(fullName);
+    }
+    return p->uuid;
+}
+
 bool ModelInfo::isValid() const
 {
     if(this->name().isEmpty())
