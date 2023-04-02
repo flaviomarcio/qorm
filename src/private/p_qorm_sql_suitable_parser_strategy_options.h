@@ -761,7 +761,7 @@ public:
             c=new SqlParserCombination{__func__, this, KeywordCombine::kcWhere, whereObject};
             this->setPointer(c->sName(), c);
         }
-        else if(!whereObject.isValid()){
+        else if(whereObject.isValid() && !whereObject.isNull()){
             c->condition().condition(whereObject);
         }
         return c->condition();
