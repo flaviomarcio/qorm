@@ -27,6 +27,12 @@ public:
     //!
     explicit CRUDBody(const QVariant &strategy, const QVariant &source);
 
+    //!
+    //! \brief CRUDBody
+    //! \param strategy
+    //! \param expressions
+    //! \param source
+    //!
     explicit CRUDBody(const QVariant &strategy, const QVariant &expressions, const QVariant &source);
 
     //!
@@ -34,6 +40,19 @@ public:
     //! \return
     //!
     CRUDTypes::Strategy strategy() const;
+
+    //!
+    //! \brief strategyName
+    //! \return
+    //!
+    QString strategyName() const;
+
+    //!
+    //! \brief canStrategy
+    //! \param strategy
+    //! \return
+    //!
+    bool canStrategy(const QVariant &strategy);
 
     //!
     //! \brief expressions
@@ -46,6 +65,12 @@ public:
     //! \return
     //!
     QVariant source()const;
+
+    //!
+    //! \brief customSource
+    //! \return
+    //!
+    QVariant customSource()const;
 
     //!
     //! \brief items

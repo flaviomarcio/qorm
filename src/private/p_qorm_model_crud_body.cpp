@@ -11,6 +11,7 @@ static const auto __items="items";
 static const auto __uuid="uuid";
 static const auto __expressions="expressions";
 static const auto __source="source";
+static const auto __custom_source="customSource";
 static const auto __strategy="strategy";
 static const auto __resultInfo="resultInfo";
 
@@ -34,6 +35,25 @@ CRUDTypes::Strategy CRUDBody::strategy()const
     return e.type();
 }
 
+QString CRUDBody::strategyName() const
+{
+    return this->value(__strategy).toString();
+}
+
+bool CRUDBody::canStrategy(const QVariant &strategy)
+{
+    auto strategyValue=this->value(__strategy);
+
+    QStm::MetaEnum<QOrm::CRUDTypes::Strategy> e(strategyValue);
+    if(e.equal(strategy))
+        return true;
+
+    if(strategy.toString().trimmed().toLower()==strategyValue.toString().trimmed().toLower())
+        return true;
+
+    return false;
+}
+
 QVariant CRUDBody::expressions() const
 {
     Q_DECLARE_VU;
@@ -47,6 +67,13 @@ QVariant CRUDBody::source() const
     if(!this->contains(__source))
         return {};
     return this->value(__source);
+}
+
+QVariant CRUDBody::customSource() const
+{
+    if(!this->contains(__custom_source))
+        return {};
+    return this->value(__custom_source);
 }
 
 QVariantList CRUDBody::items() const
