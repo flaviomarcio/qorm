@@ -32,6 +32,8 @@ public:
         CRUDBody __return;
 
         switch (strategy) {
+        case QOrm::CRUDTypes::Strategy::Custom:
+            return crudBody;
         case QOrm::CRUDTypes::Strategy::Init:
         {
             switch (crud->actionStart()) {
@@ -333,7 +335,6 @@ ResultValue &CRUDBlock::crudify()
         crud->setOptions(p->options);
         crud->setResultInfo(p->resultInfo);
     }
-
 
     //p->crudList.
 

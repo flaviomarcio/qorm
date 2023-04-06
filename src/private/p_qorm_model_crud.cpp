@@ -234,14 +234,53 @@ public:
         this->strategy=strategy;
     }
 
+    QVariant &getSource()
+    {
+        switch (this->source.typeId()) {
+        case QMetaType::QString:
+        case QMetaType::QByteArray:
+        case QMetaType::QChar:
+        case QMetaType::QBitArray:{
+            auto v=this->source.toString().trimmed();
+            this->source=v.isEmpty()?QVariant{}:v;
+            break;
+        }
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:{
+            auto v=this->source.toList();
+            this->source=v.isEmpty()?QVariant{}:v;
+            break;
+        }
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:{
+            auto v=this->source.toHash();
+            this->source=v.isEmpty()?QVariant{}:v;
+            break;
+        }
+        default:
+            break;
+        }
+        return this->source;
+    }
+
+    ResultValue &canStrategy(const QByteArray &methodName){
+        auto name=QByteArray{methodName}.replace(__canAction, __action);
+        auto act=this->actions.value(name);
+        if(!act)
+            return parent->lr();
+        auto &lr=act->action(this->getSource());
+        if(!lr)
+            return parent->lr();
+        return parent->lr(lr.resultVariant());
+    }
+
 };
 
 
 CRUDBase::CRUDBase(QObject *parent) : QOrm::ObjectDb{parent}
 {
     this->p = new CRUDBasePvt{this};
-
-    p->set_crud(CRUDBody());
+    p->set_crud(CRUDBody{});
 }
 
 CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent}
@@ -425,31 +464,7 @@ CRUDBase &CRUDBase::strategy(const QVariant &strategy)
 
 QVariant &CRUDBase::source() const
 {
-    switch (p->source.typeId()) {
-    case QMetaType::QString:
-    case QMetaType::QByteArray:
-    case QMetaType::QChar:
-    case QMetaType::QBitArray:{
-        auto v=p->source.toString().trimmed();
-        p->source=v.isEmpty()?QVariant{}:v;
-        break;
-    }
-    case QMetaType::QVariantList:
-    case QMetaType::QStringList:{
-        auto v=p->source.toList();
-        p->source=v.isEmpty()?QVariant{}:v;
-        break;
-    }
-    case QMetaType::QVariantHash:
-    case QMetaType::QVariantMap:{
-        auto v=p->source.toHash();
-        p->source=v.isEmpty()?QVariant{}:v;
-        break;
-    }
-    default:
-        break;
-    }
-    return p->source;
+    return p->getSource();
 }
 
 CRUDBase &CRUDBase::source(const QVariant &value)
@@ -483,6 +498,10 @@ ResultValue &CRUDBase::crudify()
     p->dto.setResultInfo(this->resultInfo());
     auto strategy=this->strategy();
     switch (strategy) {
+    case QOrm::CRUDTypes::Custom:
+        if(!this->canActionCustom())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Create:
         if(!this->canActionCreate())
             return this->lr();
@@ -893,38 +912,17 @@ ResultValue &CRUDBase::canActionDeactivate()
 
 ResultValue &CRUDBase::canActionApply()
 {
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
-    auto act=p->actions.value(name);
-    if(!act)
-        return this->lr();
-    auto &lr=act->action(this->source());
-    if(!lr)
-        return this->lr();
-    return this->lr(lr.resultVariant());
+    return this->lr(p->canStrategy(__func__));
 }
 
 ResultValue &CRUDBase::canActionExecute()
 {
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
-    auto act=p->actions.value(name);
-    if(!act)
-        return this->lr();
-    auto &lr=act->action(this->source());
-    if(!lr)
-        return this->lr();
-    return this->lr(lr.resultVariant());
+    return this->lr(p->canStrategy(__func__));
 }
 
 ResultValue &CRUDBase::canActionFinalize()
 {
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
-    auto act=p->actions.value(name);
-    if(!act)
-        return this->lr();
-    auto &lr=act->action(this->source());
-    if(!lr)
-        return this->lr();
-    return this->lr(lr.resultVariant());
+    return this->lr(p->canStrategy(__func__));
 }
 
 ResultValue &CRUDBase::canActionPrint()
@@ -943,14 +941,7 @@ ResultValue &CRUDBase::canActionPrint()
 
 ResultValue &CRUDBase::canActionCustom()
 {
-    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
-    auto act=p->actions.value(name);
-    if(!act)
-        return this->lr();
-    auto &lr=act->action(this->source());
-    if(!lr)
-        return this->lr();
-    return this->lr(lr.resultVariant());
+    return this->lr(p->canStrategy(__func__));
 }
 
 ResultValue &CRUDBase::doBofore()

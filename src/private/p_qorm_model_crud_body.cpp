@@ -31,13 +31,20 @@ CRUDBody::CRUDBody(const QVariant &strategy, const QVariant &expressions, const 
 
 CRUDTypes::Strategy CRUDBody::strategy()const
 {
-    QStm::MetaEnum<QOrm::CRUDTypes::Strategy> e(this->value(__strategy));
+    auto vStrategy=this->value(__strategy);
+    QStm::MetaEnum<QOrm::CRUDTypes::Strategy> e;
+    if(!e.canType(vStrategy))
+        return QOrm::CRUDTypes::Strategy::Custom;
     return e.type();
 }
 
 QString CRUDBody::strategyName() const
 {
-    return this->value(__strategy).toString();
+    auto vStrategy=this->value(__strategy).toString().trimmed();
+    QStm::MetaEnum<QOrm::CRUDTypes::Strategy> e;
+    if(!e.canType(vStrategy))
+        return vStrategy;
+    return e.name();
 }
 
 bool CRUDBody::canStrategy(const QVariant &strategy)
@@ -168,11 +175,14 @@ bool CRUDBody::isStrategy(const QVariant &v)
 bool CRUDBody::isStrategyModify()
 {
     auto strategy=this->strategy();
-    if(
-            strategy==QOrm::CRUDTypes::Upsert
-            ||
-            strategy==QOrm::CRUDTypes::Remove
-            )
+    if
+        (
+        strategy==QOrm::CRUDTypes::Custom
+        ||
+        strategy==QOrm::CRUDTypes::Upsert
+        ||
+        strategy==QOrm::CRUDTypes::Remove
+        )
         return true;
 
     return false;
