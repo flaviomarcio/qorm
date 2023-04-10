@@ -107,7 +107,6 @@ static const auto vpName="name";
 static const auto vpObrigatory="obrigatory";
 static const auto vpOptions="options";
 static const auto vpOrder="order";
-static const auto vpOutput="output";
 static const auto vpPath="path";
 static const auto vpPerfumery="perfumerys";
 static const auto vpPrimaryKey="primaryKey";
