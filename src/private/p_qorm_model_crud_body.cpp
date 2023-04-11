@@ -33,8 +33,11 @@ CRUDTypes::Strategy CRUDBody::strategy()const
 {
     auto vStrategy=this->value(__strategy);
     QStm::MetaEnum<QOrm::CRUDTypes::Strategy> e;
-    if(!e.canType(vStrategy))
+    if(!e.canType(vStrategy)){
+        if(vStrategy.toByteArray().trimmed().isEmpty())
+            return QOrm::CRUDTypes::Strategy::Invalid;
         return QOrm::CRUDTypes::Strategy::Custom;
+    }
     return e.type();
 }
 
@@ -166,26 +169,41 @@ QVariantList CRUDBody::itemsList() const
     return __return;
 }
 
-bool CRUDBody::isStrategy(const QVariant &v)
+bool CRUDBody::isValid() const
 {
-    const auto strategy = this->strategy();
-    return (strategy == v.toInt());
+    if(this->isEmpty())
+        return false;
+
+    if(this->strategy()==CRUDTypes::Invalid)
+        return false;
+
+    return true;
+}
+
+bool CRUDBody::isStrategy(const QVariant &v)const
+{
+    QStm::MetaEnum<CRUDTypes::Strategy> e{v};
+    auto s=this->strategy();
+    if(e.equal(s))
+        return true;
+    return false;
 }
 
 bool CRUDBody::isStrategyModify()
 {
     auto strategy=this->strategy();
-    if
-        (
-        strategy==QOrm::CRUDTypes::Custom
-        ||
-        strategy==QOrm::CRUDTypes::Upsert
-        ||
-        strategy==QOrm::CRUDTypes::Remove
-        )
+    switch (strategy) {
+    case QOrm::CRUDTypes::Custom:
+    case QOrm::CRUDTypes::Upsert:
+    case QOrm::CRUDTypes::Remove:
+    case QOrm::CRUDTypes::Deactivate:
+    case QOrm::CRUDTypes::Apply:
+    case QOrm::CRUDTypes::Execute:
+    case QOrm::CRUDTypes::Finalize:
         return true;
-
-    return false;
+    default:
+        return false;
+    }
 }
 
 QVariant CRUDBody::resultInfo() const

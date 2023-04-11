@@ -103,11 +103,17 @@ public:
     QVariantList itemsList()const;
 
     //!
+    //! \brief isValid
+    //! \return
+    //!
+    virtual bool isValid() const;
+
+    //!
     //! \brief isStrategy
     //! \param v
     //! \return
     //!
-    virtual bool isStrategy(const QVariant &v);
+    virtual bool isStrategy(const QVariant &v) const;
 
     //!
     //! \brief isStrategyModify

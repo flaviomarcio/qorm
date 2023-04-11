@@ -539,9 +539,7 @@ ResultValue &CRUDBase::crudify()
             return this->lr();
         break;
     default:
-        if(!this->canActionCustom())
-            return this->lr();
-        break;
+        return this->lr().setValidation(tr("Invalid strategy"));
     }
 
     if(!this->afterCrudify())

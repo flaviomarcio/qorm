@@ -327,6 +327,9 @@ ResultValue &CRUDBlock::crudify()
     QVariantList pageList;
     const CRUDBody crudBody{p->crudBody};
 
+    if(!crudBody.isValid())
+        return this->lr().setValidation(tr("Invalid CRUDBody"));
+
     this->resultInfo().setValues(crudBody.resultInfo());
     auto crudPages=crudBody.pagesHash();
 
