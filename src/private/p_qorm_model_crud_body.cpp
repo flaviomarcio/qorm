@@ -33,12 +33,12 @@ CRUDTypes::Strategy CRUDBody::strategy()const
 {
     auto vStrategy=this->value(__strategy);
     QStm::MetaEnum<QOrm::CRUDTypes::Strategy> e;
-    if(!e.canType(vStrategy)){
-        if(vStrategy.toByteArray().trimmed().isEmpty())
-            return QOrm::CRUDTypes::Strategy::Invalid;
-        return QOrm::CRUDTypes::Strategy::Custom;
-    }
-    return e.type();
+    if(e.canType(vStrategy))
+        return e.type();
+
+    if(vStrategy.toByteArray().trimmed().isEmpty())
+        return QOrm::CRUDTypes::Strategy::Init;
+    return QOrm::CRUDTypes::Strategy::Custom;
 }
 
 QString CRUDBody::strategyName() const
@@ -155,7 +155,6 @@ QVariantHash CRUDBody::pagesHash() const
 QVariantList CRUDBody::itemsList() const
 {
     QVariantList __return;
-
     auto pagesList=this->pagesList();
     for(auto &v:pagesList){
         auto vHash=v.toHash();
@@ -171,13 +170,12 @@ QVariantList CRUDBody::itemsList() const
 
 bool CRUDBody::isValid() const
 {
-    if(this->isEmpty())
+    switch (this->strategy()) {
+    case CRUDTypes::Invalid:
         return false;
-
-    if(this->strategy()==CRUDTypes::Invalid)
-        return false;
-
-    return true;
+    default:
+        return true;
+    }
 }
 
 bool CRUDBody::isStrategy(const QVariant &v)const
