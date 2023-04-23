@@ -400,17 +400,32 @@ public:
     }
     SqlParserConditions<TemplateParent>&between(const QVariant &field, const QVariant &valueA, const KeywordLogical &keywordLogical=KeywordLogical::klAnd)
     {
-        switch (valueA.typeId()) {
-        case QMetaType::QDateTime:
-        case QMetaType::QDate:
-        case QMetaType::QTime:
-        {
-            auto valueB=QDateTime{valueA.toDateTime().date(), QTime(23,59,59,998)};
-            return this->addCondition(new SqlParserCondition{__func__, field, valueA, valueB, KeywordOperator::koBetween, keywordLogical});
+        QVariant vA;
+        QVariant vB;
+
+        static const auto __list_ls=QVector<QMetaType::Type>{QMetaType::QVariantList, QMetaType::QStringList};
+        static const auto __list_dt=QVector<QMetaType::Type>{QMetaType::QDateTime, QMetaType::QDate, QMetaType::QTime};
+
+        if(__list_ls.contains(valueA.typeId())){
+            auto vList=valueA.toList();
+            vA=(vList.size()>0)?vList.at(0):QVariant{};
+            vB=(vList.size()>1)?vList.at(1):QVariant{};
         }
-        default:
-            return this->equal(field, valueA, keywordLogical);
+        else{
+            vA=valueA;
         }
+
+        if(
+            (vB.isNull() || !vB.isValid())
+            ||
+            __list_dt.contains(vA.typeId())
+            ){
+            vB=QDateTime{vA.toDateTime().date(), QTime(23,59,59,998)};
+        }
+
+        if(vB.isNull() || !vB.isValid())
+            return this->equal(field, vA, keywordLogical);
+        return this->addCondition(new SqlParserCondition{__func__, field, vA, vB, KeywordOperator::koBetween, keywordLogical});
     }
     auto &between(const QVariant &field, const QVariant &valueA, const QVariant &valueB, const KeywordLogical &keywordLogical=KeywordLogical::klAnd)
     {
