@@ -30,7 +30,11 @@ public:
             QByteArray _textBytes;
             QString _textStr;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+            QMetaMethodReturnArgument invokeReturn;
+#else
             QGenericReturnArgument invokeReturn;
+#endif
 
             switch (method.returnType()) {
             case QMetaType::QString:

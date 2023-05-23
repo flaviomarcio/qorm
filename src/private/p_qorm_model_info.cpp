@@ -149,7 +149,11 @@ public:
             QVariantList _vList;
             QStringList _sList;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+            QMetaMethodReturnArgument invokeReturn;
+#else
             QGenericReturnArgument invokeReturn;
+#endif
             switch (method.returnType()) {
             case QMetaType::QVariantList:
                 invokeReturn=Q_RETURN_ARG(QVariantList, _vList);
@@ -192,7 +196,11 @@ public:
             QVariantList _vList;
             QStringList _sList;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+            QMetaMethodReturnArgument invokeReturn;
+#else
             QGenericReturnArgument invokeReturn;
+#endif
 
             switch (method.returnType()) {
             case QMetaType::QVariantList:
@@ -240,7 +248,11 @@ public:
             QVariant _v;
             QVariantMap _vMap;
             QVariantHash _vHash;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+            QMetaMethodReturnArgument invokeReturn;
+#else
             QGenericReturnArgument invokeReturn;
+#endif
 
             switch (method.returnType()) {
             case QMetaType::QVariantHash:
@@ -287,8 +299,12 @@ public:
             QVariant _v;
             QByteArray _textBytes;
             QString _textString;
-            QGenericReturnArgument invokeReturn;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+            QMetaMethodReturnArgument invokeReturn;
+#else
+            QGenericReturnArgument invokeReturn;
+#endif
             switch (method.returnType()) {
             case QMetaType::QByteArray:
                 invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
