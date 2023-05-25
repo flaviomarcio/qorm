@@ -746,13 +746,8 @@ public:
     {
         Query query{this};
         query.builder().structure().truncateTable(this->p_modelInfo);
-
         if (!query.exec())
             return this->lr(query.lr());
-
-        if (!query.next())
-            return this->lr() = false;
-
         return this->lr() = true;
     }
 
@@ -766,10 +761,6 @@ public:
         query.builder().structure().truncateTableCascade(this->p_modelInfo);
         if (!query.exec())
             return this->lr(query.lr());
-
-        if (!query.next())
-            return this->lr() = false;
-
         return this->lr() = true;
     }
 

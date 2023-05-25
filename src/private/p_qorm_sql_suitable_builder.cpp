@@ -33,24 +33,24 @@ SqlSuitableKeyWord &SqlSuitableBuilderPvt::parser()
 
 QList<SqlParserCommand *> SqlSuitableBuilderPvt::strategyList()
 {
-    QList<SqlParserCommand*> strategy;
-    strategy<<&this->select;
-    strategy<<&this->insert;
-    strategy<<&this->update;
-    strategy<<&this->upsert;
-    strategy<<&this->remove;
-    strategy<<&this->procedure;
-    strategy<<&this->function;
-    strategy<<&this->structure;
-    strategy<<&this->combineSelect;
+    QList<SqlParserCommand*> strategy={
+     &this->select
+    ,&this->insert
+    ,&this->update
+    ,&this->upsert
+    ,&this->remove
+    ,&this->procedure
+    ,&this->function
+    ,&this->structure
+    ,&this->combineSelect
+    };
     return strategy;
 }
 
 void SqlSuitableBuilderPvt::clear()
 {
-    for(auto &v:this->strategyList()){
+    for(auto &v:this->strategyList())
         v->clear();
-    }
 }
 
 QSqlDatabase SqlSuitableBuilderPvt::connection()
@@ -78,6 +78,7 @@ bool SqlSuitableBuilderPvt::canBuild()
 
 bool SqlSuitableBuilderPvt::build()
 {
+    this->prepareIgnored=false;
     for(auto &strategy:this->strategyList()){
         if(strategy==nullptr)
             continue;
@@ -90,17 +91,19 @@ bool SqlSuitableBuilderPvt::build()
 
         auto parser=&this->parser();
 
-        this->_build.clear();
-        if(parser==nullptr){
+        this->preparedQuery.clear();
+        if(parser==nullptr)
             return (&this->parser())!=nullptr;
-        }
+
 
         auto lst=strategy->toScript(*parser);
         for(auto &v:lst)
-            this->_build<<v;
+            this->preparedQuery.append(v);
 
-        if(strategy->ignorePrepare())
+        if(strategy->ignorePrepare()){
+            this->prepareIgnored=strategy->ignorePrepare();
             continue;
+        }
 
         auto command=lst.join(' ') + QStringLiteral(";");
         {
@@ -109,7 +112,7 @@ bool SqlSuitableBuilderPvt::build()
                 return false;
         }
     }
-    return !this->_build.isEmpty();
+    return !this->preparedQuery.isEmpty();
 }
 
 }

@@ -568,10 +568,7 @@ public:
     {
         auto object=new SqlParserCommand{};
         object->makeUuid();
-        QVariantMap map;
-        map[__type]=kgcNextValSelect;
-        map[__object]=v;
-        object->setValue(map);
+        object->setValue(QVariantMap{{__type, kgcNextValSelect},{__object, v}});
         this->setPointer(this->suuid(), object);
         return *this;
     }
@@ -616,10 +613,7 @@ public:
     {
         auto object=new SqlParserCommand{};
         object->makeUuid();
-        QVariantMap map;
-        map[__type]=kgcTruncateTable;
-        map[__object]=v;
-        object->setValue(map);
+        object->setValue(QVariantMap{{__type, kgcTruncateTable},{__object, v}});
         this->setPointer(this->suuid(), object);
         return *this;
     }
@@ -628,10 +622,7 @@ public:
     {
         auto object=new SqlParserCommand{};
         object->makeUuid();
-        QVariantMap map;
-        map[__type]=kgcTruncateTableCacade;
-        map[__object]=v;
-        object->setValue(map);
+        object->setValue(QVariantMap{{__type, kgcTruncateTableCacade},{__object, v}});
         this->setPointer(this->suuid(), object);
         return *this;
     }

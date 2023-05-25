@@ -92,6 +92,12 @@ public:
     QStringList &preparedQuery() const;
 
     //!
+    //! \brief prepareIgnored
+    //! \return
+    //!
+    bool prepareIgnored()const;
+
+    //!
     //! \brief clear
     //!
     virtual void clear();

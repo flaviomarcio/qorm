@@ -19,6 +19,7 @@ public:
     QMetaObject modelMetaObject;
     SqlSuitableBuilder sqlBuilder;
     QSqlQuery sqlQuery;
+    bool prepareIgnored=false;
     QStringList preperedQuery;
     QStringList sqlQueryFields;
     QSqlRecord sqlRecord;

@@ -79,8 +79,12 @@ bool SqlSuitableBuilder::build()
 
 QStringList &SqlSuitableBuilder::preparedQuery() const
 {
+    return p->preparedQuery;
+}
 
-    return p->_build;
+bool SqlSuitableBuilder::prepareIgnored() const
+{
+    return p->prepareIgnored;
 }
 
 void SqlSuitableBuilder::clear()

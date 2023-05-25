@@ -11,9 +11,9 @@ namespace QOrm{
 class SqlSuitableBuilderPvt:public QObject {
 
 public:
-
     Query*query=nullptr;
-    QStringList _build;
+    bool prepareIgnored=false;
+    QStringList preparedQuery;
     SqlParserInsert insert;
     SqlParserUpdate update;
     SqlParserUpsert upsert;

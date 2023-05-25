@@ -51,6 +51,7 @@ bool QueryPvt::prepare()
     }
 
     this->sqlBuilder.clear();
+    this->prepareIgnored=this->sqlBuilder.prepareIgnored();
     this->preperedQuery=this->sqlBuilder.preparedQuery();
     return true;
 }
@@ -81,7 +82,20 @@ bool QueryPvt::prepareExecCache()
 bool QueryPvt::exec(const QVariant &command)
 {
     auto scriptCommand=command.toString().trimmed();
+
+    bool execReturn=false;
+
     if(!scriptCommand.isEmpty()){
+        this->preperedQuery.clear();
+        this->prepareIgnored=false;
+        this->preperedQuery.append(scriptCommand);
+    }
+
+    if(this->prepareIgnored){
+        scriptCommand=this->preperedQuery.join(';');
+        execReturn=this->sqlQuery.exec(scriptCommand);
+    }
+    else if(!scriptCommand.isEmpty()){
         if(!this->sqlQuery.prepare(scriptCommand)){
             this->writeLog(this->sqlQuery.executedQuery(), this->sqlQuery.lastError());
 #if Q_ORM_LOG
@@ -91,11 +105,13 @@ bool QueryPvt::exec(const QVariant &command)
             this->sqlError=this->sqlQuery.lastError();
             return false;
         }
-        this->preperedQuery.clear();
-        this->preperedQuery.append(scriptCommand);
+        execReturn=this->sqlQuery.exec();
+    }
+    else{
+        execReturn=this->sqlQuery.exec();
     }
 
-    if(!this->sqlQuery.exec()){
+    if(!execReturn){
         this->writeLog(this->sqlQuery.executedQuery(), this->sqlQuery.lastError());
 #if Q_ORM_LOG
         oWarning()<<this->sqlQuery.executedQuery();
@@ -148,7 +164,7 @@ void QueryPvt::makeSqlRecord(QSqlRecord &sqlRecord)
     this->sqlRecord=sqlRecord;
     this->sqlQueryFields.clear();
     for (int col = 0; col < this->sqlRecord.count(); ++col)
-        this->sqlQueryFields<<this->sqlRecord.fieldName(col).toLower().trimmed();
+        this->sqlQueryFields.append(this->sqlRecord.fieldName(col).toLower().trimmed());
 }
 
 bool QueryPvt::makeModelMetaObject(QMetaObject &metaObject)
