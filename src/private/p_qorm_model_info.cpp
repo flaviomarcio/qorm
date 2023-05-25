@@ -901,7 +901,8 @@ const ModelInfo &ModelInfo::from(const QVariant &v)
         return info;
     }
 #ifdef QT_DEBUG
-    oWarning()<<QObject::tr("Invalid model info, className:[%1]").arg(className);
+    if(!className.isEmpty())
+        oWarning()<<QObject::tr("Invalid model info, className:[%1]").arg(className);
 #endif
     static ModelInfo info;
     return info;
