@@ -46,14 +46,17 @@ bool QueryPvt::prepare()
 
     if(!this->sqlBuilder.build()){
         this->sqlBuilder.clear();
+        this->prepareIgnored=this->sqlBuilder.prepareIgnored();
+        this->preperedQuery=this->sqlBuilder.preparedQuery();
         this->preperedQuery.clear();
         return false;
     }
-
-    this->sqlBuilder.clear();
-    this->prepareIgnored=this->sqlBuilder.prepareIgnored();
-    this->preperedQuery=this->sqlBuilder.preparedQuery();
-    return true;
+    else{
+        this->sqlBuilder.clear();
+        this->prepareIgnored=this->sqlBuilder.prepareIgnored();
+        this->preperedQuery=this->sqlBuilder.preparedQuery();
+        return true;
+    }
 }
 
 bool QueryPvt::prepareExec()

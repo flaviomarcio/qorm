@@ -1,4 +1,5 @@
 #include "./p_qorm_sql_suitable_builder.h"
+#include <QSqlError>
 
 namespace QOrm{
 
@@ -108,8 +109,11 @@ bool SqlSuitableBuilderPvt::build()
         auto command=lst.join(' ') + QStringLiteral(";");
         {
             auto &p=*static_cast<QueryPvt*>(query->p);
-            if(!p.sqlQuery.prepare(command))
+            if(!p.sqlQuery.prepare(command)){
+                qDebug()<<p.sqlQuery.lastError().text();
+                qDebug()<<command;
                 return false;
+            }
         }
     }
     return !this->preparedQuery.isEmpty();
