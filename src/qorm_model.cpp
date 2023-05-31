@@ -426,8 +426,7 @@ public:
         auto name=wrapperName.toLower().trimmed().toUtf8();
         const auto &mapWrapper=this->mapWrapper.value(name);
         QVariantList vList;
-        auto typeId=v.typeId();
-        switch (typeId) {
+        switch (v.typeId()) {
         case QMetaType::QVariantHash:
         case QMetaType::QVariantMap:
             vList.append(v.toHash());
@@ -451,7 +450,9 @@ public:
             QMultiHashIterator<QByteArray, QByteArray> i(mapWrapper);
             while (i.hasNext()) {
                 i.next();
-                auto  k=modelInfo.tablePrefix()+i.key();
+                QString k=i.key();
+                if(!record.contains(i.key()))
+                    k=modelInfo.tablePrefix()+i.key();
                 auto &s=i.value();
                 auto v=record.value(k);
                 switch (v.typeId()){

@@ -506,12 +506,10 @@ QString SqlSuitableKeyWord::formatValue(const QVariant &v)
     if(!v.isValid())
         return __nullStr;
 
-    auto typeId=v.typeId();
-
-    if(typeId>=QMetaType::User)
+    if(v.typeId()>=QMetaType::User)
         return QString::number(v.toLongLong());
 
-    switch (typeId) {
+    switch (v.typeId()) {
     case QMetaType::Int:
     case QMetaType::UInt:
     case QMetaType::LongLong:
@@ -599,8 +597,7 @@ QString SqlSuitableKeyWord::formatParameter(const QVariant &v)
     if(!v.isValid())
         return __nullStr;
 
-    auto typeId=v.typeId();
-    switch (typeId) {
+    switch (v.typeId()) {
     case QMetaType::Int:
     case QMetaType::UInt:
     case QMetaType::LongLong:
