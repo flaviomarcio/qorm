@@ -58,11 +58,6 @@ public:
                                QObject *parent);
 
     //!
-    //! \brief ~ConnectionSetting
-    //!
-    ~ConnectionSetting();
-
-    //!
     //! \brief printLog
     //!
     ConnectionSetting &printLog();
@@ -81,23 +76,17 @@ public:
     ConnectionSetting &fromSetting(const ConnectionSetting &setting);
 
     //!
-    //! \brief toMap
-    //! \return
-    //!
-    QVariantMap toMap() const;
-
-    //!
     //! \brief toHash
     //! \return
     //!
     QVariantHash toHash() const;
 
     //!
-    //! \brief fromMap
+    //! \brief fromHash
     //! \param map
     //! \return
     //!
-    ConnectionSetting &fromMap(const QVariantHash &map);
+    ConnectionSetting &fromHash(const QVariantHash &map);
 
     //!
     //! \brief fromConnection

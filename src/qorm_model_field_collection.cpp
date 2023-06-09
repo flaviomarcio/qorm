@@ -95,7 +95,7 @@ const QList<ModelFieldDescriptor *> &ModelFieldCollection::list() const
     }
     if(p->list.isEmpty()){
         auto vList=p->collection.values();
-        for(auto&field:vList)
+        for(auto &field:vList)
             p->list.append(field);
     }
     return p->list;
@@ -104,7 +104,7 @@ const QList<ModelFieldDescriptor *> &ModelFieldCollection::list() const
 const QVariantList &ModelFieldCollection::toList()const
 {
     p->vList.clear();
-    auto&list=this->list();
+    auto &list=this->list();
     for(auto &field : list){
         if(field->field().isEmpty())
             continue;

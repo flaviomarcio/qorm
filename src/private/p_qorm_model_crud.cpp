@@ -99,7 +99,7 @@ public:
         auto makeHeaders=[this](QRmk::Headers &headers)
         {
             QStringList groupingField;
-            for(auto&header : this->parent->dto().headers().list()){
+            for(auto &header : this->parent->dto().headers().list()){
                 headers
                         .header(header->field())
                         .title(header->title())
@@ -117,7 +117,7 @@ public:
 
         auto makeSummary=[this](QRmk::Headers &headers)
         {
-            for(auto&header : this->parent->dto().headers().list()){
+            for(auto &header : this->parent->dto().headers().list()){
                 if(header->summaryMode()==header->None)
                     continue;
                 headers
@@ -188,7 +188,7 @@ public:
     {
         Q_UNUSED(crudController)
         Q_UNUSED(vBody)
-        return*this->parent;
+        return *this->parent;
     }
 
     void set_crud(const QVariant &crud)

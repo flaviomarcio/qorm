@@ -79,7 +79,7 @@ const QList<ModelActionDescriptor *> &ModelActionCollection::list() const
 const QVariantList &ModelActionCollection::toList()const
 {
     p->vList.clear();
-    auto&list=this->list();
+    auto &list=this->list();
     for(auto &field : list){
         if(field->action().isEmpty())
             continue;

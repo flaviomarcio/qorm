@@ -572,8 +572,14 @@ public:
                 if(tableFiltrableField_.contains(propertyName))
                     pvt->propertyFiltrable.insert(propertyName, property);
 
-                if(!QMetaTypeUtilVariantDictionary.contains(property.typeId()))//property info
+                switch (property.typeId()) {
+                case QMetaType::QVariantHash:
+                case QMetaType::QVariantMap:
+                case QMetaType::QVariantPair:
+                    break;
+                default:
                     continue;
+                }
             }
 
             {
@@ -689,7 +695,7 @@ public:
 
             auto metaObject=pvt->staticMetaObjectDescriptor;
 
-            auto&descriptor=descriptors[metaObject.className()];
+            auto &descriptor=descriptors[metaObject.className()];
             if(descriptor==nullptr){
                 if(!metaObject.inherits(&ModelFieldDescriptors::staticMetaObject))//SE HERDAR de QOrm::ModelFieldDescriptors
                     return vDescriptors;
@@ -721,7 +727,7 @@ public:
         QHashIterator <QByteArray, QOrm::ModelInfo*> i(*__static_model_info);
         while(i.hasNext()){
             i.next();
-            auto&modelInfo=i.value();
+            auto &modelInfo=i.value();
 
 
             auto nameObject=modelInfo->name();
@@ -1348,7 +1354,7 @@ QVVM ModelInfo::parserVVM(const QVariant &v) const
     QVVM __return;
 
     Q_DECLARE_VU;
-    for(auto&item:vList){
+    for(auto &item:vList){
         auto vHash=item.toHash();
         if(vHash.isEmpty())
             continue;

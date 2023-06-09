@@ -1,6 +1,5 @@
 #pragma once
 
-#include "./qorm_connection_notify.h"
 #include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
 #include "./qorm_object.h"
@@ -13,6 +12,9 @@ class ConnectionManagerPvt;
 class Q_ORM_EXPORT ConnectionManager : public QOrm::Object
 {
     Q_OBJECT
+    Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment NOTIFY enviromentChanged)
+    Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey NOTIFY secreChanged)
+    Q_PROPERTY(QVariantHash paramaters READ paramaters WRITE setParamaters NOTIFY paramatersChanged)
 public:
     //!
     //! \brief ConnectionManager
@@ -25,7 +27,7 @@ public:
     //! \param manager
     //! \param parent
     //!
-    explicit ConnectionManager(ConnectionManager &manager, QObject *parent = nullptr);
+    explicit ConnectionManager(const ConnectionManager &manager, QObject *parent = nullptr);
 
     //!
     //! \brief ConnectionManager
@@ -34,9 +36,6 @@ public:
     //!
     Q_INVOKABLE explicit ConnectionManager(const QVariant &setting, QObject *parent = nullptr);
 
-    Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment NOTIFY enviromentChanged)
-    Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey NOTIFY secreChanged)
-    Q_PROPERTY(QVariantHash paramaters READ paramaters WRITE setParamaters NOTIFY paramatersChanged)
 
     //!
     //! \brief clear
@@ -120,16 +119,10 @@ public:
     virtual ConnectionPool &pool(const QByteArray &value);
 
     //!
-    //! \brief toMap
-    //! \return
-    //!
-    Q_INVOKABLE virtual QVariantMap toMap() const;
-
-    //!
     //! \brief toHash
     //! \return
     //!
-    Q_INVOKABLE virtual QVariantHash toHash() const;
+    virtual QVariantHash toHash() const;
 
     //!
     //! \brief isEmpty
@@ -152,36 +145,10 @@ public:
 
     //!
     //! \brief load
-    //! \param settingsObject
-    //! \return
-    //!
-    virtual bool load(QObject *settingsObject);
-
-    //!
-    //! \brief load
     //! \param manager
     //! \return
     //!
     virtual bool load(const ConnectionManager &manager);
-
-    //!
-    //! \brief settingsFileName
-    //! \return
-    //!
-    Q_INVOKABLE virtual QVariant settingsFileName();
-
-    //!
-    //! \brief setSettingsFileName
-    //! \param fileName
-    //! \return
-    //!
-    virtual bool setSettingsFileName(const QString &fileName);
-
-    //!
-    //! \brief notify
-    //! \return
-    //!
-    ConnectionNotify &notify();
 
     //!
     //! \brief operator <<

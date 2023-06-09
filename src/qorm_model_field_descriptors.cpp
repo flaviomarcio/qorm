@@ -336,11 +336,11 @@ ModelFieldDescriptors &ModelFieldDescriptors::copyDescriptorToFilters()
 {
     this->setActionStart(this->asCREATE);
     p->filtersCollection.clear();
-    for(auto&field:p->descriptorsCollection.list()){
+    for(auto &field:p->descriptorsCollection.list()){
         if(!field->filtrable()) continue;
         this->addFilter(field->field(), field->toHash());
     }
-    for(auto&field:p->filtersCollection.list())
+    for(auto &field:p->filtersCollection.list())
         field->visible(true);
     return *this;
 }

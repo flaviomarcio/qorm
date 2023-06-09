@@ -9,7 +9,6 @@ INCLUDEPATH += $$PWD/includes
 INCLUDEPATH += $$PWD/../qstm/includes
 
 HEADERS += \
-    $$PWD/src/private/p_qorm_connection_manager.h \
     $$PWD/src/private/p_qorm_connection_notify.h \
     $$PWD/src/private/p_qorm_connection_notify_subscribe.h \
     $$PWD/src/private/p_qorm_model_action_method.h \
@@ -87,7 +86,6 @@ HEADERS += \
     $$PWD/src/qorm_wrapper.h \
 
 SOURCES += \
-    $$PWD/src/private/p_qorm_connection_manager.cpp \
     $$PWD/src/private/p_qorm_connection_notify.cpp \
     $$PWD/src/private/p_qorm_connection_notify_subscribe.cpp \
     $$PWD/src/private/p_qorm_model_action_method.cpp \

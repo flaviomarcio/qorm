@@ -384,7 +384,7 @@ public:
         case QMetaType::QStringList:
         {
             auto list=values.toList();
-            for(auto&v : list){
+            for(auto &v : list){
                 auto vHash=v.toHash();
                 if(!vHash.isEmpty())
                     vList.append(v);
@@ -398,7 +398,7 @@ public:
         auto metaObject = this->model->metaObject();
         auto prefix=this->modelInfo().tablePrefix();
 
-        for(auto&v:vList){
+        for(auto &v:vList){
             auto record=v.toHash();
             for(int col = 0; col < metaObject->propertyCount(); ++col) {
                 auto property = metaObject->property(col);
@@ -520,7 +520,7 @@ public:
         QHashIterator<QString,QMetaProperty> i(pks);
         while(i.hasNext()){
             i.next();
-            auto&property=i.value();
+            auto &property=i.value();
             auto v=property.read(this->model);
             switch (property.typeId()) {
             case QMetaType::QUuid:{

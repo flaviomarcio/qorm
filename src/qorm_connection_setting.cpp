@@ -89,11 +89,6 @@ ConnectionSetting::ConnectionSetting(const QByteArray &name,
     }
 }
 
-ConnectionSetting::~ConnectionSetting()
-{
-
-}
-
 ConnectionSetting &ConnectionSetting::printLog()
 {
     QStringList lst;
@@ -145,12 +140,7 @@ bool ConnectionSetting::isValid() const
 
 ConnectionSetting &ConnectionSetting::fromSetting(const ConnectionSetting &setting)
 {
-    return this->fromMap(setting.toHash());
-}
-
-QVariantMap ConnectionSetting::toMap() const
-{
-    return QVariant(this->toHash()).toMap();
+    return this->fromHash(setting.toHash());
 }
 
 QVariantHash ConnectionSetting::toHash() const
@@ -172,7 +162,7 @@ QVariantHash ConnectionSetting::toHash() const
     return __return;
 }
 
-ConnectionSetting &ConnectionSetting::fromMap(const QVariantHash &map)
+ConnectionSetting &ConnectionSetting::fromHash(const QVariantHash &map)
 {
     QVariantHash vMap;
     QHashIterator<QString, QVariant> i(map);
@@ -246,12 +236,12 @@ ConnectionSetting &ConnectionSetting::fromConnection(const QSqlDatabase &connect
     map[QStringLiteral("hostName")] = connection.hostName();
     map[QStringLiteral("port")] = connection.port();
     map[QStringLiteral("connectOptions")] = connection.connectOptions();
-    return this->fromMap(map);
+    return this->fromHash(map);
 }
 
 ConnectionSetting &ConnectionSetting::operator=(const QVariant &value)
 {
-    return this->fromMap(value.toHash());
+    return this->fromHash(value.toHash());
 }
 
 QVariantHash ConnectionSetting::variables() const

@@ -100,7 +100,7 @@ public:
 
     virtual bool from(const QVariant &setting)
     {
-        return connectionSetting.fromMap(setting.toHash()).isValid();
+        return connectionSetting.fromHash(setting.toHash()).isValid();
     }
 
     virtual bool from(const QSqlDatabase &db)

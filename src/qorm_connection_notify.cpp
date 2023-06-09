@@ -1,17 +1,11 @@
 #include "./qorm_connection_notify.h"
 #include "./private/p_qorm_connection_notify.h"
-//#include "./private/p_qorm_connection_notify_subscribe.h"
 
 namespace QOrm {
 
 ConnectionNotify::ConnectionNotify(QObject *parent) : QObject{parent}
 {
     this->p = new ConnectionNotifyPvt{this};
-}
-
-ConnectionNotify::~ConnectionNotify()
-{
-
 }
 
 bool ConnectionNotify::notify_send(const QVariant &payload)

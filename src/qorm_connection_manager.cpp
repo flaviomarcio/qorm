@@ -1,9 +1,267 @@
 #include "./qorm_connection_manager.h"
-#include "./private/p_qorm_connection_manager.h"
 #include "./qorm_macro.h"
+#include "../../../qstm/src/qstm_envs.h"
 #include <QMetaProperty>
 
 namespace QOrm {
+
+static const auto __secret="secret";
+static const auto __environment="environment";
+static const auto __paramaters="paramaters";
+
+static const auto __connection="connection";
+static const auto __host="host";
+static const auto __user="user";
+static const auto __driver="driver";
+static const auto __hostName="hostName";
+static const auto __userName="userName";
+static const auto __password="password";
+static const auto __dataBaseName="dataBaseName";
+static const auto __connectOptions="connectOptions";
+static const auto __schemaNames="schemaNames";
+static const auto __port="port";
+static const auto __name="name";
+
+static const auto __DB_ENVIRONMENT="DB_ENVIRONMENT";
+static const auto __DB_DRIVER="DB_DRIVER";
+static const auto __DB_HOST="DB_HOST";
+static const auto __DB_USER="DB_USER";
+static const auto __DB_PASSWORD="DB_PASSWORD";
+static const auto __DB_DATABASE="DB_DATABASE";
+static const auto __DB_OPTION="DB_OPTION";
+static const auto __DB_PORT="DB_PORT";
+static const auto __DB_SCHEMA="DB_SCHEMA";
+
+
+//!
+//! \brief The ConnectionManagerPvt class
+//!
+class ConnectionManagerPvt:public QObject
+{
+public:
+    QByteArray enviroment;
+    QByteArray secret;
+    QHash<QString, ConnectionSetting*> settings;
+    QMap<QString, ConnectionPool*> pools;
+    ConnectionManager*parent=nullptr;
+    QObject *parentParent=nullptr;
+    ConnectionPool defaultPool;
+    //!
+    //! \brief ConnectionManagerPvt
+    //! \param parent
+    //!
+    explicit ConnectionManagerPvt(ConnectionManager*parent):QObject{parent}, defaultPool{parent}
+    {
+        this->parent=parent;
+        this->init();
+    }
+
+    virtual ~ConnectionManagerPvt()
+    {
+        this->clear();
+    }
+
+    //!
+    //! \brief init
+    //!
+    void init()
+    {
+        this->detailGetCheck(this->enviroment);
+    }
+
+    //!
+    //! \brief pool
+    //! \param value
+    //! \return
+    //!
+    ConnectionPool &pool(const QByteArray &value)
+    {
+        auto &p=*this;
+
+        auto detail=p.settings.value(value);
+        if(detail==nullptr){
+            if(p.pools.isEmpty()){
+                oWarning()<<QStringLiteral("invalid pool: ")<<value<<QStringLiteral(", keys==")<<p.pools.keys();
+                return defaultPool;
+            }
+            auto pool=p.pools.first();
+            return*pool;
+        }
+
+        if(!p.pools.contains(value))
+            p.pools.insert(value, new ConnectionPool(*detail));
+        auto setting=p.settingNameAdjust(value);
+        auto &pool=*p.pools.value(setting);
+        return pool;
+    }
+
+    //!
+    //! \brief isLoaded
+    //! \return
+    //!
+    bool isLoaded()const
+    {
+        QHashIterator<QString, ConnectionSetting*> i(this->settings);
+        while (i.hasNext()) {
+            i.next();
+            if(i.key().trimmed().isEmpty())
+                continue;
+
+            auto &v=i.value();
+            if(v->isValid())
+                return true;
+        }
+        return false;
+    }
+
+    //!
+    //! \brief isEmpty
+    //! \return
+    //!
+    bool isEmpty()const
+    {
+        QHashIterator<QString, ConnectionSetting*> i(this->settings);
+        while (i.hasNext()) {
+            i.next();
+            auto &v=i.value();
+            if(v->isValid())
+                return false;
+        }
+        return true;
+    }
+
+    //!
+    //! \brief clear
+    //!
+    void clear()
+    {
+        auto _detail=this->settings;
+        qDeleteAll(_detail);
+        this->enviroment.clear();
+        this->secret.clear();
+        this->pools.clear();
+        this->settings.clear();
+    }
+
+    //!
+    //! \brief settingNameAdjust
+    //! \param settingName
+    //! \return
+    //!
+    QByteArray settingNameAdjust(QByteArray settingName)
+    {
+        auto setting=settingName.trimmed().isEmpty()? this->enviroment : settingName.trimmed();
+        if(!this->settings.contains(setting))
+            setting=this->enviroment;
+        return setting;
+    }
+
+    //!
+    //! \brief detailGetCheck
+    //! \param settingName
+    //! \return
+    //!
+    ConnectionSetting &detailGetCheck(QByteArray &settingName)
+    {
+        auto RETURN=this->settingNameAdjust(settingName);
+        if(!settings.contains(RETURN))
+            settings.insert(RETURN, new ConnectionSetting(parent));
+        return*settings.value(RETURN);
+    }
+
+    //!
+    //! \brief insert
+    //! \param value
+    //! \return
+    //!
+    ConnectionManager &insert(const QVariantHash &value)
+    {
+        auto &p=*this;
+        if(value.isEmpty())
+            return *this->parent;
+        auto name=value.value(__name).toByteArray().trimmed();
+        if(name.isEmpty())
+            return *this->parent;
+
+        auto drivers=QSqlDatabase::drivers();
+        auto setting=p.settings.value(name);
+        if(setting==nullptr){
+            setting=new ConnectionSetting(nullptr);
+            setting->fromHash(value);
+            setting->setName(name);
+            p.settings.insert(setting->name(), setting);
+        }
+        else{
+            setting->fromHash(value);
+        }
+
+        if(!drivers.contains(setting->driver())){
+            oWarning()<<QStringLiteral("invalid database driver == ")<<setting->driver();
+            oWarning()<<QStringLiteral("avaliable drivers == ")<<drivers.join(',');
+        }
+        return *this->parent;
+    }
+
+    //!
+    //! \brief load
+    //! \param vSettings
+    //! \return
+    //!
+    bool load(const QVariant &vSettings)
+    {
+        auto &p=*this;
+        bool __return=false;
+        auto settings=vSettings.toHash();
+
+        if(settings.contains(__connection))
+            settings=settings.value(__connection).toHash();
+
+        if(settings.isEmpty()){
+            p.clear();
+            return false;
+        }
+
+        if(settings.contains(__host) && settings.contains(__user)){
+            this->insert(settings);
+            return true;
+        }
+
+        QByteArray enviroment = getenv(__DB_ENVIRONMENT);
+
+        QStm::Envs envs;
+        envs.customEnvs(__driver        , envs.value(__DB_DRIVER  ));
+        envs.customEnvs(__hostName      , envs.value(__DB_HOST    ));
+        envs.customEnvs(__userName      , envs.value(__DB_USER    ));
+        envs.customEnvs(__password      , envs.value(__DB_PASSWORD));
+        envs.customEnvs(__dataBaseName  , envs.value(__DB_DATABASE));
+        envs.customEnvs(__connectOptions, envs.value(__DB_OPTION  ));
+        envs.customEnvs(__port          , envs.value(__DB_PORT    ));
+        envs.customEnvs(__schemaNames   , envs.value(__DB_SCHEMA  ));
+
+        p.secret = settings.value(__secret).toByteArray();
+        p.enviroment = settings.value(__environment).toByteArray();
+        p.enviroment=enviroment.isEmpty()?p.enviroment:enviroment;
+        auto paramaters = settings.value(__paramaters).toHash();
+        paramaters=envs.parser(paramaters).toHash();
+        QHashIterator<QString, QVariant> i(paramaters);
+        while (i.hasNext()) {
+            i.next();
+            auto name=i.key().trimmed();
+            if(name.trimmed().isEmpty())
+                continue;
+
+            auto value=i.value().toHash();
+            if(value.isEmpty())
+                continue;
+
+            value.insert(__name, name);
+            p.insert(value);
+            __return=true;
+        }
+        return __return;
+    }
+
+};
 
 ConnectionManager::ConnectionManager(QObject *parent) : QOrm::Object(nullptr)
 {
@@ -16,10 +274,12 @@ ConnectionManager::ConnectionManager(QObject *parent) : QOrm::Object(nullptr)
         this->setParent(parent);
 
     p->parentParent = parent;
-    p->load(p->parentParent);
+    auto cnnParent=dynamic_cast<ConnectionManager*>(p->parentParent);
+    if(cnnParent)
+        p->load(cnnParent->toHash());
 }
 
-ConnectionManager::ConnectionManager(ConnectionManager &manager, QObject *parent)
+ConnectionManager::ConnectionManager(const ConnectionManager &manager, QObject *parent)
     : QStm::Object(nullptr)
 {
     this->p = new ConnectionManagerPvt{this};
@@ -47,7 +307,7 @@ ConnectionManager::ConnectionManager(const QVariant &setting, QObject *parent)
         this->setParent(parent);
 
     p->parentParent = parent;
-    p->v_load(setting);
+    p->load(setting);
 }
 
 void ConnectionManager::clear()
@@ -87,7 +347,7 @@ QVariantHash ConnectionManager::paramaters() const
             continue;
 
         if (v->isValid())
-            paramaters.insert(k, v->toMap());
+            paramaters.insert(k, v->toHash());
     }
     return paramaters;
 }
@@ -95,8 +355,8 @@ QVariantHash ConnectionManager::paramaters() const
 void ConnectionManager::setParamaters(const QVariantHash &value)
 {
     auto lst = p->settings.values();
-    qDeleteAll(lst);
     p->settings.clear();
+    qDeleteAll(lst);
     for (auto &v : value) {
         switch (v.typeId()) {
         case QMetaType::QVariantHash:
@@ -139,31 +399,12 @@ ConnectionPool &ConnectionManager::pool(const QByteArray &value)
     return p->pool(value);
 }
 
-QVariantMap ConnectionManager::toMap() const
-{
-    if (this->isEmpty() || !this->isLoaded())
-        return {};
-
-    QVariantMap RETURN;
-    for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
-        auto property = this->metaObject()->property(row);
-        if (QByteArray{property.name()} == QT_STRINGIFY2(objectName))
-            continue;
-
-        const auto key = property.name();
-        const auto value = property.read(this);
-        if (!value.isNull())
-            RETURN.insert(key, value);
-    }
-    return RETURN;
-}
-
 QVariantHash ConnectionManager::toHash() const
 {
     if (this->isEmpty() || !this->isLoaded())
         return {};
 
-    QVariantHash RETURN;
+    QVariantHash __return;
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
         auto property = this->metaObject()->property(row);
         if (QByteArray{property.name()} == QT_STRINGIFY2(objectName))
@@ -172,9 +413,9 @@ QVariantHash ConnectionManager::toHash() const
         const auto key = property.name();
         const auto value = property.read(this);
         if (!value.isNull())
-            RETURN.insert(key, value);
+            __return.insert(key, value);
     }
-    return RETURN;
+    return __return;
 }
 
 bool ConnectionManager::isEmpty() const
@@ -189,32 +430,12 @@ bool ConnectionManager::isLoaded() const
 
 bool ConnectionManager::load(const QVariant &settings)
 {
-    return p->v_load(settings);
-}
-
-bool ConnectionManager::load(QObject *settingsObject)
-{
-    return p->load(settingsObject);
+    return p->load(settings);
 }
 
 bool ConnectionManager::load(const ConnectionManager &manager)
 {
     return p->load(manager.toHash());
-}
-
-QVariant ConnectionManager::settingsFileName()
-{
-    return p->settingsFileName;
-}
-
-bool ConnectionManager::setSettingsFileName(const QString &fileName)
-{
-    return p->load(fileName);
-}
-
-ConnectionNotify &ConnectionManager::notify()
-{
-    return p->notify;
 }
 
 ConnectionManager &ConnectionManager::operator<<(ConnectionSetting &value)

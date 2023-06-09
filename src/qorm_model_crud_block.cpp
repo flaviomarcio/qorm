@@ -228,7 +228,7 @@ QVariant &CRUDBlock::crudBody() const
 CRUDBlock &CRUDBlock::crudBody(const QVariant &v)
 {
     p->crudBody=v;
-    return*this;
+    return *this;
 }
 
 CRUDBlock &CRUDBlock::makeBlock(CRUDBlock &crudBlock, const QVariant &crudBody)
@@ -240,7 +240,7 @@ CRUDBlock &CRUDBlock::clear()
 {
     p->generatedRecords.clear();
     p->crudMap.clear();
-    return*this;
+    return *this;
 }
 
 CRUDBlock &CRUDBlock::clean()
@@ -258,7 +258,7 @@ CRUDBlock &CRUDBlock::append(PrivateQOrm::CRUDBase *crud)
         p->crudMap.insert(crud->uuid().toString(), crud);
         p->crudList.append(crud);
     }
-    return*this;
+    return *this;
 }
 
 CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
@@ -270,7 +270,7 @@ CRUDBlock &CRUDBlock::remove(PrivateQOrm::CRUDBase *crud)
             delete _crud;
         }
     }
-    return*this;
+    return *this;
 }
 
 CRUDBlock &CRUDBlock::remove(const QUuid &crudUuid)

@@ -112,7 +112,7 @@ public:
         default:
             vList.append(vValues);
         }
-        for(auto&v:vList)
+        for(auto &v:vList)
             v=parseRecord(v);
 
         vList=parseVariables(vList).toList();
@@ -236,7 +236,7 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
         return {};
 
 
-    const auto&propertyPK=modelRef.propertyPK();
+    const auto &propertyPK=modelRef.propertyPK();
 
 
     QVariantHash __return;
@@ -266,7 +266,7 @@ QVariantHash ModelDao::toPreparePrimaryKey(const QOrm::ModelInfo &modelRef, cons
             case QMetaType::QStringList:
             {
                 auto itemList=p->cleanList(v.toList());
-                for(auto&v:itemList)
+                for(auto &v:itemList)
                     vFilterList.append(v);
                 break;
             }
@@ -496,7 +496,7 @@ QVariantHash ModelDao::toPrepareSearch(const QOrm::ModelInfo &modelRef, const QV
             case QMetaType::QStringList:
             {
                 auto vList=val.toList();
-                for(auto&v:vList){
+                for(auto &v:vList){
                     if(!vFilterList.contains(v))
                         vFilterList.append(v);
                 }

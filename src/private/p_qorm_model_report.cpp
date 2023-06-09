@@ -43,7 +43,7 @@ public:
     {
         Q_UNUSED(controller)
         Q_UNUSED(vBody)
-        return*this->parent;
+        return *this->parent;
     }
 
     void set_report(const QVariant &v)

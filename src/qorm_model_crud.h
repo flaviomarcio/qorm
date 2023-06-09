@@ -219,12 +219,12 @@ protected:
         }
 
         QVariantList vListReturn;
-        for(auto&v:vList){
+        for(auto &v:vList){
             auto filters=this->modelInfo().extractProperties(v.toHash());
             if(!this->search(filters))
                 return this->lr();
 
-            for(auto&v:this->lr().resultList())
+            for(auto &v:this->lr().resultList())
                 vListReturn.append(v);
         }
         return this->lr(vListReturn);
@@ -271,7 +271,7 @@ protected:
             vList.append(value);
             break;
         }
-        for(auto&v:vList){
+        for(auto &v:vList){
             T model(this, v);
             if(!this->p_dao.reload(model) && this->lr().isNotOk())
                 return this->lr(this->p_dao.lr());
