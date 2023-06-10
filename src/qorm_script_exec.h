@@ -20,33 +20,24 @@ public:
     //!
     Q_INVOKABLE explicit ScriptExec(QObject *parent = nullptr);
 
-    //!
-    //! \brief operator =
-    //! \param v
-    //! \return
-    //!replace all values
     ScriptExec &operator=(const QVariant &v);
+    ScriptExec &operator=(const QFileInfoList &v);
+    ScriptExec &operator<<(const QVariant &v);
+    ScriptExec &operator<<(const QFileInfoList &v);
 
     //!
-    //! \brief operator =
+    //! \brief append
     //! \param entryInfoList
     //! \return
     //!
-    ScriptExec &operator=(const QFileInfoList &entryInfoList);
+    ScriptExec &append(const QFileInfoList &v);
 
     //!
-    //! \brief operator <<
+    //! \brief append
     //! \param v
     //! \return
     //!
-    ScriptExec &operator<<(const QVariant &v);
-
-    //!
-    //! \brief operator <<
-    //! \param entryInfoList
-    //! \return
-    //!
-    ScriptExec &operator<<(const QFileInfoList &entryInfoList);
+    ScriptExec &append(const QVariant &v);
 
     //!
     //! \brief scriptValues

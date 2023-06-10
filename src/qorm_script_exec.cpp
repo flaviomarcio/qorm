@@ -131,54 +131,49 @@ ScriptExec &ScriptExec::operator=(const QVariant &v)
     return *this;
 }
 
-ScriptExec &ScriptExec::operator=(const QFileInfoList &entryInfoList)
+ScriptExec &ScriptExec::operator=(const QFileInfoList &v)
 {
-
     p->scriptedClear();
     p->scriptValues.clear();
-    for (auto &f : entryInfoList) {
-        p->scriptAppend(QUrl::fromLocalFile(f.filePath()));
-    }
-    return *this;
+    return this->append(v);
+}
+
+ScriptExec &ScriptExec::operator<<(const QFileInfoList &v)
+{
+    return this->append(v);
 }
 
 ScriptExec &ScriptExec::operator<<(const QVariant &v)
 {
+    return this->append(v);
+}
 
+ScriptExec &ScriptExec::append(const QFileInfoList &v)
+{
+    for (auto &f : v)
+        p->scriptAppend(QUrl::fromLocalFile(f.filePath()));
+    return *this;
+}
+
+ScriptExec &ScriptExec::append(const QVariant &v)
+{
     p->scriptAppend(v);
     return *this;
 }
 
-ScriptExec &ScriptExec::operator<<(const QFileInfoList &entryInfoList)
-{
-
-    for (auto &f : entryInfoList) {
-        auto fileName = f.filePath();
-        if (!QFile::exists(fileName)) {
-            oWarning() << tr("Invalid filename: %1").arg(fileName);
-            continue;
-        }
-
-        p->scriptAppend(fileName);
-    }
-    return *this;
-}
 
 QVariantList ScriptExec::scriptValues() const
 {
-
     return p->scriptValues;
 }
 
 const QStringList &ScriptExec::scriptedValues()
 {
-
     return p->scriptedMaker();
 }
 
 ResultValue &ScriptExec::exec()
 {
-
     p->scriptedClear();
     return p->scriptExec();
 }

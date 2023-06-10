@@ -1,4 +1,4 @@
-#include "./qorm_object_db.h"
+#include "./qorm_object_db_extension.h"
 #include "./qorm_const.h"
 #include "./qorm_macro.h"
 #include <QMetaMethod>
@@ -7,12 +7,17 @@
 
 namespace QOrm {
 
-class ObjectDbPvt : public QObject
+class ObjectDbExtensionPvt
 {
 public:
     QObject *parent = nullptr;
-    QByteArray ___connectionId;
-    explicit ObjectDbPvt(QObject *parent) : QObject{parent} { this->parent = parent; }
+    QByteArray connectionId;
+    explicit ObjectDbExtensionPvt(QObject *parent, const QByteArray &connectionId)
+        :
+        parent{parent},
+        connectionId{connectionId}
+    {
+    }
 
     bool invokeMethodConnection(QObject *objectCheck, QSqlDatabase &outConnection)
     {
@@ -76,13 +81,12 @@ public:
 
     QSqlDatabase connectionGet()
     {
-        if (!this->___connectionId.isEmpty()) {
-            auto connection = QSqlDatabase::database(this->___connectionId);
-            if (connection.isOpen())
-                return connection;
-        }
+        auto connection = this->connectionId.isEmpty()
+                              ?QSqlDatabase{}
+                              :QSqlDatabase::database(this->connectionId);
+        if (connection.isOpen())
+            return connection;
 
-        QSqlDatabase connection;
         auto parentConnection = this->parent;
         if (parentConnection == nullptr)
             return {};
@@ -90,7 +94,7 @@ public:
         QVector<QObject *> parentVector;
         auto loopObject = parentConnection;
         while (loopObject != nullptr) {
-            parentVector << loopObject;
+            parentVector.append(loopObject);
             loopObject = loopObject->parent();
         }
         for (auto &invokeObject : parentVector) {
@@ -101,16 +105,46 @@ public:
         }
         return {};
     }
-
-    QByteArray connectionId() const { return this->___connectionId; }
 };
 
-ObjectDb::ObjectDb(QObject *parent) : QStm::Object{parent}, ObjectDbExtension{this}
+ObjectDbExtension::ObjectDbExtension(QObject *parent):
+    p(new ObjectDbExtensionPvt{parent, {}})
 {
 }
 
-ObjectDb::ObjectDb(const QSqlDatabase &connection, QObject *parent) : QOrm::Object{parent},ObjectDbExtension{connection, this}
+ObjectDbExtension::ObjectDbExtension(const QSqlDatabase &connection, QObject *parent):
+    p(new ObjectDbExtensionPvt{parent, connection.connectionName().toUtf8()})
 {
+}
+
+ObjectDbExtension::~ObjectDbExtension()
+{
+    delete p;
+}
+
+QSqlDatabase ObjectDbExtension::connection() const
+{
+    return p->connectionGet();
+}
+
+bool ObjectDbExtension::setConnection(const QSqlDatabase &connection)
+{
+    if (connection.isValid() && connection.isOpen())
+        p->connectionId = connection.connectionName().toUtf8();
+    else
+        p->connectionId.clear();
+    return !p->connectionId.isEmpty();
+}
+
+bool ObjectDbExtension::setConnection(const QString &connectionName)
+{
+    auto connection = QSqlDatabase::database(connectionName);
+    return this->setConnection(connection);
+}
+
+QByteArray &ObjectDbExtension::connectionId() const
+{
+    return p->connectionId;
 }
 
 } // namespace QOrm
