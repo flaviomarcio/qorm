@@ -63,11 +63,6 @@ public:
     Q_INVOKABLE explicit SqlSuitableValue(QObject *parent=nullptr);
 
     //!
-    //! \brief ~SqlSuitableValue
-    //!
-    virtual ~SqlSuitableValue();
-
-    //!
     //! \brief toUuid
     //! \param v
     //! \return

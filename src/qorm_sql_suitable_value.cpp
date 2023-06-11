@@ -87,11 +87,6 @@ SqlSuitableValue::SqlSuitableValue(QObject *parent):QObject{parent}
     this->setConnection({});
 }
 
-SqlSuitableValue::~SqlSuitableValue()
-{
-
-}
-
 QString SqlSuitableValue::toUuid(const QVariant &v)
 {
     return this->toStr(v.toUuid().toString());
