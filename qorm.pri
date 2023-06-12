@@ -130,7 +130,7 @@ SOURCES += \
     $$PWD/src/qorm_model_field_descriptor.cpp \
     $$PWD/src/qorm_model_field_descriptors.cpp \
     $$PWD/src/qorm_object_db.cpp \
-    $$PWD/src/qorm_object_db_extend.cpp \
+    $$PWD/src/qorm_object_db_extension.cpp \
     $$PWD/src/qorm_query.cpp \
     $$PWD/src/qorm_script_exec.cpp \
     $$PWD/src/qorm_sql_suitable_builder.cpp \

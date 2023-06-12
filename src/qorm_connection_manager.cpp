@@ -64,10 +64,8 @@ public:
 
         auto detail=p.settings.value(value);
         if(detail==nullptr){
-            if(p.pools.isEmpty()){
-                oWarning()<<QStringLiteral("invalid pool: ")<<value<<QStringLiteral(", keys==")<<p.pools.keys();
+            if(p.pools.isEmpty())
                 return defaultPool;
-            }
             auto pool=p.pools.first();
             return *pool;
         }

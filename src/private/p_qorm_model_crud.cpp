@@ -13,7 +13,7 @@ static const auto __action = "action";
 static const auto __source = "source";
 static const auto __method = "method";
 static const auto __strategy = "strategy";
-static const auto __resuliInfo = "resultInfo";
+static const auto __resultInfo = "resultInfo";
 static const auto __canAction = "canAction";
 static const auto __before = "before";
 static const auto __failed = "failed";
@@ -211,7 +211,7 @@ public:
         };
         this->strategySet(vStrategy());
         this->sourceSet(vSource());
-        this->parent->lr().resultInfo().fromVar(vCrud.value(__resuliInfo));
+        this->parent->lr().resultInfo().fromVar(vCrud.value(__resultInfo));
     }
 
     void sourceSet(const QVariant &source)

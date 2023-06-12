@@ -17,7 +17,7 @@ public:
     bool rollbackOnError = true;
     bool exceptionOnFail = true;
     Transaction *parent = nullptr;
-    explicit TransactionPvt(Transaction *parent):QObject{parent} { this->parent = parent; }
+    explicit TransactionPvt(Transaction *parent):QObject{parent}, parent{parent} {}
 
     void objReg()
     {
@@ -87,14 +87,12 @@ public:
     }
 };
 
-Transaction::Transaction(QObject *parent) : ObjectDb{parent}
+Transaction::Transaction(QObject *parent) : ObjectDb{parent}, p{new TransactionPvt{this}}
 {
-    this->p = new TransactionPvt{this};
 }
 
 ResultValue &Transaction::transaction()
 {
-
     auto objectTransaction = p->objectTransaction();
     auto db = this->connection();
     if (objectTransaction == this)
@@ -121,7 +119,6 @@ ResultValue &Transaction::transaction()
 
 ResultValue &Transaction::commit()
 {
-
     auto objectTransaction = p->objectTransaction();
     if (objectTransaction == this && this->lr()) {
         auto db = this->connection();
@@ -146,7 +143,6 @@ ResultValue &Transaction::commit()
 
 ResultValue &Transaction::rollback()
 {
-
     auto objectTransaction = p->objectTransaction();
     if (objectTransaction == this) {
         auto db = this->connection();
@@ -159,7 +155,6 @@ ResultValue &Transaction::rollback()
 
 ResultValue &Transaction::inTransaction()
 {
-
     auto db = this->connection();
     if (!this->lr())
         return this->lr();
@@ -187,7 +182,6 @@ ResultValue &Transaction::isValid()
 
 ResultValue &Transaction::canTransaction()
 {
-
     if (!this->isValid())
         return this->lr();
 
@@ -196,13 +190,11 @@ ResultValue &Transaction::canTransaction()
 
 bool Transaction::rollbackOnError() const
 {
-
     return p->rollbackOnError;
 }
 
 void Transaction::setRollbackOnError(bool value)
 {
-
     if (!value)
         oWarning() << QStringLiteral(
             "in the business structure disable autorollback this can be very, very dangerous");
@@ -211,13 +203,11 @@ void Transaction::setRollbackOnError(bool value)
 
 bool Transaction::exceptionOnFail() const
 {
-
     return p->exceptionOnFail;
 }
 
 void Transaction::setExceptionOnFail(bool value)
 {
-
     if (!value)
         oWarning() << QStringLiteral(
             "in the business structure disable autorollback this can be very, very dangerous");

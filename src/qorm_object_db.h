@@ -18,7 +18,12 @@ public:
     //! \param parent
     //!
     Q_INVOKABLE explicit ObjectDb(QObject *parent = nullptr);
-    explicit ObjectDb(const QSqlDatabase &connection, QObject *parent = nullptr);
+
+    //!
+    //! \brief connectionId
+    //! \return
+    //!
+    Q_INVOKABLE QByteArray connectionId() const;
 
 };
 

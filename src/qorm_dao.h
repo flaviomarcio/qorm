@@ -10,23 +10,13 @@ class DaoPvt;
 //!
 class Q_ORM_EXPORT Dao : public ObjectDb
 {
+    Q_OBJECT
 public:
     //!
     //! \brief Dao
     //! \param parent
     //!
     Q_INVOKABLE explicit Dao(QObject *parent = nullptr);
-
-    //!
-    //! \brief Dao
-    //! \param connection
-    //! \param parent
-    //!
-    explicit Dao(const QSqlDatabase &connection, QObject *parent = nullptr);
-
-    //!
-    //!
-    ~Dao();
 
     //!
     //! \brief format

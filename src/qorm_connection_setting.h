@@ -38,14 +38,14 @@ public:
     //! \param detail
     //! \param parent
     //!
-    explicit ConnectionSetting(const QSqlDatabase &detail, QObject *parent);
+    explicit ConnectionSetting(const QSqlDatabase &connection, QObject *parent);
 
     //!
     //! \brief ConnectionSetting
     //! \param detail
     //! \param parent
     //!
-    explicit ConnectionSetting(const ConnectionSetting &detail, QObject *parent);
+    explicit ConnectionSetting(const ConnectionSetting &setting, QObject *parent);
 
     //!
     //! \brief ConnectionSetting

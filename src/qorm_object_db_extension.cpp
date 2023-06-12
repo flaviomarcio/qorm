@@ -12,71 +12,67 @@ class ObjectDbExtensionPvt
 public:
     QObject *parent = nullptr;
     QByteArray connectionId;
-    explicit ObjectDbExtensionPvt(QObject *parent, const QByteArray &connectionId)
-        :
-        parent{parent},
-        connectionId{connectionId}
+    explicit ObjectDbExtensionPvt(QObject *parent): parent{parent}
+    {
+    }
+
+    virtual ~ObjectDbExtensionPvt()
     {
     }
 
     bool invokeMethodConnection(QObject *objectCheck, QSqlDatabase &outConnection)
     {
+        if(objectCheck==nullptr)
+            return {};
+
         static QByteArray connectionIdMethod(QByteArrayLiteral("connectionid"));
         auto metaObject = objectCheck->metaObject();
+
+        QMetaMethod objectMethod;
         for (int i = 0; i < metaObject->methodCount(); ++i) {
             auto method = metaObject->method(i);
 
             if (method.parameterCount() > 0)
                 continue;
 
+            if (method.methodType() != QMetaMethod::Method)
+                continue;
+
+            auto returnType=QMetaType::Type(method.returnType());
+            if (returnType != QMetaType::QString && returnType != QMetaType::QByteArray)
+                continue;
+
             if (method.name().toLower() != connectionIdMethod)
                 continue;
 
-            QByteArray _textBytes;
-            QString _textStr;
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-            QMetaMethodReturnArgument invokeReturn;
-#else
-            QGenericReturnArgument invokeReturn;
-#endif
-
-            switch (method.returnType()) {
-            case QMetaType::QString:
-                invokeReturn=Q_RETURN_ARG(QString, _textStr);
-                break;
-            default:
-                invokeReturn=Q_RETURN_ARG(QByteArray, _textBytes);
-                break;
-            }
-
-            if (!method.invoke(objectCheck, Qt::DirectConnection, invokeReturn)) {
-#ifdef Q_ORM_LOG_SUPER_VERBOSE
-                oWarning() << QByteArrayLiteral("Invalid invoke ") << method.name() << QByteArrayLiteral(" to object:") << objectCheck->metaObject()->className();
-#endif
-                return {};
-            }
-
-            QByteArray connectionId;
-            switch (method.returnType()) {
-            case QMetaType::QString:
-                connectionId = _textStr.toUtf8().trimmed();
-                break;
-            default:
-                connectionId = _textBytes.trimmed();
-            }
-
-            if (connectionId.isEmpty())
-                return {};
-
-            auto connection = QSqlDatabase::database(connectionId);
-            if (!connection.isValid() || !connection.isOpen())
-                return {};
-
-            outConnection = connection;
-            return true;
+            objectMethod=method;
+            break;
         }
-        return {};
+
+        if(!objectMethod.isValid()){
+            return {};
+        }
+
+        QByteArray returnValue;
+
+        auto invokeReturn = Q_RETURN_ARG(QByteArray, returnValue);
+
+        if (!objectMethod.invoke(objectCheck, Qt::DirectConnection, invokeReturn)) {
+#ifdef Q_ORM_LOG_SUPER_VERBOSE
+            oWarning() << QStringLiteral("method:[%1::%2]: error on invoke").arg(objectCheck->metaObject()->className(), objectMethod.name());
+#endif
+            return {};
+        }
+
+        if (returnValue.isEmpty())
+            return {};
+
+        auto connection = QSqlDatabase::database(returnValue);
+        if (!connection.isValid() || !connection.isOpen())
+            return {};
+
+        outConnection = connection;
+        return true;
     };
 
     QSqlDatabase connectionGet()
@@ -100,26 +96,25 @@ public:
         for (auto &invokeObject : parentVector) {
             if (!this->invokeMethodConnection(invokeObject, connection))
                 continue;
-
             return connection;
         }
         return {};
     }
 };
 
-ObjectDbExtension::ObjectDbExtension(QObject *parent):
-    p(new ObjectDbExtensionPvt{parent, {}})
-{
-}
-
-ObjectDbExtension::ObjectDbExtension(const QSqlDatabase &connection, QObject *parent):
-    p(new ObjectDbExtensionPvt{parent, connection.connectionName().toUtf8()})
+ObjectDbExtension::ObjectDbExtension(QObject *parent)
+    : p{new ObjectDbExtensionPvt{parent}}
 {
 }
 
 ObjectDbExtension::~ObjectDbExtension()
 {
     delete p;
+}
+
+QByteArray ObjectDbExtension::connectionId() const
+{
+    return p->connectionId;
 }
 
 QSqlDatabase ObjectDbExtension::connection() const
@@ -139,12 +134,13 @@ bool ObjectDbExtension::setConnection(const QSqlDatabase &connection)
 bool ObjectDbExtension::setConnection(const QString &connectionName)
 {
     auto connection = QSqlDatabase::database(connectionName);
-    return this->setConnection(connection);
+    if (connection.isValid() && connection.isOpen())
+        p->connectionId = connection.connectionName().toUtf8();
+    else
+        p->connectionId.clear();
+    return !p->connectionId.isEmpty();
 }
 
-QByteArray &ObjectDbExtension::connectionId() const
-{
-    return p->connectionId;
-}
+
 
 } // namespace QOrm

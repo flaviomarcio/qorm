@@ -40,27 +40,25 @@ public:
     }
 };
 
-ConnectionSetting::ConnectionSetting(QObject *parent) : QObject{parent}
+ConnectionSetting::ConnectionSetting(QObject *parent)
+    : QObject{parent}, p{new ConnectionSettingPvt{this}}
 {
-    this->p = new ConnectionSettingPvt{this};
 }
 
-ConnectionSetting::ConnectionSetting(const QSqlDatabase &detail, QObject *parent) : QObject{parent}
+ConnectionSetting::ConnectionSetting(const QSqlDatabase &connection, QObject *parent)
+    : QObject{parent}, p{new ConnectionSettingPvt{this}}
 {
-    this->p = new ConnectionSettingPvt{this};
-
-    p->_name = detail.connectionName().toUtf8();
-    this->fromConnection(detail);
+    p->_name = connection.connectionName().toUtf8();
+    this->fromConnection(connection);
 }
 
-ConnectionSetting::ConnectionSetting(const ConnectionSetting &detail, QObject *parent)
-    : QObject{parent}
+ConnectionSetting::ConnectionSetting(const ConnectionSetting &setting, QObject *parent)
+    : QObject{parent}, p{new ConnectionSettingPvt{this}}
 {
-    this->p = new ConnectionSettingPvt{this};
-    auto name = detail.name();
-
-    p->_name = name;
-    this->fromSetting(detail);
+    if(setting.isValid()){
+        p->_name = setting.name();
+        this->fromSetting(setting);
+    }
 }
 
 ConnectionSetting::ConnectionSetting(const QByteArray &name,
@@ -111,6 +109,8 @@ ConnectionSetting &ConnectionSetting::printLog()
 
 bool ConnectionSetting::isValid() const
 {
+    if(this->name().trimmed().isEmpty())
+        return {};
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
         auto property = this->metaObject()->property(row);
         if (QByteArray{property.name()} == QT_STRINGIFY2(objectName))

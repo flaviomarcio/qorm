@@ -31,7 +31,7 @@ public:
     //! \param connection
     //! \param parent
     //!
-    explicit ConnectionPool(const QVariant &connection, QObject *parent = nullptr);
+    explicit ConnectionPool(const QVariantHash &connection, QObject *parent = nullptr);
 
     //!
     //! \brief ConnectionPool

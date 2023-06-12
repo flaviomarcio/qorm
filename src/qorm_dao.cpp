@@ -6,21 +6,10 @@ class DaoPvt:public QObject
 {
 public:
     QOrm::SqlSuitableValue suitableValue;
-    explicit DaoPvt(QObject *parent=nullptr):QObject{parent} {}
-    virtual ~DaoPvt() {}
+    explicit DaoPvt(QObject *parent):QObject{parent} {}
 };
 
-Dao::Dao(QObject *parent) : ObjectDb{parent}
-{
-    this->p = new DaoPvt{this};
-}
-
-Dao::Dao(const QSqlDatabase &connection, QObject *parent) : ObjectDb(connection, parent)
-{
-    this->p = new DaoPvt{this};
-}
-
-Dao::~Dao()
+Dao::Dao(QObject *parent) : ObjectDb{parent}, p{new DaoPvt{this}}
 {
 }
 

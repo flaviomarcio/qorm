@@ -11,20 +11,12 @@ class ObjectDbExtensionPvt;
 //!
 class Q_ORM_EXPORT ObjectDbExtension
 {
-
 public:
     //!
     //! \brief ObjectDbExtension
     //! \param parent
     //!
-    Q_INVOKABLE explicit ObjectDbExtension(QObject *parent = nullptr);
-
-    //!
-    //! \brief ObjectDbExtension
-    //! \param connection
-    //! \param parent
-    //!
-    explicit ObjectDbExtension(const QSqlDatabase &connection, QObject *parent = nullptr);
+    explicit ObjectDbExtension(QObject *parent = nullptr);
 
     //!
     //! \brief ~ObjectDbExtension
@@ -32,33 +24,35 @@ public:
     virtual ~ObjectDbExtension();
 
     //!
+    //! \brief connectionId
+    //! \return
+    //!
+    QByteArray connectionId() const;
+
+    //!
     //! \brief connection
     //! \return
     //!
-    Q_INVOKABLE virtual QSqlDatabase connection() const;
+    QSqlDatabase connection() const;
 
     //!
     //! \brief setConnection
     //! \param connection
     //! \return
     //!
-    Q_INVOKABLE virtual bool setConnection(const QSqlDatabase &connection);
+    bool setConnection(const QSqlDatabase &connection);
 
     //!
     //! \brief setConnection
     //! \param connectionId
     //! \return
     //!
-    Q_INVOKABLE virtual bool setConnection(const QString &connectionId);
+    bool setConnection(const QString &connectionId);
 
-    //!
-    //! \brief connectionId
-    //! \return
-    //!
-    Q_INVOKABLE virtual QByteArray &connectionId() const;
 
 private:
     ObjectDbExtensionPvt *p = nullptr;
 };
+
 
 } // namespace QOrm

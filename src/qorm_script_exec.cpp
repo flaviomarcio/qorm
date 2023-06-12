@@ -13,16 +13,16 @@ namespace QOrm {
 class ScriptExecPvt:public QObject
 {
 public:
-    QOrm::ObjectDb *parent = nullptr;
+    ScriptExec *parent = nullptr;
     QVariantList scriptValues;
     QStringList scriptedValues;
-    explicit ScriptExecPvt(QOrm::ObjectDb *parent):QObject{parent} { this->parent = parent; }
+    explicit ScriptExecPvt(ScriptExec *parent):QObject{parent}, parent{parent} {}
 
-    virtual ~ScriptExecPvt() {}
+
 
     void scriptedClear() { this->scriptedValues.clear(); }
 
-    void scriptAppend(const QVariant &v) { this->scriptValues << v; }
+    void scriptAppend(const QVariant &v) { this->scriptValues.append(v); }
 
     QStringList scriptParser(const QVariant &v)
     {
@@ -62,7 +62,7 @@ public:
                     if (line.startsWith(QStringLiteral("##")))
                         continue;
 
-                    __return << line.trimmed();
+                    __return.append(line.trimmed());
                 }
             }
             return __return;
@@ -82,7 +82,7 @@ public:
             for (auto &v : this->scriptValues) {
                 auto lines = this->scriptParser(v);
                 for (auto &line : lines)
-                    this->scriptedValues << line;
+                    this->scriptedValues.append(line);
             }
         }
         return this->scriptedValues;
@@ -118,9 +118,9 @@ public:
     }
 };
 
-ScriptExec::ScriptExec(QObject *parent) : QOrm::ObjectDb{parent}
+ScriptExec::ScriptExec(QObject *parent) : QOrm::ObjectDb{parent}, p{new ScriptExecPvt{this}}
 {
-    this->p = new ScriptExecPvt{this};
+
 }
 
 ScriptExec &ScriptExec::operator=(const QVariant &v)

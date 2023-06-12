@@ -37,34 +37,41 @@ Q_COREAPP_STARTUP_FUNCTION(init);
 class ConnectionPoolPvt:public QObject
 {
 public:
-    QString baseName;
-    ConnectionSetting connectionSetting;
-    QStringList connectionList;
     QObject *parent = nullptr;
-
+    ConnectionSetting setting;
+    QStringList connectionList;
+    QString baseName;
     QSqlError lastError;
-    explicit ConnectionPoolPvt(QObject *parent, const ConnectionSetting &cnnSetting)
-        : QObject{parent}, connectionSetting(cnnSetting, parent)
+    explicit ConnectionPoolPvt(QObject *parent, const QVariantHash &setting)
+        : QObject{parent}, parent{parent}, setting{parent}, baseName(makeBasePath(parent))
     {
-        this->parent = parent;
-        this->baseName
-                = ((this->parent != nullptr) ? this->parent->objectName().trimmed() : "").left(50);
-        if (!this->baseName.isEmpty())
-            return;
-        auto thread = QThread::currentThread();
-        if (thread == nullptr)
-            return;
-
-        this->baseName = thread->objectName().trimmed().left(50);
-        if (!this->baseName.isEmpty())
-            return;
-        auto threadId = QString::number(qlonglong(QThread::currentThreadId()), 16);
-        this->baseName = QStringLiteral("pool%1").arg(threadId).left(50);
+        this->setting.fromHash(setting);
     }
 
     virtual ~ConnectionPoolPvt()
     {
         this->finish();
+    }
+
+    static QString makeBasePath(QObject *parent)
+    {
+        auto thread = QThread::currentThread();
+        if (thread == nullptr)
+            return {};
+
+        auto baseName= (parent
+                             ?parent->objectName().trimmed()
+                             : ""
+                         ).left(50);
+
+        if (!baseName.isEmpty())
+            return baseName;
+
+        baseName = thread->objectName().trimmed().left(50);
+        if (!baseName.isEmpty())
+            return baseName;
+        auto threadId = QString::number(qlonglong(QThread::currentThreadId()), 16);
+        return QStringLiteral("pool%1").arg(threadId).left(50);
     }
 
     void finish()
@@ -90,22 +97,22 @@ public:
 
     virtual bool from(ConnectionPool &pool)
     {
-        return connectionSetting.fromSetting(pool.setting()).isValid();
+        return setting.fromSetting(pool.setting()).isValid();
     }
 
     virtual bool from(const ConnectionSetting &setting)
     {
-        return connectionSetting.fromSetting(setting).isValid();
+        return this->setting.fromSetting(setting).isValid();
     }
 
     virtual bool from(const QVariant &setting)
     {
-        return connectionSetting.fromHash(setting.toHash()).isValid();
+        return this->setting.fromHash(setting.toHash()).isValid();
     }
 
     virtual bool from(const QSqlDatabase &db)
     {
-        return connectionSetting.fromConnection(db).isValid();
+        return setting.fromConnection(db).isValid();
     }
 
     static QString urlMaker(const QSqlDatabase &connection)
@@ -142,7 +149,7 @@ public:
         Q_UNUSED(readOnly)
         this->finish(connection);
         this->lastError = {};
-        auto driver = this->connectionSetting.driver().trimmed();
+        auto driver = this->setting.driver().trimmed();
 
 #if Q_ORM_LOG_VERBOSE
         oWarning() << QStringLiteral("avaliable drivers %1").arg(QSqlDatabase::drivers().join(QStringLiteral(",")));
@@ -193,13 +200,13 @@ public:
             return {};
         }
 
-        QString hostName = this->connectionSetting.hostName().trimmed();
-        QString userName = this->connectionSetting.userName().trimmed();
-        QString password = this->connectionSetting.password().trimmed();
-        QString dataBaseName = this->connectionSetting.dataBaseName().trimmed();
-        auto port = this->connectionSetting.port();
-        QString connectOptions = this->connectionSetting.connectOptions().trimmed();
-        auto schameNames = this->connectionSetting.schemaNames();
+        QString hostName = this->setting.hostName().trimmed();
+        QString userName = this->setting.userName().trimmed();
+        QString password = this->setting.password().trimmed();
+        QString dataBaseName = this->setting.dataBaseName().trimmed();
+        auto port = this->setting.port();
+        QString connectOptions = this->setting.connectOptions().trimmed();
+        auto schameNames = this->setting.schemaNames();
 
         if (__connection.driverName() == driver_QODBC) {
             QString odbcDriver;
@@ -327,36 +334,34 @@ public:
     }
 };
 
-ConnectionPool::ConnectionPool(QObject *parent):QObject{parent}
+ConnectionPool::ConnectionPool(QObject *parent)
+    :QObject{parent},p{new ConnectionPoolPvt{parent, {}}}
 {
-    ConnectionSetting cnnSetting;
-    this->p = new ConnectionPoolPvt{parent, cnnSetting};
 }
 
-ConnectionPool::ConnectionPool(const ConnectionSetting &connectionSetting, QObject *parent):QObject{parent}
+ConnectionPool::ConnectionPool(const ConnectionSetting &connectionSetting, QObject *parent)
+    :QObject{parent}, p{new ConnectionPoolPvt{parent, connectionSetting.toHash()}}
 {
-    this->p = new ConnectionPoolPvt{parent, connectionSetting};
 }
 
-ConnectionPool::ConnectionPool(const QVariant &connection, QObject *parent):QObject{parent}
+ConnectionPool::ConnectionPool(const QVariantHash &connection, QObject *parent)
+    :QObject{parent}, p{new ConnectionPoolPvt{parent, connection}}
 {
-    QOrm::ConnectionSetting connectionSetting(QByteArray(), connection.toHash(), nullptr);
-    this->p = new ConnectionPoolPvt{parent, connectionSetting};
 }
 
-ConnectionPool::ConnectionPool(const ConnectionPool &pool, QObject *parent):QObject{parent}
+ConnectionPool::ConnectionPool(const ConnectionPool &pool, QObject *parent)
+    :QObject{parent}, p{new ConnectionPoolPvt{parent, pool.setting().toHash()}}
 {
-    this->p = new ConnectionPoolPvt{parent, pool.setting()};
 }
 
 ConnectionSetting &ConnectionPool::setting() const
 {
-    return p->connectionSetting;
+    return p->setting;
 }
 
 bool ConnectionPool::isValid()
 {
-    return p->connectionSetting.isValid();
+    return p->setting.isValid();
 }
 
 bool ConnectionPool::from(ConnectionPool &pool)
