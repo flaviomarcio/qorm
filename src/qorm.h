@@ -3,7 +3,6 @@
 #include "./private/p_qorm_model_crud_body.h"
 #include "./private/p_qorm_sql_suitable_parser_keywork.h"
 #include "./qorm_connection_manager.h"
-#include "./qorm_connection_notify.h"
 #include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
 #include "./qorm_const.h"

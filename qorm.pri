@@ -9,8 +9,6 @@ INCLUDEPATH += $$PWD/includes
 INCLUDEPATH += $$PWD/../qstm/includes
 
 HEADERS += \
-    $$PWD/src/private/p_qorm_connection_notify.h \
-    $$PWD/src/private/p_qorm_connection_notify_subscribe.h \
     $$PWD/src/private/p_qorm_model_action_method.h \
     $$PWD/src/private/p_qorm_const.h \
     $$PWD/src/private/p_qorm_model_controls.h \
@@ -48,7 +46,6 @@ HEADERS += \
     $$PWD/src/qorm_log.h \
     $$PWD/src/qorm_macro.h \
     $$PWD/src/qorm_connection_manager.h \
-    $$PWD/src/qorm_connection_notify.h \
     $$PWD/src/qorm_connection_pool.h \
     $$PWD/src/qorm_connection_setting.h \
     $$PWD/src/qorm_model_consts.h \
@@ -87,8 +84,6 @@ HEADERS += \
     $$PWD/src/qorm_wrapper.h \
 
 SOURCES += \
-    $$PWD/src/private/p_qorm_connection_notify.cpp \
-    $$PWD/src/private/p_qorm_connection_notify_subscribe.cpp \
     $$PWD/src/private/p_qorm_model_action_method.cpp \
     $$PWD/src/private/p_qorm_model_controls.cpp \
     $$PWD/src/private/p_qorm_model_crud_body.cpp \
@@ -120,7 +115,6 @@ SOURCES += \
     $$PWD/src/private/p_qorm_task_pool.cpp \
     $$PWD/src/private/p_qorm_task_slot.cpp \
     $$PWD/src/qorm_connection_manager.cpp \
-    $$PWD/src/qorm_connection_notify.cpp \
     $$PWD/src/qorm_connection_pool.cpp \
     $$PWD/src/qorm_connection_setting.cpp \
     $$PWD/src/qorm_log.cpp \

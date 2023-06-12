@@ -34,49 +34,49 @@ public:
     //! \param setting
     //! \param parent
     //!
-    Q_INVOKABLE explicit ConnectionManager(const QVariant &setting, QObject *parent = nullptr);
+    explicit ConnectionManager(const QVariantHash &setting, QObject *parent = nullptr);
 
 
     //!
     //! \brief clear
     //!
-    virtual void clear();
+    virtual ConnectionManager &clear();
 
     //!
     //! \brief enviroment
     //! \return
     //!
-    virtual QByteArray enviroment() const;
+    virtual const QByteArray &enviroment() const;
 
     //!
     //! \brief setEnviroment
     //! \param value
     //!
-    virtual void setEnviroment(const QByteArray &value);
+    virtual ConnectionManager &setEnviroment(const QByteArray &value);
 
     //!
     //! \brief secretKey
     //! \return
     //!
-    virtual QByteArray secretKey() const;
+    virtual const QByteArray &secretKey() const;
 
     //!
     //! \brief setSecretKey
     //! \param value
     //!
-    virtual void setSecretKey(const QByteArray &value);
+    virtual ConnectionManager &setSecretKey(const QByteArray &value);
 
     //!
     //! \brief paramaters
     //! \return
     //!
-    virtual QVariantHash paramaters() const;
+    virtual const QVariantHash &paramaters() const;
 
     //!
     //! \brief setParamaters
     //! \param value
     //!
-    virtual void setParamaters(const QVariantHash &value);
+    virtual ConnectionManager &setParamaters(const QVariantHash &value);
 
     //!
     //! \brief insert
@@ -93,19 +93,6 @@ public:
     virtual ConnectionManager &insert(const QVariantHash &value);
 
     //!
-    //! \brief detail
-    //! \return
-    //!
-    virtual ConnectionSetting &detail();
-
-    //!
-    //! \brief detail
-    //! \param value
-    //! \return
-    //!
-    virtual ConnectionSetting &detail(const QByteArray &value);
-
-    //!
     //! \brief pool
     //! \return
     //!
@@ -117,12 +104,6 @@ public:
     //! \return
     //!
     virtual ConnectionPool &pool(const QByteArray &value);
-
-    //!
-    //! \brief toHash
-    //! \return
-    //!
-    virtual QVariantHash toHash() const;
 
     //!
     //! \brief isEmpty
@@ -141,7 +122,7 @@ public:
     //! \param settings
     //! \return
     //!
-    virtual bool load(const QVariant &settings);
+    virtual bool load(const QVariantHash &settings);
 
     //!
     //! \brief load

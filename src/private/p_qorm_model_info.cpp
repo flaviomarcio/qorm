@@ -370,7 +370,7 @@ public:
             modelInfo->setName(className);
             static_init_make(modelInfo->p, staticMetaObject);
         }
-        return*modelInfo;
+        return *modelInfo;
     }
 
     void read(ModelInfoPvt *p)

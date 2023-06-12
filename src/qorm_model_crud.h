@@ -383,7 +383,7 @@ protected:
     auto &onBefore(CRUDBodyActionMethod method)
     {
         auto obj=PrivateQOrm::CRUDBase::onBefore(method);
-        return*(dynamic_cast<CRUD<T>*>(obj));
+        return *(dynamic_cast<CRUD<T>*>(obj));
     }
 
     //!
@@ -394,7 +394,7 @@ protected:
     auto &onSuccess(CRUDBodyActionMethod method)
     {
         auto obj=PrivateQOrm::CRUDBase::onSuccess(method);
-        return*(dynamic_cast<CRUD<T>*>(obj));
+        return *(dynamic_cast<CRUD<T>*>(obj));
     }
 
     //!
@@ -405,7 +405,7 @@ protected:
     auto &onFailed(CRUDBodyActionMethod method)
     {
         auto obj=PrivateQOrm::CRUDBase::onFailed(method);
-        return*(dynamic_cast<CRUD<T>*>(obj));
+        return *(dynamic_cast<CRUD<T>*>(obj));
     }
 };
 

@@ -142,7 +142,7 @@ public:
             object=new SqlParserFields<SqlParserSelect>(this->vMap(__func__));
             this->setPointer(__func__,object);
         }
-        return*object;
+        return *object;
     }
 
     //!
@@ -194,7 +194,7 @@ public:
             object=new SqlParserFields<SqlParserSelect>(this->vMap(__func__));
             this->setPointer(__func__,object);
         }
-        return*object;
+        return *object;
     }
 
     //!
