@@ -10,10 +10,10 @@
 #include <QStringList>
 #include <QStandardPaths>
 #include <QCoreApplication>
-#include <QProcess>
 
 namespace QOrm {
 
+static const auto __objectName="objectName";
 static const auto __driver="driver";
 static const auto __dataBaseName="dataBaseName";
 static const auto __userName="userName";
@@ -155,7 +155,7 @@ QVariantHash ConnectionSetting::toHash() const
     QVariantHash __return;
     for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
         auto property = this->metaObject()->property(row);
-        if (QByteArray{property.name()} == QT_STRINGIFY2(objectName))
+        if (QByteArray{property.name()} == __objectName)
             continue;
 
         const auto key = property.name();
