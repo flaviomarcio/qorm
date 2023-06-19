@@ -670,7 +670,7 @@ public:
     SqlParserCombineSelect &except();
 
     SqlParserCombineSelect &exceptAll();
-    QObject*q=nullptr;
+    QObject *q=nullptr;
 private:
     SqlParserCombineSelect &setV(int t);
 };

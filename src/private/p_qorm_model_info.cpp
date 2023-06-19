@@ -129,7 +129,7 @@ public:
         return false;
     };
 
-    static QVariant invokeVar(QObject*objectCheck, const QString &methodName)
+    static QVariant invokeVar(QObject *objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.toUtf8().trimmed().replace(QByteArrayLiteral("\""), "").toLower();
         auto metaObject=objectCheck->metaObject();
@@ -176,7 +176,7 @@ public:
         return {};
     }
 
-    static QVariantList invokeList(QObject*objectCheck, const QString &methodName)
+    static QVariantList invokeList(QObject *objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.toUtf8().trimmed().replace(QByteArrayLiteral("\""), "").toLower();
         auto metaObject=objectCheck->metaObject();
@@ -229,7 +229,7 @@ public:
         return {};
     };
 
-    static QVariantHash invokeHash(QObject*objectCheck, const QString &methodName)
+    static QVariantHash invokeHash(QObject *objectCheck, const QString &methodName)
     {
         auto __methodName=methodName.toUtf8().trimmed().replace(QByteArrayLiteral("\""), "").toLower();
         auto metaObject=objectCheck->metaObject();
@@ -281,7 +281,7 @@ public:
         return {};
     };
 
-    static QString invokeText(QObject*objectCheck, const QString &methodName)
+    static QString invokeText(QObject *objectCheck, const QString &methodName)
     {
         QSqlDatabase RETURN;
 
@@ -332,7 +332,7 @@ public:
         return {};
     };
 
-    static bool invokeBool(QObject*objectCheck, const QString &methodName)
+    static bool invokeBool(QObject *objectCheck, const QString &methodName)
     {
         QSqlDatabase RETURN;
 
@@ -452,7 +452,7 @@ public:
         pvt->clear();
 
 
-        auto object=staticMetaObject.newInstance(Q_ARG(QObject*, __modelInfoParent));
+        auto object=staticMetaObject.newInstance(Q_ARG(QObject *, __modelInfoParent));
 
         if(object==nullptr)
             return;
@@ -700,7 +700,7 @@ public:
                 if(!metaObject.inherits(&ModelFieldDescriptors::staticMetaObject))//SE HERDAR de QOrm::ModelFieldDescriptors
                     return vDescriptors;
 
-                auto obj=metaObject.newInstance(Q_ARG(QObject*, nullptr));
+                auto obj=metaObject.newInstance(Q_ARG(QObject *, nullptr));
                 if(obj==nullptr)
                     return vDescriptors;
 

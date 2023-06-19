@@ -383,7 +383,7 @@ public:
     //! \param value
     //! \return
     //!
-    virtual bool setProperty(const QMetaProperty&property, const QVariant &value);
+    virtual bool setProperty(const QMetaProperty &property, const QVariant &value);
 
     //!
     //! \brief autoSet

@@ -70,7 +70,7 @@ public:
     }
 
 
-    bool write(const QMetaProperty&property, const QVariant &value)
+    bool write(const QMetaProperty &property, const QVariant &value)
     {
         Q_DECLARE_VU;
 
