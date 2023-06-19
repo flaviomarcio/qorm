@@ -22,8 +22,6 @@ class Q_ORM_EXPORT TaskSlot : public QThread
 {
     Q_OBJECT
 public:
-    explicit TaskSlot(QObject *parent=nullptr);
-
     //!
     //! \brief TaskSlot
     //! \param pool

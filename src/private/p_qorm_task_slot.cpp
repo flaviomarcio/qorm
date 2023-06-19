@@ -32,12 +32,6 @@ public:
         pool{pool},
         runner{pool->runner()}
     {
-        this->signalConnect();
-    }
-
-    ~TaskSlotPvt()
-    {
-        this->signalDisconnect();
     }
 
     void signalConnect()
@@ -101,11 +95,6 @@ private slots:
     }
 };
 
-TaskSlot::TaskSlot(QObject *parent): QThread{nullptr}, p{new TaskSlotPvt{this, dynamic_cast<TaskPool*>(parent)}}
-{
-
-}
-
 TaskSlot::TaskSlot(TaskPool *pool, int slotNumber,
                    const QVariantHash &connectionSetting,
                    TaskRunnerMethod methodExecute,
@@ -140,7 +129,9 @@ bool TaskSlot::start()
 
 void TaskSlot::run()
 {
+    p->signalConnect();
     this->exec();
+    p->signalDisconnect();
 }
 
 } // namespace QOrm
