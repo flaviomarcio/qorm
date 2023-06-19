@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QtReforce/QStm>
 #include "./qorm_global.h"
+#include "../../qstm/src/qstm_object_wrapper.h"
 
 namespace QOrm {
 class ModelActionDescriptorPvt;

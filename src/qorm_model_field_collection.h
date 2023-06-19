@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtReforce/QStm>
+#include "../../qstm/src/qstm_object_wrapper.h"
 #include "./qorm_global.h"
 #include "./qorm_model_field_descriptor.h"
 

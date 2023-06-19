@@ -1,94 +1,30 @@
 #pragma once
 
+#include <QTest>
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QDebug>
-#include <QHash>
+#include <QUuid>
 #include <QStringList>
 #include <QTimer>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QLocale>
 #include <QJsonDocument>
-#include <gtest/gtest.h>
+#include <QTest>
 
-#define CRUD_TESTER_BODY(vCrud){\
-auto ___hash=QVariant(vCrud).toHash();\
-    for(auto&property:Q_ORM_CRUD_PROPERTY_LIST){\
-        bool contains=___hash.contains(property);\
-        EXPECT_EQ(contains,true);\
-    }\
-}
+namespace QOrm{
 
-#define CRUD_TESTER_REQUEST(request, body, method)\
-request.call(QRpc::Get, method, body);\
-EXPECT_EQ(request.response().isOk(), true);\
-if(request.response().isOk())\
-    CRUD_TESTER_BODY(request.response().bodyHash());
+#define Q_ORM_OBJECT_TEST(OBJECT) \
+public:\
+    Q_INVOKABLE explicit OBJECT(QObject *parent=nullptr):QStm::ObjectTest{parent}{};
 
-namespace QOrm {
-
-class SDKGoogleTest : public testing::Test{
+class ObjectTest : public QObject{
+    Q_OBJECT
 public:
+    Q_INVOKABLE explicit ObjectTest(QObject *parent=nullptr);
 
-    explicit SDKGoogleTest();
-
-    //!
-    //! \brief SetUpTestCase
-    //!
-    static void SetUpTestCase()
-    {
-    }
-
-    //!
-    //! \brief SetUp
-    //!
-    virtual void SetUp()
-    {
-    }
-
-    //!
-    //! \brief TearDown
-    //!
-    virtual void TearDown()
-    {
-    }
-
-    //!
-    //! \brief TearDownTestCase
-    //!
-    static void TearDownTestCase()
-    {
-    }
-
-    //!
-    //! \brief clear
-    //! \return
-    //!
-    virtual bool clear();
-
-    //!
-    //! \brief arguments
-    //! \return
-    //!
-    virtual QStringList arguments()const;
-
-    //!
-    //! \brief toMd5
-    //! \param v
-    //! \return
-    //!
-    static const QByteArray toMd5(const QVariant &v);
-
-    //!
-    //! \brief toVar
-    //! \param v
-    //! \return
-    //!
-    static const QVariant toVar(const QVariant &v);
-
-public:
-
-
+    virtual void execute();
 };
+
 }

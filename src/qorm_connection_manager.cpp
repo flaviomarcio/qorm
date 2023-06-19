@@ -1,6 +1,6 @@
 #include "./qorm_connection_manager.h"
 #include "./qorm_macro.h"
-#include "../../../qstm/src/qstm_envs.h"
+#include "../../qstm/src/qstm_envs.h"
 #include <QMetaProperty>
 #include <QJsonDocument>
 

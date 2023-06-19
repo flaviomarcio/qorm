@@ -1,11 +1,8 @@
 #include "./qorm_model_field_collection.h"
 #include "./qorm_model_field_descriptor.h"
-
-#include <qstring.h>
+#include "../../qstm/src/qstm_util_variant.h"
 
 namespace QOrm {
-
-//static const auto __P="%";
 
 class ModelFieldCollectionPvt:public QObject{
 public:

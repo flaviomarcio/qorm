@@ -1,4 +1,5 @@
 #include "qorm_model_field_descriptor.h"
+#include "../../qstm/src/qstm_meta_enum.h"
 
 namespace QOrm {
 
@@ -39,9 +40,8 @@ public:
 };
 
 ModelFieldDescriptor::ModelFieldDescriptor(QObject *parent)
-    : QStm::ObjectWrapper{parent}
+    : QStm::ObjectWrapper{parent}, p{new ModelFieldDescriptorPvt{parent}}
 {
-    this->p=new ModelFieldDescriptorPvt{parent};
 }
 
 const QString &ModelFieldDescriptor::field() const

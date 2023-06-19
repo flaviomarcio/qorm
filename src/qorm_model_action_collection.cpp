@@ -1,6 +1,5 @@
-#include "qorm_model_action_collection.h"
-
-#include <qstring.h>
+#include "./qorm_model_action_collection.h"
+#include "../../qstm/src/qstm_util_variant.h"
 
 namespace QOrm {
 
@@ -42,9 +41,8 @@ public:
 };
 
 ModelActionCollection::ModelActionCollection(QObject *parent)
-    : QStm::ObjectWrapper{parent}
+    : QStm::ObjectWrapper{parent}, p{new ModelActionCollectionPvt{this}}
 {
-    this->p=new ModelActionCollectionPvt{this};
 }
 
 ModelActionDescriptor &ModelActionCollection::item(const QString &actionName)
