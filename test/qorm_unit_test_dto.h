@@ -20,7 +20,7 @@ public:
         dto.headers().item(QStringLiteral("enabled"   )).title(QStringLiteral("en")).dataType(vText     ).align(vaStart  ).width(QStringLiteral("15%")).editable(false);
         dto.items(records);
 
-        auto toOutput=dto.toOutput().resultMap();
+        auto toOutput=dto.toOutput().resultHash();
         QVERIFY(!toOutput.isEmpty());
         if(!toOutput.isEmpty()){
             auto headers=toOutput.value(vpHeaders).toList();
