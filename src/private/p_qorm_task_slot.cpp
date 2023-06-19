@@ -2,14 +2,18 @@
 #include "./p_qorm_task_pool.h"
 #include "../qorm_task_runner.h"
 #include "../qorm_connection_pool.h"
-#include "../qorm_connection_setting.h"
 #include <QSqlError>
 
 namespace QOrm {
 
+static const auto __request="request";
+static const auto __error="error";
+static const auto __response="response";
+
 class TaskSlotPvt : public QObject
 {
 public:
+    int slotNumber=-1;
     QVariantList taskQueueValue;
     QVariantList resultList;
     TaskRunnerMethod methodExecute;
@@ -19,158 +23,124 @@ public:
     bool resultBool;
     TaskSlot *parent = nullptr;
     TaskPool *pool = nullptr;
-    TaskRunner *runner = nullptr;
-    QSqlDatabase connection;
-    QOrm::ConnectionPool cnnPool;
+    const TaskRunner *runner = nullptr;
 
-    explicit TaskSlotPvt(TaskSlot *parent) : QObject{parent} { this->parent = parent; }
+    explicit TaskSlotPvt(TaskSlot *parent, TaskPool *pool)
+        :
+        QObject{parent},
+        parent{parent},
+        pool{pool},
+        runner{pool->runner()}
+    {
+        this->signalConnect();
+    }
 
-    virtual ~TaskSlotPvt() { this->signalDisconnect(); }
+    ~TaskSlotPvt()
+    {
+        this->signalDisconnect();
+    }
 
     void signalConnect()
     {
         QObject::connect(this->parent, &TaskSlot::taskSend, this, &TaskSlotPvt::onTaskSend);
-        QObject::connect(this->parent, &TaskSlot::taskRequest, this->pool, &TaskPool::taskRequest);
         QObject::connect(this->parent, &TaskSlot::taskSuccess, this->pool, &TaskPool::taskResponse);
         QObject::connect(this->parent, &TaskSlot::taskError, this->pool, &TaskPool::taskResponse);
         QObject::connect(this->parent, &TaskSlot::taskStart, this->runner, &TaskRunner::taskStart);
         QObject::connect(this->parent, &TaskSlot::taskState, this->runner, &TaskRunner::taskState);
-        QObject::connect(this->parent,
-                         &TaskSlot::taskSuccess,
-                         this->runner,
-                         &TaskRunner::taskSuccess);
+        QObject::connect(this->parent, &TaskSlot::taskSuccess, this->runner, &TaskRunner::taskSuccess);
         QObject::connect(this->parent, &TaskSlot::taskError, this->runner, &TaskRunner::taskError);
     }
 
     void signalDisconnect()
     {
         QObject::disconnect(this->parent, &TaskSlot::taskSend, this, &TaskSlotPvt::onTaskSend);
-        QObject::disconnect(this->parent,
-                            &TaskSlot::taskRequest,
-                            this->pool,
-                            &TaskPool::taskRequest);
-        QObject::disconnect(this->parent,
-                            &TaskSlot::taskSuccess,
-                            this->pool,
-                            &TaskPool::taskResponse);
+        QObject::disconnect(this->parent, &TaskSlot::taskSuccess, this->pool, &TaskPool::taskResponse);
         QObject::disconnect(this->parent, &TaskSlot::taskError, this->pool, &TaskPool::taskResponse);
-        QObject::disconnect(this->parent,
-                            &TaskSlot::taskStart,
-                            this->runner,
-                            &TaskRunner::taskStart);
-        QObject::disconnect(this->parent,
-                            &TaskSlot::taskState,
-                            this->runner,
-                            &TaskRunner::taskState);
-        QObject::disconnect(this->parent,
-                            &TaskSlot::taskSuccess,
-                            this->runner,
-                            &TaskRunner::taskSuccess);
-        QObject::disconnect(this->parent,
-                            &TaskSlot::taskError,
-                            this->runner,
-                            &TaskRunner::taskError);
-    }
-
-    bool connectionCheck()
-    {
-        if (this->connection.isValid()) {
-            if (!this->connection.isOpen())
-                this->connection.open();
-            return this->connection.isOpen();
-        }
-
-        if (!cnnPool.isValid())
-            return this->cnnPool.finish(this->connection);
-
-        if (!cnnPool.get(connection))
-            return !this->cnnPool.finish(this->connection);
-
-        return this->connection.isOpen();
+        QObject::disconnect(this->parent, &TaskSlot::taskStart, this->runner, &TaskRunner::taskStart);
+        QObject::disconnect(this->parent, &TaskSlot::taskState, this->runner, &TaskRunner::taskState);
+        QObject::disconnect(this->parent, &TaskSlot::taskSuccess, this->runner, &TaskRunner::taskSuccess);
+        QObject::disconnect(this->parent, &TaskSlot::taskError, this->runner, &TaskRunner::taskError);
     }
 
 private slots:
-    void onTaskRequest() { emit this->parent->taskRequest(this->parent); }
 
     void onTaskSend(const QVariant &task)
     {
-        QVariantHash vTask;
-        vTask[QStringLiteral("request")] = task;
+
+        QOrm::ConnectionPool cnnPool(this->connectionSetting, this);
+        QSqlDatabase connection;
+
+        auto connectionCheck=[&cnnPool, &connection]()
+        {
+            if (!cnnPool.isValid())
+                return cnnPool.finish(connection);
+
+            if (!cnnPool.get(connection))
+                return !cnnPool.finish(connection);
+
+            return connection.isOpen();
+        };
+
+        QVariantHash vTask={{__request, task}};
         emit this->parent->taskStart(vTask);
-        if (!this->connectionCheck()) {
-            vTask[QStringLiteral("error")] = QStringLiteral("Invalid connection on Slot");
-            this->methodFailed(this->connection, task);
-            emit this->parent->taskError(vTask);
-            emit this->parent->taskRequest(this->parent);
+        if (!connectionCheck()) {
+            static const auto __msg=QStringLiteral("Invalid connection on Slot[%1]");
+            vTask.insert(__error, __msg.arg(this->slotNumber));
+            this->methodFailed(connection, task);
+            emit this->parent->taskError(this->slotNumber, vTask);
             return;
         }
 
-        auto response = this->methodExecute(this->connection, task);
-        vTask[QStringLiteral("response")] = response;
-        this->connection.close();
-        if (!this->connection.open()) {
-            vTask[QStringLiteral("error")] = connection.lastError().text();
-            this->methodFailed(this->connection, vTask);
-        } else {
-            auto r = this->methodSuccess(this->connection, response);
-            vTask[QStringLiteral("response")] = r;
-        }
-        emit this->parent->taskSuccess(vTask);
-        emit this->parent->taskRequest(this->parent);
-        this->connection.close();
+        auto response = this->methodExecute(connection, task);
+        vTask.insert(__response, response);
+        auto r = this->methodSuccess(connection, response);
+        vTask.insert(__response, r);
+
+        emit this->parent->taskSuccess(this->slotNumber, vTask);
+        cnnPool.finish(connection);
     }
 };
 
-TaskSlot::TaskSlot(TaskPool *pool,
+TaskSlot::TaskSlot(QObject *parent): QThread{nullptr}, p{new TaskSlotPvt{this, dynamic_cast<TaskPool*>(parent)}}
+{
+
+}
+
+TaskSlot::TaskSlot(TaskPool *pool, int slotNumber,
                    const QVariantHash &connectionSetting,
                    TaskRunnerMethod methodExecute,
                    TaskRunnerMethod methodSuccess,
                    TaskRunnerMethod methodFailed)
-    : QThread{nullptr}
+    : QThread{nullptr}, p{new TaskSlotPvt{this, pool}}
 {
-    this->p = new TaskSlotPvt{this};
     this->moveToThread(this);
 
-    p->pool = pool;
-    p->runner = pool->runner();
+    p->slotNumber=slotNumber;
     p->connectionSetting = connectionSetting;
     p->methodExecute = methodExecute;
     p->methodSuccess = methodSuccess;
     p->methodFailed = methodFailed;
-    p->cnnPool.setting() = p->connectionSetting;
-    p->signalConnect();
 }
 
-TaskSlot::~TaskSlot()
+int TaskSlot::slotNumber()
 {
+    return p->slotNumber;
 }
 
 bool TaskSlot::start()
 {
+    if (this->isRunning())
+        return true;
     QThread::start();
     while (this->eventDispatcher() == nullptr)
         this->msleep(1);
+
     return true;
 }
 
 void TaskSlot::run()
 {
-
-    if (!p->connectionCheck()) {
-        this->quit();
-        return;
-    }
-
-    p->connection.close();
     this->exec();
-    p->cnnPool.finish(p->connection);
-}
-
-void TaskSlot::init()
-{
-    if (!this->isRunning())
-        this->start();
-    emit this->taskRequest(this);
 }
 
 } // namespace QOrm

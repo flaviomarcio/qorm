@@ -6,13 +6,14 @@
 #include <QDateTime>
 #include <QUrl>
 #include <QUuid>
-#include <QMutex>
-#include "./p_qorm_task_slot.h"
-
+#include <QThread>
+#include <QSqlDatabase>
+#include <QVariantHash>
+#include "../qorm_global.h"
+#include "./p_qorm_task_types.h"
 namespace QOrm {
 class TaskRunner;
 class TaskPoolPvt;
-class TaskSlot;
 //!
 //! \brief The TaskPool class
 //!
@@ -25,18 +26,14 @@ public:
     //! \brief TaskPool
     //! \param parent
     //!
-    explicit TaskPool(TaskRunner *parent);
-
-    //!
-    //!
-    ~TaskPool();
+    explicit TaskPool(QObject *parent=nullptr);
 
     //!
     //! \brief start
     //! \param connection
     //! \return
     //!
-    bool start(const QSqlDatabase&connection);
+    bool start(const QSqlDatabase &connection);
 
     //!
     //! \brief run
@@ -46,82 +43,77 @@ public:
     //!
     //! \brief clear
     //!
-    void clear();
+    TaskPool &clear();
+
+    //!
+    //! \brief slotCount
+    //! \return
+    //!
+    QString &name() const;
+    TaskPool &setName(const QString &newName);
 
     //!
     //! \brief slotCount
     //! \return
     //!
     int slotCount() const;
-    void setSlotCount(int newSlotCount);
+    TaskPool &setSlotCount(int newSlotCount);
 
     //!
     //! \brief methodExecute
     //! \return
     //!
     const TaskRunnerMethod &methodExecute() const;
-    void setMethodExecute(const TaskRunnerMethod &newMethodExecute);
+    TaskPool &setMethodExecute(const TaskRunnerMethod &newMethodExecute);
 
     //!
     //! \brief methodSuccess
     //! \return
     //!
     const TaskRunnerMethod &methodSuccess() const;
-    void setMethodSuccess(const TaskRunnerMethod &newMethodSuccess);
+    TaskPool &setMethodSuccess(const TaskRunnerMethod &newMethodSuccess);
 
     //!
     //! \brief methodFailed
     //! \return
     //!
     const TaskRunnerMethod &methodFailed() const;
-    void setMethodFailed(const TaskRunnerMethod &newMethodFailed);
-
-    //!
-    //! \brief taskSlotList
-    //! \return
-    //!
-    const QHash<int, TaskSlot *> &taskSlotList() const;
-    void setTaskSlotList(const QHash<int, TaskSlot *> &newTaskSlotList);
+    TaskPool &setMethodFailed(const TaskRunnerMethod &newMethodFailed);
 
     //!
     //! \brief taskQueueValue
     //! \return
     //!
-    QVariantList &taskQueueValue();
-    void setTaskQueueValue(const QVariantList &newTaskQueueValue);
+    const QVariantList &taskQueueValue() const;
+    TaskPool &addTaskQueueValue(const QVariant &newTaskQueueValue);
+    TaskPool &setTaskQueueValue(const QVariantList &newTaskQueueValue);
 
     //!
     //! \brief taskQueueStarted
     //! \return
     //!
     const QVariantList &taskQueueStarted() const;
-    void setTaskQueueStarted(const QVariantList &newTaskQueueStarted);
+    TaskPool &setTaskQueueStarted(const QVariantList &newTaskQueueStarted);
 
     //!
     //! \brief resultList
     //! \return
     //!
     const QVariantList &resultList() const;
-    void setResultList(const QVariantList &newResultList);
+    TaskPool &setResultList(const QVariantList &newResultList);
 
     //!
     //! \brief resultBool
     //! \return
     //!
     bool resultBool() const;
-    void setResultBool(bool newResultBool);
-
-    //!
-    //! \brief running
-    //! \return
-    //!
-    QMutex &running();
+    TaskPool &setResultBool(bool newResultBool);
 
     //!
     //! \brief runner
     //! \return
     //!
-    TaskRunner *runner();
+    TaskRunner *runner() const;
 
 signals:
     //!
@@ -132,25 +124,35 @@ signals:
     //! \param progress
     //!
     void taskProgress(qlonglong maximum, qlonglong minimum, qlonglong value, qlonglong progress);
-public slots:
+private:
     //!
     //! \brief threadInit
     //!
-    void threadInit();
+    TaskPool &threadInit();
+
+    //!
+    //! \brief threadStart
+    //!
+    TaskPool &threadStart();
 
     //!
     //! \brief threadDinit
     //!
-    void threadDinit();
+    TaskPool &threadDinit();
+public slots:
 
     //!
     //! \brief taskRequest
     //! \param slot
     //!
-    void taskRequest(QOrm::TaskSlot*slot);
+    void taskRequest(int slotNumber);
 
     //!
-    void taskResponse(const QVariantHash &task);
+    //! \brief taskResponse
+    //! \param task
+    //! \return
+    //!
+    void taskResponse(const int slotNumber, const QVariantHash &task);
 private:
     TaskPoolPvt *p=nullptr;
 };

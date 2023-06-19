@@ -43,6 +43,7 @@ HEADERS += \
     $$PWD/src/private/p_qorm_sql_suitable_parser_value.h \
     $$PWD/src/private/p_qorm_task_pool.h \
     $$PWD/src/private/p_qorm_task_slot.h \
+    $$PWD/src/private/p_qorm_task_types.h \
     $$PWD/src/qorm_log.h \
     $$PWD/src/qorm_macro.h \
     $$PWD/src/qorm_connection_manager.h \

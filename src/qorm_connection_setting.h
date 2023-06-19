@@ -54,7 +54,7 @@ public:
     //! \param parent
     //!
     explicit ConnectionSetting(const QByteArray &name,
-                               const QVariantHash &detailMap,
+                               const QVariantHash &detail,
                                QObject *parent);
 
     //!
@@ -86,7 +86,7 @@ public:
     //! \param map
     //! \return
     //!
-    ConnectionSetting &fromHash(const QVariantHash &map);
+    ConnectionSetting &fromHash(const QVariantHash &values);
 
     //!
     //! \brief fromConnection

@@ -122,12 +122,12 @@ public:
     //!
     //! \brief stop
     //!
-    virtual void stop();
+    virtual TaskRunner &stop();
 
     //!
     //! \brief clear
     //!
-    virtual void clear();
+    virtual TaskRunner &clear();
 
     //!
     //! \brief taskAppend
@@ -162,12 +162,6 @@ public:
     //! \return
     //!
     virtual TaskRunner &setSlotCount(int slotCount);
-
-    //!
-    //! \brief idealThreadCount
-    //! \return
-    //!
-    virtual int idealThreadCount() const;
 
     //!
     //! \brief timeout
@@ -206,13 +200,13 @@ signals:
     //! \brief taskError
     //! \param task
     //!
-    void taskError(const QVariantHash &task);
+    void taskError(int slotNumber, const QVariantHash &task);
 
     //!
     //! \brief taskSuccess
     //! \param task
     //!
-    void taskSuccess(const QVariantHash &task);
+    void taskSuccess(int slotNumber, const QVariantHash &task);
 
     //!
     //! \brief taskProgress

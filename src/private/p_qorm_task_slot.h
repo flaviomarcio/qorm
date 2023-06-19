@@ -7,13 +7,11 @@
 #include <QTimer>
 #include <QUrl>
 #include <QUuid>
-#include <QVariant>
-#include <QSqlDatabase>
 #include "../qorm_global.h"
+#include "./p_qorm_task_types.h"
 
 namespace QOrm {
 class TaskSlotPvt;
-typedef std::function<QVariant(QSqlDatabase &db, const QVariant &task)> TaskRunnerMethod;
 class TaskPool;
 class TaskRunner;
 
@@ -24,6 +22,8 @@ class Q_ORM_EXPORT TaskSlot : public QThread
 {
     Q_OBJECT
 public:
+    explicit TaskSlot(QObject *parent=nullptr);
+
     //!
     //! \brief TaskSlot
     //! \param pool
@@ -33,11 +33,13 @@ public:
     //! \param methodFailed
     //!
     explicit TaskSlot(TaskPool *pool,
+                      int slotNumber,
                       const QVariantHash &connectionSetting,
                       TaskRunnerMethod methodExecute,
                       TaskRunnerMethod methodSuccess,
                       TaskRunnerMethod methodFailed);
-    ~TaskSlot();
+
+    int slotNumber();
 
     //!
     //! \brief start
@@ -49,23 +51,12 @@ public:
     //! \brief run
     //!
     void run() override;
-
-    //!
-    //! \brief init
-    //!
-    void init();
 signals:
     //!
     //! \brief taskSend
     //! \param task
     //!
     void taskSend(const QVariant &task);
-
-    //!
-    //! \brief taskRequest
-    //! \param slot
-    //!
-    void taskRequest(QOrm::TaskSlot *slot);
 
     //!
     //! \brief taskStart
@@ -83,13 +74,13 @@ signals:
     //! \brief taskError
     //! \param task
     //!
-    void taskError(const QVariantHash &task);
+    void taskError(const int slotNumber, const QVariantHash &task);
 
     //!
     //! \brief taskSuccess
     //! \param task
     //!
-    void taskSuccess(const QVariantHash &task);
+    void taskSuccess(const int slotNumber, const QVariantHash &task);
 
 private:
     TaskSlotPvt *p = nullptr;
