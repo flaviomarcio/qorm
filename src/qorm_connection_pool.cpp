@@ -45,10 +45,10 @@ public:
     explicit ConnectionPoolPvt(QObject *parent, const QVariantHash &setting)
         : QObject{parent}, parent{parent}, setting{parent}, baseName(makeBasePath(parent))
     {
-        this->setting.fromHash(setting);
+        this->setting.from(setting);
     }
 
-    virtual ~ConnectionPoolPvt()
+    ~ConnectionPoolPvt()
     {
         this->finish();
     }
@@ -95,24 +95,24 @@ public:
         return !connection.isValid();
     }
 
-    virtual bool from(ConnectionPool &pool)
+    bool from(ConnectionPool &pool)
     {
-        return setting.fromSetting(pool.setting()).isValid();
+        return setting.from(pool.setting()).isValid();
     }
 
-    virtual bool from(const ConnectionSetting &setting)
+    bool from(const ConnectionSetting &setting)
     {
-        return this->setting.fromSetting(setting).isValid();
+        return this->setting.from(setting).isValid();
     }
 
-    virtual bool from(const QVariant &setting)
+    bool from(const QVariant &setting)
     {
-        return this->setting.fromHash(setting.toHash()).isValid();
+        return this->setting.from(setting.toHash()).isValid();
     }
 
-    virtual bool from(const QSqlDatabase &db)
+    bool from(const QSqlDatabase &db)
     {
-        return setting.fromConnection(db).isValid();
+        return setting.from(db).isValid();
     }
 
     static QString urlMaker(const QSqlDatabase &connection)

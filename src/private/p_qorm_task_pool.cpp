@@ -35,7 +35,7 @@ public:
 
     bool threadsStoppeds()
     {
-        for(auto&v:taskSlotList){
+        for(auto &v:taskSlotList){
             if(v->isRunning())
                 return false;
         }

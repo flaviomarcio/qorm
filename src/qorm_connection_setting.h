@@ -35,14 +35,14 @@ public:
 
     //!
     //! \brief ConnectionSetting
-    //! \param detail
+    //! \param connection
     //! \param parent
     //!
     explicit ConnectionSetting(const QSqlDatabase &connection, QObject *parent);
 
     //!
     //! \brief ConnectionSetting
-    //! \param detail
+    //! \param setting
     //! \param parent
     //!
     explicit ConnectionSetting(const ConnectionSetting &setting, QObject *parent);
@@ -50,50 +50,10 @@ public:
     //!
     //! \brief ConnectionSetting
     //! \param name
-    //! \param detailMap
+    //! \param detail
     //! \param parent
     //!
-    explicit ConnectionSetting(const QByteArray &name,
-                               const QVariantHash &detail,
-                               QObject *parent);
-
-    //!
-    //! \brief printLog
-    //!
-    ConnectionSetting &printLog();
-
-    //!
-    //! \brief isValid
-    //! \return
-    //!
-    bool isValid() const;
-
-    //!
-    //! \brief fromSetting
-    //! \param setting
-    //! \return
-    //!
-    ConnectionSetting &fromSetting(const ConnectionSetting &setting);
-
-    //!
-    //! \brief toHash
-    //! \return
-    //!
-    QVariantHash toHash() const;
-
-    //!
-    //! \brief fromHash
-    //! \param map
-    //! \return
-    //!
-    ConnectionSetting &fromHash(const QVariantHash &values);
-
-    //!
-    //! \brief fromConnection
-    //! \param connection
-    //! \return
-    //!
-    ConnectionSetting &fromConnection(const QSqlDatabase &connection);
+    explicit ConnectionSetting(const QByteArray &name, const QVariantHash &detail, QObject *parent);
 
 public:
     //!
@@ -102,150 +62,131 @@ public:
     //! \return
     //!
     ConnectionSetting &operator=(const QVariant &value);
+    ConnectionSetting &operator=(const QSqlDatabase &value);
+    ConnectionSetting &operator=(const ConnectionSetting &value);
+
+    //!
+    //! \brief from
+    //! \param setting
+    //! \return
+    //!
+    ConnectionSetting &from(const ConnectionSetting &value);
+    ConnectionSetting &from(const QVariant &value);
+    ConnectionSetting &from(const QSqlDatabase &value);
+
+    //!
+    //! \brief print
+    //! \return
+    //!
+    const ConnectionSetting &print()const ;
+
+    //!
+    //! \brief isValid
+    //! \return
+    //!
+    bool isValid() const;
+
+    //!
+    //! \brief toHash
+    //! \return
+    //!
+    const QVariantHash &toHash() const;
 
     //!
     //! \brief variables
     //! \return
     //!
-    virtual QVariantHash variables() const;
-
-    //!
-    //! \brief setVariables
-    //! \param value
-    //!
-    virtual void setVariables(const QVariantHash &value);
+    const QVariantHash &variables() const;
+    ConnectionSetting &setVariables(const QVariantHash &value);
+    ConnectionSetting &variables(const QVariantHash &value){ return this->setVariables(value);};
 
     //!
     //! \brief driver
     //! \return
     //!
-    virtual QByteArray driver() const;
-
-    //!
-    //! \brief setDriver
-    //! \param value
-    //!
-    virtual void setDriver(const QByteArray &value);
+    const QByteArray &driver() const;
+    ConnectionSetting &setDriver(const QByteArray &value);
+    ConnectionSetting &driver(const QByteArray &value){ return this->setDriver(value);};
 
     //!
     //! \brief name
     //! \return
     //!
-    virtual QByteArray name() const;
-
-    //!
-    //! \brief setName
-    //! \param value
-    //!
-    virtual void setName(const QByteArray &value);
+    const QByteArray &name() const;
+    ConnectionSetting &setName(const QByteArray &value);
+    ConnectionSetting &name(const QByteArray &value){ return this->setName(value);};
 
     //!
     //! \brief hostName
     //! \return
     //!
-    virtual QByteArray hostName() const;
-
-    //!
-    //! \brief setHostName
-    //! \param value
-    //!
-    virtual void setHostName(const QByteArray &value);
+    const QByteArray &hostName() const;
+    ConnectionSetting &setHostName(const QByteArray &value);
+    ConnectionSetting &hostName(const QByteArray &value){ return this->setHostName(value);};
 
     //!
     //! \brief userName
     //! \return
     //!
-    virtual QByteArray userName() const;
-
-    //!
-    //! \brief setUserName
-    //! \param value
-    //!
-    virtual void setUserName(const QByteArray &value);
+    const QByteArray &userName() const;
+    ConnectionSetting &setUserName(const QByteArray &value);
+    ConnectionSetting &userName(const QByteArray &value){ return this->setUserName(value);};
 
     //!
     //! \brief password
     //! \return
     //!
-    virtual QByteArray password() const;
-
-    //!
-    //! \brief setPassword
-    //! \param value
-    //!
-    virtual void setPassword(const QByteArray &value);
+    const QByteArray &password() const;
+    ConnectionSetting &setPassword(const QByteArray &value);
+    ConnectionSetting &password(const QByteArray &value){ return this->setPassword(value);};
 
     //!
     //! \brief port
     //! \return
     //!
-    virtual int port() const;
-
-    //!
-    //! \brief setPort
-    //! \param value
-    //!
-    virtual void setPort(const QVariant &value);
+    int port() const;
+    ConnectionSetting &setPort(const QVariant &value);
+    ConnectionSetting &port(const QVariant &value){ return this->setPort(value);};
 
     //!
     //! \brief dataBaseName
     //! \return
     //!
-    virtual QByteArray dataBaseName() const;
-
-    //!
-    //! \brief setDataBaseName
-    //! \param value
-    //!
-    virtual void setDataBaseName(const QByteArray &value);
+    const QByteArray &dataBaseName() const;
+    ConnectionSetting &setDataBaseName(const QByteArray &value);
+    ConnectionSetting &dataBaseName(const QByteArray &value){ return this->setDataBaseName(value);};
 
     //!
     //! \brief schemaNames
     //! \return
     //!
-    virtual QStringList schemaNames() const;
-
-    //!
-    //! \brief setSchemaNames
-    //! \param value
-    //!
-    virtual void setSchemaNames(const QStringList &value);
+    QStringList &schemaNames() const;
+    ConnectionSetting &setSchemaNames(const QStringList &value);
+    ConnectionSetting &schemaNames(const QStringList &value){ return this->setSchemaNames(value);};
 
     //!
     //! \brief connectOptions
     //! \return
     //!
-    virtual QByteArray connectOptions() const;
-
-    //!
-    //! \brief setConnectOptions
-    //! \param value
-    //!
-    virtual void setConnectOptions(const QByteArray &value);
+    const QByteArray &connectOptions() const;
+    ConnectionSetting &setConnectOptions(const QByteArray &value);
+    ConnectionSetting &connectOptions(const QByteArray &value){ return this->setConnectOptions(value);};
 
     //!
     //! \brief commandBeforeOpen
     //! \return
     //!
-    virtual QStringList commandBeforeOpen() const;
-
-    //!
-    //! \brief setCommandBeforeOpen
-    //! \param value
-    //!
-    virtual void setCommandBeforeOpen(const QStringList &value);
+    const QStringList &commandBeforeOpen() const;
+    ConnectionSetting &setCommandBeforeOpen(const QStringList &value);
+    ConnectionSetting &commandBeforeOpen(const QStringList &value){ return this->setCommandBeforeOpen(value);};
 
     //!
     //! \brief commandAfterClose
     //! \return
     //!
-    virtual QStringList commandAfterClose() const;
-
-    //!
-    //! \brief setCommandAfterClose
-    //! \param value
-    //!
-    virtual void setCommandAfterClose(const QStringList &value);
+    const QStringList &commandAfterClose() const;
+    ConnectionSetting &setCommandAfterClose(const QStringList &value);
+    ConnectionSetting &commandAfterClose(const QStringList &value){ return this->setCommandAfterClose(value);};
 
 private:
     ConnectionSettingPvt *p = nullptr;

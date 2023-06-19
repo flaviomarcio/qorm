@@ -44,7 +44,7 @@ public:
     //! \brief setting
     //! \return
     //!
-    virtual ConnectionSetting &setting() const;
+    ConnectionSetting &setting() const;
 
     //!
     //! \brief isValid
@@ -57,28 +57,28 @@ public:
     //! \param pool
     //! \return
     //!
-    virtual bool from(ConnectionPool &pool);
+    bool from(ConnectionPool &pool);
 
     //!
     //! \brief from
     //! \param setting
     //! \return
     //!
-    virtual bool from(const ConnectionSetting &setting);
+    bool from(const ConnectionSetting &setting);
 
     //!
     //! \brief from
     //! \param connection
     //! \return
     //!
-    virtual bool from(const QVariant &connection);
+    bool from(const QVariant &connection);
 
     //!
     //! \brief from
     //! \param connection
     //! \return
     //!
-    virtual bool from(const QSqlDatabase &connection);
+    bool from(const QSqlDatabase &connection);
 
     //!
     //! \brief get

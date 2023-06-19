@@ -2,19 +2,18 @@
 
 #include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
-#include "./qorm_object.h"
 
 namespace QOrm {
 class ConnectionManagerPvt;
 //!
 //! \brief The ConnectionManager class
 //!
-class Q_ORM_EXPORT ConnectionManager : public QOrm::Object
+class Q_ORM_EXPORT ConnectionManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QByteArray enviroment READ enviroment WRITE setEnviroment NOTIFY enviromentChanged)
     Q_PROPERTY(QByteArray secretKey READ secretKey WRITE setSecretKey NOTIFY secreChanged)
-    Q_PROPERTY(QVariantHash paramaters READ paramaters WRITE setParamaters NOTIFY paramatersChanged)
+    Q_PROPERTY(QVariantHash settings READ settings WRITE setSettings NOTIFY settingsChanged)
 public:
     //!
     //! \brief ConnectionManager
@@ -27,7 +26,7 @@ public:
     //! \param manager
     //! \param parent
     //!
-    explicit ConnectionManager(const ConnectionManager &manager, QObject *parent = nullptr);
+    explicit ConnectionManager(const ConnectionManager &managerParent, QObject *parent = nullptr);
 
     //!
     //! \brief ConnectionManager
@@ -36,118 +35,123 @@ public:
     //!
     explicit ConnectionManager(const QVariantHash &setting, QObject *parent = nullptr);
 
+    //!
+    //! \brief operator =
+    //! \param value
+    //! \return
+    //!
+    ConnectionManager &operator=(const ConnectionSetting &value);
+    ConnectionManager &operator=(const QVariant &value);
+    ConnectionManager &operator=(const QSqlDatabase &value);
+
+    //!
+    //! \brief operator <<
+    //! \param value
+    //! \return
+    //!
+    ConnectionManager &operator<<(const ConnectionSetting &value);
+    ConnectionManager &operator<<(const QVariantHash &value);
+    ConnectionManager &operator<<(const QSqlDatabase &value);
+
+    //!
+    //! \brief toHash
+    //! \return
+    //!
+    const QVariantHash &toHash()const;
 
     //!
     //! \brief clear
     //!
-    virtual ConnectionManager &clear();
+    const ConnectionManager &clear();
 
     //!
     //! \brief enviroment
     //! \return
     //!
-    virtual const QByteArray &enviroment() const;
-
-    //!
-    //! \brief setEnviroment
-    //! \param value
-    //!
-    virtual ConnectionManager &setEnviroment(const QByteArray &value);
+    const QByteArray &enviroment() const;
+    ConnectionManager &setEnviroment(const QByteArray &value);
+    auto &enviroment(const QByteArray &value){ return this->setEnviroment(value);};
 
     //!
     //! \brief secretKey
     //! \return
     //!
-    virtual const QByteArray &secretKey() const;
+    const QByteArray &secretKey() const;
+    ConnectionManager &setSecretKey(const QByteArray &value);
+    auto &secretKey(const QByteArray &value){ return this->setSecretKey(value);};
 
     //!
-    //! \brief setSecretKey
-    //! \param value
-    //!
-    virtual ConnectionManager &setSecretKey(const QByteArray &value);
-
-    //!
-    //! \brief paramaters
+    //! \brief settings
     //! \return
     //!
-    virtual const QVariantHash &paramaters() const;
-
-    //!
-    //! \brief setParamaters
-    //! \param value
-    //!
-    virtual ConnectionManager &setParamaters(const QVariantHash &value);
+    const QVariantHash &settings() const;
+    ConnectionManager &setSettings(const QVariant &value);
+    auto &settings(const QVariantHash &value){ return this->setSettings(value);};
 
     //!
     //! \brief insert
     //! \param value
     //! \return
     //!
-    virtual ConnectionManager &insert(ConnectionSetting &value);
+    ConnectionManager &insert(const QSqlDatabase &value);
 
     //!
     //! \brief insert
     //! \param value
     //! \return
     //!
-    virtual ConnectionManager &insert(const QVariantHash &value);
+    ConnectionManager &insert(const ConnectionSetting &value);
+
+    //!
+    //! \brief insert
+    //! \param value
+    //! \return
+    //!
+    ConnectionManager &insert(const QVariantHash &value);
 
     //!
     //! \brief pool
     //! \return
     //!
-    virtual ConnectionPool &pool();
+    ConnectionPool &pool();
 
     //!
     //! \brief pool
     //! \param value
     //! \return
     //!
-    virtual ConnectionPool &pool(const QByteArray &value);
+    ConnectionPool &pool(const QByteArray &value);
 
     //!
     //! \brief isEmpty
     //! \return
     //!
-    virtual bool isEmpty() const;
+    bool isEmpty() const;
 
     //!
     //! \brief isLoaded
     //! \return
     //!
-    virtual bool isLoaded() const;
+    bool isLoaded() const;
 
     //!
     //! \brief load
     //! \param settings
     //! \return
     //!
-    virtual bool load(const QVariantHash &settings);
+    bool load(const QVariantHash &settings);
 
     //!
     //! \brief load
     //! \param manager
     //! \return
     //!
-    virtual bool load(const ConnectionManager &manager);
+    bool load(const ConnectionManager &manager);
 
-    //!
-    //! \brief operator <<
-    //! \param value
-    //! \return
-    //!
-    ConnectionManager &operator<<(ConnectionSetting &value);
-
-    //!
-    //! \brief operator <<
-    //! \param value
-    //! \return
-    //!
-    ConnectionManager &operator<<(const QVariantHash &value);
 signals:
     void enviromentChanged();
     void secreChanged();
-    void paramatersChanged();
+    void settingsChanged();
 private:
     ConnectionManagerPvt *p = nullptr;
 };
