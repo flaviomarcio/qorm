@@ -110,6 +110,8 @@ public:\
 
 #define Q_V_SET_STRINGLIST(v)auto v=vu.toStringList(vOrmMap.value(#v));
 
+#define Q_V_SET_BOOL(v)auto v=vu.toBool(vOrmMap.value(#v))\
+
 #define QORM_DTO_DECLARE_HEADER(propertyName, params)\
 Q_PROPERTY(QVariantHash header_propertyName READ get_##propertyName)\
 public:\
