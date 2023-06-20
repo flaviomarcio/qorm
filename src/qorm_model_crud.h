@@ -3,6 +3,8 @@
 #include "./private/p_qorm_model_crud.h"
 #include "./private/p_qorm_model_info.h"
 #include "./qorm_model_dao.h"
+#include "../../qstm/src/qstm_util_variant.h"
+#include "../../qstm/src/qstm_meta_enum.h"
 
 namespace QOrm{
 
@@ -166,8 +168,8 @@ protected:
     virtual ResultValue &search(const T &model)
     {
         auto value=model.toPKValuesValid();
-        VariantUtil util;
-        if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
+        Q_DECLARE_VU;
+        if(!this->options().searchOnEmptyFilter() && vu.vIsEmpty(value))
             return this->lr();
 
         if(!this->p_dao.recordList(value))
@@ -185,8 +187,8 @@ protected:
     //!
     virtual ResultValue &search(const QVariant &value)
     {
-        VariantUtil util;
-        if(!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
+        Q_DECLARE_VU;
+        if(!this->options().searchOnEmptyFilter() && vu.vIsEmpty(value))
             return this->lr();
 
         if(!this->p_dao.recordList(value))

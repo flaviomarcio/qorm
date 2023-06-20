@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../qstm/src/qstm_result_info.h"
+#include "../../../qstm/src/qstm_object.h"
 #include "./p_qorm_model_dto_host.h"
 #include "./p_qorm_model_dto_endpoints.h"
 #include "../qorm_model_field_descriptors.h"

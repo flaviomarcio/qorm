@@ -1,5 +1,6 @@
 #include "./p_qorm_model_report.h"
 #include "./p_qorm_model_report_body.h"
+#include "../../../qstm/src/qstm_util_variant.h"
 #include <QJsonDocument>
 
 namespace PrivateQOrm {
@@ -235,8 +236,7 @@ ModelReportBase &ModelReportBase::onFailed(QOrm::ModelActionMethod method)
 
 ResultValue &ModelReportBase::canActionSearch()
 {
-    VariantUtil vu;
-
+    Q_DECLARE_VU;
     static auto name=QByteArray{__func__}.replace(__canAction, __action);
     QVariant v;
     if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(this->source())){

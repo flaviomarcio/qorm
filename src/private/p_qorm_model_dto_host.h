@@ -1,7 +1,10 @@
 #pragma once
 
-#include <QStm>
+#include "../../../qstm/src/qstm_object_wrapper.h"
 #include "../qorm_global.h"
+#include <QUuid>
+#include <QVariant>
+#include <QVariantHash>
 
 namespace QOrm {
 
@@ -23,8 +26,6 @@ class Q_ORM_EXPORT Host : public QStm::ObjectWrapper
     Q_PROPERTY(QByteArray basePath READ basePath WRITE setBasePath RESET resetBasePath NOTIFY basePathChanged)
 public:
     Q_INVOKABLE explicit Host(QObject *parent = nullptr);
-
-    ~Host();
 
     //!
     //! \brief isValid

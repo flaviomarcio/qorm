@@ -10,7 +10,11 @@
 #include <QMutex>
 #include <QStringList>
 #include <QCoreApplication>
-#include <QStm>
+#include <QDate>
+#include <QTime>
+#include <QDateTime>
+#include <QUuid>
+#include <QUrl>
 
 namespace QOrm {
 
@@ -385,7 +389,6 @@ QStringList SqlSuitableKeyWord::parserCommand(int command, const ModelInfo *mode
         }
 
         auto values=this->formatValues(modelInfo->tablePk(), listRecords);
-        auto tableNameFull=modelInfo->propertyTableList();
 
         if(!values.isEmpty()){
             auto tablePk=modelInfo->tablePk();

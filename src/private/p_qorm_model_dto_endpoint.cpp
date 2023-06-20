@@ -1,6 +1,8 @@
 #include "./p_qorm_model_dto_endpoint.h"
 #include "./p_qorm_model_dto_host.h"
 #include <QJsonDocument>
+#include "../../../qstm/src/qstm_network_types.h"
+#include "../../../qstm/src/qstm_util_variant.h"
 
 namespace QOrm {
 

@@ -2,6 +2,8 @@
 #include "../qorm_model_dto.h"
 #include <QJsonDocument>
 #include "./p_qorm_model_crud_body.h"
+#include "../../../qstm/src/qstm_meta_enum.h"
+#include "../../../qstm/src/qstm_util_variant.h"
 //#include "./p_qorm_sql_suitable_parser_item.h"
 //#include "../qorm_query.h"
 //#include "../qorm_transaction_scope.h"

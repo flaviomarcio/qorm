@@ -1,8 +1,7 @@
 #include "./p_qorm_model_crud_body.h"
 #include "../qorm_model_crud_types.h"
-#include <QStm>
-
-
+#include "../../../qstm/src/qstm_meta_enum.h"
+#include "../../../qstm/src/qstm_util_variant.h"
 
 namespace QOrm {
 
@@ -115,7 +114,7 @@ QVariantList CRUDBody::items() const
 
 QVariant CRUDBody::data() const
 {
-    QStm::VariantUtil vu;
+    Q_DECLARE_VU;
     auto v=this->value(__expressions);
     if(!vu.vIsEmpty(v))
         return v;

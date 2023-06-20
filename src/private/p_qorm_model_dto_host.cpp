@@ -1,8 +1,9 @@
 #include "./p_qorm_model_dto_host.h"
+#include "../../../qstm/src/qstm_network_types.h"
 
 namespace QOrm {
 
-class HostPvt{
+class HostPvt:public QObject {
 public:
     QStm::Network n;
     Host *parent=nullptr;
@@ -12,25 +13,13 @@ public:
     int port=-1;
     QVariantHash headers;
     QByteArray basePath;
-    explicit HostPvt(Host *parent)
+    explicit HostPvt(Host *parent):QObject{parent}, parent{parent}
     {
-        this->parent=parent;
-    }
-
-    virtual ~HostPvt()
-    {
-
     }
 };
 
-Host::Host(QObject *parent) : ObjectWrapper{parent}
+Host::Host(QObject *parent) : ObjectWrapper{parent}, p{new HostPvt{this}}
 {
-    this->p=new HostPvt{this};
-}
-
-Host::~Host()
-{
-    delete p;
 }
 
 bool Host::isValid() const
@@ -69,7 +58,6 @@ bool Host::isEmpty() const
 
 const QByteArray &Host::protocol() const
 {
-
     if(p->protocol.trimmed().isEmpty())
         return p->n.HTTP_PROTOCOL;
     return p->protocol;

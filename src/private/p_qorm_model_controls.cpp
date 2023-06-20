@@ -1,7 +1,7 @@
 #include "./p_qorm_model_controls.h"
 #include "../../qstm/src/qstm_macro.h"
+#include "../../qstm/src/qstm_util_variant.h"
 #include "../qorm_model_consts.h"
-#include <QStm>
 #include <QVariantHash>
 #include <QCoreApplication>
 

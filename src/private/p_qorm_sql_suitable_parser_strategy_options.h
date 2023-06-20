@@ -1,7 +1,5 @@
 #pragma once
 
-//#include <QStm>
-//#include "../qorm_macro.h"
 #include "./p_qorm_model_info.h"
 #include "./p_qorm_sql_suitable_parameter.h"
 #include "./p_qorm_sql_suitable_parser_command.h"

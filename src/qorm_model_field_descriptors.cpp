@@ -4,6 +4,7 @@
 #include <QMetaProperty>
 #include <QRect>
 #include "../../qstm/src/qstm_meta_enum.h"
+#include "../../qstm/src/qstm_util_variant.h"
 
 namespace QOrm {
 
@@ -98,7 +99,7 @@ public:
     {
         static const auto __P="%";
         QVector<ModelFieldDescriptor *> listOrder;
-        VariantUtil vu;
+        Q_DECLARE_VU;
 
         double vCurrentValue=-1;
 

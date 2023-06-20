@@ -1,5 +1,5 @@
 #pragma once
-
+#include "../../qstm/src/qstm_util_variant.h"
 #include "./private/p_qorm_model_report.h"
 #include "./qorm_model_dao.h"
 #include "./qorm_model.h"
@@ -77,8 +77,8 @@ protected:
     virtual ResultValue &search(const T &model)
     {
         auto value = model.toPKValuesValid();
-        VariantUtil util;
-        if (!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
+        Q_DECLARE_VU;
+        if (!this->options().searchOnEmptyFilter() && vu.vIsEmpty(value))
             return this->lr();
 
         if (!this->p_dao.recordList(value))
@@ -96,8 +96,8 @@ protected:
     //!
     virtual ResultValue &search(const QVariant &value)
     {
-        VariantUtil util;
-        if (!this->options().searchOnEmptyFilter() && util.vIsEmpty(value))
+        Q_DECLARE_VU;
+        if (!this->options().searchOnEmptyFilter() && vu.vIsEmpty(value))
             return this->lr();
 
         if (!this->p_dao.recordList(value))

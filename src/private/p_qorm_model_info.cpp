@@ -1,4 +1,5 @@
 #include <QMutex>
+#include <QFile>
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include "./p_qorm_model_info.h"
@@ -7,10 +8,11 @@
 #include "../qorm_macro.h"
 #include "../qorm_model.h"
 #include "../qorm_model_field_descriptors.h"
-//#include "../qorm_macro.h"
 #include "../qorm_model_macro.h"
 #include "../qorm_startup.h"
 #include "./p_qorm_sql_suitable_parser_item.h"
+#include "../../../qstm/src/qstm_util_variant.h"
+#include "../../../qstm/src/qstm_macro.h"
 
 namespace QOrm {
 
