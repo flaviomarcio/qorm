@@ -230,7 +230,7 @@ public:
     //!
     //! \brief ~TypeUtil
     //!
-    virtual ~TypeUtil();
+    virtual ~TypeUtil(){};
 
     //!
     //! \brief strToDataType

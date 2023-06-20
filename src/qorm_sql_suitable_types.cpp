@@ -1,14 +1,9 @@
 #include "./qorm_sql_suitable_types.h"
-#include "../../qstm/src/qstm_types_const.h"
+#include "./qorm_const.h"
 
 namespace QOrm {
 
 TypeUtil::TypeUtil()
-{
-
-}
-
-TypeUtil::~TypeUtil()
 {
 
 }
@@ -33,7 +28,7 @@ QSqlDriver::DbmsType TypeUtil::strToDataType(const QString &driverName)
     return QSqlDriver::UnknownDbms;
 }
 
-const QList<int>&TypeUtil::keywordGroupingTypes()
+const QList<int> &TypeUtil::keywordGroupingTypes()
 {
     static auto __keywordGroupingTypes=QList<int>{kgMin, kgMax, kgAvg, kgSum, kgCount, kgMinAs, kgMaxAs, kgAvgAs, kgSumAs, kgCountAs};
    return __keywordGroupingTypes;

@@ -15,10 +15,10 @@
 namespace QOrm {
 
 //static const auto driver_QMYSQL="QMYSQL";
-static const auto driver_QODBC="QODBC";
+//static const auto driver_QODBC="QODBC";
 //static const auto driver_QOIC="QOIC";
 //static const auto driver_QPSQL="QPSQL";
-static const auto driver_QSQLITE="QSQLITE";
+//static const auto driver_QSQLITE="QSQLITE";
 
 static const auto __arg_1="%1";
 
