@@ -18,23 +18,91 @@ static const auto __connectOptions="connectOptions";
 class ConnectionSettingPvt:public QObject
 {
 public:
-    QObject *parent = nullptr;
-    QVariantHash toHash;
-    QByteArray driver, driverParser;
-    QByteArray name, nameParser;
-    QByteArray hostName, hostNameParser;
-    QByteArray userName, userNameParser;
-    QByteArray password, passwordParser;
-    QByteArray dataBaseName, dataBaseNameParser;
+    ConnectionSetting *parent = nullptr;
+
+    QByteArray driver;
+    QByteArray name;
+    QByteArray hostName;
+    QByteArray userName;
+    QByteArray password;
+    QByteArray dataBaseName;
     QVariant port = -1;
-    QStringList schemaNames, schemaNamesParser;
-    QByteArray connectOptions, connectOptionsParser;
-    QStringList commandBeforeOpen, commandBeforeOpenParser;
-    QStringList commandAfterClose, commandAfterCloseParser;
+    QStringList schemaNames;
+    QByteArray connectOptions;
+    QStringList commandBeforeOpen;
+    QStringList commandAfterClose;
     QStm::Envs envs;
-    explicit ConnectionSettingPvt(QObject *parent):QObject{parent}, parent{parent}, envs{parent}
+    explicit ConnectionSettingPvt(ConnectionSetting *parent):QObject{parent}, parent{parent}, envs{parent}
     {
     }
+
+    QVariantHash toHash()
+    {
+        if(!this->parent->isValid())
+            return {};
+
+        static const auto __objectName=QByteArrayLiteral("objectName");
+
+        QVariantHash __return;
+
+        for (int row = 0; row < this->parent->metaObject()->propertyCount(); ++row) {
+            auto property = this->parent->metaObject()->property(row);
+            if(!property.isReadable())
+                continue;
+
+            if (property.name() == __objectName)
+                continue;
+
+            auto vGet = property.read(this->parent);
+
+            switch (vGet.typeId()) {
+            case QMetaType::QString:
+            case QMetaType::QByteArray:{
+                if(vGet.toString().trimmed().isEmpty())
+                    continue;
+                break;
+            }
+            case QMetaType::Int:
+            case QMetaType::UInt:
+            case QMetaType::LongLong:
+            case QMetaType::ULongLong:
+            {
+                bool ok=false;
+                if(vGet.toLongLong(&ok)<=0 || !ok)
+                    continue;
+                break;
+            }
+            case QMetaType::Double:
+            {
+                bool ok=false;
+                if(vGet.toDouble(&ok)<=0 || !ok)
+                    continue;
+                break;
+            }
+            case QMetaType::QVariantHash:
+            case QMetaType::QVariantMap:
+            case QMetaType::QVariantPair:
+            {
+                if(vGet.toHash().isEmpty())
+                    continue;
+                break;
+            }
+            case QMetaType::QVariantList:
+            case QMetaType::QStringList:
+            {
+                if(vGet.toList().isEmpty())
+                    continue;
+                break;
+            }
+            default:
+                break;
+            }
+
+            __return.insert(property.name(), vGet);
+        }
+        return __return;
+    }
+
 };
 
 ConnectionSetting::ConnectionSetting(QObject *parent)
@@ -295,74 +363,16 @@ bool ConnectionSetting::isValid() const
 }
 
 
-const QVariantHash &ConnectionSetting::toHash() const
+const QVariantHash ConnectionSetting::toHash() const
 {
-    p->toHash.clear();
-    if(!this->isValid())
-        return p->toHash;
-
-    static const auto __objectName=QByteArrayLiteral("objectName");
-
-    QVariantHash __return;
-
-    for (int row = 0; row < this->metaObject()->propertyCount(); ++row) {
-        auto property = this->metaObject()->property(row);
-        if(!property.isReadable())
-            continue;
-
-        if (property.name() == __objectName)
-            continue;
-
-        auto vGet = property.read(this);
-
-        switch (vGet.typeId()) {
-        case QMetaType::QString:
-        case QMetaType::QByteArray:{
-            if(vGet.toString().trimmed().isEmpty())
-                continue;
-            break;
-        }
-        case QMetaType::Int:
-        case QMetaType::UInt:
-        case QMetaType::LongLong:
-        case QMetaType::ULongLong:
-        {
-            bool ok=false;
-            if(vGet.toLongLong(&ok)<=0 || !ok)
-                continue;
-            break;
-        }
-        case QMetaType::Double:
-        {
-            bool ok=false;
-            if(vGet.toDouble(&ok)<=0 || !ok)
-                continue;
-            break;
-        }
-        case QMetaType::QVariantHash:
-        case QMetaType::QVariantMap:
-        case QMetaType::QVariantPair:
-        {
-            if(vGet.toHash().isEmpty())
-                continue;
-            break;
-        }
-        case QMetaType::QVariantList:
-        case QMetaType::QStringList:
-        {
-            if(vGet.toList().isEmpty())
-                continue;
-            break;
-        }
-        default:
-            break;
-        }
-
-        __return.insert(property.name(), vGet);
-    }
-    return p->toHash=__return;
+    return p->toHash();
 }
 
+const QByteArray ConnectionSetting::toJson()
+{
+    return QJsonDocument::fromVariant(p->toHash())
+        .toJson(QJsonDocument::Compact);
+}
 
 const QVariantHash &ConnectionSetting::variables() const
 {
@@ -375,9 +385,9 @@ ConnectionSetting &ConnectionSetting::setVariables(const QVariantHash &value)
     return *this;
 }
 
-const QByteArray &ConnectionSetting::driver() const
+const QByteArray ConnectionSetting::driver() const
 {
-    return p->driverParser=p->envs.parser(p->driver).toByteArray();
+    return p->envs.parser(p->driver).toByteArray();
 }
 
 ConnectionSetting &ConnectionSetting::setDriver(const QByteArray &value)
@@ -386,9 +396,9 @@ ConnectionSetting &ConnectionSetting::setDriver(const QByteArray &value)
     return *this;
 }
 
-const QByteArray &ConnectionSetting::name() const
+const QByteArray ConnectionSetting::name() const
 {
-    return p->passwordParser=p->envs.parser(p->name).toByteArray();
+    return p->envs.parser(p->name).toByteArray();
 }
 
 ConnectionSetting &ConnectionSetting::setName(const QByteArray &value)
@@ -397,9 +407,9 @@ ConnectionSetting &ConnectionSetting::setName(const QByteArray &value)
     return *this;
 }
 
-const QByteArray &ConnectionSetting::hostName() const
+const QByteArray ConnectionSetting::hostName() const
 {
-    return p->hostNameParser=p->envs.parser(p->hostName.trimmed()).toByteArray();
+    return p->envs.parser(p->hostName.trimmed()).toByteArray();
 }
 
 ConnectionSetting &ConnectionSetting::setHostName(const QByteArray &value)
@@ -408,9 +418,9 @@ ConnectionSetting &ConnectionSetting::setHostName(const QByteArray &value)
     return *this;
 }
 
-const QByteArray &ConnectionSetting::userName() const
+const QByteArray ConnectionSetting::userName() const
 {
-    return p->userNameParser=p->envs.parser(p->userName.trimmed()).toByteArray();
+    return p->envs.parser(p->userName.trimmed()).toByteArray();
 }
 
 ConnectionSetting &ConnectionSetting::setUserName(const QByteArray &value)
@@ -419,9 +429,9 @@ ConnectionSetting &ConnectionSetting::setUserName(const QByteArray &value)
     return *this;
 }
 
-const QByteArray &ConnectionSetting::password() const
+const QByteArray ConnectionSetting::password() const
 {
-    return p->passwordParser=p->envs.parser(p->password).toByteArray();
+    return p->envs.parser(p->password).toByteArray();
 }
 
 ConnectionSetting &ConnectionSetting::setPassword(const QByteArray &value)
@@ -444,9 +454,9 @@ ConnectionSetting &ConnectionSetting::setPort(const QVariant &value)
     return *this;
 }
 
-const QByteArray &ConnectionSetting::dataBaseName() const
+const QByteArray ConnectionSetting::dataBaseName() const
 {
-    return p->dataBaseNameParser=p->envs.parser(p->dataBaseName).toByteArray();
+    return p->envs.parser(p->dataBaseName).toByteArray();
 }
 
 ConnectionSetting &ConnectionSetting::setDataBaseName(const QByteArray &value)
@@ -455,7 +465,7 @@ ConnectionSetting &ConnectionSetting::setDataBaseName(const QByteArray &value)
     return *this;
 }
 
-QStringList &ConnectionSetting::schemaNames() const
+const QStringList ConnectionSetting::schemaNames() const
 {
     auto lst=p->envs.parser(p->schemaNames).toStringList();
     QStringList __return;
@@ -463,7 +473,7 @@ QStringList &ConnectionSetting::schemaNames() const
         if(!v.trimmed().isEmpty())
             __return.append(v.trimmed());
     }
-    return p->schemaNamesParser=__return;
+    return __return;
 }
 
 ConnectionSetting &ConnectionSetting::setSchemaNames(const QStringList &value)
@@ -472,9 +482,9 @@ ConnectionSetting &ConnectionSetting::setSchemaNames(const QStringList &value)
     return *this;
 }
 
-const QByteArray &ConnectionSetting::connectOptions() const
+const QByteArray ConnectionSetting::connectOptions() const
 {
-    return p->connectOptionsParser=p->envs.parser(p->commandBeforeOpen).toByteArray();
+    return p->envs.parser(p->commandBeforeOpen).toByteArray();
 }
 
 ConnectionSetting &ConnectionSetting::setConnectOptions(const QByteArray &value)
@@ -483,9 +493,9 @@ ConnectionSetting &ConnectionSetting::setConnectOptions(const QByteArray &value)
     return *this;
 }
 
-const QStringList &ConnectionSetting::commandBeforeOpen() const
+const QStringList ConnectionSetting::commandBeforeOpen() const
 {
-    return p->commandBeforeOpenParser=p->envs.parser(p->commandBeforeOpen).toStringList();
+    return p->envs.parser(p->commandBeforeOpen).toStringList();
 }
 
 ConnectionSetting &ConnectionSetting::setCommandBeforeOpen(const QStringList &value)
@@ -494,9 +504,9 @@ ConnectionSetting &ConnectionSetting::setCommandBeforeOpen(const QStringList &va
     return *this;
 }
 
-const QStringList &ConnectionSetting::commandAfterClose() const
+const QStringList ConnectionSetting::commandAfterClose() const
 {
-    return p->commandAfterCloseParser=p->envs.parser(p->commandAfterClose).toStringList();
+    return p->envs.parser(p->commandAfterClose).toStringList();
 }
 
 ConnectionSetting &ConnectionSetting::setCommandAfterClose(const QStringList &value)

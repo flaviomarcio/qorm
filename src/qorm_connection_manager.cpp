@@ -40,9 +40,8 @@ static const auto __DB_SCHEMA="DB_SCHEMA";
 class ConnectionManagerPvt:public QObject
 {
 public:
-    QVariantHash toHash;
-    QByteArray enviroment, enviromentParser;
-    QByteArray secretKey, secretKeyParser;
+    QByteArray enviroment;
+    QByteArray secretKey;
     QVariantHash settings;
     QHash<QString, ConnectionSetting*> settingsHash;
     QMap<QString, ConnectionPool*> pools;
@@ -126,11 +125,8 @@ public:
     //!
     void clear()
     {
-        this->toHash={};
         this->enviroment={};
-        this->enviromentParser={};
         this->secretKey={};
-        this->secretKeyParser={};
         this->settings={};
 
         auto _detail=this->settingsHash;
@@ -355,14 +351,13 @@ ConnectionManager &ConnectionManager::operator<<(const ConnectionSetting &value)
     return p->insert(value.toHash());
 }
 
-const QVariantHash &ConnectionManager::toHash() const
+const QVariantHash ConnectionManager::toHash() const
 {
-    p->toHash={
+    return {
             {__environment, this->enviroment()},
             {__secretKey, this->secretKey()},
             {__settings, this->settings()},
             };
-    return p->toHash;
 }
 
 ConnectionManager &ConnectionManager::operator<<(const QVariantHash &value)
@@ -386,9 +381,9 @@ const ConnectionManager &ConnectionManager::clear()
     return *this;
 }
 
-const QByteArray &ConnectionManager::enviroment() const
+const QByteArray ConnectionManager::enviroment() const
 {
-    return p->enviromentParser=p->envs.parser(p->enviroment).toByteArray();
+    return p->envs.parser(p->enviroment).toByteArray();
 }
 
 ConnectionManager &ConnectionManager::setEnviroment(const QByteArray &value)
@@ -398,9 +393,9 @@ ConnectionManager &ConnectionManager::setEnviroment(const QByteArray &value)
     return *this;
 }
 
-const QByteArray &ConnectionManager::secretKey() const
+const QByteArray ConnectionManager::secretKey() const
 {
-    return p->secretKeyParser=p->envs.parser(p->secretKey).toByteArray();
+    return p->envs.parser(p->secretKey).toByteArray();
 }
 
 ConnectionManager &ConnectionManager::setSecretKey(const QByteArray &value)
@@ -410,9 +405,9 @@ ConnectionManager &ConnectionManager::setSecretKey(const QByteArray &value)
     return *this;
 }
 
-const QVariantHash &ConnectionManager::settings() const
+const QVariantHash ConnectionManager::settings() const
 {
-    p->settings.clear();
+    QVariantHash vSettins;
     QHashIterator<QString, ConnectionSetting *> i(p->settingsHash);
     while (i.hasNext()) {
         i.next();
@@ -422,9 +417,9 @@ const QVariantHash &ConnectionManager::settings() const
             continue;
 
         if (v->isValid())
-            p->settings.insert(k, v->toHash());
+            vSettins.insert(k, v->toHash());
     }
-    return p->settings;
+    return vSettins;
 }
 
 ConnectionManager &ConnectionManager::setSettings(const QVariant &value)

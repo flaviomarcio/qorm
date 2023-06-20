@@ -5,6 +5,7 @@
 #include "./private/p_qorm_const.h"
 #include "./private/p_qorm_model_info.h"
 #include "../../../qstm/src/qstm_util_variant.h"
+#include "../../../qstm/src/qstm_util_hash.h"
 #include "../../../qstm/src/qstm_macro.h"
 #include <QCryptographicHash>
 #include <QMetaProperty>
@@ -52,7 +53,8 @@ public:
             if(list.contains(property.name()))
                 vBody[property.name()]=property.read(this->model);
         }
-        return this->model->toMd5(vBody);
+        Q_DECLARE_HU;
+        return hu.toMd5(vBody);
     }
 
     void clear()

@@ -57,7 +57,7 @@ public:
     //! \brief toHash
     //! \return
     //!
-    const QVariantHash &toHash()const;
+    const QVariantHash toHash()const;
 
     //!
     //! \brief clear
@@ -68,7 +68,7 @@ public:
     //! \brief enviroment
     //! \return
     //!
-    const QByteArray &enviroment() const;
+    const QByteArray enviroment() const;
     ConnectionManager &setEnviroment(const QByteArray &value);
     auto &enviroment(const QByteArray &value){ return this->setEnviroment(value);};
 
@@ -76,7 +76,7 @@ public:
     //! \brief secretKey
     //! \return
     //!
-    const QByteArray &secretKey() const;
+    const QByteArray secretKey() const;
     ConnectionManager &setSecretKey(const QByteArray &value);
     auto &secretKey(const QByteArray &value){ return this->setSecretKey(value);};
 
@@ -84,7 +84,7 @@ public:
     //! \brief settings
     //! \return
     //!
-    const QVariantHash &settings() const;
+    const QVariantHash settings() const;
     ConnectionManager &setSettings(const QVariant &value);
     auto &settings(const QVariantHash &value){ return this->setSettings(value);};
 

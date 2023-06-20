@@ -90,7 +90,13 @@ public:
     //! \brief toHash
     //! \return
     //!
-    const QVariantHash &toHash() const;
+    const QVariantHash toHash() const;
+
+    //!
+    //! \brief toJson
+    //! \return
+    //!
+    const QByteArray toJson();
 
     //!
     //! \brief variables
@@ -104,7 +110,7 @@ public:
     //! \brief driver
     //! \return
     //!
-    const QByteArray &driver() const;
+    const QByteArray driver() const;
     ConnectionSetting &setDriver(const QByteArray &value);
     ConnectionSetting &driver(const QByteArray &value){ return this->setDriver(value);};
 
@@ -112,7 +118,7 @@ public:
     //! \brief name
     //! \return
     //!
-    const QByteArray &name() const;
+    const QByteArray name() const;
     ConnectionSetting &setName(const QByteArray &value);
     ConnectionSetting &name(const QByteArray &value){ return this->setName(value);};
 
@@ -120,7 +126,7 @@ public:
     //! \brief hostName
     //! \return
     //!
-    const QByteArray &hostName() const;
+    const QByteArray hostName() const;
     ConnectionSetting &setHostName(const QByteArray &value);
     ConnectionSetting &hostName(const QByteArray &value){ return this->setHostName(value);};
 
@@ -128,7 +134,7 @@ public:
     //! \brief userName
     //! \return
     //!
-    const QByteArray &userName() const;
+    const QByteArray userName() const;
     ConnectionSetting &setUserName(const QByteArray &value);
     ConnectionSetting &userName(const QByteArray &value){ return this->setUserName(value);};
 
@@ -136,7 +142,7 @@ public:
     //! \brief password
     //! \return
     //!
-    const QByteArray &password() const;
+    const QByteArray password() const;
     ConnectionSetting &setPassword(const QByteArray &value);
     ConnectionSetting &password(const QByteArray &value){ return this->setPassword(value);};
 
@@ -152,7 +158,7 @@ public:
     //! \brief dataBaseName
     //! \return
     //!
-    const QByteArray &dataBaseName() const;
+    const QByteArray dataBaseName() const;
     ConnectionSetting &setDataBaseName(const QByteArray &value);
     ConnectionSetting &dataBaseName(const QByteArray &value){ return this->setDataBaseName(value);};
 
@@ -160,7 +166,7 @@ public:
     //! \brief schemaNames
     //! \return
     //!
-    QStringList &schemaNames() const;
+    const QStringList schemaNames() const;
     ConnectionSetting &setSchemaNames(const QStringList &value);
     ConnectionSetting &schemaNames(const QStringList &value){ return this->setSchemaNames(value);};
 
@@ -168,7 +174,7 @@ public:
     //! \brief connectOptions
     //! \return
     //!
-    const QByteArray &connectOptions() const;
+    const QByteArray connectOptions() const;
     ConnectionSetting &setConnectOptions(const QByteArray &value);
     ConnectionSetting &connectOptions(const QByteArray &value){ return this->setConnectOptions(value);};
 
@@ -176,7 +182,7 @@ public:
     //! \brief commandBeforeOpen
     //! \return
     //!
-    const QStringList &commandBeforeOpen() const;
+    const QStringList commandBeforeOpen() const;
     ConnectionSetting &setCommandBeforeOpen(const QStringList &value);
     ConnectionSetting &commandBeforeOpen(const QStringList &value){ return this->setCommandBeforeOpen(value);};
 
@@ -184,7 +190,7 @@ public:
     //! \brief commandAfterClose
     //! \return
     //!
-    const QStringList &commandAfterClose() const;
+    const QStringList commandAfterClose() const;
     ConnectionSetting &setCommandAfterClose(const QStringList &value);
     ConnectionSetting &commandAfterClose(const QStringList &value){ return this->setCommandAfterClose(value);};
 
