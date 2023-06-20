@@ -34,19 +34,7 @@ public:
     //! \return
     //!
     QSqlDatabase connection() const;
-
-    //!
-    //! \brief setConnection
-    //! \param connection
-    //! \return
-    //!
     bool setConnection(const QSqlDatabase &connection);
-
-    //!
-    //! \brief setConnection
-    //! \param connectionId
-    //! \return
-    //!
     bool setConnection(const QString &connectionId);
 
 
