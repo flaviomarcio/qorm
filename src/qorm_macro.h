@@ -128,20 +128,14 @@ static const QVariantHash filter_get_##propertyName(){\
     return v;\
 }
 
-#define ___o_party_1 QString::number(qlonglong(QThread::currentThreadId()))+QStringLiteral(":")
+#define ___o_party_1 QString::number(qlonglong(QThread::currentThreadId()))+QStringLiteral(" ")
 
-#define ___o_party_2 QString(__PRETTY_FUNCTION__).replace(QStringLiteral("virtual"),QLatin1String("")).split(QStringLiteral("(")).first().trimmed()+QStringLiteral(":")
+#define ___o_party_2 QString(__PRETTY_FUNCTION__).replace(QStringLiteral("virtual"),QLatin1String("")).split(QStringLiteral("(")).first().trimmed()+QStringLiteral(" ")
 
-#define oDebug()qDebug()<<___o_party_1<<___o_party_2
+#define oDebug()qDebug()<<___o_party_1 + ___o_party_2
 
-#define oCritical()qCritical()<<___o_party_1<<___o_party_2
+#define oCritical()qCritical()<<___o_party_1 + ___o_party_2
 
-#define oInfo()qInfo()<<___o_party_1<<___o_party_2
+#define oInfo()qInfo()<<___o_party_1 + ___o_party_2
 
-#define oWarning()qWarning()<<___o_party_1<<___o_party_2
-
-#define oDebugMethodStart() qDebug()<<___o_party_1<<___o_party_2<<QStringLiteral(":start")
-
-#define oDebugMethodFinish()qDebug()<<___o_party_1<<___o_party_2<<QStringLiteral(":finish")
-
-
+#define oWarning()qWarning()<<___o_party_1 + ___o_party_2
