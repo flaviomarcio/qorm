@@ -88,6 +88,23 @@ public:
         return this->scriptedValues;
     }
 
+    bool scriptExec(const QString &scommand)
+    {
+        if (scommand.isEmpty() || scommand.startsWith(QStringLiteral("--")))
+            return true;
+
+        auto db = this->parent->connection();
+        QSqlQuery query(db);
+
+        if (!query.exec(scommand))
+            return false;
+
+        query.finish();
+        query.clear();
+
+        return true;
+    }
+
     ResultValue &scriptExec()
     {
         QVariantList __return;
@@ -161,7 +178,6 @@ ScriptExec &ScriptExec::append(const QVariant &v)
     return *this;
 }
 
-
 QVariantList ScriptExec::scriptValues() const
 {
     return p->scriptValues;
@@ -176,6 +192,11 @@ ResultValue &ScriptExec::exec()
 {
     p->scriptedClear();
     return p->scriptExec();
+}
+
+bool ScriptExec::exec(const QString &command)
+{
+    return p->scriptExec(command);
 }
 
 } // namespace QOrm

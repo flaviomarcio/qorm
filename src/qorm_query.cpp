@@ -94,7 +94,7 @@ QVariantList Query::makeRecordList(const QMetaObject &metaObject)
 
 QVariantList Query::makeRecordList(const ModelInfo &modelInfo)
 {
-    auto metaObject = modelInfo.staticMetaObjectModel();
+    const auto &metaObject = modelInfo.staticMetaObjectModel();
     QVariantList recordList;
     if (metaObject.methodCount() == 0) {
         while (this->next()) {

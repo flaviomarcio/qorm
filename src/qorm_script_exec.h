@@ -56,6 +56,7 @@ public:
     //! \return
     //!execute values on database
     ResultValue &exec();
+    bool exec(const QString &command);
 
 private:
     ScriptExecPvt *p = nullptr;

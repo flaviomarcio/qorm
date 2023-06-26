@@ -182,11 +182,26 @@ public:
             auto vValueB = SqlParserItem::from(valueB).toFormatParameter(parser);
             auto keywordLogical = KeywordLogical ( map.contains(QStringLiteral("keywordLogical"))?map.value(QStringLiteral("keywordLogical") ).toInt(): -1 );
 
-            auto kOperator = parser.parserCommand(keywordOperator );
             auto kLogical = parser.parserCommand(keywordLogical );
 
             static const auto vLikeNulls=QVector<QString>{{}, QStringLiteral("''"), QStringLiteral("'%'"), QStringLiteral("'%%'")};
 
+            static const auto __nullStr=QStringLiteral("null");
+
+            if(vValueB==__nullStr){
+                switch (keywordOperator) {
+                case koEqual:
+                    keywordOperator=koIsNull;
+                    break;
+                case koNotEqual:
+                    keywordOperator=koIsNotNull;
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            auto kOperator = parser.parserCommand(keywordOperator );
             switch (keywordOperator) {
             case KeywordOperator::koLike:
             {

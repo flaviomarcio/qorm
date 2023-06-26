@@ -12,7 +12,7 @@ static QVariant __methodFailed(QSqlDatabase&db, const QVariant &task){Q_UNUSED(t
 
 namespace QOrm {
 
-static const auto __uuid="uuid";
+//static const auto __uuid="uuid";
 
 class TaskPoolPvt:public QObject{
 public:
