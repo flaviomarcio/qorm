@@ -51,7 +51,7 @@ public:
                 continue;
 
             if(list.contains(property.name()))
-                vBody[property.name()]=property.read(this->model);
+                vBody.insert(property.name(), property.read(this->model));
         }
         Q_DECLARE_HU;
         return hu.toMd5(vBody);

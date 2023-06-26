@@ -72,7 +72,7 @@ public:
     //! \brief storedMd5Make
     //! \return
     //!
-    Q_INVOKABLE virtual QByteArray storedMd5Make() const;
+    virtual QByteArray storedMd5Make() const;
 
     //!
     //! \brief isModifier
