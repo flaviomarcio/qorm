@@ -1,4 +1,5 @@
 #include "./qorm_object_db_extension.h"
+#include "./qorm_connection_scoped.h"
 #include "./qorm_const.h"
 #include "./qorm_macro.h"
 #include <QMetaMethod>
@@ -98,7 +99,11 @@ public:
                 continue;
             return connection;
         }
-        return {};
+        connection=QOrm::ConnectionScoped::connection();
+        if (!connection.isValid() || !connection.isOpen())
+            return {};
+
+        return connection;
     }
 };
 

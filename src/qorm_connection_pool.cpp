@@ -2,6 +2,7 @@
 #include "./private/p_qorm_sql_suitable_parser_keywork.h"
 #include "./qorm_sql_suitable_types.h"
 #include "./qorm_connection_setting.h"
+#include "./qorm_object_db.h"
 #include "./qorm_macro.h"
 #include "./qorm_const.h"
 #include <QCoreApplication>
@@ -45,7 +46,10 @@ public:
     explicit ConnectionPoolPvt(QObject *parent, const QVariantHash &setting)
         : QObject{parent}, parent{parent}, setting{parent}, baseName(makeBasePath(parent))
     {
-        this->setting.from(setting);
+        if(!setting.isEmpty())
+            this->from(setting);
+        else
+            this->from(parent);
     }
 
     ~ConnectionPoolPvt()
@@ -95,14 +99,41 @@ public:
         return !connection.isValid();
     }
 
-    bool from(ConnectionPool &pool)
+    bool fromPool(const ConnectionPool *pool)
     {
-        return setting.from(pool.setting()).isValid();
+        if(!pool)
+            return false;
+        return setting.from(pool->setting()).isValid();
     }
 
-    bool from(const ConnectionSetting &setting)
+    bool fromSetting(ConnectionSetting *setting)
     {
-        return this->setting.from(setting).isValid();
+        if(!setting)
+            return false;
+        return this->setting.from(setting->toHash()).isValid();
+    }
+
+    bool fromObject(const QOrm::ObjectDb *object)
+    {
+        if(!object)
+            return false;
+        return setting.from(object->connection()).isValid();
+    }
+
+    bool from(QObject *object){
+        if(!object)
+            return false;
+
+        if(fromSetting(dynamic_cast<QOrm::ConnectionSetting*>(object)))
+            return true;
+
+        if(fromPool(dynamic_cast<QOrm::ConnectionPool*>(object)))
+            return true;
+
+        if(fromObject(dynamic_cast<QOrm::ObjectDb*>(object)))
+            return true;
+
+        return false;
     }
 
     bool from(const QVariant &setting)
@@ -339,11 +370,6 @@ ConnectionPool::ConnectionPool(QObject *parent)
 {
 }
 
-ConnectionPool::ConnectionPool(const ConnectionSetting &connectionSetting, QObject *parent)
-    :QObject{parent}, p{new ConnectionPoolPvt{parent, connectionSetting.toHash()}}
-{
-}
-
 ConnectionPool::ConnectionPool(const QVariantHash &connection, QObject *parent)
     :QObject{parent}, p{new ConnectionPoolPvt{parent, connection}}
 {
@@ -364,14 +390,21 @@ bool ConnectionPool::isValid()
     return p->setting.isValid();
 }
 
-bool ConnectionPool::from(ConnectionPool &pool)
+bool ConnectionPool::from(QObject *object)
 {
-    return p->from(pool);
-}
+    if(!object)
+        return false;
 
-bool ConnectionPool::from(const ConnectionSetting &setting)
-{
-    return p->from(setting);
+    if(p->fromSetting(dynamic_cast<QOrm::ConnectionSetting*>(object)))
+        return true;
+
+    if(p->fromPool(dynamic_cast<QOrm::ConnectionPool*>(object)))
+        return true;
+
+    if(p->fromObject(dynamic_cast<QOrm::ObjectDb*>(object)))
+        return true;
+
+    return false;
 }
 
 bool ConnectionPool::from(const QVariant &connection)

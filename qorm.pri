@@ -49,6 +49,7 @@ HEADERS += \
     $$PWD/src/qorm_connection_manager.h \
     $$PWD/src/qorm_connection_pool.h \
     $$PWD/src/qorm_connection_setting.h \
+    $$PWD/src/qorm_connection_scoped.h \
     $$PWD/src/qorm_model_consts.h \
     $$PWD/src/qorm_model_dto_options.h \
     $$PWD/src/qorm.h \
@@ -118,6 +119,7 @@ SOURCES += \
     $$PWD/src/qorm_connection_manager.cpp \
     $$PWD/src/qorm_connection_pool.cpp \
     $$PWD/src/qorm_connection_setting.cpp \
+    $$PWD/src/qorm_connection_scoped.cpp \
     $$PWD/src/qorm_log.cpp \
     $$PWD/src/qorm_model_dto_options.cpp \
     $$PWD/src/qorm_controller.cpp \

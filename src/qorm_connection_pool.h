@@ -21,13 +21,6 @@ public:
 
     //!
     //! \brief ConnectionPool
-    //! \param connectionSetting
-    //! \param parent
-    //!
-    explicit ConnectionPool(const ConnectionSetting &connectionSetting, QObject *parent = nullptr);
-
-    //!
-    //! \brief ConnectionPool
     //! \param connection
     //! \param parent
     //!
@@ -57,14 +50,7 @@ public:
     //! \param pool
     //! \return
     //!
-    bool from(ConnectionPool &pool);
-
-    //!
-    //! \brief from
-    //! \param setting
-    //! \return
-    //!
-    bool from(const ConnectionSetting &setting);
+    bool from(QObject *object);
 
     //!
     //! \brief from

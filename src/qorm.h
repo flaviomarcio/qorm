@@ -5,6 +5,7 @@
 #include "./qorm_connection_manager.h"
 #include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
+#include "./qorm_connection_scoped.h"
 #include "./qorm_const.h"
 #include "./qorm_controller.h"
 #include "./qorm_dao.h"

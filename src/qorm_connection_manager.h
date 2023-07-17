@@ -1,6 +1,5 @@
 #pragma once
 
-#include "./qorm_connection_pool.h"
 #include "./qorm_connection_setting.h"
 
 namespace QOrm {
@@ -84,6 +83,7 @@ public:
     //! \brief settings
     //! \return
     //!
+    QVariantHash setting() const;
     const QVariantHash settings() const;
     ConnectionManager &setSettings(const QVariant &value);
     auto &settings(const QVariantHash &value){ return this->setSettings(value);};
@@ -108,19 +108,6 @@ public:
     //! \return
     //!
     ConnectionManager &insert(const QVariantHash &value);
-
-    //!
-    //! \brief pool
-    //! \return
-    //!
-    ConnectionPool &pool();
-
-    //!
-    //! \brief pool
-    //! \param value
-    //! \return
-    //!
-    ConnectionPool &pool(const QByteArray &value);
 
     //!
     //! \brief isEmpty

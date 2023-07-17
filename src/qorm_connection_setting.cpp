@@ -106,30 +106,27 @@ public:
 };
 
 ConnectionSetting::ConnectionSetting(QObject *parent)
-    : QObject{parent}, p{new ConnectionSettingPvt{this}}
+    :
+    QObject{parent},
+    p{new ConnectionSettingPvt{this}}
 {
 }
 
 ConnectionSetting::ConnectionSetting(const QSqlDatabase &connection, QObject *parent)
-    : QObject{parent}, p{new ConnectionSettingPvt{this}}
+    :
+    QObject{parent},
+    p{new ConnectionSettingPvt{this}}
 {
     p->name = connection.connectionName().toUtf8();
     this->from(connection);
 }
 
-ConnectionSetting::ConnectionSetting(const ConnectionSetting &setting, QObject *parent)
-    : QObject{parent}, p{new ConnectionSettingPvt{this}}
-{
-    if(setting.isValid()){
-        p->name = setting.name();
-        this->from(setting);
-    }
-}
-
 ConnectionSetting::ConnectionSetting(const QByteArray &name,
                                      const QVariantHash &detail,
                                      QObject *parent)
-    : QObject{parent}, p{new ConnectionSettingPvt{this}}
+    :
+    QObject{parent},
+    p{new ConnectionSettingPvt{this}}
 {
     auto _name = name.trimmed();
 

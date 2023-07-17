@@ -10,9 +10,6 @@ static const auto __secretKey="secretKey";
 static const auto __environment="environment";
 static const auto __paramaters="paramaters";
 static const auto __settings="settings";
-
-//static const auto __host="host";
-//static const auto __user="user";
 static const auto __driver="driver";
 static const auto __hostName="hostName";
 static const auto __userName="userName";
@@ -22,7 +19,6 @@ static const auto __connectOptions="connectOptions";
 static const auto __schemaNames="schemaNames";
 static const auto __port="port";
 static const auto __name="name";
-
 static const auto __DB_ENVIRONMENT="DB_ENVIRONMENT";
 static const auto __DB_DRIVER="DB_DRIVER";
 static const auto __DB_HOST="DB_HOST";
@@ -44,45 +40,19 @@ public:
     QByteArray secretKey;
     QVariantHash settings;
     QHash<QString, ConnectionSetting*> settingsHash;
-    QMap<QString, ConnectionPool*> pools;
     ConnectionManager *parent=nullptr;
-    ConnectionPool defaultPool;
     QStm::Envs envs;
     //!
     //! \brief ConnectionManagerPvt
     //! \param parent
     //!
-    explicit ConnectionManagerPvt(ConnectionManager *parent):QObject{parent}, parent{parent}, defaultPool{parent}, envs{this}
+    explicit ConnectionManagerPvt(ConnectionManager *parent):QObject{parent}, parent{parent}, envs{this}
     {
     }
 
-    explicit ConnectionManagerPvt(const ConnectionManager &managerParent, ConnectionManager *parent):QObject{parent}, parent{parent}, defaultPool{parent}
+    explicit ConnectionManagerPvt(const ConnectionManager &managerParent, ConnectionManager *parent):QObject{parent}, parent{parent}
     {
         load(managerParent.toHash());
-    }
-
-    //!
-    //! \brief pool
-    //! \param value
-    //! \return
-    //!
-    ConnectionPool &pool(const QByteArray &value)
-    {
-        auto &p=*this;
-
-        auto detail=p.settingsHash.value(value);
-        if(detail==nullptr){
-            if(p.pools.isEmpty())
-                return defaultPool;
-            auto pool=p.pools.first();
-            return *pool;
-        }
-
-        if(!p.pools.contains(value))
-            p.pools.insert(value, new ConnectionPool(*detail));
-        auto setting=value.trimmed().toLower();
-        auto &pool=*p.pools.value(setting);
-        return pool;
     }
 
     //!
@@ -133,7 +103,6 @@ public:
         qDeleteAll(_detail);
         this->enviroment.clear();
         this->secretKey.clear();
-        this->pools.clear();
         this->settingsHash.clear();
 
         this->envs.reset();
@@ -188,7 +157,7 @@ public:
         auto drivers=QSqlDatabase::drivers();
         auto setting=p.settingsHash.value(name);
         if(setting==nullptr){
-            setting=new ConnectionSetting(this);
+            setting=new QOrm::ConnectionSetting(this);
             setting->from(value);
             setting->setName(name);
             p.settingsHash.insert(setting->name(), setting);
@@ -405,6 +374,12 @@ ConnectionManager &ConnectionManager::setSecretKey(const QByteArray &value)
     return *this;
 }
 
+QVariantHash ConnectionManager::setting() const
+{
+    const auto setting=p->settingsHash.value(p->enviroment);
+    return setting->toHash();
+}
+
 const QVariantHash ConnectionManager::settings() const
 {
     QVariantHash vSettins;
@@ -442,16 +417,6 @@ ConnectionManager &ConnectionManager::insert(const ConnectionSetting &value)
 ConnectionManager &ConnectionManager::insert(const QVariantHash &value)
 {
     return p->insert(value);
-}
-
-ConnectionPool &ConnectionManager::pool()
-{
-    return p->pool(p->enviroment);
-}
-
-ConnectionPool &ConnectionManager::pool(const QByteArray &value)
-{
-    return p->pool(value);
 }
 
 bool ConnectionManager::isEmpty() const
