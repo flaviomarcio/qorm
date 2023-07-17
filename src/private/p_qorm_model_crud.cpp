@@ -7,6 +7,9 @@
 //#include "./p_qorm_sql_suitable_parser_item.h"
 //#include "../qorm_query.h"
 //#include "../qorm_transaction_scope.h"
+#ifdef QTREFORCE_QRMK
+#include <QFile>
+#endif
 
 namespace PrivateQOrm {
 
