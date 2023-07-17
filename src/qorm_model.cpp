@@ -4,9 +4,9 @@
 #include "./private/p_qorm_sql_suitable_parser_item.h"
 #include "./private/p_qorm_const.h"
 #include "./private/p_qorm_model_info.h"
-#include "../../../qstm/src/qstm_util_variant.h"
-#include "../../../qstm/src/qstm_util_hash.h"
-#include "../../../qstm/src/qstm_macro.h"
+#include "../../qstm/src/qstm_util_variant.h"
+#include "../../qstm/src/qstm_util_hash.h"
+#include "../../qstm/src/qstm_macro.h"
 #include <QCryptographicHash>
 #include <QMetaProperty>
 #include <QSqlField>
@@ -26,12 +26,10 @@ typedef QMultiHash<QByteArray,QByteArray> WrapperMap;
 
 class ModelPvt:public QObject{
 public:
-    QMultiHash<QByteArray, QMultiHash<QByteArray,QByteArray>> mapWrapper;
     QOrm::Model*model=nullptr;
-
-    explicit ModelPvt(QOrm::Model*model)
+    QMultiHash<QByteArray, QMultiHash<QByteArray,QByteArray>> mapWrapper;
+    explicit ModelPvt(QOrm::Model*model):model{model}
     {
-        this->model=model;
     }
 
     const ModelInfo &modelInfo()
@@ -561,9 +559,8 @@ public:
 
 };
 
-Model::Model(QObject *parent):QOrm::Object{parent}
+Model::Model(QObject *parent):QOrm::Object{parent}, p{new ModelPvt{this}}
 {
-    this->p=new ModelPvt{this};
 }
 
 
