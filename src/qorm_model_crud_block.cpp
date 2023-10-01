@@ -339,8 +339,6 @@ ResultValue &CRUDBlock::crudify()
         crud->setResultInfo(p->resultInfo);
     }
 
-    //p->crudList.
-
     for(auto &crud:p->crudList){
 
         CRUDBody crudItem{};
@@ -352,12 +350,19 @@ ResultValue &CRUDBlock::crudify()
 
         if(!crud->crudBody(p->reMakeCRUDBody(pageList, crud, crudItem)).crudify())
             return this->lr(crud->lr());
+
+        crud->resultInfo().md5Counter(crudItem.expressions());
+
         auto vResult=crud->lr().resultVariant();
         pageList.append(vResult);
     }
 
     if(pageList.isEmpty())
         return this->lr().clear();
+
+    auto resultInfo=p->crudList.first()->resultInfo().toHash();
+
+    p->resultInfo.setValues(resultInfo);
 
     auto crudType=this->type().toString().trimmed();
     if(crudType.isEmpty())

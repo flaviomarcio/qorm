@@ -35,7 +35,7 @@ public:
     //! \return
     //!
     virtual QStm::ResultInfo &resultInfo();
-    virtual ModelDtoControls &setResultInfo(const QStm::ResultInfo&resultInfo);
+    virtual ModelDtoControls &resultInfo(const QStm::ResultInfo&resultInfo);
 
     //!
     //! \brief uuid

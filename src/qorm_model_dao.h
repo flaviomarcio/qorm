@@ -172,6 +172,48 @@ public:
     }
 
     //!
+    //! \brief page
+    //! \return
+    //!
+    QVariantHash page() { return this->record(QVariant{}); }
+
+    //!
+    //! \brief page
+    //! \param v
+    //! \return
+    //!
+    QVariantHash page(const QVariant &v)
+    {
+        Query query{this};
+        auto &strategy = query.builder().select();
+        strategy
+            .fields().count();
+        strategy.from(p_modelInfo);
+        if (v.isValid()) {
+            QVariant value;
+            SearchParameters vv{this->variantToParameters(v)};
+            value = vv.buildVariant();
+            if (value.isValid())
+                strategy.where().condition(value);
+        }
+
+        if(this->_deactivateField){
+            auto vvm=this->p_modelInfo.parserVVM(this->p_modelInfo.propertyActivateField());
+            strategy.where(vvm);
+        }
+
+        if (!query.exec()){
+            this->lr(query.lr());
+            return {};
+        }
+
+        return
+            QStm::ResultInfo()
+            .totalCount(query.value(0).toInt())
+            .toHash();
+    }
+
+    //!
     //! \brief record
     //! \return
     //!

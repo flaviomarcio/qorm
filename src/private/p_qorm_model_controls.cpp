@@ -111,9 +111,9 @@ QStm::ResultInfo &ModelDtoControls::resultInfo()
     return p->resultInfo;
 }
 
-ModelDtoControls &ModelDtoControls::setResultInfo(const QStm::ResultInfo &resultInfo)
+ModelDtoControls &ModelDtoControls::resultInfo(const QStm::ResultInfo &resultInfo)
 {
-    p->resultInfo.fromHash(resultInfo.toHash());
+    p->resultInfo.readFrom(resultInfo.toHash());
     return *this;
 }
 

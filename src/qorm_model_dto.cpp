@@ -149,13 +149,13 @@ QStm::ResultInfo &ModelDto::resultInfo()
 
 ModelDtoControls &ModelDto::resultInfo(const QVariant &v)
 {
-    p->dtoControls.resultInfo().fromVar(v);
+    p->dtoControls.resultInfo().readFrom(v);
     return p->dtoControls;
 }
 
 ModelDtoControls &ModelDto::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
-    p->dtoControls.resultInfo().fromHash(resultInfo.toHash());
+    p->dtoControls.resultInfo().readFrom(resultInfo.toHash());
     return p->dtoControls;
 }
 

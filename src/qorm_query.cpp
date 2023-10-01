@@ -7,9 +7,8 @@
 
 namespace QOrm {
 
-Query::Query(QObject *parent) : ObjectDb{parent}
+Query::Query(QObject *parent) : ObjectDb{parent}, p{new QOrm::QueryPvt{this, {}}}
 {
-    this->p = new QOrm::QueryPvt{this, {}};
 }
 
 Query::Query(const QSqlDatabase &db, QObject *parent) : ObjectDb{parent}

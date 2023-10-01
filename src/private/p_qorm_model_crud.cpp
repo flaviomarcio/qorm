@@ -32,8 +32,9 @@ static const auto __value="value";
 
 class CRUDBasePvt:public QObject{
 public:
+    CRUDBase*parent=nullptr;
     QVariant type;
-    QOrm::ModelDtoOptions options;    
+    QOrm::ModelDtoOptions options;
     QOrm::Host host;
     QUuid uuid;
     QByteArray owner;
@@ -46,20 +47,20 @@ public:
     QStm::MetaEnum<QOrm::CRUDTypes::Strategy> strategy=QOrm::CRUDTypes::Search;
     QVariant source;
     QVariantList generatedRecords;
-    CRUDBase*parent=nullptr;
 #ifdef QTREFORCE_QRMK
     QRmk::Maker maker;
 #endif
-    explicit CRUDBasePvt(CRUDBase*parent):
+    explicit CRUDBasePvt(CRUDBase *parent, const QVariant &vBody):
         QObject{parent}
-      , options{parent}
-      , dao{parent}
-      , dto{parent}
+        , parent{parent}
+        , options{parent}
+        , dao{parent}
+        , dto{parent}
 #ifdef QTREFORCE_QRMK
-      , maker{parent}
+        , maker{parent}
 #endif
     {
-        this->parent=parent;
+        this->setCrudBody(vBody);
     }
 
 #ifdef QTREFORCE_QRMK
@@ -106,14 +107,14 @@ public:
             QStringList groupingField;
             for(auto &header : this->parent->dto().headers().list()){
                 headers
-                        .header(header->field())
-                        .title(header->title())
-                        .align(header->align())
-                        .field(header->field())
-                        .width(header->width())
-                        .visible(header->displayer())
-                        .format(header->format())
-                        .dataType(header->dataType());
+                    .header(header->field())
+                    .title(header->title())
+                    .align(header->align())
+                    .field(header->field())
+                    .width(header->width())
+                    .visible(header->displayer())
+                    .format(header->format())
+                    .dataType(header->dataType());
                 if(header->grouping() && !groupingField.contains(header->field()))
                     groupingField.append(header->field());
             }
@@ -126,56 +127,56 @@ public:
                 if(header->summaryMode()==header->None)
                     continue;
                 headers
-                        .header(header->field())
-                        .format(header->format())
-                        .computeMode(header->summaryMode());
+                    .header(header->field())
+                    .format(header->format())
+                    .computeMode(header->summaryMode());
             }
         };
 
         auto makerSignature=[](QRmk::Signatures &signatures)
         {
             Q_UNUSED(signatures)
-    //            auto declaration=QStringList
-    //            {
-    //                    "<p>Recebi da <strong>Empresa de Serviços</strong> LTDA com CNPJ: ",
-    //                    "888.888.88/0001-88, a importância total de <strong>R$ 505,82 ( QUINHENTOS E CINCO ",
-    //                    "REAIS E OITENTA E DOIS CENTAVOS )</strong> valor este discriminado acima</p> "
-    //            };
+            //            auto declaration=QStringList
+            //            {
+            //                    "<p>Recebi da <strong>Empresa de Serviços</strong> LTDA com CNPJ: ",
+            //                    "888.888.88/0001-88, a importância total de <strong>R$ 505,82 ( QUINHENTOS E CINCO ",
+            //                    "REAIS E OITENTA E DOIS CENTAVOS )</strong> valor este discriminado acima</p> "
+            //            };
 
-    //            auto local="Sant Lois";
+            //            auto local="Sant Lois";
 
-    //            signatures
-    //                    .pageArea(QRmk::Signatures::Area{"20%","30%"})
-    //                    .title("Recibo")
-    //                    .declaration(declaration)
-    //                    .local(local);
+            //            signatures
+            //                    .pageArea(QRmk::Signatures::Area{"20%","30%"})
+            //                    .title("Recibo")
+            //                    .declaration(declaration)
+            //                    .local(local);
 
-    //            signatures
-    //                    .signature("${document01}-One")
-    //                    .documentType(QRmk::Signature::CNPJ)
-    //                    .name("${name}");
+            //            signatures
+            //                    .signature("${document01}-One")
+            //                    .documentType(QRmk::Signature::CNPJ)
+            //                    .name("${name}");
 
-    //            signatures
-    //                    .signature("${document02}-Two")
-    //                    .documentType(QRmk::Signature::CNPJ)
-    //                    .name("${name}");
+            //            signatures
+            //                    .signature("${document02}-Two")
+            //                    .documentType(QRmk::Signature::CNPJ)
+            //                    .name("${name}");
 
-    //            signatures
-    //                    .signature("${document03}-three")
-    //                    .documentType(QRmk::Signature::CNPJ)
-    //                    .name("${name}");
+            //            signatures
+            //                    .signature("${document03}-three")
+            //                    .documentType(QRmk::Signature::CNPJ)
+            //                    .name("${name}");
         };
 
         this->maker
-                .clean()
-                .headers(makeHeaders)
-                .summary(makeSummary)
-                .filters(makeFilters)
-                .title(this->parent->description())
-                .signature(makerSignature)
-                .owner(this->owner)
-                .make()
-                ;
+            .clean()
+            .headers(makeHeaders)
+            .summary(makeSummary)
+            .filters(makeFilters)
+            .title(this->parent->description())
+            .signature(makerSignature)
+            .owner(this->owner)
+            .make()
+            ;
 
         return this->maker;
     }
@@ -196,7 +197,7 @@ public:
         return *this->parent;
     }
 
-    void set_crud(const QVariant &crud)
+    void setCrudBody(const QVariant &crud)
     {
         auto vCrud=CRUDBody(crud);
         auto vStrategy=[&vCrud](){
@@ -216,7 +217,7 @@ public:
         };
         this->strategySet(vStrategy());
         this->sourceSet(vSource());
-        this->parent->lr().resultInfo().fromVar(vCrud.value(__resultInfo));
+        this->parent->lr().resultInfo().readFrom(vCrud.value(__resultInfo));
     }
 
     void sourceSet(const QVariant &source)
@@ -282,17 +283,12 @@ public:
 };
 
 
-CRUDBase::CRUDBase(QObject *parent) : QOrm::ObjectDb{parent}
+CRUDBase::CRUDBase(QObject *parent) : QOrm::ObjectDb{parent}, p{new CRUDBasePvt{this,{}}}
 {
-    this->p = new CRUDBasePvt{this};
-    p->set_crud(CRUDBody{});
 }
 
-CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent}
+CRUDBase::CRUDBase(const QVariant &vBody, QObject *parent):QOrm::ObjectDb{parent}, p{new CRUDBasePvt{this,vBody}}
 {
-    this->p = new CRUDBasePvt{this};
-
-    p->set_crud(vBody);
 }
 
 bool CRUDBase::isValid()const
@@ -369,14 +365,19 @@ CRUDBase &CRUDBase::setOptions(const QOrm::ModelDtoOptions &options)
     return *this;
 }
 
-QStm::ResultInfo &CRUDBase::resultInfo()
+QStm::ResultInfo &CRUDBase::resultInfo()const
+{
+    return this->lr().resultInfo();
+}
+
+QStm::ResultInfo &CRUDBase::makeResultInfo()const
 {
     return this->lr().resultInfo();
 }
 
 CRUDBase &CRUDBase::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
-    this->lr().resultInfo().fromHash(resultInfo.toHash());
+    this->lr().resultInfo().readFrom(resultInfo.toHash());
     return *this;
 }
 
@@ -452,7 +453,7 @@ QOrm::ModelDto &CRUDBase::dto()
 
 CRUDBase &CRUDBase::crudBody(const QVariant &v)
 {
-    p->set_crud(v);
+    p->setCrudBody(v);
     return *this;
 }
 
@@ -803,10 +804,14 @@ ResultValue &CRUDBase::canActionCreate()
 #else
     p->generatedRecords=vu.toList(v);
 #endif
-    return this->lr(p->dto
-                    .uuid(this->uuid())//crud uuid
-                    .host(p->host)
-                    .items(p->generatedRecords).o());
+    return this->lr(
+        p->dto
+            .uuid(this->uuid())//crud uuid
+            .host(p->host)
+            .items(p->generatedRecords)
+            .resultInfo(makeResultInfo())
+            .o()
+        );
 }
 
 ResultValue &CRUDBase::canActionSearch()
@@ -854,10 +859,14 @@ ResultValue &CRUDBase::canActionSearch()
 #else
     p->generatedRecords=vu.toList(v);
 #endif
-    return this->lr(p->dto
-                    .uuid(this->uuid())//crud uuid
-                    .host(p->host)
-                    .items(p->generatedRecords).o());
+    return this->lr(
+        p->dto
+            .uuid(this->uuid())//crud uuid
+            .host(p->host)
+            .items(p->generatedRecords)
+            .resultInfo(this->resultInfo())
+            .o()
+        );
 }
 
 ResultValue &CRUDBase::canActionUpsert()
@@ -873,10 +882,14 @@ ResultValue &CRUDBase::canActionUpsert()
     }
     Q_DECLARE_VU;
     p->generatedRecords=vu.toList(v);
-    return this->lr(p->dto
-                    .uuid(this->uuid())//crud uuid
-                    .host(p->host)
-                    .items(v).o());
+    return this->lr(
+        p->dto
+            .uuid(this->uuid())//crud uuid
+            .host(p->host)
+            .items(v)
+            .resultInfo(this->resultInfo())
+            .o()
+        );
 }
 
 ResultValue &CRUDBase::canActionRemove()

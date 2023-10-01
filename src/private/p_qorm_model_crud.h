@@ -107,7 +107,13 @@ public:
     //! \brief resultInfo
     //! \return
     //!
-    QStm::ResultInfo &resultInfo();
+    QStm::ResultInfo &resultInfo() const;
+
+    //!
+    //! \brief makeResultInfo
+    //! \return
+    //!
+    virtual QStm::ResultInfo &makeResultInfo() const;
 
     //!
     //! \brief setResultInfo
