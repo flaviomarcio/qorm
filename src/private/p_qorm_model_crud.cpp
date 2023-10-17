@@ -4,9 +4,6 @@
 #include "./p_qorm_model_crud_body.h"
 #include "../../../qstm/src/qstm_meta_enum.h"
 #include "../../../qstm/src/qstm_util_variant.h"
-//#include "./p_qorm_sql_suitable_parser_item.h"
-//#include "../qorm_query.h"
-//#include "../qorm_transaction_scope.h"
 #ifdef QTREFORCE_QRMK
 #include <QFile>
 #endif
@@ -34,7 +31,7 @@ static const auto __value="value";
 
 class CRUDBasePvt:public QObject{
 public:
-    CRUDBase*parent=nullptr;
+    CRUDBase *parent=nullptr;
     QVariant type;
     QOrm::ModelDtoOptions options;
     QOrm::Host host;
@@ -138,35 +135,6 @@ public:
         auto makerSignature=[](QRmk::Signatures &signatures)
         {
             Q_UNUSED(signatures)
-            //            auto declaration=QStringList
-            //            {
-            //                    "<p>Recebi da <strong>Empresa de Serviços</strong> LTDA com CNPJ: ",
-            //                    "888.888.88/0001-88, a importância total de <strong>R$ 505,82 ( QUINHENTOS E CINCO ",
-            //                    "REAIS E OITENTA E DOIS CENTAVOS )</strong> valor este discriminado acima</p> "
-            //            };
-
-            //            auto local="Sant Lois";
-
-            //            signatures
-            //                    .pageArea(QRmk::Signatures::Area{"20%","30%"})
-            //                    .title("Recibo")
-            //                    .declaration(declaration)
-            //                    .local(local);
-
-            //            signatures
-            //                    .signature("${document01}-One")
-            //                    .documentType(QRmk::Signature::CNPJ)
-            //                    .name("${name}");
-
-            //            signatures
-            //                    .signature("${document02}-Two")
-            //                    .documentType(QRmk::Signature::CNPJ)
-            //                    .name("${name}");
-
-            //            signatures
-            //                    .signature("${document03}-three")
-            //                    .documentType(QRmk::Signature::CNPJ)
-            //                    .name("${name}");
         };
 
         this->maker
@@ -281,6 +249,24 @@ public:
             return parent->lr();
         return parent->lr(lr.resultVariant());
     }
+
+    void actionInsert(const QByteArray &func, QOrm::ModelAction *action){
+        if(action && this->parent)
+            action->setCrudBase(this->parent);
+        this->actions.insert(func, action);
+    }
+
+    void actionClear(const QByteArray &func){
+        static auto __actionSearch=QT_STRINGIFY2(actionSearch);
+        auto keys=this->actions.keys();
+        for(auto &name : keys){
+            if(name==__actionSearch)
+                continue;
+            this->actionInsert(func, nullptr);
+        }
+    }
+
+
 
 };
 
@@ -520,6 +506,10 @@ ResultValue &CRUDBase::crudify()
         if(!this->canActionCreate())
             return this->lr();
         break;
+    case QOrm::CRUDTypes::Edit:
+        if(!this->canActionEdit())
+            return this->lr();
+        break;
     case QOrm::CRUDTypes::Search:
         if(!this->canActionSearch())
             return this->lr();
@@ -569,85 +559,87 @@ CRUDBase &CRUDBase::actionsNulls()
     return *this;
 }
 
+CRUDBase &CRUDBase::actionInit()
+{
+    p->actionClear(__func__);
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionInit(QOrm::ModelAction &action)
+{
+    p->actionInsert(__func__, &action);
+    return *this;
+}
+
 CRUDBase &CRUDBase::actionsSearch()
 {
-    static auto __actionSearch=QT_STRINGIFY2(actionSearch);
-    auto keys=p->actions.keys();
-    for(auto &name : keys){
-        if(name==__actionSearch)
-            continue;
-        p->actions.insert(name, nullptr);
-    }
+    p->actionClear(__func__);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionSearch(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionCreate(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
+    return *this;
+}
+
+CRUDBase &CRUDBase::actionEdit(QOrm::ModelAction &action)
+{
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionUpsert(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionRemove(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionDeactivate(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionApply(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionExecute(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionFinalize(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionCustom(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
 CRUDBase &CRUDBase::actionPrint(QOrm::ModelAction &action)
 {
-    action.setCrudBase(this);
-    p->actions.insert(__func__, &action);
+    p->actionInsert(__func__, &action);
     return *this;
 }
 
@@ -668,6 +660,17 @@ ResultValue &CRUDBase::create()
 }
 
 ResultValue &CRUDBase::create(const QVariant &value)
+{
+    Q_UNUSED(value)
+    return this->lr().setNotImplemented();
+}
+
+ResultValue &CRUDBase::edit()
+{
+    return this->upsert({});
+}
+
+ResultValue &CRUDBase::edit(const QVariant &value)
 {
     Q_UNUSED(value)
     return this->lr().setNotImplemented();
@@ -847,6 +850,61 @@ ResultValue &CRUDBase::canActionCreate()
             .host(p->host)
             .items(p->generatedRecords)
             .resultInfo(makeResultInfo())
+            .o()
+        );
+}
+
+ResultValue &CRUDBase::canActionEdit()
+{
+    Q_DECLARE_VU;
+
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action).replace(__print, __action);
+
+    QVariantHash vSource;
+    {
+        switch (this->source().typeId()) {
+        case QMetaType::QVariantList:
+        case QMetaType::QStringList:
+        {
+            auto vList=this->source().toList();
+            if(!vList.isEmpty())
+                vSource=vList.first().toHash();
+            break;
+        }
+        case QMetaType::QVariantHash:
+        case QMetaType::QVariantMap:
+            vSource=this->source().toHash();
+            break;
+        default:
+            break;
+        }
+        if(vSource.contains(__source))
+            vSource=vSource.value(__source).toHash();
+    }
+
+    QVariant v;
+    if(this->options().searchOnEmptyFilter() || !vu.vIsEmpty(vSource)){
+        auto act=p->actions.value(name);
+        auto &lr=(act==nullptr)?this->edit():act->action(vSource);
+        if(!lr)
+            return this->lr(lr);
+        v=lr.resultVariant();
+    }
+#ifdef QTREFORCE_QRMK
+    p->generatedRecords=p->makerPrepare()
+                              .clean()
+                              .items(v)
+                              .makeRecords();
+    v={};
+#else
+    p->generatedRecords=vu.toList(v);
+#endif
+    return this->lr(
+        p->dto
+            .uuid(this->uuid())//crud uuid
+            .host(p->host)
+            .items(p->generatedRecords)
+            .resultInfo(this->resultInfo())
             .o()
         );
 }

@@ -62,6 +62,7 @@ public:
         switch (strategy) {
         case QOrm::CRUDTypes::Strategy::Init:
         case QOrm::CRUDTypes::Strategy::Create:
+        case QOrm::CRUDTypes::Strategy::Edit:
         case QOrm::CRUDTypes::Strategy::Remove:
         case QOrm::CRUDTypes::Strategy::Deactivate:
         case QOrm::CRUDTypes::Strategy::Search:
@@ -69,6 +70,7 @@ public:
             if(returns.isEmpty()){//prepara primeira consulta
                 QVariant data;
                 switch (strategy) {
+                case QOrm::CRUDTypes::Strategy::Edit:
                 case QOrm::CRUDTypes::Strategy::Search:
                 case QOrm::CRUDTypes::Strategy::Print:
                     if(crudBody.expressions().isValid())
@@ -142,15 +144,12 @@ public:
 
 };
 
-CRUDBlock::CRUDBlock(QObject *parent):QOrm::ObjectDb{parent}
+CRUDBlock::CRUDBlock(QObject *parent):QOrm::ObjectDb{parent}, p{new CRUDBlockPvt{this}}
 {
-    this->p = new CRUDBlockPvt{this};
 }
 
-CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb{parent}
+CRUDBlock::CRUDBlock(const QVariant &crudBody, QObject *parent):QOrm::ObjectDb{parent}, p{new CRUDBlockPvt{this}}
 {
-    this->p = new CRUDBlockPvt{this};
-
     p->crudBody=crudBody;
 }
 
@@ -341,6 +340,7 @@ ResultValue &CRUDBlock::crudify()
     }
 
     QVariantHash resultInfo;
+    bool jump=false;
 
     for(auto &crud:p->crudList){
 
@@ -351,8 +351,13 @@ ResultValue &CRUDBlock::crudify()
         else
             crudItem=crudBody;
 
-        if(!crud->crudBody(p->reMakeCRUDBody(pageList, crud, crudItem)).crudify())
-            return this->lr(crud->lr());
+        if(!jump){
+            if(!crud->crudBody(p->reMakeCRUDBody(pageList, crud, crudItem)).crudify())
+                return this->lr(crud->lr());
+        }
+
+        if(crudBody.isStrategy(CRUDTypes::Init) || crudBody.isStrategy(CRUDTypes::Search))// não carrega os proximos
+            jump=true;
 
         crud->resultInfo().md5Counter(crudItem.expressions());
 

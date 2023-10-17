@@ -244,6 +244,13 @@ public:
     virtual CRUDBase &actionsNulls();
 
     //!
+    //! \brief actionInit
+    //! \return
+    //!
+    virtual CRUDBase &actionInit();
+    virtual CRUDBase &actionInit(QOrm::ModelAction &action);
+
+    //!
     //! \brief actionsSearch
     //! \return
     //!
@@ -262,6 +269,12 @@ public:
     //! \return
     //!
     virtual CRUDBase &actionCreate(QOrm::ModelAction &action);
+
+    //!
+    //! \brief actionEdit
+    //! \return
+    //!
+    virtual CRUDBase &actionEdit(QOrm::ModelAction &action);
 
     //!
     //! \brief actionUpsert
@@ -349,6 +362,19 @@ protected:
     //! \return
     //!
     virtual ResultValue &create(const QVariant &value);
+
+    //!
+    //! \brief edit
+    //! \return
+    //!
+    virtual ResultValue &edit();
+
+    //!
+    //! \brief edit
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &edit(const QVariant &value);
 
     //!
     //! \brief search
@@ -473,6 +499,12 @@ protected:
     //! \return
     //!
     virtual ResultValue &canActionCreate();
+
+    //!
+    //! \brief canActionEdit
+    //! \return
+    //!
+    virtual ResultValue &canActionEdit();
 
     //!
     //! \brief canActionSearch

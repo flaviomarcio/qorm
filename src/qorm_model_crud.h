@@ -135,7 +135,7 @@ private:
 protected:
 
     //!
-    //! \brief create
+    //! \brief init
     //! \param model
     //! \return
     //!
@@ -145,12 +145,6 @@ protected:
         auto value=model.toPKValuesValid();
         return this->init(value);
     }
-
-    //!
-    //! \brief create
-    //! \param value
-    //! \return
-    //!
     virtual ResultValue &init(const QVariant &value)
     {
         Q_DECLARE_VU;
@@ -162,11 +156,6 @@ protected:
 
         return this->lr(this->p_dao.lr().resultVariant());
     }
-
-    //!
-    //! \brief create
-    //! \return
-    //!
     virtual ResultValue &init()
     {
         return this->init(this->source());
@@ -182,25 +171,32 @@ protected:
         Q_UNUSED(model)
         return this->lr();
     }
-
-    //!
-    //! \brief create
-    //! \param value
-    //! \return
-    //!
     virtual ResultValue &create(const QVariant &value)
     {
         T model(this, value);
         return this->create(model);
     }
-
-    //!
-    //! \brief create
-    //! \return
-    //!
     virtual ResultValue &create()
     {
         return this->create(this->source());
+    }
+
+    //!
+    //! \brief edit
+    //! \param model
+    //! \return
+    //!
+    virtual ResultValue &edit(const T &model)
+    {
+        return this->search(model);
+    }
+    virtual ResultValue &edit(const QVariant &value)
+    {
+        return this->search(value);
+    }
+    virtual ResultValue &edit()
+    {
+        return this->lr(this->search());
     }
 
     //!
@@ -222,12 +218,6 @@ protected:
         vList=this->p_model.toList(vList);
         return this->lr(vList);
     }
-
-    //!
-    //! \brief search
-    //! \param value
-    //! \return
-    //!
     virtual ResultValue &search(const QVariant &value)
     {
         Q_DECLARE_VU;
@@ -241,11 +231,6 @@ protected:
         vList=this->p_model.toList(vList);
         return this->lr(vList);
     }
-
-    //!
-    //! \brief search
-    //! \return
-    //!
     virtual ResultValue &search()
     {
         QVariantList vList;
@@ -298,12 +283,6 @@ protected:
 
         return this->lr(model.toHash());
     }
-
-    //!
-    //! \brief upsert
-    //! \param value
-    //! \return
-    //!
     virtual ResultValue &upsert(const QVariant &value)
     {
         QVariantList vList;
@@ -327,11 +306,6 @@ protected:
         }
         return this->lr(vList);
     }
-
-    //!
-    //! \brief upsert
-    //! \return
-    //!
     virtual ResultValue &upsert()
     {
         return this->upsert(this->source());
@@ -357,12 +331,6 @@ protected:
 
         return this->lr().clear();
     }
-
-    //!
-    //! \brief remove
-    //! \param value
-    //! \return
-    //!
     virtual ResultValue &remove(const QVariant &value)
     {
         T model(this, value);
@@ -377,12 +345,6 @@ protected:
     {
         return this->remove(this->source());
     }
-
-    //!
-    //! \brief deactivate
-    //! \param model
-    //! \return
-    //!
     virtual ResultValue &deactivate(T &model)
     {
         if(model.isEmptyPK())
@@ -410,11 +372,6 @@ protected:
         T model(this, value);
         return this->deactivate(model);
     }
-
-    //!
-    //! \brief deactivate
-    //! \return
-    //!
     virtual ResultValue &deactivate()
     {
         return this->deactivate(this->source());
