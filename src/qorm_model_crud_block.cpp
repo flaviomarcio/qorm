@@ -14,7 +14,6 @@ public:
     QByteArray owner;
     QVariant type;
     ModelDtoOptions options;
-    QStm::ResultInfo resultInfo;
     CRUDBlock *parent=nullptr;
     QVariant crudBody;
     QMap<QString, PrivateQOrm::CRUDBase *> crudMap;
@@ -34,19 +33,19 @@ public:
         switch (strategy) {
         case QOrm::CRUDTypes::Strategy::Custom:
             return crudBody;
-        case QOrm::CRUDTypes::Strategy::Init:
-        {
-            switch (crud->actionStart()) {
-            case PrivateQOrm::CRUDBase::asCREATE:
-                strategy=QOrm::CRUDTypes::Create;
-                break;
-            case PrivateQOrm::CRUDBase::asSEARCH:
-                strategy=QOrm::CRUDTypes::Search;
-                break;
-            default:
-                break;
-            }
-        }
+//        case QOrm::CRUDTypes::Strategy::Init:
+//        {
+//            switch (crud->actionStart()) {
+//            case PrivateQOrm::CRUDBase::asCREATE:
+//                strategy=QOrm::CRUDTypes::Create;
+//                break;
+//            case PrivateQOrm::CRUDBase::asSEARCH:
+//                strategy=QOrm::CRUDTypes::Search;
+//                break;
+//            default:
+//                break;
+//            }
+//        }
         default:
             break;
         }
@@ -61,6 +60,7 @@ public:
 //        }
 
         switch (strategy) {
+        case QOrm::CRUDTypes::Strategy::Init:
         case QOrm::CRUDTypes::Strategy::Create:
         case QOrm::CRUDTypes::Strategy::Remove:
         case QOrm::CRUDTypes::Strategy::Deactivate:
@@ -202,7 +202,7 @@ ModelDtoOptions &CRUDBlock::options()
 
 QStm::ResultInfo &CRUDBlock::resultInfo()
 {
-    return p->resultInfo;
+    return this->lr().resultInfo();
 }
 
 CRUDBlock &CRUDBlock::operator+=(PrivateQOrm::CRUDBase *crud)
@@ -330,14 +330,17 @@ ResultValue &CRUDBlock::crudify()
     if(!crudBody.isValid())
         return this->lr().setValidation(tr("Invalid CRUDBody"));
 
-    this->resultInfo().setValues(crudBody.resultInfo());
+    auto &rInfo=this->resultInfo();
+    rInfo.setValues(crudBody.resultInfo());
     auto crudPages=crudBody.pagesHash();
 
     for(auto &crud:p->crudList){
         crud->setHost(p->host);
         crud->setOptions(p->options);
-        crud->setResultInfo(p->resultInfo);
+        crud->setResultInfo(rInfo);
     }
+
+    QVariantHash resultInfo;
 
     for(auto &crud:p->crudList){
 
@@ -353,16 +356,28 @@ ResultValue &CRUDBlock::crudify()
 
         crud->resultInfo().md5Counter(crudItem.expressions());
 
-        auto vResult=crud->lr().resultVariant();
+        auto vResult=crud->lr().resultHash();
+        if(resultInfo.isEmpty())
+            resultInfo=vResult.value(__resultInfo).toHash();
         pageList.append(vResult);
     }
 
     if(pageList.isEmpty())
         return this->lr().clear();
 
-    auto resultInfo=p->crudList.first()->resultInfo().toHash();
+    auto totalCount=rInfo.totalCount();
+    auto page=rInfo.page();
+    auto perPage=rInfo.perPage();
+    rInfo.setValues(resultInfo);
+    this->resultInfo()
+        .page(page)
+        .perPage(perPage)
+        .totalCount(
+            (rInfo.totalCount()<=0 && totalCount>0)
+                ?totalCount
+                :rInfo.totalCount()
+            );
 
-    p->resultInfo.setValues(resultInfo);
 
     auto crudType=this->type().toString().trimmed();
     if(crudType.isEmpty())

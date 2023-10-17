@@ -120,7 +120,7 @@ public:
     //! \param resultInfo
     //! \return
     //!
-    CRUDBase &setResultInfo(const QStm::ResultInfo &resultInfo);
+    virtual CRUDBase &setResultInfo(const QStm::ResultInfo &resultInfo);
 
     //!
     //! \brief clear
@@ -177,7 +177,7 @@ public:
     //! \brief dto
     //! \return
     //!
-    virtual QOrm::ModelDto &dto();
+    virtual QOrm::ModelDto &dto() const;
 
     //!
     //! \brief crudBody
@@ -328,6 +328,19 @@ protected:
     //! \brief create
     //! \return
     //!
+    virtual ResultValue &init();
+
+    //!
+    //! \brief create
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &init(const QVariant &value);
+
+    //!
+    //! \brief create
+    //! \return
+    //!
     virtual ResultValue &create();
 
     //!
@@ -448,6 +461,12 @@ protected:
     //! \return
     //!
     CRUDBase &onFailed(QOrm::CRUDBodyActionMethod method);
+
+    //!
+    //! \brief canActionInit
+    //! \return
+    //!
+    virtual ResultValue &canActionInit();
 
     //!
     //! \brief canActionCreate

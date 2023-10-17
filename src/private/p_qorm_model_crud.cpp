@@ -24,6 +24,8 @@ static const auto __before = "before";
 static const auto __failed = "failed";
 static const auto __print = "print";
 
+static const auto __rows = "rows";
+
 #ifdef QTREFORCE_QRMK
 static const auto __title="title";
 static const auto __field="field";
@@ -377,7 +379,9 @@ QStm::ResultInfo &CRUDBase::makeResultInfo()const
 
 CRUDBase &CRUDBase::setResultInfo(const QStm::ResultInfo &resultInfo)
 {
-    this->lr().resultInfo().readFrom(resultInfo.toHash());
+    auto vHash=resultInfo.toHash();
+    this->dto().resultInfo().readFrom(vHash);
+    this->lr().resultInfo().readFrom(vHash);
     return *this;
 }
 
@@ -446,8 +450,9 @@ CRUDBase &CRUDBase::description(const QVariant &value)
     return *this;
 }
 
-QOrm::ModelDto &CRUDBase::dto()
+QOrm::ModelDto &CRUDBase::dto()const
 {
+    p->dto.setResultInfo(this->resultInfo());
     return p->dto;
 }
 
@@ -497,7 +502,6 @@ bool CRUDBase::afterCrudify()
 ResultValue &CRUDBase::crudify()
 {
     this->clean();
-
     if(!this->beforeCrudify())
         return this->lr()=false;
 
@@ -506,6 +510,10 @@ ResultValue &CRUDBase::crudify()
     switch (strategy) {
     case QOrm::CRUDTypes::Custom:
         if(!this->canActionCustom())
+            return this->lr();
+        break;
+    case QOrm::CRUDTypes::Init:
+        if(!this->canActionInit())
             return this->lr();
         break;
     case QOrm::CRUDTypes::Create:
@@ -643,6 +651,17 @@ CRUDBase &CRUDBase::actionPrint(QOrm::ModelAction &action)
     return *this;
 }
 
+ResultValue &CRUDBase::init()
+{
+    return this->init({});
+}
+
+ResultValue &CRUDBase::init(const QVariant &value)
+{
+    Q_UNUSED(value)
+    return this->lr().setNotImplemented();
+}
+
 ResultValue &CRUDBase::create()
 {
     return this->create({});
@@ -761,6 +780,24 @@ CRUDBase &CRUDBase::onFailed(QOrm::CRUDBodyActionMethod method)
 {
     p->actionMethod.insert(__failed, method);
     return *this;
+}
+
+ResultValue &CRUDBase::canActionInit()
+{
+    static const auto name=QByteArray{__func__}.replace(__canAction, __action);
+    auto act=p->actions.value(name);
+    auto &lr=(act==nullptr)?this->init():act->action({});
+    if(!lr)
+        return this->lr(lr);
+
+    auto &resultInfo=makeResultInfo();
+    auto v=lr.resultHash();
+    resultInfo.totalCount(v.value(__rows).toInt());
+
+    if(!this->canActionCreate())
+        return this->lr();
+
+    return this->lr();
 }
 
 ResultValue &CRUDBase::canActionCreate()

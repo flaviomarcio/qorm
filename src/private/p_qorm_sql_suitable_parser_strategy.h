@@ -45,11 +45,12 @@ public:
     //!
     auto &limit(int limit)
     {
-        if(limit>0){
-            auto map=this->toMap();
+        auto map=this->toMap();
+        if(limit>0)
             map.insert(__func__, limit);
-            this->setValue(map);
-        }
+        else
+            map.remove(__func__);
+        this->setValue(map);
         return *this;
     }
 
@@ -60,11 +61,12 @@ public:
     //!
     auto &offset(int off_set)
     {
-        if(off_set>0){
-            auto map=this->toMap();
+        auto map=this->toMap();
+        if(off_set>0)
             map.insert(__func__, off_set);
-            this->setValue(map);
-        }
+        else
+            map.remove(__func__);
+        this->setValue(map);
         return *this;
     }
 
@@ -76,10 +78,8 @@ public:
     //!
     auto &offset(int limit, int off_set)
     {
-        if(limit>0)
-            this->limit(limit);
-        if(off_set>0)
-            this->offset(off_set);
+        this->limit(limit);
+        this->offset(off_set);
         return *this;
     }
 
@@ -209,8 +209,8 @@ public:
 
         auto mapObject=this->toMap();
         auto parser_distinct=getVariantStartsWith(__distinct, mapObject);
-        auto parser_limit=getVariantStartsWith(__limit, mapObject);
-        auto parser_offset=getVariantStartsWith(__offset, mapObject);
+        auto parser_limit=getVariantStartsWith(__limit, mapObject).toInt();
+        auto parser_offset=getVariantStartsWith(__offset, mapObject).toInt();
         auto parser_lockSkip=getVariantStartsWith(__lockSkip,mapObject).toBool();
         auto parser_lock=getVariantStartsWith(__lock,mapObject).toBool();
 
@@ -229,9 +229,9 @@ public:
         if(!parser_fields.isValid()){
             output.append(parser.parserCommand(kgcSelectForExists));
         }
-        else if(parser_limit.isValid()){
+        else if(parser_limit>0){
             auto cmd=parser.parserCommand(parser_distinct.isValid()?kgcSelectDistinctTop:kgcSelectTop);
-            output.append(cmd.contains(__arg1)?cmd.arg(parser_limit.toInt()):cmd);
+            output.append(cmd.contains(__arg1)?cmd.arg(parser_limit):cmd);
         }
         else{
             output.append(parser.parserCommand(parser_distinct.isValid()?kgcSelectDistinct:kgcSelect));
@@ -255,7 +255,7 @@ public:
                         group.append(fieldName);
                     }
                     if(isGrouping)
-                        parser_groupby<<group;
+                        parser_groupby.append(group);
                     continue;
                 }
 
@@ -271,7 +271,7 @@ public:
                     auto isGroup=(groupingTypes.contains(grouping));
                     isGrouping = isGrouping || isGroup;
                     if(isGroup){
-                        fields<<parser.parserCommand(KeywordGenericCommand(grouping),nullptr, map);
+                        fields.append(parser.parserCommand(KeywordGenericCommand(grouping),nullptr, map));
                     }
                     else if(!value.isEmpty()){
                         group.append(value);
@@ -280,7 +280,7 @@ public:
                     break;
                 }
                 default:
-                    fields<<parser_fields.toString();
+                    fields.append(parser_fields.toString());
                 }
                 if(isGrouping)
                     parser_groupby.append(group);
@@ -351,14 +351,13 @@ public:
             }
         }
 
-        if(parser_limit.isValid()){
+        if(parser_limit>0){
             auto cmd=parser.parserCommand(kgcLimit);
-            output.append(cmd.arg(parser_limit.toInt()));
-        }
-
-        if(parser_offset.isValid()){
-            auto cmd=parser.parserCommand(kgcOffset);
-            output.append(cmd.arg(parser_offset.toInt()));
+            output.append(cmd.arg(parser_limit));
+            if(parser_offset>0){
+                auto cmd=parser.parserCommand(kgcOffset);
+                output.append(cmd.arg(parser_offset));
+            }
         }
 
         if(parser_lockSkip)

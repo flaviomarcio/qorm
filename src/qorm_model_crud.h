@@ -90,13 +90,20 @@ public:
         return action.type();
     }
 
+    virtual CRUDBase &setResultInfo(const QStm::ResultInfo &resultInfo)
+    {
+        this->p_dao.lr().resultInfo(resultInfo);
+        PrivateQOrm::CRUDBase::setResultInfo(resultInfo);
+        return *this;
+    }
+
     //!
     //! \brief host
     //! \return
     //!
     const QOrm::Host &host()const
     {
-        return p_dto.host();
+        return this->dto().host();
     }
 
     //!
@@ -106,7 +113,7 @@ public:
     //!
     CRUDBase &setHost(const QOrm::Host &newHost)
     {
-        p_dto.host(newHost);
+        this->dto().host(newHost);
         return CRUDBase::setHost(newHost);
     }
 
@@ -116,7 +123,7 @@ public:
     //!
     virtual bool beforeCrudify()
     {
-        p_dto.initDescriptors(&p_model);
+        this->dto().initDescriptors(&p_model);
         const auto &modelInfo=this->modelInfo();
         this->name(modelInfo.name()).description(modelInfo.description());
         return true;
@@ -125,9 +132,45 @@ public:
 private:
     ModelDao<T> p_dao;
     T p_model;
-    QOrm::ModelDto &p_dto=this->dto();
-
 protected:
+
+    //!
+    //! \brief create
+    //! \param model
+    //! \return
+    //!
+    virtual ResultValue &init(T &model)
+    {
+        Q_UNUSED(model)
+        auto value=model.toPKValuesValid();
+        return this->init(value);
+    }
+
+    //!
+    //! \brief create
+    //! \param value
+    //! \return
+    //!
+    virtual ResultValue &init(const QVariant &value)
+    {
+        Q_DECLARE_VU;
+        if(!this->options().searchOnEmptyFilter() && vu.vIsEmpty(value))
+            return this->lr();
+
+        if(!this->p_dao.recordCount(value))
+            return this->lr(this->p_dao.lr());
+
+        return this->lr(this->p_dao.lr().resultVariant());
+    }
+
+    //!
+    //! \brief create
+    //! \return
+    //!
+    virtual ResultValue &init()
+    {
+        return this->init(this->source());
+    }
 
     //!
     //! \brief create

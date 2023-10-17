@@ -172,48 +172,6 @@ public:
     }
 
     //!
-    //! \brief page
-    //! \return
-    //!
-    QVariantHash page() { return this->record(QVariant{}); }
-
-    //!
-    //! \brief page
-    //! \param v
-    //! \return
-    //!
-    QVariantHash page(const QVariant &v)
-    {
-        Query query{this};
-        auto &strategy = query.builder().select();
-        strategy
-            .fields().count();
-        strategy.from(p_modelInfo);
-        if (v.isValid()) {
-            QVariant value;
-            SearchParameters vv{this->variantToParameters(v)};
-            value = vv.buildVariant();
-            if (value.isValid())
-                strategy.where().condition(value);
-        }
-
-        if(this->_deactivateField){
-            auto vvm=this->p_modelInfo.parserVVM(this->p_modelInfo.propertyActivateField());
-            strategy.where(vvm);
-        }
-
-        if (!query.exec()){
-            this->lr(query.lr());
-            return {};
-        }
-
-        return
-            QStm::ResultInfo()
-            .totalCount(query.value(0).toInt())
-            .toHash();
-    }
-
-    //!
     //! \brief record
     //! \return
     //!
@@ -252,6 +210,46 @@ public:
     }
 
     //!
+    //! \brief recordCount
+    //! \return
+    //!
+    auto &recordCount() { return this->recordCount({}); }
+
+    //!
+    //! \brief recordCount
+    //! \param v
+    //! \return
+    //!
+    auto &recordCount(const QVariant &v){
+        Query query{this};
+        auto &strategy = query.builder().select();
+        strategy
+            .fields().count();
+        strategy
+            .from(p_modelInfo);
+        if (v.isValid()) {
+            QVariant value;
+            SearchParameters vv{this->variantToParameters(v)};
+            value = vv.buildVariant();
+            if (value.isValid())
+                strategy.where().condition(value);
+        }
+
+        if(this->_deactivateField){
+            auto vvm=this->p_modelInfo.parserVVM(this->p_modelInfo.propertyActivateField());
+            strategy.where(vvm);
+        }
+
+        if (!query.exec())
+            return this->lr(query.lr());
+
+        if (!query.next())
+            return this->lr() = false;
+
+        return this->lr(query.makeRecord());
+    }
+
+    //!
     //! \brief recordList
     //! \return
     //!
@@ -266,6 +264,11 @@ public:
     {
         Query query{this};
         auto &strategy = query.builder().select();
+
+        auto &rInfo=this->lr().resultInfo();
+        if(rInfo.perPage()>0)
+            strategy.offset(rInfo.perPage(),rInfo.offSetRecords());
+
         strategy.fieldsFrom(p_modelInfo);
 
         auto vvm=this->p_modelInfo.parserVVM(v);
