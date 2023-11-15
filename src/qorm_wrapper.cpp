@@ -10,7 +10,6 @@ public:
     QVariant v;
     explicit WrapperPvt(QObject *parent=nullptr):QObject{parent} {}
 
-    virtual ~WrapperPvt() {}
 
     QVariant &wrapper()
     {
@@ -74,16 +73,13 @@ public:
     }
 };
 
-Wrapper::Wrapper(const QVariant &v):QObject{}
+Wrapper::Wrapper(const QVariant &v):QObject{},p{new WrapperPvt{this}}
 {
-    this->p = new WrapperPvt{this};
     p->v = v;
 }
 
-Wrapper::Wrapper(ResultValue &v):QObject{}
+Wrapper::Wrapper(ResultValue &v):QObject{},p{new WrapperPvt{this}}
 {
-    this->p = new WrapperPvt{this};
-
     p->v = v.resultVariant();
 }
 
@@ -102,14 +98,12 @@ Wrapper &Wrapper::w(const QString &propertySrc)
 
 Wrapper &Wrapper::clear()
 {
-
     p->wrapperNames.clear();
     return *this;
 }
 
 QVariant &Wrapper::v() const
 {
-
     return p->wrapper();
 }
 

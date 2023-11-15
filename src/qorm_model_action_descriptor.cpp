@@ -15,9 +15,8 @@ public:
 };
 
 ModelActionDescriptor::ModelActionDescriptor(QObject *parent)
-    : QStm::ObjectWrapper{parent}
+    : QStm::ObjectWrapper{parent}, p{new ModelActionDescriptorPvt{parent}}
 {
-    this->p=new ModelActionDescriptorPvt{parent};
 }
 
 const QString &ModelActionDescriptor::action() const

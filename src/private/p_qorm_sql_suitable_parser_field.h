@@ -26,9 +26,8 @@ public:
     explicit SqlParserFields(const QVariant &v={}):SqlParserCommand{v}
     {
     }
-    explicit SqlParserFields(TemplateParent*parent, const QVariant &v={}):SqlParserCommand{v}
+    explicit SqlParserFields(TemplateParent*parent, const QVariant &v={}):SqlParserCommand{v}, parent{parent}
     {
-        this->parent=parent;
     }
     auto &f(const QVariant &v)
     {

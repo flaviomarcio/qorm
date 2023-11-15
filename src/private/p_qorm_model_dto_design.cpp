@@ -14,13 +14,11 @@ public:
     QStm::MetaEnum<Design::Layout> layout=Design::Vertical;
     QVariant type;
     QVariant typeName;
-    explicit DesignPvt(Design *parent):QObject{parent}{ this->parent=parent; }
+    explicit DesignPvt(Design *parent):QObject{parent}, parent{parent}{}
 };
 
-Design::Design(QObject *parent)
-    : QStm::ObjectWrapper{parent}
+Design::Design(QObject *parent): QStm::ObjectWrapper{parent}, p{new DesignPvt{this}}
 {
-    this->p=new DesignPvt{this};
 }
 
 QVariant &Design::width()

@@ -49,9 +49,8 @@ private:
 };
 
 EndPoints::EndPoints(QObject *parent)
-    : QStm::ObjectWrapper{parent}
+    : QStm::ObjectWrapper{parent}, p{new EndPointsPvt{this}}
 {
-    this->p=new EndPointsPvt{this};
 }
 
 bool EndPoints::setValues(const QVariant &v)

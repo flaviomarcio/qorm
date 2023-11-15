@@ -6,15 +6,14 @@ namespace QOrm {
 
 class ModelFieldCollectionPvt:public QObject{
 public:
+    ModelFieldCollection *parent=nullptr;
     QStringList order;
     QVariantList vList;
-    ModelFieldCollection *parent=nullptr;
     QList<ModelFieldDescriptor *> list;
     QHash<QString, ModelFieldDescriptor*> collection;
 
-    explicit ModelFieldCollectionPvt(ModelFieldCollection *parent):QObject{parent}
+    explicit ModelFieldCollectionPvt(ModelFieldCollection *parent):QObject{parent}, parent{parent}
     {
-        this->parent=parent;
     }
 
     void clear()
@@ -54,9 +53,8 @@ public:
 };
 
 ModelFieldCollection::ModelFieldCollection(QObject *parent)
-    : QStm::ObjectWrapper{parent}
+    : QStm::ObjectWrapper{parent}, p{new ModelFieldCollectionPvt{this}}
 {
-    this->p=new ModelFieldCollectionPvt{this};
 }
 
 ModelFieldDescriptor &ModelFieldCollection::item(const QString &fieldName)

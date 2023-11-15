@@ -40,8 +40,6 @@ public:
 public:
     explicit SqlSuitableValuePvt(QObject *parent=nullptr):QObject{parent} {}
 
-    virtual ~SqlSuitableValuePvt() {}
-
     static QString parserTextLike(const QVariant &v)
     {
         auto text = v.toString().trimmed();
@@ -75,15 +73,13 @@ int SqlSuitableValue::Format::currencyPrecision() const
     return 6;
 }
 
-SqlSuitableValue::SqlSuitableValue(QSqlDatabase db, QObject *parent):QObject{parent}
+SqlSuitableValue::SqlSuitableValue(QSqlDatabase db, QObject *parent):QObject{parent},p{new SqlSuitableValuePvt(this)}
 {
-    this->p = new SqlSuitableValuePvt(this);
     this->setConnection(db);
 }
 
-SqlSuitableValue::SqlSuitableValue(QObject *parent):QObject{parent}
+SqlSuitableValue::SqlSuitableValue(QObject *parent):QObject{parent}, p{new SqlSuitableValuePvt(this)}
 {
-    this->p = new SqlSuitableValuePvt(this);
     this->setConnection({});
 }
 

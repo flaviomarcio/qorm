@@ -266,9 +266,8 @@ SearchParam SearchParam::from(const QVariant &value)
     return SearchParam{};
 }
 
-SearchParameters::SearchParameters(const QVariant &other):QVariant{}
+SearchParameters::SearchParameters(const QVariant &other):QVariant{}, p{new SearchParametersPvt{}}
 {
-    this->p = new SearchParametersPvt{};
     p->add(other);
 }
 

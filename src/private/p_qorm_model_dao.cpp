@@ -151,9 +151,8 @@ public:
 
 };
 
-ModelDao::ModelDao(QObject *parent) : QOrm::ObjectDb{parent}
+ModelDao::ModelDao(QObject *parent) : QOrm::ObjectDb{parent}, p{new ModelDaoPvt{this}}
 {
-    this->p = new ModelDaoPvt{this};
 }
 
 QOrm::SqlSuitableValue &ModelDao::suitableValue()

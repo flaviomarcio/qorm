@@ -780,9 +780,9 @@ ModelInfo::ModelInfo(QObject *parent)
     #else
     :QVariant{}
     #endif
+    , p{new ModelInfoPvt{this}}
 {
     Q_UNUSED(parent)
-    this->p=new ModelInfoPvt{this};
 }
 
 ModelInfo::ModelInfo(const QByteArray &className, QObject *parent)
@@ -791,9 +791,9 @@ ModelInfo::ModelInfo(const QByteArray &className, QObject *parent)
     #else
     :QVariant{}
     #endif
+    , p{new ModelInfoPvt{this}}
 {
     Q_UNUSED(parent)
-    this->p=new ModelInfoPvt{this};
     if(__static_model_info->contains(className)){
         const auto info=__static_model_info->value(className);
         p->read(info->p);
@@ -806,9 +806,9 @@ ModelInfo::ModelInfo(const QMetaObject &metaObject, QObject *parent)
     #else
     :QVariant{}
     #endif
+    , p{new ModelInfoPvt{this}}
 {
     Q_UNUSED(parent)
-    this->p=new ModelInfoPvt{this};
     if(__static_model_info->contains(metaObject.className())){
         const auto info=__static_model_info->value(metaObject.className());
         p->read(info->p);

@@ -9,6 +9,7 @@ namespace QOrm {
 
 class ModelDtoControlsPvt:public QObject{
 public:
+    ModelDtoControls *parent=nullptr;
     QUuid uuid;
     QString settingName;
     Host host;
@@ -16,16 +17,15 @@ public:
     QVariantList items;
     QStm::ResultInfo resultInfo;
     QVariantHash descriptors;
-    ModelDtoControls *parent=nullptr;
 
     explicit ModelDtoControlsPvt(ModelDtoControls *parent)
         :
           QObject{parent},
+          parent{parent},
           host{this},
           fieldDescriptors{parent},
           resultInfo{parent}
     {
-        this->parent=parent;
     }
 
     QVariantHash toOutput()
@@ -96,9 +96,8 @@ public:
 
 };
 
-ModelDtoControls::ModelDtoControls(QObject *parent) : QStm::Object{parent}
+ModelDtoControls::ModelDtoControls(QObject *parent) : QStm::Object{parent}, p{new ModelDtoControlsPvt{this}}
 {
-    this->p = new ModelDtoControlsPvt{this};
 }
 
 ModelFieldDescriptors &ModelDtoControls::fields()

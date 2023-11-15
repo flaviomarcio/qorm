@@ -64,36 +64,27 @@ Q_COREAPP_STARTUP_FUNCTION(init);
 
 class SqlSuitableKeyWordPvt:public QObject{
 public:
+    SqlSuitableKeyWord*parent=nullptr;
     QList<QSqlDriver::DbmsType> drivers;
     KeywordCache staticKeywordCache;
-    SqlSuitableKeyWord*parent=nullptr;
 
-    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent):QObject{parent}
+    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent):QObject{parent}, parent{parent}
     {
-        this->parent=parent;
     }
 
-    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QSqlDriver::DbmsType driver):QObject{parent}
+    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QSqlDriver::DbmsType driver):QObject{parent}, parent{parent}
     {
-        this->parent=parent;
         if(!this->drivers.contains(driver))
             this->drivers.append(driver);
     }
-    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QList<QSqlDriver::DbmsType> drivers):QObject{parent}
+    explicit SqlSuitableKeyWordPvt(SqlSuitableKeyWord*parent, QList<QSqlDriver::DbmsType> drivers):QObject{parent}, parent{parent}, drivers{drivers}
     {
-        this->parent=parent;
-        this->drivers=drivers;
-    }
-    virtual ~SqlSuitableKeyWordPvt()
-    {
-
     }
 
     auto isValid()
     {
         return !this->drivers.isEmpty();
     }
-
 
     void init()
     {
@@ -235,22 +226,16 @@ public:
     }
 };
 
-SqlSuitableKeyWord::SqlSuitableKeyWord(QObject *parent):QObject{parent}
+SqlSuitableKeyWord::SqlSuitableKeyWord(QObject *parent):QObject{parent}, p{new SqlSuitableKeyWordPvt{this}}
 {
-    Q_UNUSED(parent)
-    this->p = new SqlSuitableKeyWordPvt{this};
 }
 
-SqlSuitableKeyWord::SqlSuitableKeyWord(QSqlDriver::DbmsType driver, QObject *parent):QObject{parent}
+SqlSuitableKeyWord::SqlSuitableKeyWord(QSqlDriver::DbmsType driver, QObject *parent):QObject{parent}, p{new SqlSuitableKeyWordPvt(this, driver)}
 {
-    Q_UNUSED(parent)
-    this->p = new SqlSuitableKeyWordPvt(this, driver);
 }
 
-SqlSuitableKeyWord::SqlSuitableKeyWord(QList<QSqlDriver::DbmsType> drivers, QObject *parent):QObject{parent}
+SqlSuitableKeyWord::SqlSuitableKeyWord(QList<QSqlDriver::DbmsType> drivers, QObject *parent):QObject{parent}, p{new SqlSuitableKeyWordPvt(this, drivers)}
 {
-    Q_UNUSED(parent)
-    this->p = new SqlSuitableKeyWordPvt(this, drivers);
 }
 
 SqlSuitableKeyWord::~SqlSuitableKeyWord()

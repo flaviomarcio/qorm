@@ -22,9 +22,8 @@ public:
 private:
 };
 
-EndPoint::EndPoint(QObject *parent) : QStm::ObjectWrapper{parent}
+EndPoint::EndPoint(QObject *parent) : QStm::ObjectWrapper{parent}, p{new EndPointPvt{this}}
 {
-    this->p=new EndPointPvt{this};
 }
 
 bool EndPoint::isValid() const

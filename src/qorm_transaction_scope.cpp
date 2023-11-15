@@ -30,9 +30,8 @@ public:
     }
 };
 
-TransactionScope::TransactionScope(QObject *parent) : ObjectDb{parent}
+TransactionScope::TransactionScope(QObject *parent) : ObjectDb{parent}, p{new TransactionScopePvt{this}}
 {
-    this->p = new TransactionScopePvt{this};
 }
 
 bool TransactionScope::rollback()

@@ -7,12 +7,11 @@ class ModelDtoOptionsPvt:public QObject
 public:
     ModelDtoOptions *parent = nullptr;
     bool searchOnEmptyFilter = true;
-    explicit ModelDtoOptionsPvt(ModelDtoOptions *parent):QObject{parent} { this->parent = parent; }
+    explicit ModelDtoOptionsPvt(ModelDtoOptions *parent):QObject{parent}, parent{parent} {}
 };
 
-ModelDtoOptions::ModelDtoOptions(QObject *parent) : QObject{parent}
+ModelDtoOptions::ModelDtoOptions(QObject *parent) : QObject{parent}, p{new ModelDtoOptionsPvt{this}}
 {
-    this->p = new ModelDtoOptionsPvt{this};
 }
 
 bool ModelDtoOptions::searchOnEmptyFilter() const

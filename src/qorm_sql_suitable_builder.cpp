@@ -3,9 +3,8 @@
 
 namespace QOrm {
 
-SqlSuitableBuilder::SqlSuitableBuilder(Query*parent):ObjectDb{parent}
+SqlSuitableBuilder::SqlSuitableBuilder(Query*parent):ObjectDb{parent}, p{new SqlSuitableBuilderPvt{parent}}
 {
-    this->p = new SqlSuitableBuilderPvt{parent};
 }
 
 SqlSuitableBuilder::~SqlSuitableBuilder()

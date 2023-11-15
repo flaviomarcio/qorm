@@ -16,6 +16,7 @@ static const auto __source="source";
 
 class ModelReportBasePvt:public QObject{
 public:
+    ModelReportBase*parent=nullptr;
     QOrm::ModelDtoOptions options;
     QUuid uuid;
     QByteArray name;
@@ -25,11 +26,9 @@ public:
     QHash<QByteArray, QOrm::ModelActionMethod> actionMethod;
     QVariant strategy;
     QVariant source;
-    ModelReportBase*parent=nullptr;
 
-    explicit ModelReportBasePvt(ModelReportBase*parent):QObject{parent}, options{parent}, dto{parent}
+    explicit ModelReportBasePvt(ModelReportBase*parent):QObject{parent}, parent{parent}, options{parent}, dto{parent}
     {
-        this->parent=parent;
     }
 
     auto &doModelAction(const QString &methodName)
@@ -90,17 +89,13 @@ public:
 };
 
 
-ModelReportBase::ModelReportBase(QObject *parent) : QOrm::ObjectDb{parent}
+ModelReportBase::ModelReportBase(QObject *parent) : QOrm::ObjectDb{parent}, p{new ModelReportBasePvt{this}}
 {
-    this->p = new ModelReportBasePvt{this};
-
     p->set_report(ReportBody{});
 }
 
-ModelReportBase::ModelReportBase(const QVariant &reportBody, QObject *parent):QOrm::ObjectDb{parent}
+ModelReportBase::ModelReportBase(const QVariant &reportBody, QObject *parent):QOrm::ObjectDb{parent}, p{new ModelReportBasePvt{this}}
 {
-    this->p = new ModelReportBasePvt{this};
-
     p->set_report(reportBody);
 }
 

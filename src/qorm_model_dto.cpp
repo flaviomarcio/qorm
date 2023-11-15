@@ -15,11 +15,10 @@ namespace QOrm {
 class ModelDtoPvt:public QObject
 {
 public:
-    ModelDtoControls dtoControls;
     QObject *parent = nullptr;
-    explicit ModelDtoPvt(ModelDto *parent):QObject{parent}, dtoControls{parent}
+    ModelDtoControls dtoControls;
+    explicit ModelDtoPvt(ModelDto *parent):QObject{parent}, parent{parent}, dtoControls{parent}
     {
-        this->parent = parent;
         auto pParent = parent->parent();
         if (pParent != nullptr)
             this->initDescriptors(pParent);
@@ -47,20 +46,17 @@ public:
     }
 };
 
-ModelDto::ModelDto(QObject *parent) : QStm::Object{parent}
+ModelDto::ModelDto(QObject *parent) : QStm::Object{parent}, p{new ModelDtoPvt{this}}
 {
-    this->p = new ModelDtoPvt{this};
 }
 
-ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object{parent}
+ModelDto::ModelDto(const ResultValue &rows, QObject *parent) : QStm::Object{parent}, p{new ModelDtoPvt{this}}
 {
-    this->p = new ModelDtoPvt{this};
     p->dtoControls.setValue(rows.resultVariant());
 }
 
-ModelDto::ModelDto(const ModelInfo *modelInfo, QObject *parent) : QStm::Object{parent}
+ModelDto::ModelDto(const ModelInfo *modelInfo, QObject *parent) : QStm::Object{parent}, p{new ModelDtoPvt{this}}
 {
-    this->p = new ModelDtoPvt{this};
     p->initDescriptors(*modelInfo);
 }
 

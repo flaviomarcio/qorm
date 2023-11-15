@@ -11,18 +11,17 @@ static auto __items="items";
 
 class CRUDBlockPvt:public QObject{
 public:
+    CRUDBlock *parent=nullptr;
     QByteArray owner;
     QVariant type;
     ModelDtoOptions options;
-    CRUDBlock *parent=nullptr;
     QVariant crudBody;
     QMap<QString, PrivateQOrm::CRUDBase *> crudMap;
     QList<PrivateQOrm::CRUDBase *> crudList;
     QVariantHash generatedRecords;
     Host host;
-    explicit CRUDBlockPvt(CRUDBlock*parent):QObject{parent}, options{parent}
+    explicit CRUDBlockPvt(CRUDBlock*parent):QObject{parent}, parent{parent}, options{parent}
     {
-        this->parent=parent;
     }
 
     static CRUDBody reMakeCRUDBody(const QVariantList &returns, PrivateQOrm::CRUDBase *crud, CRUDBody crudBody)

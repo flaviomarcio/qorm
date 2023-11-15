@@ -11,9 +11,8 @@ Query::Query(QObject *parent) : ObjectDb{parent}, p{new QOrm::QueryPvt{this, {}}
 {
 }
 
-Query::Query(const QSqlDatabase &db, QObject *parent) : ObjectDb{parent}
+Query::Query(const QSqlDatabase &db, QObject *parent) : ObjectDb{parent}, p{new QOrm::QueryPvt{this, db}}
 {
-    this->p = new QOrm::QueryPvt{this, db};
     if (!db.isValid() || !db.isOpen()) {
 #if Q_ORM_LOG
         oWarning() << QStringLiteral("connection is not valid");

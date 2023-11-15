@@ -5,15 +5,14 @@ namespace QOrm {
 
 class ModelActionCollectionPvt:public QObject{
 public:
+    ModelActionCollection *parent=nullptr;
     QStringList order;
     QVariantList vList;
-    ModelActionCollection *parent=nullptr;
     QList<ModelActionDescriptor *> list;
     QHash<QString, ModelActionDescriptor*> collection;
 
-    explicit ModelActionCollectionPvt(ModelActionCollection *parent):QObject{parent}
+    explicit ModelActionCollectionPvt(ModelActionCollection *parent):QObject{parent}, parent{parent}
     {
-        this->parent=parent;
     }
 
     void clear()

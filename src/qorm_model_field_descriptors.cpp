@@ -31,6 +31,7 @@ static auto const __finalizeName="Finalizar";
 class ModelDescriptorPvt:public QObject
 {
 public:
+    ModelFieldDescriptors *parent=nullptr;
     QVariant type=Q_ORM_REGISTERFORM;
     QByteArray className;
     QUuid uuid;
@@ -45,7 +46,6 @@ public:
     bool obrigatory=false;
     bool readOnly=false;
     QStringList fieldsValid;
-    ModelFieldDescriptors *parent=nullptr;
     QStm::MetaEnum<QOrm::ModelFieldDescriptors::ActionStart> actionStart=ModelFieldDescriptors::asSEARCH;
 #ifdef QTREFORCE_QRMK
     QRmk::Maker reportMaker;
@@ -53,6 +53,7 @@ public:
     explicit ModelDescriptorPvt(ModelFieldDescriptors *parent)
         :
           QObject{parent},
+          parent{parent},
           descriptorsCollection{parent},
           filtersCollection{parent},
           actionsCollection{parent},
@@ -61,7 +62,6 @@ public:
           endPoints{parent},
           endPoint{parent}
     {
-        this->parent=parent;
         this->actionCRUDMaker();
     }
 
@@ -232,9 +232,8 @@ public:
 
 };
 
-ModelFieldDescriptors::ModelFieldDescriptors(QObject *parent) : QStm::ObjectWrapper{parent}
+ModelFieldDescriptors::ModelFieldDescriptors(QObject *parent) : QStm::ObjectWrapper{parent}, p{new ModelDescriptorPvt{this}}
 {
-    this->p = new ModelDescriptorPvt{this};
 }
 
 bool ModelFieldDescriptors::isValid() const

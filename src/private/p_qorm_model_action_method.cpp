@@ -14,17 +14,15 @@ public:
     ModelActionMethodPointer action=nullptr;
     ModelActionMethodPointer actionAfter=nullptr;
     PrivateQOrm::CRUDBase *crudBase=nullptr;
-    explicit ModelActionPvt(ModelAction*parent):QObject{parent}
+    explicit ModelActionPvt(ModelAction*parent):QObject{parent}, parent{parent}
     {
-        this->parent=parent;
         if(this->parent)
             this->parentDb = dynamic_cast<ObjectDb*>(this->parent->parent());
     }
 };
 
-ModelAction::ModelAction(QObject *parent) : QOrm::ObjectDb{parent}
+ModelAction::ModelAction(QObject *parent) : QOrm::ObjectDb{parent}, p{new ModelActionPvt{this}}
 {
-    this->p = new ModelActionPvt{this};
 }
 
 ModelAction &ModelAction::onActionBefore(ModelActionMethodPointer action)

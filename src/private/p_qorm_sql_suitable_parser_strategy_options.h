@@ -234,9 +234,8 @@ public:
     explicit SqlParserConditions(const QVariant &v):SqlParserCommand{v}
     {
     }
-    explicit SqlParserConditions(void *parent, const QString &name, const QVariant &v={}):SqlParserCommand{v}
+    explicit SqlParserConditions(void *parent, const QString &name, const QVariant &v={}):SqlParserCommand{v}, parent{parent}
     {
-        this->parent=parent;
         Q_UNUSED(name)
     }
 
@@ -478,24 +477,23 @@ class SqlParserCombinations:public SqlParserCommand{
 public:
     class SqlParserCombination:public SqlParserCommand{
     public:
+        SqlParserCombinations<T> * parent=nullptr;
         QString funcName;
         QString sName()
         {
             return this->funcName+this->suuid(QStringLiteral("."));
         }
 
-        SqlParserCombinations<T> * parent=nullptr;
         explicit SqlParserCombination(const QVariant &v={}):SqlParserCommand{v}
         {
             this->parent=nullptr;
             this->makeUuid();
         }
 
-        explicit SqlParserCombination(const QString &funcName, SqlParserCombinations<T> * parent, const KeywordCombine&combine, const QVariant &condition, const QVariant &alias={}):SqlParserCommand{}
+        explicit SqlParserCombination(const QString &funcName, SqlParserCombinations<T> * parent, const KeywordCombine&combine, const QVariant &condition, const QVariant &alias={}):SqlParserCommand{}, parent{parent}
         {
             this->makeUuid();
             this->funcName=funcName.toLower();
-            this->parent=parent;
 
             auto map=this->toMap();
             map.insert(QStringLiteral("combine"),combine);
